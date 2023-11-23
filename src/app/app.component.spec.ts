@@ -1,3 +1,4 @@
+import { Component } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { RouterTestingModule } from '@angular/router/testing';
 import { AppComponent } from './app.component';
@@ -5,7 +6,7 @@ import { AppComponent } from './app.component';
 describe('AppComponent', () => {
   beforeEach(() => TestBed.configureTestingModule({
     imports: [RouterTestingModule],
-    declarations: [AppComponent]
+    declarations: [AppComponent, MockHeaderComponent]
   }));
 
   it('should create the app', () => {
@@ -21,3 +22,10 @@ describe('AppComponent', () => {
   });
 
 });
+
+@Component({
+  selector: 'app-header',
+  template: ''
+})
+class MockHeaderComponent {
+}
