@@ -1,0 +1,127 @@
+@use '@angular/material' as mat;
+@include mat.core();
+
+// Colors
+
+$black-87-opacity: rgba(black, 0.87);
+$condensed-font-family: 'Roboto Condensed, Roboto, sans-serif';
+
+$d11-primary: (
+  50: #e0e2e8,
+  100: #b3b6c5,
+  200: #80859e,
+  300: #4d5477,
+  400: #262f59,
+  500: #000a3c,
+  600: #000936,
+  700: #00072e,
+  800: #000527,
+  900: $black-87-opacity,
+  A100: #5858ff,
+  A200: #2525ff,
+  A400: #0000f1,
+  A700: #0000d8,
+  contrast: (
+    50: $black-87-opacity,
+    100: $black-87-opacity,
+    200: $black-87-opacity,
+    300: white,
+    400: white,
+    500: white,
+    600: white,
+    700: white,
+    800: white,
+    900: white,
+    A100: $black-87-opacity,
+    A200: $black-87-opacity,
+    A400: white,
+    A700: white,
+  ),
+);
+
+$d11-accent: (
+  50: #ebeef2,
+  100: #cdd4de,
+  200: #acb8c8,
+  300: #8b9bb1,
+  400: #7285a1,
+  500: #597090,
+  600: #516888,
+  700: #485d7d,
+  800: #3e5373,
+  900: $black-87-opacity,
+  A100: #accaff,
+  A200: #79a9ff,
+  A400: #4688ff,
+  A700: #2c78ff,
+
+  contrast: (
+    50: $black-87-opacity,
+    100: $black-87-opacity,
+    200: $black-87-opacity,
+    300: $black-87-opacity,
+    400: white,
+    500: white,
+    600: white,
+    700: white,
+    800: white,
+    900: white,
+    A100: $black-87-opacity,
+    A200: $black-87-opacity,
+    A400:white,
+    A700: white
+  )
+);
+
+$d11-primary-palette: mat.define-palette($d11-primary, 500, 300, 900, A100);
+$d11-accent-palette: mat.define-palette($d11-accent, 500, 300, 900, A700);
+
+$d11-theme: mat.define-light-theme(
+  (
+    color: (
+      primary: $d11-primary-palette,
+      accent: $d11-accent-palette
+    )
+  )
+);
+
+// Add more mixins here as we add components that need them
+@include mat.core-theme($d11-theme);
+@include mat.toolbar-theme($d11-theme);
+
+// Typography
+
+$d11-condensed-typography: mat.define-typography-config(
+  $font-family: $condensed-font-family,
+  $button: mat.define-typography-level(
+    $font-size: 1rem,
+    $font-weight: 700
+  )
+);
+
+@include mat.button-typography($d11-condensed-typography);
+
+// Apparently there's no mat-menu mixin so apply theme directly
+html {
+  --mat-menu-container-color: #{mat.get-color-from-palette($d11-primary-palette, 900)};
+
+  --mat-menu-trigger-label-text-transform: uppercase;
+
+  --mat-menu-item-hover-state-layer-color: #{mat.get-color-from-palette($d11-accent-palette, 500)};
+  --mat-menu-item-focus-state-layer-color: #{mat.get-color-from-palette($d11-accent-palette, 500)};
+
+  --mat-menu-item-label-text-color: #{mat.get-color-from-palette($d11-primary-palette, 900-contrast)};
+  --mat-menu-item-label-text-font: #{$condensed-font-family};
+  --mat-menu-item-label-text-size: inherit;
+  --mat-menu-item-label-text-weight: 700;
+  --mat-menu-item-label-text-transform: uppercase;
+}
+
+// Can't set text-transform in typography config so apply directly
+.mat-mdc-menu-trigger {
+  text-transform: var(--mat-menu-trigger-label-text-transform);
+}
+
+.mat-mdc-menu-item {
+  text-transform: var(--mat-menu-item-label-text-transform);
+}
