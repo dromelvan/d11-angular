@@ -1,0 +1,15 @@
+<mat-toolbar class="mat-primary">
+  <mat-toolbar-row>
+      <img src="assets/images/d11-logo.png" alt="D11" class="logo">
+
+      <button mat-button [matMenuTriggerFor]="menu">
+        Info
+      </button>
+      <mat-menu #menu="matMenu">
+        <button mat-menu-item>Rules</button>
+        <button mat-menu-item>About D11</button>
+      </mat-menu>
+
+      <span class="spacer"></span>
+  </mat-toolbar-row>
+</mat-toolbar>

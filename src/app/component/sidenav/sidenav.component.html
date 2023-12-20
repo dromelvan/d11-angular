@@ -1,0 +1,22 @@
+<mat-sidenav-container class="sidenav-container">
+  <mat-sidenav #sidenav mode="over">
+    <mat-list>
+      <div mat-subheader>Info</div>
+      <mat-list-item>
+        <mat-icon matListItemIcon>book</mat-icon>
+        <div matListItemTitle>Rules</div>
+      </mat-list-item>
+      <mat-list-item>
+        <mat-icon matListItemIcon>information</mat-icon>
+        <div matListItemTitle>About D11</div>
+      </mat-list-item>
+    </mat-list>
+  </mat-sidenav>
+
+  <mat-sidenav-content>
+
+    <ng-content></ng-content>
+
+  </mat-sidenav-content>
+
+</mat-sidenav-container>

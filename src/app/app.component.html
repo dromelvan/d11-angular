@@ -1,1 +1,21 @@
-<router-outlet></router-outlet>
+<div
+  [class.xs]="breakpointService.isXs()"
+  [class.sm]="breakpointService.isSm()"
+  [class.md]="breakpointService.isMd()"
+  [class.lg]="breakpointService.isLg()"
+  [class.xl]="breakpointService.isXl()"
+>
+
+  <app-sidenav *ngIf="breakpointService.isSmAndDown()">
+    <app-toolbar-sm-and-down></app-toolbar-sm-and-down>
+
+    <router-outlet></router-outlet>
+  </app-sidenav>
+
+  <ng-container *ngIf="breakpointService.isMdAndUp()">
+    <app-toolbar-md-and-up></app-toolbar-md-and-up>
+
+    <router-outlet></router-outlet>
+  </ng-container>
+
+</div>

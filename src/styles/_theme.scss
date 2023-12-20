@@ -17,7 +17,7 @@ $d11-primary: (
   700: #00072e,
   800: #000527,
   900: $black-87-opacity,
-  A100: #5858ff,
+  A100: $black-87-opacity,
   A200: #2525ff,
   A400: #0000f1,
   A700: #0000d8,
@@ -32,8 +32,8 @@ $d11-primary: (
     700: white,
     800: white,
     900: white,
-    A100: $black-87-opacity,
-    A200: $black-87-opacity,
+    A100: #b2b2b2,
+    A200: white,
     A400: white,
     A700: white,
   ),
@@ -88,6 +88,7 @@ $d11-theme: mat.define-light-theme(
 // Add more mixins here as we add components that need them
 @include mat.core-theme($d11-theme);
 @include mat.toolbar-theme($d11-theme);
+@include mat.list-theme($d11-theme);
 
 // Typography
 
@@ -99,10 +100,22 @@ $d11-condensed-typography: mat.define-typography-config(
   )
 );
 
-@include mat.button-typography($d11-condensed-typography);
+$d11-sidenav-typography: mat.define-typography-config(
+  $font-family: $condensed-font-family,
+  $subtitle-1: mat.define-typography-level(
+    $font-size: .9rem
+  ),
+  $body-1: mat.define-typography-level(
+    $font-size: .9rem
+  )
 
-// Apparently there's no mat-menu mixin so apply theme directly
+);
+
+@include mat.button-typography($d11-condensed-typography);
+@include mat.list-typography($d11-sidenav-typography);
+
 html {
+  // Set properties that won't get set by mixins
   --mat-menu-container-color: #{mat.get-color-from-palette($d11-primary-palette, 900)};
 
   --mat-menu-trigger-label-text-transform: uppercase;
@@ -115,6 +128,29 @@ html {
   --mat-menu-item-label-text-size: inherit;
   --mat-menu-item-label-text-weight: 700;
   --mat-menu-item-label-text-transform: uppercase;
+
+  --mat-sidenav-container-text-color: #{mat.get-color-from-palette($d11-primary-palette, A100-contrast)};;
+  --mat-sidenav-container-background-color: #{mat.get-color-from-palette($d11-primary-palette, A100)};
+
+}
+
+.mat-mdc-list-base {
+  --mdc-list-list-item-label-text-color: #{mat.get-color-from-palette($d11-primary-palette, 900-contrast)};
+  --mdc-list-list-item-supporting-text-color: #{mat.get-color-from-palette($d11-primary-palette, 900-contrast)};
+  --mdc-list-list-item-leading-icon-color: #{mat.get-color-from-palette($d11-primary-palette, 900-contrast)};
+  --mdc-list-list-item-trailing-supporting-text-color: #{mat.get-color-from-palette($d11-primary-palette, 900-contrast)};
+  --mdc-list-list-item-trailing-icon-color: #{mat.get-color-from-palette($d11-primary-palette, 900-contrast)};
+  --mdc-list-list-item-selected-trailing-icon-color: #{mat.get-color-from-palette($d11-primary-palette, 900-contrast)};
+  --mdc-list-list-item-disabled-label-text-color: #{mat.get-color-from-palette($d11-primary-palette, 900-contrast)};
+  --mdc-list-list-item-disabled-leading-icon-color: #{mat.get-color-from-palette($d11-primary-palette, 900-contrast)};
+  --mdc-list-list-item-disabled-trailing-icon-color: #{mat.get-color-from-palette($d11-primary-palette, 900-contrast)};
+  --mdc-list-list-item-hover-label-text-color: #{mat.get-color-from-palette($d11-primary-palette, 900-contrast)};
+  --mdc-list-list-item-hover-leading-icon-color: #{mat.get-color-from-palette($d11-primary-palette, 900-contrast)};
+  --mdc-list-list-item-hover-trailing-icon-color: #{mat.get-color-from-palette($d11-primary-palette, 900-contrast)};
+  --mdc-list-list-item-focus-label-text-color: #{mat.get-color-from-palette($d11-primary-palette, 900-contrast)};
+  --mdc-list-list-item-hover-state-layer-color: #{mat.get-color-from-palette($d11-primary-palette, 900-contrast)};
+  --mdc-list-list-item-hover-state-layer-opacity: #{mat.get-color-from-palette($d11-primary-palette, 900-contrast)};
+  --mdc-list-list-item-focus-state-layer-color: #{mat.get-color-from-palette($d11-primary-palette, 900-contrast)};
 }
 
 // Can't set text-transform in typography config so apply directly
@@ -122,6 +158,7 @@ html {
   text-transform: var(--mat-menu-trigger-label-text-transform);
 }
 
+.mat-mdc-subheader,
 .mat-mdc-menu-item {
   text-transform: var(--mat-menu-item-label-text-transform);
 }

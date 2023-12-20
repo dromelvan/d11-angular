@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { BreakpointService } from './shared/services/breakpoint.service';
 
 @Component({
   selector: 'app-root',
@@ -6,5 +7,9 @@ import { Component } from '@angular/core';
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent {
-  title = 'D11';
+
+    title = 'D11';
+
+    constructor(public breakpointService: BreakpointService) {}
+
 }
