@@ -1,9 +1,9 @@
-<div
-  [class.xs]="breakpointService.isXs()"
-  [class.sm]="breakpointService.isSm()"
-  [class.md]="breakpointService.isMd()"
-  [class.lg]="breakpointService.isLg()"
-  [class.xl]="breakpointService.isXl()"
+<div class="breakpoint-container"
+  [class.breakpoint-xs]="breakpointService.isXs()"
+  [class.breakpoint-sm]="breakpointService.isSm()"
+  [class.breakpoint-md]="breakpointService.isMd()"
+  [class.breakpoint-lg]="breakpointService.isLg()"
+  [class.breakpoint-xl]="breakpointService.isXl()"
 >
 
   <app-sidenav *ngIf="breakpointService.isSmAndDown()">

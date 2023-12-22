@@ -10,6 +10,6 @@ export class AppComponent {
 
     title = 'D11';
 
-    constructor(public breakpointService: BreakpointService) {}
+    constructor(protected breakpointService: BreakpointService) {}
 
 }
