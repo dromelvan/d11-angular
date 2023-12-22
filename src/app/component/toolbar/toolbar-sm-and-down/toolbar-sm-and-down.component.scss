@@ -1,33 +1,33 @@
 mat-toolbar {
-  background-image: url("/assets/images/toolbar-background.png");
+    background-image: url("/assets/images/toolbar-background.png");
 
-  position: fixed;
+    position: fixed;
 
-  .mat-toolbar-row {
-    padding: 0;
-  }
+    .mat-toolbar-row {
+        padding: 0;
+    }
 
-  .mat-mdc-button > .mat-icon {
-    font-size: 24px;
-    height: 24px;
-    width: 24px;
-  }
+    .mat-mdc-button>.mat-icon {
+        font-size: 24px;
+        height: 24px;
+        width: 24px;
+    }
 
-  .logo {
-    max-height: 38px;
-    margin-right: 16px;
-  }
+    .logo {
+        max-height: 38px;
+        margin-right: 16px;
+    }
 }
 
 :host-context(.breakpoint-xs) {
-  mat-toolbar {
-    .logo {
-      margin-left: auto;
-      margin-right: auto;
-    }
+    mat-toolbar {
+        .logo {
+            margin-left: auto;
+            margin-right: auto;
+        }
 
-    .spacer {
-      min-width: 64px;
+        .spacer {
+            min-width: 64px;
+        }
     }
-  }
 }

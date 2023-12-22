@@ -9,18 +9,18 @@ import { ToolbarMdAndUpComponent } from './component/toolbar/toolbar-md-and-up/t
 import { ToolbarSmAndDownComponent } from './component/toolbar/toolbar-sm-and-down/toolbar-sm-and-down.component';
 
 @NgModule({
-  declarations: [
-    AppComponent
-  ],
-  imports: [
-    BrowserModule,
-    AppRoutingModule,
-    BrowserAnimationsModule,
-    SidenavComponent,
-    ToolbarMdAndUpComponent,
-    ToolbarSmAndDownComponent
-  ],
-  providers: [],
-  bootstrap: [AppComponent]
+    declarations: [
+        AppComponent
+    ],
+    imports: [
+        BrowserModule,
+        AppRoutingModule,
+        BrowserAnimationsModule,
+        SidenavComponent,
+        ToolbarMdAndUpComponent,
+        ToolbarSmAndDownComponent
+    ],
+    providers: [],
+    bootstrap: [AppComponent]
 })
 export class AppModule { }

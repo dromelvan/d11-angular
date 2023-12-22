@@ -1,21 +1,21 @@
 .sidenav-container {
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  left: 0;
-  right: 0;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
 }
 
 .mat-mdc-list-base {
-  --mdc-list-list-item-one-line-container-height: 40px;
+    --mdc-list-list-item-one-line-container-height: 40px;
 }
 
 .mdc-list-item--with-leading-icon .mdc-list-item__start {
-  margin-right: 24px;
+    margin-right: 24px;
 }
 
 .mat-mdc-list-item.mdc-list-item--with-leading-icon.mdc-list-item--with-one-line,
 .mat-mdc-list-item.mdc-list-item--with-leading-icon.mdc-list-item--with-one-line {
-  height: var(--mdc-list-list-item-one-line-container-height);
-  padding-right: 64px;
+    height: var(--mdc-list-list-item-one-line-container-height);
+    padding-right: 64px;
 }
