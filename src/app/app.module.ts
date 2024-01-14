@@ -5,8 +5,8 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { SidenavComponent } from './component/sidenav/sidenav.component';
-import { ToolbarMdAndUpComponent } from './component/toolbar/toolbar-md-and-up/toolbar-md-and-up.component';
-import { ToolbarSmAndDownComponent } from './component/toolbar/toolbar-sm-and-down/toolbar-sm-and-down.component';
+import { ToolbarMenuComponent } from './component/toolbar/toolbar-menu/toolbar-menu.component';
+import { ToolbarSidenavComponent } from './component/toolbar/toolbar-sidenav/toolbar-sidenav.component';
 
 @NgModule({
     declarations: [
@@ -17,8 +17,8 @@ import { ToolbarSmAndDownComponent } from './component/toolbar/toolbar-sm-and-do
         AppRoutingModule,
         BrowserAnimationsModule,
         SidenavComponent,
-        ToolbarMdAndUpComponent,
-        ToolbarSmAndDownComponent
+        ToolbarMenuComponent,
+        ToolbarSidenavComponent
     ],
     providers: [],
     bootstrap: [AppComponent]

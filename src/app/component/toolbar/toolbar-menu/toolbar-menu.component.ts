@@ -5,12 +5,12 @@ import { MatMenuModule } from '@angular/material/menu';
 import { MatToolbarModule } from '@angular/material/toolbar';
 
 @Component({
-    selector: 'app-toolbar-md-and-up',
+    selector: 'd11-toolbar-menu',
     imports: [MatToolbarModule, MatButtonModule, MatMenuModule, MatIconModule],
     standalone: true,
-    templateUrl: './toolbar-md-and-up.component.html',
-    styleUrls: ['./toolbar-md-and-up.component.scss']
+    templateUrl: './toolbar-menu.component.html',
+    styleUrls: ['./toolbar-menu.component.scss']
 })
-export class ToolbarMdAndUpComponent {
+export class ToolbarMenuComponent {
 
 }

@@ -7,7 +7,7 @@ import { BreakpointService } from './../../../shared/services/breakpoint.service
 import { CommonModule } from '@angular/common';
 
 @Component({
-    selector: 'app-toolbar-sm-and-down',
+    selector: 'd11-toolbar-sidenav',
     imports: [
         CommonModule,
         MatToolbarModule,
@@ -15,10 +15,10 @@ import { CommonModule } from '@angular/common';
         MatButtonModule
     ],
     standalone: true,
-    templateUrl: './toolbar-sm-and-down.component.html',
-    styleUrls: ['./toolbar-sm-and-down.component.scss']
+    templateUrl: './toolbar-sidenav.component.html',
+    styleUrls: ['./toolbar-sidenav.component.scss']
 })
-export class ToolbarSmAndDownComponent {
+export class ToolbarSidenavComponent {
 
     constructor(protected breakpointService: BreakpointService, protected sidenav: SidenavComponent) { }
 

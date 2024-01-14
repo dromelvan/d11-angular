@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { BreakpointService } from './shared/services/breakpoint.service';
 
 @Component({
-    selector: 'app-root',
+    selector: 'd11-root',
     templateUrl: './app.component.html',
     styleUrls: ['./app.component.scss']
 })

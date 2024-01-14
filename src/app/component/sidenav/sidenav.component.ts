@@ -10,7 +10,7 @@ import { MatSidenav, MatSidenavModule } from '@angular/material/sidenav';
         MatIconModule
     ],
     standalone: true,
-    selector: 'app-sidenav',
+    selector: 'd11-sidenav',
     templateUrl: './sidenav.component.html',
     styleUrls: ['./sidenav.component.scss']
 })
