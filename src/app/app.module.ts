@@ -9,18 +9,16 @@ import { ToolbarMenuComponent } from './component/toolbar/toolbar-menu/toolbar-m
 import { ToolbarSidenavComponent } from './component/toolbar/toolbar-sidenav/toolbar-sidenav.component';
 
 @NgModule({
-    declarations: [
-        AppComponent
-    ],
+    declarations: [AppComponent],
     imports: [
         BrowserModule,
         AppRoutingModule,
         BrowserAnimationsModule,
         SidenavComponent,
         ToolbarMenuComponent,
-        ToolbarSidenavComponent
+        ToolbarSidenavComponent,
     ],
     providers: [],
-    bootstrap: [AppComponent]
+    bootstrap: [AppComponent],
 })
-export class AppModule { }
+export class AppModule {}

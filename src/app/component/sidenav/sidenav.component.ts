@@ -4,22 +4,16 @@ import { MatListModule } from '@angular/material/list';
 import { MatSidenav, MatSidenavModule } from '@angular/material/sidenav';
 
 @Component({
-    imports: [
-        MatSidenavModule,
-        MatListModule,
-        MatIconModule
-    ],
+    imports: [MatSidenavModule, MatListModule, MatIconModule],
     standalone: true,
     selector: 'd11-sidenav',
     templateUrl: './sidenav.component.html',
-    styleUrls: ['./sidenav.component.scss']
+    styleUrls: ['./sidenav.component.scss'],
 })
 export class SidenavComponent {
-
     @ViewChild('sidenav') sidenav!: MatSidenav;
 
     toggle(): void {
         this.sidenav.toggle();
     }
-
 }

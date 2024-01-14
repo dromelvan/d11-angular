@@ -2,10 +2,9 @@ import { Injectable } from '@angular/core';
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 
 @Injectable({
-    providedIn: 'root'
+    providedIn: 'root',
 })
 export class BreakpointService {
-
     private xSmall!: boolean;
     private small!: boolean;
     private medium!: boolean;
@@ -17,19 +16,21 @@ export class BreakpointService {
     }
 
     private observeScreenSize() {
-        this.breakpointObserver.observe([
-            Breakpoints.XSmall,
-            Breakpoints.Small,
-            Breakpoints.Medium,
-            Breakpoints.Large,
-            Breakpoints.XLarge,
-        ]).subscribe((result) => {
-            this.xSmall = result.breakpoints[Breakpoints.XSmall];
-            this.small = result.breakpoints[Breakpoints.Small];
-            this.medium = result.breakpoints[Breakpoints.Medium];
-            this.large = result.breakpoints[Breakpoints.Large];
-            this.xLarge = result.breakpoints[Breakpoints.XLarge];
-        });
+        this.breakpointObserver
+            .observe([
+                Breakpoints.XSmall,
+                Breakpoints.Small,
+                Breakpoints.Medium,
+                Breakpoints.Large,
+                Breakpoints.XLarge,
+            ])
+            .subscribe((result) => {
+                this.xSmall = result.breakpoints[Breakpoints.XSmall];
+                this.small = result.breakpoints[Breakpoints.Small];
+                this.medium = result.breakpoints[Breakpoints.Medium];
+                this.large = result.breakpoints[Breakpoints.Large];
+                this.xLarge = result.breakpoints[Breakpoints.XLarge];
+            });
     }
 
     isXs(): boolean {
@@ -75,5 +76,4 @@ export class BreakpointService {
     isXl(): boolean {
         return this.xLarge;
     }
-
 }

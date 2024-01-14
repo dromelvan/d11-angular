@@ -9,10 +9,7 @@ describe('SidenavComponent', () => {
 
     beforeEach(() => {
         TestBed.configureTestingModule({
-            imports: [
-                SidenavComponent,
-                NoopAnimationsModule
-            ]
+            imports: [SidenavComponent, NoopAnimationsModule],
         });
         fixture = TestBed.createComponent(SidenavComponent);
         component = fixture.componentInstance;
@@ -30,5 +27,4 @@ describe('SidenavComponent', () => {
 
         expect(toggleSpy).toHaveBeenCalled();
     });
-
 });

@@ -1,6 +1,10 @@
 import { TestBed } from '@angular/core/testing';
 import { BreakpointService } from './breakpoint.service';
-import { BreakpointObserver, Breakpoints, BreakpointState } from '@angular/cdk/layout';
+import {
+    BreakpointObserver,
+    Breakpoints,
+    BreakpointState,
+} from '@angular/cdk/layout';
 import { of } from 'rxjs';
 
 describe('BreakpointService', () => {
@@ -17,11 +21,15 @@ describe('BreakpointService', () => {
             ],
         });
 
-        breakpointObserverSpy = TestBed.inject(BreakpointObserver) as jasmine.SpyObj<BreakpointObserver>;
-        breakpointObserverSpy.observe.and.returnValue(of<BreakpointState>({
-            breakpoints: {},
-            matches: false,
-        }));
+        breakpointObserverSpy = TestBed.inject(
+            BreakpointObserver,
+        ) as jasmine.SpyObj<BreakpointObserver>;
+        breakpointObserverSpy.observe.and.returnValue(
+            of<BreakpointState>({
+                breakpoints: {},
+                matches: false,
+            }),
+        );
 
         service = TestBed.inject(BreakpointService);
     });
@@ -170,5 +178,4 @@ describe('BreakpointService', () => {
         expect(service.isLgAndUp()).toBe(true);
         expect(service.isXl()).toBe(true);
     });
-
 });
