@@ -68,7 +68,7 @@ $d11-accent: (
         900: white,
         A100: $black-87-opacity,
         A200: $black-87-opacity,
-        A400:white,
+        A400: white,
         A700: white)
 );
 
@@ -81,8 +81,14 @@ $d11-theme: mat.define-light-theme((color: (primary: $d11-primary-palette, accen
 @include mat.core-theme($d11-theme);
 @include mat.toolbar-theme($d11-theme);
 @include mat.list-theme($d11-theme);
+@include mat.button-theme($d11-theme);
 
 // Typography
+
+$d11-all-components-typography: mat.define-typography-config(
+    $body-1: mat.define-typography-level($font-size: 1rem),
+    $body-2: mat.define-typography-level($font-size: 1rem),
+);
 
 $d11-condensed-typography: mat.define-typography-config(
     $font-family: $condensed-font-family,
@@ -95,6 +101,7 @@ $d11-sidenav-typography: mat.define-typography-config(
     $body-1: mat.define-typography-level($font-size: .9rem)
 );
 
+@include mat.all-component-typographies($d11-all-components-typography);
 @include mat.button-typography($d11-condensed-typography);
 @include mat.list-typography($d11-sidenav-typography);
 
@@ -114,7 +121,6 @@ html {
     --mat-menu-item-label-text-transform: uppercase;
 
     --mat-sidenav-container-text-color: #{mat.get-color-from-palette($d11-primary-palette, A100-contrast)};
-    ;
     --mat-sidenav-container-background-color: #{mat.get-color-from-palette($d11-primary-palette, A100)};
 
 }
