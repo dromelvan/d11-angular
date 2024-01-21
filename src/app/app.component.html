@@ -8,13 +8,13 @@
     <d11-sidenav *ngIf="breakpointService.isSmAndDown()">
         <d11-toolbar-sidenav></d11-toolbar-sidenav>
 
-        <router-outlet></router-outlet>
+        <d11-main></d11-main>
     </d11-sidenav>
 
     <ng-container *ngIf="breakpointService.isMdAndUp()">
         <d11-toolbar-menu></d11-toolbar-menu>
 
-        <router-outlet></router-outlet>
+        <d11-main></d11-main>
     </ng-container>
 
 </div>
