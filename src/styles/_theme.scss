@@ -123,6 +123,17 @@ html {
     --mat-sidenav-container-text-color: #{mat.get-color-from-palette($d11-primary-palette, A100-contrast)};
     --mat-sidenav-container-background-color: #{mat.get-color-from-palette($d11-primary-palette, A100)};
 
+    // D11 component variables
+    --d11-hero-section-color: #{mat.get-color-from-palette($d11-accent-palette, 900-contrast)};
+    --d11-hero-section-background-color: #{mat.get-color-from-palette($d11-primary-palette, 900)};
+
+    --d11-hero-section-title-text-size: 3rem;
+    --d11-hero-section-title-text-weight: 700;
+    --d11-hero-section-title-line-height: 3rem;
+
+    --d11-hero-section-subtitle-text-size: 2rem;
+    --d11-hero-section-subtitle-text-weight: 700;
+    --d11-hero-section-subtitle-line-height: 2rem;
 }
 
 .mat-mdc-list-base {

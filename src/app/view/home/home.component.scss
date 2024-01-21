@@ -1,0 +1,20 @@
+.hero-section {
+    background-image:
+        linear-gradient(to left, transparent 40%, rgba(255, 255, 255, .8) 60%, rgba(255, 255, 255, 1.0) 100%),
+        url('/assets/images/hero-background.jpg');
+
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+.hero-title {
+    font-size: var(--d11-hero-section-title-text-size);
+    font-weight: var(--d11-hero-section-title-text-weight);
+    line-height: var(--d11-hero-section-title-line-height);
+}
+
+.hero-subtitle {
+    font-size: var(--d11-hero-section-subtitle-text-size);
+    font-weight: var(--d11-hero-section-subtitle-text-weight);
+}
