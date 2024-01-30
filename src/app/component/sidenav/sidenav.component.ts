@@ -13,7 +13,16 @@ import { MatSidenav, MatSidenavModule } from '@angular/material/sidenav';
 export class SidenavComponent {
     @ViewChild('sidenav') sidenav!: MatSidenav;
 
-    toggle(): void {
+    toggle() {
         this.sidenav.toggle();
+    }
+
+    onOpen(): void {
+        // CSS to prevent background scrolling is in global styles.scss
+        document.body.classList.add('sidenav-open');
+    }
+
+    onClosed(): void {
+        document.body.classList.remove('sidenav-open');
     }
 }

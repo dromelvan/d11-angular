@@ -1,5 +1,5 @@
 <mat-sidenav-container class="sidenav-container">
-    <mat-sidenav #sidenav mode="over">
+    <mat-sidenav #sidenav mode="over" fixedInViewport (openedStart)="onOpen()" (closedStart)="onClosed()">
         <mat-list>
             <div mat-subheader>Info</div>
             <mat-list-item>

@@ -3,9 +3,16 @@
 html, body {
     height: 100%;
 }
+
 body {
     margin: 0;
     font-family: Roboto, "Helvetica Neue", sans-serif;
+}
+
+// Sidenav component sets this class when sidenav opens and removes it when it closes. This is to prevent background
+// scrolling when sidenav is open as that just feels weird
+body.sidenav-open {
+    overflow: hidden;
 }
 
 @import './_theme';
