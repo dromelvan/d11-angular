@@ -1,10 +1,10 @@
-<mat-toolbar class="mat-primary mat-elevation-z4">
+<mat-toolbar [@scrollTrigger]="hidden ? 'hidden' : 'shown'">
     <mat-toolbar-row>
-        <button mat-button (click)="sidenav.toggle()">
+        <button mat-button (click)="toggleSidenav()">
             <mat-icon>menu</mat-icon>
         </button>
 
-        <img src="assets/images/d11-logo.png" alt="D11" class="logo">
+        <img src="assets/images/d11-logo-dark.png" alt="D11" class="logo">
 
         <span *ngIf="breakpointService.isXs()" class="spacer"></span>
     </mat-toolbar-row>

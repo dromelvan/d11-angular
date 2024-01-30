@@ -1,6 +1,5 @@
 mat-toolbar {
-    background-image: url("/assets/images/toolbar-background.png");
-
+    background-color: transparent;
     position: fixed;
 
     .mat-toolbar-row {
@@ -27,7 +26,7 @@ mat-toolbar {
         }
 
         .spacer {
-            min-width: 64px;
+            min-width: 74px;
         }
     }
 }
