@@ -1,15 +1,65 @@
-<section class="hero-section p-14 xs:p-2 min-h-[550px] xs:min-h-fit">
-    <div class="hero-content sm:w-3/4 md:w-2/3 lg:w-1/2 xl:w-1/2 p-3 h-full">
-        <h1 class="hero-title pb-5">Elevate Your Fantasy Football Experience</h1>
-        <h2 class="hero-subtitle">Where Strategy Meets Glory</h2>
+<section class="hero-section p-14 xs:p-2 xs:pt-14 min-h-[550px] xs:min-h-fit">
+    <div class="hero-content sm:w-3/5 md:w-2/3 lg:w-1/2 xl:w-1/2 xs:p-3 pt-3 pl-3 h-full">
+        <h1 class="hero-title pb-5">Forge Your Fantasy Legacy</h1>
+        <h2 class="hero-subtitle">Your Team, Your Tactics, Your Glory</h2>
         <div class="mb-10">
             <p>
-                Welcome to D11. The beating heart of fantasy football, where your dreams of managing a Premier League team come
-                to life. This isn't just a game; it's your chance to reign supreme as the mastermind behind a squad destined
-                for greatness.
+                Welcome to the epicenter of football fantasy – your gateway to an immersive experience in the English
+                Premier League like never before. Dive into the world where your managerial prowess takes center stage,
+                and every decision you make shapes the destiny of your virtual team.This isn't just a game; it's your
+                chance to reign supreme as the mastermind behind a squad destined for greatness.
             </p>
         </div>
 
         <d11-button>Learn More</d11-button>
+    </div>
+</section>
+
+<section class="p-14 pt-2 xs:p-2">
+<!--    <div class="sm:w-3/5 md:w-2/3 lg:w-1/2 xl:w-1/2 xs:p-3 pt-3 pl-3 h-full">-->
+    <div class="pt-3 pl-3 h-full">
+        <h2 class="hero-subtitle">Command Your Team</h2>
+        <div class="mb-10 grid grid-cols-2 xs:grid-cols-1">
+            <div>
+                <p class="pb-6">
+                    Craft your dream team from the stars of the Premier League – a squad that mirrors your football
+                    philosophy. Whether you seek attacking brilliance, defensive resilience, or a perfect balance, the power
+                    to shape your destiny lies at your fingertips. This is your canvas; let your creativity shine.
+                </p>
+                <p class="pb-6">
+                    Immerse yourself in the thrill of weekly matchups, where every goal, assist, and clean sheet propel you
+                    up the ranks. Navigate through injuries, suspensions, and fierce competition as you strive for fantasy
+                    supremacy. The stakes are high, but so are the rewards for those with the vision to lead.
+                </p>
+                <p>
+                    But it's not just about the players on the field – engage in strategic transfers, outsmart your rivals,
+                    and prove that your football knowledge reigns supreme. The fantasy arena is where legends are born, and
+                    every decision is a stepping stone toward fantasy immortality.
+                </p>
+            </div>
+            <div *ngIf="breakpointService.isSmAndUp()">
+                <img src="assets/images/home-page-player-01.png" alt="Player" class="m-auto h-80">
+            </div>
+        </div>
+
+        <d11-button>Sign In</d11-button>
+    </div>
+</section>
+
+<section class="p-14 pt-2 xs:p-2">
+    <div class="sm:w-3/5 md:w-2/3 lg:w-1/2 xl:w-1/2 xs:p-3 pt-3 pl-3 h-full">
+        <h2 class="hero-subtitle">Start Your Fantasy Odyssey</h2>
+        <div class="mb-10">
+            <p class="pb-6">
+                Embark on a journey where the cheers of the crowd and the agony of defeat are felt with every decision
+                you make. Seize the thrill, embrace the challenge, and join a league where your journey is as legendary
+                as the victories you'll celebrate.
+            </p>
+            <p class="italic">
+                Gear up, Manager. The pitch is yours.
+            </p>
+        </div>
+
+        <d11-button>Sign Up</d11-button>
     </div>
 </section>

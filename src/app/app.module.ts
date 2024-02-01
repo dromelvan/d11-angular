@@ -8,6 +8,7 @@ import { D11MainComponent } from './component/d11-main/d11-main.component';
 import { SidenavComponent } from './component/sidenav/sidenav.component';
 import { ToolbarMenuComponent } from './component/toolbar/toolbar-menu/toolbar-menu.component';
 import { ToolbarSidenavComponent } from './component/toolbar/toolbar-sidenav/toolbar-sidenav.component';
+import { HomeComponent } from './view/home/home.component';
 
 @NgModule({
     declarations: [AppComponent],
@@ -19,6 +20,7 @@ import { ToolbarSidenavComponent } from './component/toolbar/toolbar-sidenav/too
         SidenavComponent,
         ToolbarMenuComponent,
         ToolbarSidenavComponent,
+        HomeComponent,
     ],
     providers: [],
     bootstrap: [AppComponent],

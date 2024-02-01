@@ -25,9 +25,10 @@ describe('AppComponent', () => {
             imports: [RouterTestingModule],
             declarations: [
                 AppComponent,
-                MockSidenavComponent,
-                MockToolBarMdAndUpdComponent,
-                MockToolBarSmAndDownComponent,
+                MockD11SidenavComponent,
+                MockD11ToolBarMenuComponent,
+                MockD11ToolBarSidenavComponent,
+                MockD11MainComponent,
             ],
             providers: [
                 BreakpointService,
@@ -103,7 +104,7 @@ describe('AppComponent', () => {
             'breakpoint-xl',
         );
         expect(
-            fixture.debugElement.query(By.directive(MockSidenavComponent)),
+            fixture.debugElement.query(By.directive(MockD11SidenavComponent)),
         ).toBeTruthy();
 
         breakpointObserverSpy.observe.and.returnValue(
@@ -137,7 +138,7 @@ describe('AppComponent', () => {
             'breakpoint-xl',
         );
         expect(
-            fixture.debugElement.query(By.directive(MockSidenavComponent)),
+            fixture.debugElement.query(By.directive(MockD11SidenavComponent)),
         ).toBeTruthy();
 
         breakpointObserverSpy.observe.and.returnValue(
@@ -171,7 +172,7 @@ describe('AppComponent', () => {
             'breakpoint-xl',
         );
         expect(
-            fixture.debugElement.query(By.directive(MockSidenavComponent)),
+            fixture.debugElement.query(By.directive(MockD11SidenavComponent)),
         ).not.toBeTruthy();
 
         breakpointObserverSpy.observe.and.returnValue(
@@ -205,7 +206,7 @@ describe('AppComponent', () => {
             'breakpoint-xl',
         );
         expect(
-            fixture.debugElement.query(By.directive(MockSidenavComponent)),
+            fixture.debugElement.query(By.directive(MockD11SidenavComponent)),
         ).not.toBeTruthy();
 
         breakpointObserverSpy.observe.and.returnValue(
@@ -239,25 +240,31 @@ describe('AppComponent', () => {
             'breakpoint-xl',
         );
         expect(
-            fixture.debugElement.query(By.directive(MockSidenavComponent)),
+            fixture.debugElement.query(By.directive(MockD11SidenavComponent)),
         ).not.toBeTruthy();
     });
 });
 
 @Component({
-    selector: 'app-sidenav',
+    selector: 'd11-sidenav',
     template: '',
 })
-class MockSidenavComponent {}
+class MockD11SidenavComponent {}
 
 @Component({
-    selector: 'app-toolbar-md-and-up',
+    selector: 'd11-toolbar-menu',
     template: '',
 })
-class MockToolBarMdAndUpdComponent {}
+class MockD11ToolBarMenuComponent {}
 
 @Component({
-    selector: 'app-toolbar-sm-and-down',
+    selector: 'd11-toolbar-sidenav',
     template: '',
 })
-class MockToolBarSmAndDownComponent {}
+class MockD11ToolBarSidenavComponent {}
+
+@Component({
+    selector: 'd11-main',
+    template: '',
+})
+class MockD11MainComponent {}
