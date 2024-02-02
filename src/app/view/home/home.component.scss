@@ -8,6 +8,16 @@
     background-repeat: no-repeat;
 }
 
+.sign-in {
+    background-image:
+        linear-gradient(to left, transparent 40%, rgba(255, 255, 255, .8) 60%, rgba(255, 255, 255, 1.0) 100%),
+        url('/assets/images/home-page-player-01.png');
+
+    background-size: cover;
+    background-position: right;
+    background-repeat: no-repeat;
+}
+
 .hero-title {
     font-size: var(--d11-hero-section-title-text-size);
     font-weight: var(--d11-hero-section-title-text-weight);
