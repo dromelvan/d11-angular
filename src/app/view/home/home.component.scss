@@ -8,18 +8,6 @@
     background-repeat: no-repeat;
 }
 
-.sign-in {
-    background-image:
-        linear-gradient(to left, transparent 40%, rgba(0, 0, 0, .8) 60%, rgba(0, 0, 0, 1.0) 100%),
-        url('/assets/images/home-page-player-01.png');
-
-    background-size: cover;
-    background-position: right;
-    background-repeat: no-repeat;
-
-    color: white;
-}
-
 .hero-title {
     font-size: var(--d11-hero-section-title-text-size);
     font-weight: var(--d11-hero-section-title-text-weight);
@@ -29,4 +17,23 @@
 .hero-subtitle {
     font-size: var(--d11-hero-section-subtitle-text-size);
     font-weight: var(--d11-hero-section-subtitle-text-weight);
+}
+
+.sign-in {
+    background-image:
+        linear-gradient(to left, transparent 40%, rgba(0, 0, 0, .8) 60%, rgba(0, 0, 0, 1.0) 100%),
+        url('/assets/images/sign-in-background.png');
+
+    background-size: cover;
+    background-position: right;
+    background-repeat: no-repeat;
+
+    color: white;
+}
+
+::ng-deep .breakpoint-xs {
+    .sign-in {
+        background-image: linear-gradient(to left, transparent 40%, rgba(0, 0, 0, .8) 60%, rgba(0, 0, 0, 1.0) 100%),
+        url('/assets/images/sign-in-background-xs.png');
+    }
 }
