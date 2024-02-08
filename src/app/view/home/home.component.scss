@@ -31,9 +31,24 @@
     color: white;
 }
 
+.sign-up {
+    background-image:
+        linear-gradient(to left, transparent 40%, rgba(255, 255, 255, .8) 60%, rgba(255, 255, 255, 1.0) 100%),
+        url('/assets/images/sign-up-background.jpg');
+
+    background-size: cover;
+    background-position: right;
+    background-repeat: no-repeat;
+}
+
 ::ng-deep .breakpoint-xs {
     .sign-in {
         background-image: linear-gradient(to left, transparent 40%, rgba(0, 0, 0, .8) 60%, rgba(0, 0, 0, 1.0) 100%),
         url('/assets/images/sign-in-background-xs.png');
+    }
+
+    .sign-up {
+        background-image: linear-gradient(to left, transparent 40%, rgba(255, 255, 255, .8) 60%, rgba(255, 255, 255, 1.0) 100%),
+        url('/assets/images/sign-up-background-xs.jpg');
     }
 }
