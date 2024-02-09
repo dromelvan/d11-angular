@@ -34,7 +34,7 @@
 .sign-up {
     background-image:
         linear-gradient(to left, transparent 40%, rgba(255, 255, 255, .8) 60%, rgba(255, 255, 255, 1.0) 100%),
-        url('/assets/images/sign-up-background.jpg');
+        url('/assets/images/sign-up-background.png');
 
     background-size: cover;
     background-position: right;
@@ -49,6 +49,6 @@
 
     .sign-up {
         background-image: linear-gradient(to left, transparent 40%, rgba(255, 255, 255, .8) 60%, rgba(255, 255, 255, 1.0) 100%),
-        url('/assets/images/sign-up-background-xs.jpg');
+        url('/assets/images/sign-up-background-xs.png');
     }
 }
