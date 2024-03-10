@@ -1,0 +1,24 @@
+.toolbar-bottom-nav {
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    height: 70px;
+    z-index: 2;
+}
+
+a {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    font-weight: var(--d11-toolbar-bottom-nav-font-weight);
+    font-size: var(--d11-toolbar-bottom-nav-font-size);
+    line-height: var(--d11-toolbar-bottom-nav-line-height);
+
+    flex:1;
+}
+
+mat-icon {
+    overflow: inherit;
+}

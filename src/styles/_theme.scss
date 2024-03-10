@@ -124,6 +124,10 @@ html {
     --mat-sidenav-container-background-color: #{mat.get-color-from-palette($d11-primary-palette, A100)};
 
     // D11 component variables
+    --d11-toolbar-bottom-nav-font-weight: 400;
+    --d11-toolbar-bottom-nav-font-size: .8rem;
+    --d11-toolbar-bottom-nav-line-height: 1rem;
+
     --d11-hero-section-color: #{mat.get-color-from-palette($d11-accent-palette, 900-contrast)};
     --d11-hero-section-background-color: #{mat.get-color-from-palette($d11-primary-palette, 900)};
 
