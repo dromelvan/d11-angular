@@ -8,6 +8,7 @@ import { D11MainComponent } from './component/d11-main/d11-main.component';
 import { SidenavComponent } from './component/sidenav/sidenav.component';
 import { ToolbarMenuComponent } from './component/toolbar/toolbar-menu/toolbar-menu.component';
 import { ToolbarSidenavComponent } from './component/toolbar/toolbar-sidenav/toolbar-sidenav.component';
+import { ToolbarTopNavComponent } from './component/toolbar/toolbar-top-nav/toolbar-top-nav.component';
 import { ToolbarBottomNavComponent } from './component/toolbar/toolbar-bottom-nav/toolbar-bottom-nav.component';
 import { HomeComponent } from './view/home/home.component';
 
@@ -23,6 +24,7 @@ import { HomeComponent } from './view/home/home.component';
         ToolbarSidenavComponent,
         HomeComponent,
         ToolbarBottomNavComponent,
+        ToolbarTopNavComponent,
     ],
     providers: [],
     bootstrap: [AppComponent],

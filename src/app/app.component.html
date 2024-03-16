@@ -5,13 +5,13 @@
     [class.breakpoint-lg]="breakpointService.isLg()"
     [class.breakpoint-xl]="breakpointService.isXl()">
 
-    <d11-sidenav *ngIf="breakpointService.isSmAndDown()">
-        <d11-toolbar-sidenav></d11-toolbar-sidenav>
+    <ng-container *ngIf="breakpointService.isSmAndDown()">
+        <d11-toolbar-top-nav></d11-toolbar-top-nav>
 
         <d11-main></d11-main>
 
         <d11-toolbar-bottom-nav></d11-toolbar-bottom-nav>
-    </d11-sidenav>
+    </ng-container>
 
     <ng-container *ngIf="breakpointService.isMdAndUp()">
         <d11-toolbar-menu></d11-toolbar-menu>
