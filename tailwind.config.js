@@ -9,6 +9,10 @@ module.exports = {
             md: { min: "960px", max: "1279px" },
             lg: { min: "1280px", max: "1919px" },
             xl: { min: "1920px" },
+            // Device breakpoints
+            tablet: { min: "600px" },
+            laptop: { min: "960px" },
+            desktop: { min: "1280px" },
         },
         container: {
             center: true,
