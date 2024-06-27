@@ -1,6 +1,7 @@
 .hero-section {
     background-image:
         linear-gradient(to left, transparent 40%, rgba(255, 255, 255, .8) 60%, rgba(255, 255, 255, 1.0) 100%),
+        linear-gradient(to bottom, transparent 0%, rgba(255, 255, 255, .1) 80%, rgba(255, 255, 255, 1.0) 100%),
         url('/assets/images/hero-background.jpg');
 
     background-size: cover;
@@ -17,38 +18,4 @@
 .hero-subtitle {
     font-size: var(--d11-hero-section-subtitle-text-size);
     font-weight: var(--d11-hero-section-subtitle-text-weight);
-}
-
-.sign-in {
-    background-image:
-        linear-gradient(to left, transparent 40%, rgba(0, 0, 0, .8) 60%, rgba(0, 0, 0, 1.0) 100%),
-        url('/assets/images/sign-in-background.png');
-
-    background-size: cover;
-    background-position: right;
-    background-repeat: no-repeat;
-
-    color: white;
-}
-
-.sign-up {
-    background-image:
-        linear-gradient(to left, transparent 40%, rgba(255, 255, 255, .8) 60%, rgba(255, 255, 255, 1.0) 100%),
-        url('/assets/images/sign-up-background.png');
-
-    background-size: cover;
-    background-position: right;
-    background-repeat: no-repeat;
-}
-
-::ng-deep .breakpoint-xs {
-    .sign-in {
-        background-image: linear-gradient(to left, transparent 40%, rgba(0, 0, 0, .8) 60%, rgba(0, 0, 0, 1.0) 100%),
-        url('/assets/images/sign-in-background-xs.png');
-    }
-
-    .sign-up {
-        background-image: linear-gradient(to left, transparent 40%, rgba(255, 255, 255, .8) 60%, rgba(255, 255, 255, 1.0) 100%),
-        url('/assets/images/sign-up-background-xs.png');
-    }
 }
