@@ -1,5 +1,5 @@
 @import "tailwindcss";
-@import 'tailwindcss-primeui';
+@import "tailwindcss-primeui";
 @import "primeicons/primeicons.css";
 
 @theme {
@@ -17,4 +17,36 @@
   --container-lg: 1024px;
   --container-xl: 1280px;
   --container-2xl: 1536px;
+}
+
+@layer base {
+  a {
+    @apply text-primary font-medium cursor-pointer hover:text-primary-emphasis;
+  }
+}
+
+@layer components {
+  .app-col {
+    @apply flex flex-col gap-4;
+  }
+
+  .app-col-margin {
+    @apply mb-4;
+  }
+
+  @media (min-width: 40rem) {
+    .sm\:app-col {
+      @apply flex flex-col gap-4;
+    }
+  }
+
+  .app-row {
+    @apply flex flex-row gap-10;
+  }
+
+  @media (min-width: 40rem) {
+    .sm\:app-row {
+      @apply flex flex-row gap-4;
+    }
+  }
 }
