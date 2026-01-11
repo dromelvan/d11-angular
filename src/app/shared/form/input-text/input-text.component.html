@@ -1,0 +1,11 @@
+<div class="app-input-text">
+  <label class="font-medium pt-10" for="{{ property }}">{{ label }}</label>
+  <p-inputgroup class="pt-2">
+    @if (icon) {
+      <p-inputgroup-addon>
+        <i class="pi {{ icon }}"></i>
+      </p-inputgroup-addon>
+    }
+    <input [formControlName]="property" id="{{ property }}" pInputText />
+  </p-inputgroup>
+</div>
