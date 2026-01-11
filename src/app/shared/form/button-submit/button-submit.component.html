@@ -1,0 +1,6 @@
+<button [disabled]="!form.valid || !form.dirty" class="w-full" pButton>
+  @if (icon) {
+    <i pButtonIcon class="pi {{ icon }}"></i>
+  }
+  <span pButtonLabel>{{ label }}</span>
+</button>
