@@ -5,8 +5,8 @@ import userEvent from '@testing-library/user-event';
 import { InputPasswordComponent } from './input-password.component';
 
 const PROPERTY = 'password';
-const LABEL = 'Password';
-const ICON_PROPERTY = 'iconProperty';
+const LABEL = 'label';
+const ICON_PROPERTY = 'iconPassword';
 const ICON_LABEL = 'iconLabel';
 const ICON = 'pi-icon';
 

@@ -5,7 +5,7 @@ import userEvent from '@testing-library/user-event';
 import { InputTextComponent } from './input-text.component';
 
 const PROPERTY = 'property';
-const LABEL = 'Label';
+const LABEL = 'label';
 const INITIAL_INPUT = 'initialInput';
 const ICON_PROPERTY = 'iconProperty';
 const ICON_LABEL = 'iconLabel';

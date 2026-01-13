@@ -5,7 +5,7 @@ import userEvent from '@testing-library/user-event';
 import { CheckboxComponent } from './checkbox.component';
 
 const PROPERTY = 'property';
-const LABEL = 'Label';
+const LABEL = 'label';
 
 @Component({
   template: `
