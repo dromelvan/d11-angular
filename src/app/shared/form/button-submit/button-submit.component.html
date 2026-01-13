@@ -1,6 +1,20 @@
-<button [disabled]="!form.valid || !form.dirty" class="w-full" pButton>
-  @if (icon) {
-    <i pButtonIcon class="pi {{ icon }}"></i>
+<button
+  [disabled]="!form.valid || !form.dirty || (working && working())"
+  class="app-button-submit w-full"
+  pButton
+>
+  @if (working && working()) {
+    <p-progress-spinner
+      ariaLabel="loading"
+      class="app-button-submit-progress-spinner max-h-[1.5rem]"
+      strokeWidth="5"
+    />
+  } @else {
+    @if (icon) {
+      <i pButtonIcon class="pi {{ icon }}">
+        <span class="app-button-submit-icon hidden">{{ icon }}</span>
+      </i>
+    }
+    <span pButtonLabel>{{ label }}</span>
   }
-  <span pButtonLabel>{{ label }}</span>
 </button>
