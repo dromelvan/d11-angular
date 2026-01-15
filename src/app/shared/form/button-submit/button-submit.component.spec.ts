@@ -1,10 +1,9 @@
 import { Component, signal } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { render, screen } from '@testing-library/angular';
-import userEvent from '@testing-library/user-event';
-import { ButtonSubmitComponent } from './button-submit.component';
-import { expect } from 'vitest';
 import { waitFor, within } from '@testing-library/dom';
+import userEvent from '@testing-library/user-event';
+import { ButtonSubmitComponent } from '@app/shared/form';
 
 const PROPERTY = 'property';
 const LABEL = 'label';
