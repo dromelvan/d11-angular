@@ -1,17 +1,11 @@
 import { TestBed } from '@angular/core/testing';
 import { firstValueFrom, of, throwError } from 'rxjs';
-import { SecurityApiService, UserCredentialsModel } from '@app/core/api';
+import { SecurityApiService } from '@app/core/api';
 import { ApiService } from '@app/core/api/api.service';
-import { PostFn } from '@app/core/api/test';
+import { PostFn, userCredentials } from '@app/core/api/test';
 import { AuthenticationResponseBody } from './authentication-response-body.model';
 
 describe('SecurityApiService', () => {
-  const userCredentials: UserCredentialsModel = {
-    username: 'foo@bar.com',
-    password: 'passw0rd',
-    persistent: true,
-  };
-
   const response: AuthenticationResponseBody = {
     user: { name: 'Foo', administrator: false },
     jwt: 'token',
