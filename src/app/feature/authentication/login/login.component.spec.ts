@@ -1,10 +1,11 @@
-import { Component } from '@angular/core';
-import { of, throwError } from 'rxjs';
+import { Component, computed, signal, Signal } from '@angular/core';
+import { Observable, of, throwError } from 'rxjs';
 import { render, screen } from '@testing-library/angular';
 import userEvent from '@testing-library/user-event';
-import { AuthenticationService, UserSessionModel } from '@app/core/authentication';
-import { LoginComponent } from './login.component';
 import { expect } from 'vitest';
+import { UserCredentialsModel } from '@app/core/api';
+import { UserSessionStore } from '@app/core/store';
+import { LoginComponent } from './login.component';
 
 @Component({
   template: ` <app-login /> `,
@@ -21,37 +22,45 @@ describe('LoginComponent', () => {
   const USERNAME = 'foo@bar.com';
   const PASSWORD = 'passw0rd';
 
-  const request = {
+  const TOKEN = 'token';
+
+  const userCredentials = {
     username: USERNAME,
     password: PASSWORD,
     persistent: true,
-  };
+  } as UserCredentialsModel;
 
-  const userSession = {
-    username: USERNAME,
-    token: 'TOKEN',
-    persistent: true,
-  } as UserSessionModel;
+  const jwtSignal = signal<string | undefined>(undefined);
+
+  interface UserSessionStoreMock {
+    authenticate: (userCredentials: UserCredentialsModel) => Observable<string>;
+    jwt: Signal<string | undefined>;
+  }
 
   let username: HTMLInputElement;
   let password: HTMLInputElement;
   let persistent: HTMLElement;
   let button: HTMLButtonElement;
   let user: ReturnType<typeof userEvent.setup>;
-  let authenticationService: Pick<AuthenticationService, 'login'>;
+  let userSession: Partial<UserSessionStoreMock>;
+
+  async function submitCredentials() {
+    await user.type(username, USERNAME);
+    await user.type(password, PASSWORD);
+    await user.click(persistent);
+    await user.click(button);
+  }
 
   beforeEach(async () => {
-    authenticationService = {
-      login: vi.fn(),
+    jwtSignal.set(undefined);
+
+    userSession = {
+      authenticate: vi.fn(),
+      jwt: computed(() => jwtSignal()),
     };
 
     await render(HostComponent, {
-      componentProviders: [
-        {
-          provide: AuthenticationService,
-          useValue: authenticationService,
-        },
-      ],
+      componentProviders: [{ provide: UserSessionStore, useValue: userSession }],
     });
 
     username = screen.getByRole('textbox', { name: USERNAME_LABEL });
@@ -61,50 +70,46 @@ describe('LoginComponent', () => {
     user = userEvent.setup();
   });
 
-  async function submitCredentials() {
-    await user.type(username, USERNAME);
-    await user.type(password, PASSWORD);
-    await user.click(persistent);
-    await user.click(button);
-  }
-
-  it('renders', async () => {
+  it('renders', () => {
     expect(username).toBeInTheDocument();
     expect(password).toBeInTheDocument();
     expect(persistent).toBeInTheDocument();
     expect(button).toBeInTheDocument();
 
     // Temporary until real user notification is added
-    expect(screen.getByText('Logged in: false')).toBeInTheDocument();
+    expect(screen.queryByText(/^jwt:/)).not.toBeInTheDocument();
   });
 
   it('succeeds login with valid credentials', async () => {
-    authenticationService.login = vi.fn().mockReturnValue(of(userSession));
+    userSession.authenticate = vi.fn().mockImplementation(() => {
+      jwtSignal.set(TOKEN);
+      return of(TOKEN);
+    });
 
     await submitCredentials();
 
-    expect(authenticationService.login).toHaveBeenCalledExactlyOnceWith(request);
+    expect(userSession.authenticate).toHaveBeenCalledExactlyOnceWith(userCredentials);
     expect(button).toBeDisabled();
 
     // Temporary until real user notification is added
-    expect(screen.getByText('Logged in: true')).toBeInTheDocument();
+    expect(screen.getByText(`jwt: ${TOKEN}`)).toBeInTheDocument();
   });
 
   it('fails login with invalid credentials', async () => {
-    authenticationService.login = vi.fn().mockReturnValue(throwError(() => new Error('INVALID')));
+    userSession.authenticate = vi.fn().mockReturnValue(throwError(() => new Error('INVALID')));
 
     await submitCredentials();
 
-    expect(authenticationService.login).toHaveBeenCalledExactlyOnceWith(request);
+    expect(userSession.authenticate).toHaveBeenCalledExactlyOnceWith(userCredentials);
     expect(button).toBeDisabled();
 
     // Temporary until real user notification is added
-    expect(screen.getByText('Logged in: false')).toBeInTheDocument();
+    expect(screen.queryByText(/^jwt:/)).not.toBeInTheDocument();
   });
 
   it('does not submit when form is invalid', async () => {
     await user.click(button);
 
-    expect(authenticationService.login).not.toHaveBeenCalled();
+    expect(userSession.authenticate).not.toHaveBeenCalled();
   });
 });

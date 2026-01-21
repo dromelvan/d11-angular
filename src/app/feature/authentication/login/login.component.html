@@ -29,5 +29,7 @@
       <app-button-submit [form]="form" [working]="working" icon="pi-user" label="Sign In" />
     </div>
   </form>
-  <div>Logged in: {{ loggedIm }}</div>
+  @if (jwt()) {
+    <div>jwt: {{ jwt() }}</div>
+  }
 </div>

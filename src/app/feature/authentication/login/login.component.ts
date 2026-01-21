@@ -2,14 +2,15 @@ import { Component, DestroyRef, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { NgOptimizedImage } from '@angular/common';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { finalize } from 'rxjs';
+import { UserCredentialsModel } from '@app/core/api';
+import { UserSessionStore } from '@app/core/store';
 import {
   ButtonSubmitComponent,
   CheckboxComponent,
   InputPasswordComponent,
   InputTextComponent,
 } from '@app/shared/form';
-import { AuthenticationService, CredentialsModel } from '@app/core/authentication';
-import { finalize } from 'rxjs';
 
 @Component({
   selector: 'app-login',
@@ -27,16 +28,15 @@ import { finalize } from 'rxjs';
 export class LoginComponent {
   public readonly working = signal(false);
 
-  protected loggedIm = false;
-
-  private destroyRef = inject(DestroyRef);
-  private authenticationService = inject(AuthenticationService);
-  private formBuilder = inject(FormBuilder);
-  protected form = this.formBuilder.nonNullable.group({
+  protected form = inject(FormBuilder).nonNullable.group({
     username: ['', Validators.required],
     password: ['', Validators.required],
     persistent: false,
   });
+  private userSession = inject(UserSessionStore);
+  protected jwt = this.userSession.jwt;
+
+  private destroyRef = inject(DestroyRef);
 
   protected onSubmit(): void {
     if (this.form.invalid) {
@@ -44,18 +44,18 @@ export class LoginComponent {
       return;
     }
 
-    const credentials: CredentialsModel = {
+    const userCredentials: UserCredentialsModel = {
       ...this.form.getRawValue(),
     };
 
-    this.login(credentials);
+    this.login(userCredentials);
   }
 
-  private login(credentials: CredentialsModel) {
+  private login(userCredentials: UserCredentialsModel) {
     this.working.set(true);
 
-    this.authenticationService
-      .login(credentials)
+    this.userSession
+      .authenticate(userCredentials)
       .pipe(
         takeUntilDestroyed(this.destroyRef),
         finalize(() => {
@@ -65,12 +65,12 @@ export class LoginComponent {
       )
       .subscribe({
         next: (result) => {
+          // TODO: User feedback
           console.log(result);
-          this.loggedIm = true;
         },
         error: () => {
+          // TODO: User feedback
           console.log('Login failed');
-          this.loggedIm = false;
         },
       });
   }
