@@ -1,5 +1,4 @@
-import { Component, DestroyRef, inject, signal } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { Component, inject, signal } from '@angular/core';
 import { NgOptimizedImage } from '@angular/common';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { finalize } from 'rxjs';
@@ -36,19 +35,19 @@ export class LoginComponent {
   private userSession = inject(UserSessionStore);
   protected jwt = this.userSession.jwt;
 
-  private destroyRef = inject(DestroyRef);
-
   protected onSubmit(): void {
     if (this.form.invalid) {
       this.form.markAllAsTouched();
       return;
     }
 
-    const userCredentials: UserCredentialsModel = {
-      ...this.form.getRawValue(),
-    };
+    if (this.working()) {
+      return;
+    }
 
-    this.login(userCredentials);
+    this.form.markAsPristine();
+
+    this.login(this.form.getRawValue());
   }
 
   private login(userCredentials: UserCredentialsModel) {
@@ -57,9 +56,7 @@ export class LoginComponent {
     this.userSession
       .authenticate(userCredentials)
       .pipe(
-        takeUntilDestroyed(this.destroyRef),
         finalize(() => {
-          this.form.markAsPristine();
           this.working.set(false);
         }),
       )
