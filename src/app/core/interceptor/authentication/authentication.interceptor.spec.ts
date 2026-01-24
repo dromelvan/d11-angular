@@ -1,55 +1,49 @@
-import { HttpEvent, HttpRequest } from '@angular/common/http';
-import { Observable, of } from 'rxjs';
 import { authenticationInterceptor } from '@app/core/interceptor';
+import { HttpClient, provideHttpClient, withInterceptors } from '@angular/common/http';
+import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
+import { TestBed } from '@angular/core/testing';
 
 describe('authenticationInterceptor', () => {
-  // Helper to intercept and return the modified request
-  function interceptRequest(request: HttpRequest<unknown>): HttpRequest<unknown> {
-    let interceptedRequest: HttpRequest<unknown> | undefined;
+  let http: HttpClient;
+  let httpMock: HttpTestingController;
 
-    const next = {
-      handle(httpRequest: HttpRequest<unknown>): Observable<HttpEvent<unknown>> {
-        interceptedRequest = httpRequest;
-        return of();
-      },
-    };
+  beforeEach(() => {
+    TestBed.configureTestingModule({
+      providers: [
+        provideHttpClient(withInterceptors([authenticationInterceptor])),
+        provideHttpClientTesting(),
+      ],
+    });
 
-    authenticationInterceptor(request, next.handle.bind(next));
+    http = TestBed.inject(HttpClient);
+    httpMock = TestBed.inject(HttpTestingController);
 
-    if (!interceptedRequest) {
-      throw new Error('interceptedRequest');
-    }
-    return interceptedRequest;
-  }
+    vi.spyOn(console, 'error').mockImplementation(() => {});
+  });
+
+  afterEach(() => {
+    httpMock.verify();
+    vi.restoreAllMocks();
+  });
 
   it('adds credentials for relative URLs', () => {
-    const request = new HttpRequest<unknown>('GET', '/relative/url');
+    http.get('/relative/url').subscribe();
 
-    const result = interceptRequest(request);
-
-    expect(result.credentials).toBe('same-origin');
+    const request = httpMock.expectOne('/relative/url');
+    expect(request.request.credentials).toBe('same-origin');
   });
 
-  it('does not modify absolute URLs', () => {
-    const request = new HttpRequest<unknown>('GET', 'https://absolute.com/url');
+  it('does not add credentials for absolute URLs', () => {
+    http.get('https://absolute.com/url').subscribe();
 
-    const result = interceptRequest(request);
-
-    expect(result.credentials).toBeUndefined();
+    const request = httpMock.expectOne('https://absolute.com/url');
+    expect(request.request.credentials).toBeUndefined();
   });
 
-  it('forwards the request to next', () => {
-    const request = new HttpRequest<unknown>('GET', '/next/url');
+  it('forwards the request to next handler', () => {
+    http.get('/forward/url').subscribe();
 
-    const next = {
-      handle: vi.fn((httpRequest: HttpRequest<unknown>): Observable<HttpEvent<unknown>> => {
-        void httpRequest;
-        return of({} as HttpEvent<unknown>);
-      }),
-    };
-
-    authenticationInterceptor(request, next.handle.bind(next)).subscribe();
-
-    expect(next.handle).toHaveBeenCalledTimes(1);
+    const request = httpMock.expectOne('/forward/url');
+    expect(request.request.method).toBe('GET');
   });
 });
