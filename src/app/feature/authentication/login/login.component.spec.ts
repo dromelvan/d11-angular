@@ -1,11 +1,11 @@
-import { Component, computed, signal, Signal } from '@angular/core';
+import { Component, signal } from '@angular/core';
 import { Observable, of, throwError } from 'rxjs';
 import { render, screen } from '@testing-library/angular';
 import userEvent from '@testing-library/user-event';
-import { expect } from 'vitest';
 import { UserCredentialsModel } from '@app/core/api';
-import { UserSessionStore } from '@app/core/store';
+import { UserSessionService } from '@app/core/service';
 import { LoginComponent } from './login.component';
+import { userCredentials } from '@app/core/api/test';
 
 @Component({
   template: ` <app-login /> `,
@@ -15,57 +15,33 @@ import { LoginComponent } from './login.component';
 class HostComponent {}
 
 describe('LoginComponent', () => {
-  const USERNAME_LABEL = 'Email Address';
-  const PASSWORD_LABEL = 'Password';
-  const PERSISTENT_LABEL = 'Remember me';
-
-  const USERNAME = 'foo@bar.com';
-  const PASSWORD = 'passw0rd';
-
-  const TOKEN = 'token';
-
-  const userCredentials = {
-    username: USERNAME,
-    password: PASSWORD,
-    persistent: true,
-  } as UserCredentialsModel;
-
-  const jwtSignal = signal<string | undefined>(undefined);
-
-  interface UserSessionStoreMock {
-    authenticate: (userCredentials: UserCredentialsModel) => Observable<string>;
-    jwt: Signal<string | undefined>;
-  }
-
   let username: HTMLInputElement;
   let password: HTMLInputElement;
   let persistent: HTMLElement;
   let button: HTMLButtonElement;
   let user: ReturnType<typeof userEvent.setup>;
-  let userSession: Partial<UserSessionStoreMock>;
+  let userSession: Partial<UserSessionService>;
 
   async function submitCredentials() {
-    await user.type(username, USERNAME);
-    await user.type(password, PASSWORD);
+    await user.type(username, userCredentials.username);
+    await user.type(password, userCredentials.password);
     await user.click(persistent);
     await user.click(button);
   }
 
   beforeEach(async () => {
-    jwtSignal.set(undefined);
-
     userSession = {
-      authenticate: vi.fn(),
-      jwt: computed(() => jwtSignal()),
+      jwt: signal<string | undefined>(undefined),
+      authenticate: vi.fn<(userCredentials: UserCredentialsModel) => Observable<string>>(),
     };
 
     await render(HostComponent, {
-      componentProviders: [{ provide: UserSessionStore, useValue: userSession }],
+      componentProviders: [{ provide: UserSessionService, useValue: userSession }],
     });
 
-    username = screen.getByRole('textbox', { name: USERNAME_LABEL });
-    password = screen.getByLabelText(PASSWORD_LABEL);
-    persistent = screen.getByRole('checkbox', { name: PERSISTENT_LABEL });
+    username = screen.getByRole('textbox', { name: 'Email Address' });
+    password = screen.getByLabelText('Password');
+    persistent = screen.getByRole('checkbox', { name: 'Remember me' });
     button = screen.getByRole('button');
     user = userEvent.setup();
   });
@@ -81,8 +57,10 @@ describe('LoginComponent', () => {
   });
 
   it('succeeds login with valid credentials', async () => {
+    const TOKEN = 'token';
+
     userSession.authenticate = vi.fn().mockImplementation(() => {
-      jwtSignal.set(TOKEN);
+      userSession.jwt?.set(TOKEN);
       return of(TOKEN);
     });
 

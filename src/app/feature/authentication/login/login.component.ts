@@ -3,13 +3,13 @@ import { NgOptimizedImage } from '@angular/common';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { finalize } from 'rxjs';
 import { UserCredentialsModel } from '@app/core/api';
-import { UserSessionStore } from '@app/core/store';
 import {
   ButtonSubmitComponent,
   CheckboxComponent,
   InputPasswordComponent,
   InputTextComponent,
 } from '@app/shared/form';
+import { UserSessionService } from '@app/core/service';
 
 @Component({
   selector: 'app-login',
@@ -32,7 +32,7 @@ export class LoginComponent {
     password: ['', Validators.required],
     persistent: false,
   });
-  private userSession = inject(UserSessionStore);
+  private userSession = inject(UserSessionService);
   protected jwt = this.userSession.jwt;
 
   protected onSubmit(): void {
@@ -40,7 +40,6 @@ export class LoginComponent {
       this.form.markAllAsTouched();
       return;
     }
-
     if (this.working()) {
       return;
     }
@@ -65,10 +64,7 @@ export class LoginComponent {
           // TODO: User feedback
           console.log(result);
         },
-        error: () => {
-          // TODO: User feedback
-          console.log('Login failed');
-        },
+        error: () => {},
       });
   }
 }

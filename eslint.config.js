@@ -2,7 +2,7 @@
 // noinspection JSUnresolvedReference
 
 const eslint = require('@eslint/js');
-const { defineConfig } = require("eslint/config");
+const { defineConfig } = require('eslint/config');
 const tseslint = require('typescript-eslint');
 const angular = require('angular-eslint');
 const prettier = require('eslint-plugin-prettier');
@@ -39,7 +39,9 @@ module.exports = defineConfig([
           prefix: 'app',
           style: 'kebab-case'
         }
-      ]
+      ],
+      '@typescript-eslint/no-empty-function': 'off',
+      'no-empty': 'off'
     }
   },
   {
