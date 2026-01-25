@@ -1,19 +1,20 @@
 import { TestBed } from '@angular/core/testing';
-
-import { UserSessionService } from '@app/core/service';
-import { SecurityApiService } from '@app/core/api';
 import { firstValueFrom, of, throwError } from 'rxjs';
+import { SecurityApiService } from '@app/core/api';
+import { UserSessionService } from '@app/core/service';
 import { userCredentials } from '@app/core/api/test';
 
 describe('UserSessionService', () => {
   let userSession: UserSessionService;
   let securityApi: {
     authenticate: ReturnType<typeof vi.fn>;
+    authorize: ReturnType<typeof vi.fn>;
   };
 
   beforeEach(() => {
     securityApi = {
       authenticate: vi.fn(),
+      authorize: vi.fn(),
     };
 
     TestBed.configureTestingModule({
@@ -29,26 +30,57 @@ describe('UserSessionService', () => {
     expect(userSession.jwt()).toBeUndefined();
   });
 
-  it('sets jwt on successful authentication', async () => {
-    const TOKEN = 'token';
+  // Authenticate ----------------------------------------------------------------------------------
 
-    securityApi.authenticate.mockReturnValue(of(TOKEN));
+  describe('authenticate', () => {
+    it('sets jwt on authenticate', async () => {
+      const TOKEN = 'token';
 
-    const result = await firstValueFrom(userSession.authenticate(userCredentials));
+      securityApi.authenticate.mockReturnValue(of(TOKEN));
 
-    expect(result).toBe(TOKEN);
-    expect(userSession.jwt()).toBe(TOKEN);
-    expect(securityApi.authenticate).toHaveBeenCalledExactlyOnceWith(userCredentials);
+      const result = await firstValueFrom(userSession.authenticate(userCredentials));
+
+      expect(result).toBe(TOKEN);
+      expect(userSession.jwt()).toBe(TOKEN);
+      expect(securityApi.authenticate).toHaveBeenCalledExactlyOnceWith(userCredentials);
+    });
+
+    it('does not set jwt on authenticate error', async () => {
+      securityApi.authenticate.mockReturnValue(throwError(() => new Error('INVALID')));
+
+      try {
+        await firstValueFrom(userSession.authenticate(userCredentials));
+      } catch {}
+
+      expect(userSession.jwt()).toBeUndefined();
+      expect(securityApi.authenticate).toHaveBeenCalledExactlyOnceWith(userCredentials);
+    });
   });
 
-  it('does not set jwt on failed authentication', async () => {
-    securityApi.authenticate.mockReturnValue(throwError(() => new Error('INVALID')));
+  // Authorize -------------------------------------------------------------------------------------
 
-    try {
-      await firstValueFrom(userSession.authenticate(userCredentials));
-    } catch {}
+  describe('authorize', () => {
+    it('sets jwt on authorize', async () => {
+      const TOKEN = 'token';
 
-    expect(userSession.jwt()).toBeUndefined();
-    expect(securityApi.authenticate).toHaveBeenCalledExactlyOnceWith(userCredentials);
+      securityApi.authorize.mockReturnValue(of(TOKEN));
+
+      const result = await firstValueFrom(userSession.authorize());
+
+      expect(result).toBe(TOKEN);
+      expect(userSession.jwt()).toBe(TOKEN);
+      expect(securityApi.authorize).toHaveBeenCalledOnce();
+    });
+
+    it('does not set jwt on authorize error', async () => {
+      securityApi.authenticate.mockReturnValue(throwError(() => new Error('INVALID')));
+
+      try {
+        await firstValueFrom(userSession.authenticate(userCredentials));
+      } catch {}
+
+      expect(userSession.jwt()).toBeUndefined();
+      expect(securityApi.authenticate).toHaveBeenCalledExactlyOnceWith(userCredentials);
+    });
   });
 });

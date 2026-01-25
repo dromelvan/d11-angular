@@ -17,4 +17,12 @@ export class UserSessionService {
       }),
     );
   }
+
+  authorize(): Observable<string> {
+    return this.securityApi.authorize().pipe(
+      tap((token) => {
+        this.jwt.set(token);
+      }),
+    );
+  }
 }
