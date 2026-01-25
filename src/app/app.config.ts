@@ -4,6 +4,7 @@ import { provideRouter } from '@angular/router';
 import { providePrimeNG } from 'primeng/config';
 import Aura from '@primeuix/themes/aura';
 import { authenticationInterceptor } from '@app/core/auth';
+import { provideUserSessionInitializer } from '@app/core/auth/user-session.initializer';
 import { apiErrorInterceptor } from '@app/core/api';
 import { routes } from './app.routes';
 
@@ -20,5 +21,6 @@ export const appConfig: ApplicationConfig = {
         preset: Aura,
       },
     }),
+    provideUserSessionInitializer(),
   ],
 };
