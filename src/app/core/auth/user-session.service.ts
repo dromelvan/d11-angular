@@ -25,4 +25,14 @@ export class UserSessionService {
       }),
     );
   }
+
+  unauthorize(): Observable<boolean> {
+    return this.securityApi.unauthorize().pipe(
+      tap((loggedOut) => {
+        if (loggedOut) {
+          this.jwt.set(undefined);
+        }
+      }),
+    );
+  }
 }

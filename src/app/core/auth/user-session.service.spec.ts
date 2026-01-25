@@ -5,16 +5,20 @@ import { userCredentials } from '@app/core/api/test';
 import { UserSessionService } from './user-session.service';
 
 describe('UserSessionService', () => {
+  const TOKEN = 'token';
+
   let userSession: UserSessionService;
   let securityApi: {
     authenticate: ReturnType<typeof vi.fn>;
     authorize: ReturnType<typeof vi.fn>;
+    unauthorize: ReturnType<typeof vi.fn>;
   };
 
   beforeEach(() => {
     securityApi = {
       authenticate: vi.fn(),
       authorize: vi.fn(),
+      unauthorize: vi.fn(),
     };
 
     TestBed.configureTestingModule({
@@ -34,8 +38,6 @@ describe('UserSessionService', () => {
 
   describe('authenticate', () => {
     it('sets jwt on authenticate', async () => {
-      const TOKEN = 'token';
-
       securityApi.authenticate.mockReturnValue(of(TOKEN));
 
       const result = await firstValueFrom(userSession.authenticate(userCredentials));
@@ -61,8 +63,6 @@ describe('UserSessionService', () => {
 
   describe('authorize', () => {
     it('sets jwt on authorize', async () => {
-      const TOKEN = 'token';
-
       securityApi.authorize.mockReturnValue(of(TOKEN));
 
       const result = await firstValueFrom(userSession.authorize());
@@ -81,6 +81,45 @@ describe('UserSessionService', () => {
 
       expect(userSession.jwt()).toBeUndefined();
       expect(securityApi.authenticate).toHaveBeenCalledExactlyOnceWith(userCredentials);
+    });
+  });
+
+  // Unauthorize -----------------------------------------------------------------------------------
+
+  describe('unauthorize', () => {
+    beforeEach(() => {
+      userSession.jwt.set(TOKEN);
+    });
+
+    it('clears jwt on unauthorize', async () => {
+      securityApi.unauthorize.mockReturnValue(of(true));
+
+      const result = await firstValueFrom(userSession.unauthorize());
+
+      expect(result).toBe(true);
+      expect(userSession.jwt()).toBeUndefined();
+      expect(securityApi.unauthorize).toHaveBeenCalledOnce();
+    });
+
+    it('does not clear jwt on unauthorize failure', async () => {
+      securityApi.unauthorize.mockReturnValue(of(false));
+
+      const result = await firstValueFrom(userSession.unauthorize());
+
+      expect(result).toBe(false);
+      expect(userSession.jwt()).toBe(TOKEN);
+      expect(securityApi.unauthorize).toHaveBeenCalledOnce();
+    });
+
+    it('does not clear jwt on unauthorize error', async () => {
+      securityApi.unauthorize.mockReturnValue(throwError(() => new Error('ERROR')));
+
+      try {
+        await firstValueFrom(userSession.unauthorize());
+      } catch {}
+
+      expect(userSession.jwt()).toBe(TOKEN);
+      expect(securityApi.unauthorize).toHaveBeenCalledOnce();
     });
   });
 });
