@@ -3,7 +3,7 @@ import { Observable, of, throwError } from 'rxjs';
 import { render, screen } from '@testing-library/angular';
 import userEvent from '@testing-library/user-event';
 import { UserCredentialsModel } from '@app/core/api';
-import { UserSessionService } from '@app/core/service';
+import { UserSessionService } from '@app/core/auth';
 import { LoginComponent } from './login.component';
 import { userCredentials } from '@app/core/api/test';
 

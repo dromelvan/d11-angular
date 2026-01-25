@@ -1,7 +1,7 @@
-import { authenticationInterceptor } from '@app/core/interceptor';
 import { HttpClient, provideHttpClient, withInterceptors } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
+import { authenticationInterceptor } from './authentication.interceptor';
 
 describe('authenticationInterceptor', () => {
   let http: HttpClient;

@@ -3,13 +3,13 @@ import { NgOptimizedImage } from '@angular/common';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { finalize } from 'rxjs';
 import { UserCredentialsModel } from '@app/core/api';
+import { UserSessionService } from '@app/core/auth';
 import {
   ButtonSubmitComponent,
   CheckboxComponent,
   InputPasswordComponent,
   InputTextComponent,
 } from '@app/shared/form';
-import { UserSessionService } from '@app/core/service';
 
 @Component({
   selector: 'app-login',

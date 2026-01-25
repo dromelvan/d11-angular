@@ -1,13 +1,13 @@
+import { TestBed } from '@angular/core/testing';
 import {
   HttpClient,
   HttpErrorResponse,
   provideHttpClient,
   withInterceptors,
 } from '@angular/common/http';
-import { apiErrorInterceptor } from '@app/core/interceptor';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
-import { TestBed } from '@angular/core/testing';
 import { firstValueFrom } from 'rxjs';
+import { apiErrorInterceptor } from './api-error.interceptor';
 
 describe('apiErrorInterceptor', () => {
   let http: HttpClient;

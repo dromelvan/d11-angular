@@ -1,8 +1,8 @@
 import { TestBed } from '@angular/core/testing';
 import { firstValueFrom, of, throwError } from 'rxjs';
 import { SecurityApiService } from '@app/core/api';
-import { UserSessionService } from '@app/core/service';
 import { userCredentials } from '@app/core/api/test';
+import { UserSessionService } from './user-session.service';
 
 describe('UserSessionService', () => {
   let userSession: UserSessionService;
