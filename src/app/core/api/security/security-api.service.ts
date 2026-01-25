@@ -4,7 +4,8 @@ import { UserCredentialsModel } from '@app/core/api';
 import { ApiService } from '@app/core/api/api.service';
 import { AuthenticationRequestBody } from './authentication-request-body.model';
 import { AuthenticationResponseBody } from './authentication-response-body.model';
-import { AuthorizationResponseBody } from '@app/core/api/security/authorization-response-body.model';
+import { AuthorizationResponseBody } from './authorization-response-body.model';
+import { UnauthorizationResponseBody } from './unauthorization-response-body.model';
 
 @Injectable({
   providedIn: 'root',
@@ -26,5 +27,11 @@ export class SecurityApiService {
     return this.apiService
       .post<AuthorizationResponseBody>(this.namespace, 'authorize', {})
       .pipe(map((result) => result.jwt));
+  }
+
+  unauthorize(): Observable<boolean> {
+    return this.apiService
+      .post<UnauthorizationResponseBody>(this.namespace, 'unauthorize', {})
+      .pipe(map((result) => result.loggedOut));
   }
 }
