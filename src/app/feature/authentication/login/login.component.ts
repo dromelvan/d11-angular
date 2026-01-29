@@ -1,5 +1,4 @@
 import { Component, inject, signal } from '@angular/core';
-import { NgOptimizedImage } from '@angular/common';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { finalize } from 'rxjs';
 import { UserCredentialsModel } from '@app/core/api';
@@ -10,17 +9,18 @@ import {
   InputPasswordComponent,
   InputTextComponent,
 } from '@app/shared/form';
+import { D11LionDarkImgComponent } from '@app/shared/img';
 
 @Component({
   selector: 'app-login',
   imports: [
     ReactiveFormsModule,
-    NgOptimizedImage,
     InputTextComponent,
     ButtonSubmitComponent,
     CheckboxComponent,
     InputPasswordComponent,
     InputTextComponent,
+    D11LionDarkImgComponent,
   ],
   templateUrl: './login.component.html',
 })
