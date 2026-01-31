@@ -1,4 +1,4 @@
-import { inject, Injectable, signal } from '@angular/core';
+import { computed, inject, Injectable, signal } from '@angular/core';
 import { SecurityApiService, UserCredentialsModel } from '@app/core/api';
 import { Observable, tap } from 'rxjs';
 
@@ -7,6 +7,7 @@ import { Observable, tap } from 'rxjs';
 })
 export class UserSessionService {
   public readonly jwt = signal<string | undefined>(undefined);
+  public readonly loggedIn = computed(() => this.jwt() !== undefined);
 
   private securityApi = inject(SecurityApiService);
 

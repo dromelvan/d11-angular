@@ -32,6 +32,31 @@ describe('UserSessionService', () => {
     expect(userSession).toBeTruthy();
 
     expect(userSession.jwt()).toBeUndefined();
+    expect(userSession.loggedIn()).toBe(false);
+  });
+
+  // Logged In -------------------------------------------------------------------------------------
+
+  describe('loggedIn', () => {
+    it('is false on undefined jwt', () => {
+      expect(userSession.jwt()).toBeUndefined();
+      expect(userSession.loggedIn()).toBe(false);
+    });
+
+    it('is true on set jwt', () => {
+      userSession.jwt.set(TOKEN);
+
+      expect(userSession.jwt()).toBe(TOKEN);
+      expect(userSession.loggedIn()).toBe(true);
+    });
+
+    it('is false on cleared jwt', () => {
+      userSession.jwt.set(TOKEN);
+      userSession.jwt.set(undefined);
+
+      expect(userSession.jwt()).toBeUndefined();
+      expect(userSession.loggedIn()).toBe(false);
+    });
   });
 
   // Authenticate ----------------------------------------------------------------------------------
