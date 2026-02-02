@@ -6,6 +6,9 @@
   --font-sans: InterVariable, sans-serif;
   --font-sans--font-feature-settings: "cv02", "cv03", "cv04", "cv11";
 
+  --color-primary: #000a3c;
+  --color-inverse-primary: white;
+
   --breakpoint-sm: 640px;
   --breakpoint-md: 768px;
   --breakpoint-lg: 1024px;
