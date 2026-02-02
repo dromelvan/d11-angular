@@ -1,0 +1,10 @@
+<div class="app-user-session flex w-12 items-center justify-center">
+  @if (userSession.loggedIn()) {
+    <button (click)="menu.toggle($event)" class="cursor-pointer" type="button">
+      <app-avatar resource="d11-team" [id]="1" />
+    </button>
+    <p-menu #menu [model]="menuItems" [popup]="true" />
+  } @else {
+    <app-icon-user-circle class="text-primary-contrast" />
+  }
+</div>

@@ -6,7 +6,6 @@
   --font-sans: InterVariable, sans-serif;
   --font-sans--font-feature-settings: "cv02", "cv03", "cv04", "cv11";
 
-  --color-primary: #000a3c;
   --color-inverse-primary: white;
 
   --breakpoint-sm: 640px;
@@ -52,4 +51,12 @@
       @apply flex flex-row gap-4;
     }
   }
+}
+
+.vertical-align-test {
+  background: linear-gradient(blue 50%, yellow 50%);
+}
+
+.horizontal-align-test {
+  background-image: linear-gradient(to right, yellow 0%, yellow 50%, blue 50%, blue 100%);
 }
