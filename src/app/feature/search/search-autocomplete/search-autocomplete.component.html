@@ -1,0 +1,11 @@
+<div class="app-search-autocomplete">
+  <p-autocomplete
+    (completeMethod)="search($event)"
+    (onSelect)="select($event)"
+    [suggestions]="suggestions()"
+    inputStyleClass="!rounded-full"
+    placeholder="Search..."
+    size="small"
+  >
+  </p-autocomplete>
+</div>
