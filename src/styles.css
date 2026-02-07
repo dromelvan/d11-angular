@@ -51,10 +51,14 @@
       @apply flex flex-row gap-4;
     }
   }
+
+  .app-flex {
+    @apply flex items-center;
+  }
 }
 
 .vertical-align-test {
-  background: linear-gradient(blue 50%, yellow 50%);
+  background: linear-gradient(blue 50%, red 50%);
 }
 
 .horizontal-align-test {
