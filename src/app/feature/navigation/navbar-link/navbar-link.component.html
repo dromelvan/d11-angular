@@ -1,0 +1,10 @@
+<nav class="app-navbar-link hidden lg:flex gap-x-12 justify-center text-sm">
+  @for (menuItem of links; track menuItem) {
+    <a class="primary-contrast" [href]="menuItem.url">{{ menuItem.label }}</a>
+  }
+  <a (click)="moreMenu.toggle($event)" class="primary-contrast flex items-center gap-1" href="#">
+    More
+    <i class="pi pi-chevron-down"></i>
+  </a>
+</nav>
+<p-menu #moreMenu [model]="moreMenuItems" [popup]="true" />
