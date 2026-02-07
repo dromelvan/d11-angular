@@ -6,8 +6,6 @@
   --font-sans: InterVariable, sans-serif;
   --font-sans--font-feature-settings: "cv02", "cv03", "cv04", "cv11";
 
-  --color-inverse-primary: white;
-
   --breakpoint-sm: 640px;
   --breakpoint-md: 768px;
   --breakpoint-lg: 1024px;
@@ -24,6 +22,10 @@
 @layer base {
   a {
     @apply text-primary font-medium cursor-pointer hover:text-primary-emphasis;
+  }
+
+  .primary-contrast {
+    @apply text-primary-contrast font-semibold;
   }
 }
 
@@ -62,5 +64,5 @@
 }
 
 .horizontal-align-test {
-  background-image: linear-gradient(to right, yellow 0%, yellow 50%, blue 50%, blue 100%);
+  background-image: linear-gradient(to right, red 0%, red 50%, blue 50%, blue 100%);
 }
