@@ -1,0 +1,10 @@
+<nav
+  class="app-navbar-icon app-row bg-primary text-primary-contrast lg:hidden gap-4 justify-around p-4"
+>
+  @for (menuItem of links; track menuItem) {
+    <a class="app-col text-primary-contrast items-center gap-1 text-xs" [href]="menuItem.url">
+      <i [class]="menuItem.icon" class="text-xl"></i>
+      <span>{{ menuItem.label }}</span>
+    </a>
+  }
+</nav>
