@@ -20,12 +20,12 @@
 }
 
 @layer base {
-  a {
-    @apply text-primary font-medium cursor-pointer hover:text-primary-emphasis;
+  .primary-contrast {
+    @apply text-primary-contrast font-semibold hover:text-primary-contrast hover:opacity-85;
   }
 
-  .primary-contrast {
-    @apply text-primary-contrast font-semibold;
+  a {
+    @apply text-primary font-medium cursor-pointer;
   }
 }
 
