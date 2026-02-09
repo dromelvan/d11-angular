@@ -1,7 +1,7 @@
 import { TestBed } from '@angular/core/testing';
 import { firstValueFrom, of, throwError } from 'rxjs';
 import { SecurityApiService } from '@app/core/api';
-import { userCredentials } from '@app/core/api/test';
+import { userCredentials } from '@app/core/api/test/user-credentials.mock';
 import { UserSessionService } from './user-session.service';
 
 describe('UserSessionService', () => {

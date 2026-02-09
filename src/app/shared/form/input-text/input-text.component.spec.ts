@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { render, screen } from '@testing-library/angular';
 import userEvent from '@testing-library/user-event';
-import { InputTextComponent } from '@app/shared/form';
+import { InputTextComponent } from './input-text.component';
 
 const PROPERTY = 'property';
 const LABEL = 'label';

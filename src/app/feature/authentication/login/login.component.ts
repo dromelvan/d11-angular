@@ -2,14 +2,14 @@ import { Component, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { finalize } from 'rxjs';
 import { UserCredentialsModel } from '@app/core/api';
-import { UserSessionService } from '@app/core/auth';
+import { UserSessionService } from '@app/core/auth/user-session.service';
 import {
   ButtonSubmitComponent,
   CheckboxComponent,
   InputPasswordComponent,
   InputTextComponent,
 } from '@app/shared/form';
-import { D11LionDarkImgComponent } from '@app/shared/img';
+import { D11LionDarkImgComponent } from '@app/shared/img/d11-lion-dark-img/d11-lion-dark-img.component';
 
 @Component({
   selector: 'app-login',

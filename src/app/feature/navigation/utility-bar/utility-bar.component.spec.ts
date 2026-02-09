@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { render, screen } from '@testing-library/angular';
 import { expect } from 'vitest';
-import { UtilityBarComponent } from '@app/feature';
+import { UtilityBarComponent } from './utility-bar.component';
 
 @Component({
   template: ` <app-utility-bar data-testid="utility-bar" /> `,

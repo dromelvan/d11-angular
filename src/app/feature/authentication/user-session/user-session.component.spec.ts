@@ -1,9 +1,8 @@
 import { Component, signal } from '@angular/core';
-import { UserSessionComponent } from './user-session.component';
-
-import { render, screen, waitFor } from '@testing-library/angular';
-import { UserSessionService } from '@app/core/auth';
 import { of } from 'rxjs';
+import { render, screen, waitFor } from '@testing-library/angular';
+import { UserSessionService } from '@app/core/auth/user-session.service';
+import { UserSessionComponent } from './user-session.component';
 
 @Component({
   template: ` <app-user-session data-testid="user-session" /> `,

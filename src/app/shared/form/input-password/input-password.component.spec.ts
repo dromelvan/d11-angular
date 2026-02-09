@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { render, screen } from '@testing-library/angular';
 import userEvent from '@testing-library/user-event';
-import { InputPasswordComponent } from '@app/shared/form';
+import { InputPasswordComponent } from './input-password.component';
 
 const PROPERTY = 'password';
 const LABEL = 'label';

@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { render, screen } from '@testing-library/angular';
 import { expect } from 'vitest';
-import { HeaderComponent } from '@app/feature/page/header/header.component';
+import { HeaderComponent } from './header.component';
 
 @Component({
   template: ` <app-header data-testid="header" /> `,

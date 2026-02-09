@@ -3,7 +3,7 @@ import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { render, screen } from '@testing-library/angular';
 import { waitFor, within } from '@testing-library/dom';
 import userEvent from '@testing-library/user-event';
-import { ButtonSubmitComponent } from '@app/shared/form';
+import { ButtonSubmitComponent } from './button-submit.component';
 
 const PROPERTY = 'property';
 const LABEL = 'label';

@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { render, screen } from '@testing-library/angular';
 import userEvent from '@testing-library/user-event';
 import { beforeEach, expect } from 'vitest';
-import { NavbarLinkComponent } from '@app/feature';
+import { NavbarLinkComponent } from './navbar-link.component';
 
 @Component({
   template: ` <app-navbar-link data-testid="navbar-link" /> `,

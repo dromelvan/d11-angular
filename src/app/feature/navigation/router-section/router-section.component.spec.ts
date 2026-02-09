@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { render, screen } from '@testing-library/angular';
 import { expect } from 'vitest';
-import { RouterSectionComponent } from '@app/feature';
+import { RouterSectionComponent } from './router-section.component';
 
 @Component({
   template: ` <app-router-section data-testid="navbar-link" /> `,

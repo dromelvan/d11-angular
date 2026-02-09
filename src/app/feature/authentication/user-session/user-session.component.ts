@@ -1,7 +1,7 @@
 import { Component, inject } from '@angular/core';
-import { UserSessionService } from '@app/core/auth';
+import { UserSessionService } from '@app/core/auth/user-session.service';
 import { AvatarComponent } from '@app/shared/avatar/avatar.component';
-import { IconUserCircleComponent } from '@app/shared/icon';
+import { IconUserCircleComponent } from '@app/shared/icon/user-circle/icon-user-circle.component';
 import { MenuItem } from 'primeng/api';
 import { Menu } from 'primeng/menu';
 

@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { of, Subject, throwError } from 'rxjs';
 import { render } from '@testing-library/angular';
-import { UserSessionService } from '@app/core/auth';
+import { UserSessionService } from '@app/core/auth/user-session.service';
 import { provideUserSessionInitializer } from './user-session.initializer';
 
 @Component({

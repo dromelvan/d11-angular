@@ -1,12 +1,13 @@
 import { TestBed } from '@angular/core/testing';
 import { firstValueFrom, of, throwError } from 'rxjs';
 import { beforeEach, describe } from 'vitest';
-import { SecurityApiService } from '@app/core/api';
 import { ApiService } from '@app/core/api/api.service';
-import { PostFn, userCredentials } from '@app/core/api/test';
+import { PostFn } from '@app/core/api/test/api.mock';
+import { userCredentials } from '@app/core/api/test/user-credentials.mock';
 import { AuthenticationResponseBody } from './authentication-response-body.model';
 import { AuthorizationResponseBody } from './authorization-response-body.model';
 import { UnauthorizationResponseBody } from './unauthorization-response-body.model';
+import { SecurityApiService } from './security-api.service';
 
 describe('SecurityApiService', () => {
   let securityApi: SecurityApiService;
