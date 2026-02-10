@@ -1,3 +1,3 @@
 <div class="app-avatar flex items-center justify-center">
-  <p-avatar [image]="imageUrl()" [size]="size()" shape="circle" />
+  <p-avatar [image]="imageUrl()" [size]="size()" shape="circle" (onImageError)="onImageError()" />
 </div>

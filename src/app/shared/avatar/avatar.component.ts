@@ -1,4 +1,4 @@
-import { Component, computed, input } from '@angular/core';
+import { Component, computed, input, signal } from '@angular/core';
 import { Avatar } from 'primeng/avatar';
 import { environment } from '../../../environments/environment';
 
@@ -13,7 +13,15 @@ export class AvatarComponent {
   extension = input<string>('png');
   size = input<'large' | 'xlarge'>();
 
-  protected imageUrl = computed(
-    () => `${environment.imageHost}/images/${this.resource()}/${this.id()}.${this.extension()}`,
+  private imageError = signal(false);
+
+  protected imageUrl = computed(() =>
+    this.imageError()
+      ? `${environment.imageHost}/images/${this.resource()}/default.${this.extension()}`
+      : `${environment.imageHost}/images/${this.resource()}/${this.id()}.${this.extension()}`,
   );
+
+  protected onImageError() {
+    this.imageError.set(true);
+  }
 }

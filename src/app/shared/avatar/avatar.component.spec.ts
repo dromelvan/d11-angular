@@ -1,6 +1,6 @@
 import { AvatarComponent } from './avatar.component';
 import { Component } from '@angular/core';
-import { render, screen } from '@testing-library/angular';
+import { render, RenderResult, screen } from '@testing-library/angular';
 import { environment } from '../../../environments/environment';
 
 const id = 42;
@@ -22,8 +22,10 @@ class HostComponent {
 }
 
 describe('AvatarComponent', () => {
+  let renderResult: RenderResult<HostComponent, HostComponent>;
+
   beforeEach(async () => {
-    await render(HostComponent, {});
+    renderResult = await render(HostComponent, {});
   });
 
   it('renders default extension', async () => {
@@ -76,5 +78,20 @@ describe('AvatarComponent', () => {
     const pAvatar = avatar.querySelector('p-avatar');
     expect(pAvatar).toBeInTheDocument();
     expect(pAvatar).toHaveAttribute('shape', 'circle');
+  });
+
+  it('renders default image on image load error', () => {
+    const { container, fixture } = renderResult;
+
+    const img = container.querySelector('img');
+    expect(img).toBeInTheDocument();
+
+    expect(img).toHaveAttribute('src', `${environment.imageHost}/images/${resource}/${id}.png`);
+
+    const avatar = container.querySelector('p-avatar');
+    avatar?.dispatchEvent(new Event('onImageError'));
+    fixture.detectChanges();
+
+    expect(img).toHaveAttribute('src', `${environment.imageHost}/images/${resource}/default.png`);
   });
 });
