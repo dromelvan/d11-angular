@@ -1,11 +1,22 @@
 <div class="app-search-autocomplete">
   <p-autocomplete
     (completeMethod)="search($event)"
-    (onSelect)="select($event)"
-    [suggestions]="suggestions()"
+    (onSelect)="onSelect()"
+    [(ngModel)]="selectedValue"
+    [suggestions]="result()"
     inputStyleClass="!rounded-full"
+    optionLabel="name"
     placeholder="Search..."
     size="small"
   >
+    <ng-template #item let-player>
+      <app-avatar [id]="player.id" resource="player" size="large" />
+      <div class="ml-3 text-sm">
+        <span class="block">{{ player.name }}</span>
+        @if (player.teamId > 1) {
+          <span class="text-muted-color block">{{ player.teamName }}</span>
+        }
+      </div>
+    </ng-template>
   </p-autocomplete>
 </div>

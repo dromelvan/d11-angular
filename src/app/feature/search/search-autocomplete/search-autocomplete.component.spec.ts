@@ -1,6 +1,8 @@
 import { Component } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { render, screen } from '@testing-library/angular';
+import { of, throwError } from 'rxjs';
+import { PlayerApiService, PlayerSearchResult } from '@app/core/api';
 import { SearchAutocompleteComponent } from './search-autocomplete.component';
 
 @Component({
@@ -11,9 +13,22 @@ import { SearchAutocompleteComponent } from './search-autocomplete.component';
 class HostComponent {}
 
 describe('SearchAutocompleteComponent', () => {
+  const playerSearchResult: PlayerSearchResult = {
+    id: 1,
+    name: 'Foo Bar',
+    teamId: 1,
+    teamName: 'Team A',
+  };
+
+  const service = {
+    search: vi.fn((query: string) => {
+      return query === 'foo' ? of([playerSearchResult]) : of([]);
+    }),
+  };
+
   it('should render', async () => {
     await render(HostComponent, {
-      providers: [],
+      providers: [{ provide: PlayerApiService, useValue: service }],
     });
 
     const component = screen.getByTestId('search-autocomplete');
@@ -29,8 +44,11 @@ describe('SearchAutocompleteComponent', () => {
     let fixture: ComponentFixture<SearchAutocompleteComponent>;
 
     beforeEach(async () => {
+      vi.clearAllMocks();
+
       await TestBed.configureTestingModule({
         imports: [SearchAutocompleteComponent],
+        providers: [{ provide: PlayerApiService, useValue: service }],
       }).compileComponents();
 
       fixture = TestBed.createComponent(SearchAutocompleteComponent);
@@ -38,40 +56,52 @@ describe('SearchAutocompleteComponent', () => {
       await fixture.whenStable();
     });
 
-    it('initializes suggestions', () => {
-      expect(component.suggestions()).toEqual([]);
+    it('initializes result', () => {
+      expect(component.result()).toEqual([]);
     });
 
-    it('filters suggestions', () => {
+    it('finds matching players', () => {
       component.search({ query: 'foo' });
 
-      expect(component.suggestions()).toEqual(['Foo', 'Foobar']);
-    });
-
-    it('is case insensitive', () => {
-      component.search({ query: 'FOO' });
-
-      expect(component.suggestions()).toEqual(['Foo', 'Foobar']);
+      expect(component.result()).toEqual([playerSearchResult]);
+      expect(service.search).toHaveBeenCalledExactlyOnceWith('foo');
     });
 
     it('is empty when no matches', () => {
       component.search({ query: 'xyz' });
 
-      expect(component.suggestions()).toEqual([]);
+      expect(component.result()).toEqual([]);
+      expect(service.search).toHaveBeenCalledExactlyOnceWith('xyz');
     });
 
-    it('does not filter on empty query', () => {
+    it('requires at least 3 characters', () => {
       component.search({ query: '' });
+      component.search({ query: 'f' });
+      component.search({ query: 'fo' });
 
-      expect(component.suggestions()).toEqual(['Foo', 'Bar', 'Foobar']);
+      expect(service.search).not.toHaveBeenCalled();
+
+      component.search({ query: 'foo' });
+
+      expect(service.search).toHaveBeenCalledExactlyOnceWith('foo');
     });
 
-    it('logs selected value', () => {
+    it('handles search errors', () => {
+      service.search.mockReturnValueOnce(throwError(() => new Error('500')));
+
+      component.search({ query: 'foo' });
+
+      expect(component.result()).toEqual([]);
+    });
+
+    it('handles selected player', () => {
       const consoleSpy = vi.spyOn(console, 'log');
 
-      component.select({ value: 'Foo' });
+      component.selectedValue.set(playerSearchResult);
+      component.onSelect();
 
-      expect(consoleSpy).toHaveBeenCalledWith('Selected:', 'Foo');
+      expect(consoleSpy).toHaveBeenCalledWith(playerSearchResult);
+      expect(component.selectedValue()).toBe(null);
     });
   });
 });
