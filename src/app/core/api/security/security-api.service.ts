@@ -1,6 +1,6 @@
 import { inject, Injectable } from '@angular/core';
 import { map, Observable } from 'rxjs';
-import { UserCredentialsModel } from '@app/core/api';
+import { UserCredentialsModel } from '@app/core/api/model/user-credentials.model';
 import { ApiService } from '@app/core/api/api.service';
 import { AuthenticationRequestBody } from './authentication-request-body.model';
 import { AuthenticationResponseBody } from './authentication-response-body.model';

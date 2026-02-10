@@ -1,4 +1,4 @@
-import { User } from '@app/core/api';
+import { User } from '@app/core/api/model/user.model';
 
 export interface AuthorizationResponseBody {
   user: User;
