@@ -9,3 +9,12 @@ export type PostFn = <T>(
     params?: HttpParams;
   },
 ) => Observable<T>;
+
+export type GetFn = <T>(
+  namespace: string,
+  endpoint: string,
+  options?: {
+    headers?: HttpHeaders;
+    params?: HttpParams;
+  },
+) => Observable<T>;

@@ -87,4 +87,59 @@ describe('ApiService', () => {
 
     await expect(errorPromise).rejects.toMatchObject({ status: options.status });
   });
+
+  it('calls get with url', async () => {
+    const promise = firstValueFrom(apiService.get(namespace, endpoint));
+
+    const testRequest = httpMock.expectOne(url);
+    expect(testRequest.request.method).toBe('GET');
+
+    testRequest.flush({});
+
+    await promise;
+  });
+
+  it('calls get with headers and params', async () => {
+    const param = 'a';
+    const value = '1';
+    const header = 'header';
+
+    const options = {
+      headers: new HttpHeaders({ Header: header }),
+      params: new HttpParams().set(param, value),
+    };
+
+    const promise = firstValueFrom(apiService.get(namespace, endpoint, options));
+
+    const testRequest = httpMock.expectOne(
+      (request) => request.url === url && request.params.get(param) === value,
+    );
+    expect(testRequest.request.headers.get('Header')).toBe(header);
+    expect(testRequest.request.params.get(param)).toBe(value);
+
+    testRequest.flush({});
+
+    await promise;
+  });
+
+  it('responds to get with the typed response', async () => {
+    const promise = firstValueFrom(apiService.get<{ value: number }>(namespace, endpoint));
+    const response = { value: 42 };
+
+    const testRequest = httpMock.expectOne(url);
+    testRequest.flush(response);
+
+    const responseBody = await promise;
+    expect(responseBody.value).toBe(response.value);
+  });
+
+  it('calls get and propagates HTTP errors', async () => {
+    const errorPromise = firstValueFrom(apiService.get(namespace, endpoint));
+    const options = { status: 404, statusText: 'Not Found' };
+
+    const testRequest = httpMock.expectOne(url);
+    testRequest.flush({}, options);
+
+    await expect(errorPromise).rejects.toMatchObject({ status: options.status });
+  });
 });

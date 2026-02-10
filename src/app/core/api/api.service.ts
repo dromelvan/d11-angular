@@ -22,4 +22,16 @@ export class ApiService {
     const url = `/${this.apiVersion}/${namespace}/${endpoint}`;
     return this.http.post<T>(url, body, options);
   }
+
+  get<T>(
+    namespace: string,
+    endpoint: string,
+    options?: {
+      headers?: HttpHeaders;
+      params?: HttpParams;
+    },
+  ): Observable<T> {
+    const url = `/${this.apiVersion}/${namespace}/${endpoint}`;
+    return this.http.get<T>(url, options);
+  }
 }
