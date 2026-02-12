@@ -1,0 +1,7 @@
+export enum Status {
+  PENDING = 'PENDING',
+  ACTIVE = 'ACTIVE',
+  FULL_TIME = 'FULL_TIME',
+  FINISHED = 'FINISHED',
+  POSTPONED = 'POSTPONED',
+}
