@@ -45,10 +45,12 @@ describe('PlayerApiService', () => {
       await firstValueFrom(playerApi.search(searchName));
 
       expect(apiServiceMock.get).toHaveBeenCalledExactlyOnceWith(
-        playerApi.namespace,
-        'search',
         expect.objectContaining({
-          params: expect.any(HttpParams),
+          namespace: playerApi.namespace,
+          endpoint: 'search',
+          options: expect.objectContaining({
+            params: expect.any(HttpParams),
+          }),
         }),
       );
     });

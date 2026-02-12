@@ -1,5 +1,6 @@
 import { HttpHeaders, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { ApiGetRequest } from '@app/core/api/api-get-request.model';
 
 export type PostFn = <T>(
   endpoint: string,
@@ -10,11 +11,4 @@ export type PostFn = <T>(
   },
 ) => Observable<T>;
 
-export type GetFn = <T>(
-  namespace: string,
-  endpoint: string,
-  options?: {
-    headers?: HttpHeaders;
-    params?: HttpParams;
-  },
-) => Observable<T>;
+export type GetFn = <T>(apiGetRequest: ApiGetRequest) => Observable<T>;

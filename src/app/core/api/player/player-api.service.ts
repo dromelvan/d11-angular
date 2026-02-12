@@ -16,7 +16,11 @@ export class PlayerApiService {
     const params = new HttpParams().set('name', name);
 
     return this.apiService
-      .get<PlayerSearchResultsResponseBody>(this.namespace, 'search', { params: params })
+      .get<PlayerSearchResultsResponseBody>({
+        namespace: this.namespace,
+        endpoint: 'search',
+        options: { params: params },
+      })
       .pipe(map((result) => result.players));
   }
 }

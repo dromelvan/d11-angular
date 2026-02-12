@@ -8,6 +8,7 @@ import { ApiService } from './api.service';
 describe('ApiService', () => {
   const apiVersion = environment.apiVersion;
   const namespace = 'namespace';
+  const id = 1;
   const endpoint = 'endpoint';
   const url = `/${apiVersion}/${namespace}/${endpoint}`;
 
@@ -88,10 +89,36 @@ describe('ApiService', () => {
     await expect(errorPromise).rejects.toMatchObject({ status: options.status });
   });
 
-  it('calls get with url', async () => {
-    const promise = firstValueFrom(apiService.get(namespace, endpoint));
+  it('calls get with id url', async () => {
+    const idUrl = `/${apiVersion}/${namespace}/${id}`;
+    const promise = firstValueFrom(apiService.get({ namespace: namespace, id: id }));
+
+    const testRequest = httpMock.expectOne(idUrl);
+    expect(testRequest.request.method).toBe('GET');
+
+    testRequest.flush({});
+
+    await promise;
+  });
+
+  it('calls get with endpoint url', async () => {
+    const promise = firstValueFrom(apiService.get({ namespace: namespace, endpoint: endpoint }));
 
     const testRequest = httpMock.expectOne(url);
+    expect(testRequest.request.method).toBe('GET');
+
+    testRequest.flush({});
+
+    await promise;
+  });
+
+  it('calls get with both id and endpoint url', async () => {
+    const bothUrl = `/${apiVersion}/${namespace}/${id}/${endpoint}`;
+    const promise = firstValueFrom(
+      apiService.get({ namespace: namespace, id: id, endpoint: endpoint }),
+    );
+
+    const testRequest = httpMock.expectOne(bothUrl);
     expect(testRequest.request.method).toBe('GET');
 
     testRequest.flush({});
@@ -109,7 +136,9 @@ describe('ApiService', () => {
       params: new HttpParams().set(param, value),
     };
 
-    const promise = firstValueFrom(apiService.get(namespace, endpoint, options));
+    const promise = firstValueFrom(
+      apiService.get({ namespace: namespace, endpoint: endpoint, options: options }),
+    );
 
     const testRequest = httpMock.expectOne(
       (request) => request.url === url && request.params.get(param) === value,
@@ -123,7 +152,9 @@ describe('ApiService', () => {
   });
 
   it('responds to get with the typed response', async () => {
-    const promise = firstValueFrom(apiService.get<{ value: number }>(namespace, endpoint));
+    const promise = firstValueFrom(
+      apiService.get<{ value: number }>({ namespace: namespace, endpoint: endpoint }),
+    );
     const response = { value: 42 };
 
     const testRequest = httpMock.expectOne(url);
@@ -134,7 +165,9 @@ describe('ApiService', () => {
   });
 
   it('calls get and propagates HTTP errors', async () => {
-    const errorPromise = firstValueFrom(apiService.get(namespace, endpoint));
+    const errorPromise = firstValueFrom(
+      apiService.get({ namespace: namespace, endpoint: endpoint }),
+    );
     const options = { status: 404, statusText: 'Not Found' };
 
     const testRequest = httpMock.expectOne(url);
