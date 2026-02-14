@@ -41,7 +41,32 @@ module.exports = defineConfig([
         }
       ],
       '@typescript-eslint/no-empty-function': 'off',
-      'no-empty': 'off'
+      'no-empty': 'off',
+      '@typescript-eslint/member-ordering': [
+        'error',
+        {
+          default: [
+            // Inputs
+            'public-decorated-field',
+            'protected-decorated-field',
+            
+            // Signals/resources/computed
+            'public-field',
+            'protected-field',
+            
+            // Private services
+            'private-field',
+            
+            // Constructor
+            'constructor',
+            
+            // Methods
+            'public-method',
+            'protected-method',
+            'private-method'
+          ]
+        }
+      ]
     }
   },
   {
