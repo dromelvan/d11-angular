@@ -1,3 +1,5 @@
+export * from './model/country.model';
+export * from './model/player.model';
 export * from './model/player-search-result.model';
 export * from './model/season.model';
 export * from './model/status.model';

@@ -1,6 +1,5 @@
+import { Player, Season, Status } from '@app/core/api';
 import { faker } from '@faker-js/faker';
-import { Season } from '@app/core/api/model/season.model';
-import { Status } from '@app/core/api';
 
 export const fakeSeason = (): Season => ({
   id: faker.number.int({ min: 1, max: 100 }),
@@ -11,4 +10,24 @@ export const fakeSeason = (): Season => ({
   status: faker.helpers.arrayElement([Status.ACTIVE, Status.FINISHED, Status.PENDING]),
   date: faker.date.past().toISOString().split('T')[0],
   legacy: faker.datatype.boolean(),
+});
+
+export const fakePlayer = (): Player => ({
+  id: faker.number.int({ min: 1, max: 10000 }),
+  firstName: faker.person.firstName(),
+  lastName: faker.person.lastName(),
+  name: faker.person.fullName(),
+  shortName: `${faker.person.firstName().charAt(0)}. ${faker.person.lastName()}`,
+  parameterizedName: faker.helpers.slugify(faker.person.fullName()).toLowerCase(),
+  statSourceId: faker.number.int({ min: 1, max: 999999 }),
+  premierLeagueId: faker.number.int({ min: 1, max: 999999 }),
+  fullName: faker.person.fullName(),
+  dateOfBirth: faker.date.past({ years: 40 }).toISOString().split('T')[0],
+  height: faker.number.int({ min: 160, max: 210 }),
+  verified: faker.datatype.boolean(),
+  country: {
+    id: faker.number.int({ min: 1, max: 200 }),
+    name: faker.location.country(),
+    iso: faker.location.countryCode('alpha-3'),
+  },
 });

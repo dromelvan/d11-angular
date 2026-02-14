@@ -1,11 +1,13 @@
-import { TestBed } from '@angular/core/testing';
 import { HttpParams } from '@angular/common/http';
+import { TestBed } from '@angular/core/testing';
+import { ApiService } from '@app/core/api/api.service';
+import { PlayerSearchResult } from '@app/core/api/model/player-search-result.model';
+import { GetFn } from '@app/core/api/test/api.mock';
+import { fakePlayer } from '@app/core/api/test/faker-util';
 import { firstValueFrom, of, throwError } from 'rxjs';
 import { beforeEach, describe } from 'vitest';
-import { ApiService } from '@app/core/api/api.service';
-import { GetFn } from '@app/core/api/test/api.mock';
-import { PlayerSearchResult } from '@app/core/api/model/player-search-result.model';
 import { PlayerApiService } from './player-api.service';
+import { PlayerResponseBody } from './player-response-body.model';
 import { PlayerSearchResultsResponseBody } from './player-search-results-response-body.model';
 
 describe('PlayerApiService', () => {
@@ -68,7 +70,7 @@ describe('PlayerApiService', () => {
 
       apiServiceMock.get = vi.fn().mockReturnValue(throwError(() => httpError)) as GetFn;
 
-      await expect(firstValueFrom(playerApi.search(searchName))).rejects.toThrow(httpError.message);
+      expect(firstValueFrom(playerApi.search(searchName))).rejects.toThrow(httpError.message);
     });
 
     it('does not map the result on search error', async () => {
@@ -76,7 +78,54 @@ describe('PlayerApiService', () => {
         .fn()
         .mockReturnValue(throwError(() => new Error('NOT_FOUND'))) as GetFn;
 
-      await expect(firstValueFrom(playerApi.search(searchName))).rejects.toBeInstanceOf(Error);
+      expect(firstValueFrom(playerApi.search(searchName))).rejects.toBeInstanceOf(Error);
+    });
+  });
+
+  // GetById ---------------------------------------------------------------------------------------
+
+  describe('getById', () => {
+    const player = fakePlayer();
+    const playerResponse: PlayerResponseBody = {
+      player: player,
+    };
+    const playerId = player.id;
+
+    it('calls get on getById', async () => {
+      apiServiceMock.get = vi.fn().mockReturnValue(of(playerResponse)) as GetFn;
+
+      await firstValueFrom(playerApi.getById(playerId));
+
+      expect(apiServiceMock.get).toHaveBeenCalledExactlyOnceWith(
+        expect.objectContaining({
+          namespace: playerApi.namespace,
+          id: playerId,
+        }),
+      );
+    });
+
+    it('maps the result on getById', async () => {
+      apiServiceMock.get = vi.fn().mockReturnValue(of(playerResponse)) as GetFn;
+
+      const result = await firstValueFrom(playerApi.getById(playerId));
+
+      expect(result).toEqual(player);
+    });
+
+    it('propagates errors on getById', async () => {
+      const httpError = new Error('NOT_FOUND');
+
+      apiServiceMock.get = vi.fn().mockReturnValue(throwError(() => httpError)) as GetFn;
+
+      expect(firstValueFrom(playerApi.getById(playerId))).rejects.toThrow(httpError.message);
+    });
+
+    it('does not map the result on getById error', async () => {
+      apiServiceMock.get = vi
+        .fn()
+        .mockReturnValue(throwError(() => new Error('NOT_FOUND'))) as GetFn;
+
+      expect(firstValueFrom(playerApi.getById(playerId))).rejects.toBeInstanceOf(Error);
     });
   });
 });
