@@ -2,10 +2,12 @@ import { HttpParams } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { ApiService } from '@app/core/api/api.service';
 import { PlayerSearchResult } from '@app/core/api/model/player-search-result.model';
+import { PlayerSeasonStat } from '@app/core/api/model/player-season-stat.model';
 import { Player } from '@app/core/api/model/player.model';
 import { map, Observable } from 'rxjs';
 import { PlayerResponseBody } from './player-response-body.model';
 import { PlayerSearchResultsResponseBody } from './player-search-results-response-body.model';
+import { PlayerSeasonStatsResponseBody } from './player-season-stats-response-body.model';
 
 @Injectable({
   providedIn: 'root',
@@ -21,6 +23,16 @@ export class PlayerApiService {
         id: id,
       })
       .pipe(map((result) => result.player));
+  }
+
+  getPlayerSeasonStatsByPlayerId(playerId: number): Observable<PlayerSeasonStat[]> {
+    return this.apiService
+      .get<PlayerSeasonStatsResponseBody>({
+        namespace: this.namespace,
+        id: playerId,
+        endpoint: 'player-season-stats',
+      })
+      .pipe(map((result) => result.playerSeasonStats));
   }
 
   search(name: string): Observable<PlayerSearchResult[]> {

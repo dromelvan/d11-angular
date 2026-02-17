@@ -3,7 +3,7 @@ import { TestBed } from '@angular/core/testing';
 import { ApiService } from '@app/core/api/api.service';
 import { PlayerSearchResult } from '@app/core/api/model/player-search-result.model';
 import { GetFn } from '@app/core/api/test/api.mock';
-import { fakePlayer } from '@app/core/api/test/faker-util';
+import { fakePlayer, fakePlayerSeasonStat } from '@app/core/api/test/faker-util';
 import { firstValueFrom, of, throwError } from 'rxjs';
 import { beforeEach, describe } from 'vitest';
 import { PlayerApiService } from './player-api.service';
@@ -126,6 +126,56 @@ describe('PlayerApiService', () => {
         .mockReturnValue(throwError(() => new Error('NOT_FOUND'))) as GetFn;
 
       expect(firstValueFrom(playerApi.getById(playerId))).rejects.toBeInstanceOf(Error);
+    });
+  });
+
+  // getPlayerSeasonStatsByPlayerId ----------------------------------------------------------------
+
+  describe('getPlayerSeasonStatsByPlayerId', () => {
+    const playerId = 42;
+    const stats = [fakePlayerSeasonStat(), fakePlayerSeasonStat()];
+    const response = { playerSeasonStats: stats };
+
+    it('calls get on getPlayerSeasonStatsByPlayerId', async () => {
+      apiServiceMock.get = vi.fn().mockReturnValue(of(response)) as GetFn;
+
+      await firstValueFrom(playerApi.getPlayerSeasonStatsByPlayerId(playerId));
+
+      expect(apiServiceMock.get).toHaveBeenCalledExactlyOnceWith(
+        expect.objectContaining({
+          namespace: playerApi.namespace,
+          id: playerId,
+          endpoint: 'player-season-stats',
+        }),
+      );
+    });
+
+    it('maps the result on getPlayerSeasonStatsByPlayerId', async () => {
+      apiServiceMock.get = vi.fn().mockReturnValue(of(response)) as GetFn;
+
+      const result = await firstValueFrom(playerApi.getPlayerSeasonStatsByPlayerId(playerId));
+
+      expect(result).toEqual(stats);
+    });
+
+    it('propagates errors on getPlayerSeasonStatsByPlayerId', async () => {
+      const httpError = new Error('NOT_FOUND');
+
+      apiServiceMock.get = vi.fn().mockReturnValue(throwError(() => httpError)) as GetFn;
+
+      expect(firstValueFrom(playerApi.getPlayerSeasonStatsByPlayerId(playerId))).rejects.toThrow(
+        httpError.message,
+      );
+    });
+
+    it('does not map the result on getPlayerSeasonStatsByPlayerId error', async () => {
+      apiServiceMock.get = vi
+        .fn()
+        .mockReturnValue(throwError(() => new Error('NOT_FOUND'))) as GetFn;
+
+      expect(
+        firstValueFrom(playerApi.getPlayerSeasonStatsByPlayerId(playerId)),
+      ).rejects.toBeInstanceOf(Error);
     });
   });
 });
