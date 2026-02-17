@@ -1,0 +1,35 @@
+@if (player(); as p) {
+  <p-card class="app-player-info-card">
+    <div class="grid grid-cols-3 gap-6">
+      <div data-testid="nationality">
+        <div class="app-info-card-label">Nationality</div>
+        <div class="app-info-card-value">
+          @if (p.country) {
+            <app-country-img [country]="p.country" />
+            <span class="sm:hidden">{{ p.country.iso }}</span>
+            <span class="hidden sm:block">{{ p.country.name }}</span>
+          } @else {
+            Unknown
+          }
+        </div>
+      </div>
+      <div data-testid="date-of-birth">
+        <div class="app-info-card-label">Date of Birth</div>
+        <div class="app-info-card-value">
+          @if (p.dateOfBirth) {
+            {{ p.dateOfBirth | safeDate }}
+            <span class="hidden sm:block"> age {{ p.dateOfBirth | age }}</span>
+          } @else {
+            Unknown
+          }
+        </div>
+      </div>
+      <div data-testid="height">
+        <div class="app-info-card-label">Height</div>
+        <div class="app-info-card-value">
+          {{ p.height ? `${p.height} cm` : 'Unknown' }}
+        </div>
+      </div>
+    </div>
+  </p-card>
+}

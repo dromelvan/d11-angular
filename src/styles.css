@@ -3,66 +3,79 @@
 @import "primeicons/primeicons.css";
 
 @theme {
-  --font-sans: InterVariable, sans-serif;
-  --font-sans--font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+    --font-sans: InterVariable, sans-serif;
+    --font-sans--font-feature-settings: "cv02", "cv03", "cv04", "cv11";
 
-  --breakpoint-sm: 640px;
-  --breakpoint-md: 768px;
-  --breakpoint-lg: 1024px;
-  --breakpoint-xl: 1280px;
-  --breakpoint-2xl: 1536px;
+    --breakpoint-sm: 640px;
+    --breakpoint-md: 768px;
+    --breakpoint-lg: 1024px;
+    --breakpoint-xl: 1280px;
+    --breakpoint-2xl: 1536px;
 
-  --container-sm: 640px;
-  --container-md: 768px;
-  --container-lg: 1024px;
-  --container-xl: 1280px;
-  --container-2xl: 1536px;
+    --container-sm: 640px;
+    --container-md: 768px;
+    --container-lg: 1024px;
+    --container-xl: 1280px;
+    --container-2xl: 1536px;
 }
 
 @layer base {
-  .primary-contrast {
-    @apply text-primary-contrast font-semibold hover:text-primary-contrast hover:opacity-85;
-  }
+    .primary-contrast {
+        @apply text-primary-contrast font-semibold hover:text-primary-contrast hover:opacity-85;
+    }
 
-  a {
-    @apply text-primary font-medium cursor-pointer;
-  }
+    a {
+        @apply text-primary font-medium cursor-pointer;
+    }
 }
 
 @layer components {
-  .app-col {
-    @apply flex flex-col gap-4;
-  }
-
-  .app-col-margin {
-    @apply mb-4;
-  }
-
-  @media (min-width: 40rem) {
-    .sm\:app-col {
-      @apply flex flex-col gap-4;
+    .app-col {
+        @apply flex flex-col gap-4;
     }
-  }
 
-  .app-row {
-    @apply flex flex-row gap-10;
-  }
-
-  @media (min-width: 40rem) {
-    .sm\:app-row {
-      @apply flex flex-row gap-4;
+    .app-col-margin {
+        @apply mb-4;
     }
-  }
 
-  .app-flex {
-    @apply flex items-center;
-  }
+    @media (min-width: 40rem) {
+        .sm\:app-col {
+            @apply flex flex-col gap-4;
+        }
+    }
+
+    .app-row {
+        @apply flex flex-row gap-10;
+    }
+
+    @media (min-width: 40rem) {
+        .sm\:app-row {
+            @apply flex flex-row gap-4;
+        }
+    }
+
+    .app-flex {
+        @apply flex items-center;
+    }
+
+    .app-info-card-label {
+        @apply text-xs text-surface-500 tracking-wider mb-1;
+    }
+
+    .app-info-card-value {
+        @apply flex items-center gap-2 text-base font-semibold;
+    }
+
+    /* PrimeNG things that can't be styled in theme */
+    .p-tablist-tab-list {
+        @apply justify-between;
+    }
 }
 
 .vertical-align-test {
-  background: linear-gradient(blue 50%, red 50%);
+    background: linear-gradient(blue 50%, red 50%);
 }
 
 .horizontal-align-test {
-  background-image: linear-gradient(to right, red 0%, red 50%, blue 50%, blue 100%);
+    background-image: linear-gradient(to right, red 0%, red 50%, blue 50%, blue 100%);
 }
