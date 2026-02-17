@@ -13,4 +13,25 @@ export const D11Light = definePreset(Aura, {
     },
     disabledOpacity: 0.75,
   },
+
+  components: {
+    card: {
+      title: {
+        fontWeight: 'bold',
+        fontSize: '1.5rem',
+      },
+      body: {
+        padding: '1rem',
+        gap: '1rem',
+      },
+    },
+    tabs: {
+      tab: {
+        padding: '.5rem',
+      },
+      tabpanel: {
+        padding: '1rem 0rem',
+      },
+    },
+  },
 });
