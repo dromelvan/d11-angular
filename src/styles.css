@@ -66,6 +66,10 @@
         @apply flex items-center gap-2 text-base font-semibold;
     }
 
+    .app-bg-header {
+        @apply bg-[url('/images/header-background.png')]! bg-cover! bg-center!
+    }
+
     /* PrimeNG things that can't be styled in theme */
     .p-tablist-tab-list {
         @apply justify-between;
