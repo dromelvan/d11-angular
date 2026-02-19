@@ -1,9 +1,11 @@
 import { definePreset, palette } from '@primeuix/themes';
 import Aura from '@primeuix/themes/aura';
 
+export const PRIMARY = '#0b164f';
+
 export const D11Light = definePreset(Aura, {
   semantic: {
-    primary: palette('#0b164f'),
+    primary: palette(PRIMARY),
     colorScheme: {
       light: {
         primary: {
