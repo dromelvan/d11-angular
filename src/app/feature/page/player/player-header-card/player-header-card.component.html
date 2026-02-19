@@ -1,0 +1,45 @@
+@if (player(); as p) {
+  <p-card
+    class="app-player-header-card app-bg-header relative"
+    [ngClass]="textClass()"
+    [style.background-color]="backgroundColor()"
+  >
+    <p-button
+      icon="pi pi-ellipsis-v"
+      [rounded]="true"
+      [text]="true"
+      [styleClass]="`${textClass()} absolute! top-2 right-2 z-10`"
+    />
+    <div class="app-row gap-4">
+      <app-player-img [player]="p" [width]="ImgWidth.XLARGE" />
+
+      <div class="app-col gap-1">
+        @if (p.firstName) {
+          <h1 class="text-2xl">{{ p.firstName }}</h1>
+        }
+
+        <h1 class="text-3xl font-bold">{{ p.lastName }}</h1>
+
+        @if (playerSeasonStat(); as pss) {
+          <div class="position text-sm mt-2">
+            <span>{{ pss.position.name }}</span>
+          </div>
+
+          @if (!pss.team.dummy) {
+            <div class="team app-row items-center gap-2 mt-3">
+              <app-team-img [team]="pss.team" />
+              <span class="text-l">{{ pss.team.name }}</span>
+            </div>
+          }
+
+          @if (!pss.d11Team.dummy) {
+            <div class="d11-team app-row items-center gap-2 mt-1">
+              <app-d11-team-img [d11Team]="pss.d11Team" />
+              <span class="text-l">{{ pss.d11Team.name }}</span>
+            </div>
+          }
+        }
+      </div>
+    </div>
+  </p-card>
+}
