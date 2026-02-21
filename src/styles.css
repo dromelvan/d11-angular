@@ -66,6 +66,18 @@
         @apply flex items-center gap-2 text-base font-semibold;
     }
 
+    .app-stat-card-container {
+        @apply py-4 bg-primary-50 rounded-lg;
+    }
+
+    .app-stat-card-label {
+        @apply text-2xl font-bold text-primary-500;
+    }
+
+    .app-stat-card-value {
+        @apply text-sm text-surface-600 mt-1;
+    }
+
     .app-bg-header {
         @apply bg-[url('/images/header-background.png')]! bg-cover! bg-center!
     }
