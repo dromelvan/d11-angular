@@ -3,7 +3,7 @@ import { TeamBase } from '@app/core/api';
 import { TeamImgComponent } from '@app/shared/img';
 
 @Component({
-  selector: 'app-team',
+  selector: 'app-team-base',
   imports: [TeamImgComponent],
   templateUrl: './team-base.component.html',
 })

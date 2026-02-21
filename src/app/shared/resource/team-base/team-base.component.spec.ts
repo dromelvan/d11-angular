@@ -8,7 +8,7 @@ import { TeamBaseComponent } from './team-base.component';
 let team: TeamBase;
 
 @Component({
-  template: ` <app-team [team]="team" /> `,
+  template: ` <app-team-base [team]="team" /> `,
   standalone: true,
   imports: [TeamBaseComponent],
 })

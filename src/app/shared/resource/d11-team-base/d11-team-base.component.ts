@@ -3,7 +3,7 @@ import { D11TeamBase } from '@app/core/api';
 import { D11TeamImgComponent } from '@app/shared/img';
 
 @Component({
-  selector: 'app-d11-team',
+  selector: 'app-d11-team-base',
   imports: [D11TeamImgComponent],
   templateUrl: './d11-team-base.component.html',
 })

@@ -13,7 +13,7 @@
     <div class="app-row gap-4">
       <app-player-img [player]="p" [width]="ImgWidth.XLARGE" />
 
-      <div class="app-col gap-1">
+      <div class="app-col gap-0">
         @if (p.firstName) {
           <h1 class="text-2xl">{{ p.firstName }}</h1>
         }
@@ -26,17 +26,11 @@
           </div>
 
           @if (!pss.team.dummy) {
-            <div class="team app-row items-center gap-2 mt-3">
-              <app-team-img [team]="pss.team" />
-              <span class="text-l">{{ pss.team.name }}</span>
-            </div>
+            <app-team-base [team]="pss.team" class="mt-3" />
           }
 
           @if (!pss.d11Team.dummy) {
-            <div class="d11-team app-row items-center gap-2 mt-1">
-              <app-d11-team-img [d11Team]="pss.d11Team" />
-              <span class="text-l">{{ pss.d11Team.name }}</span>
-            </div>
+            <app-d11-team-base [d11Team]="pss.d11Team" class="mt-1" />
           }
         }
       </div>

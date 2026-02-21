@@ -89,13 +89,11 @@ describe('PlayerHeaderCardComponent with dummies', () => {
   });
 
   it('does not render dummy team', async () => {
-    expect(document.querySelector('.team')).not.toBeInTheDocument();
-    expect(document.querySelector('.team-img')).not.toBeInTheDocument();
+    expect(document.querySelector('.team-base')).not.toBeInTheDocument();
   });
 
   it('does not render dummy d11 team', async () => {
-    expect(document.querySelector('.d11-team')).not.toBeInTheDocument();
-    expect(document.querySelector('.d11-team-img')).not.toBeInTheDocument();
+    expect(document.querySelector('.d11-team-base')).not.toBeInTheDocument();
   });
 });
 
@@ -106,9 +104,7 @@ describe('PlayerHeaderCardComponent with undefined playerSeasonStat', () => {
     await render(HostComponent, {});
 
     expect(document.querySelector('.position')).not.toBeInTheDocument();
-    expect(document.querySelector('.team')).not.toBeInTheDocument();
-    expect(document.querySelector('.team-img')).not.toBeInTheDocument();
-    expect(document.querySelector('.d11-team')).not.toBeInTheDocument();
-    expect(document.querySelector('.d11-team-img')).not.toBeInTheDocument();
+    expect(document.querySelector('.team-base')).not.toBeInTheDocument();
+    expect(document.querySelector('.d11-team-base')).not.toBeInTheDocument();
   });
 });

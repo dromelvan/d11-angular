@@ -8,7 +8,7 @@ import { D11TeamBaseComponent } from './d11-team-base.component';
 let d11Team: D11TeamBase;
 
 @Component({
-  template: ` <app-d11-team [d11Team]="d11Team" /> `,
+  template: ` <app-d11-team-base [d11Team]="d11Team" /> `,
   standalone: true,
   imports: [D11TeamBaseComponent],
 })
