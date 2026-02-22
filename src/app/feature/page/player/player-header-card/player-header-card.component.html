@@ -1,6 +1,6 @@
 @if (player(); as p) {
   <p-card
-    class="app-player-header-card app-bg-header relative"
+    class="app-player-header-card app-bg-header min-h-40 relative"
     [ngClass]="textClass()"
     [style.background-color]="backgroundColor()"
   >
@@ -8,7 +8,7 @@
       icon="pi pi-ellipsis-v"
       [rounded]="true"
       [text]="true"
-      [styleClass]="`${textClass()} absolute! top-2 right-2 z-10`"
+      [styleClass]="`${textClass()} absolute! top-2 right-2 z-2`"
     />
     <div class="app-row gap-4">
       <app-player-img [player]="p" [width]="ImgWidth.XLARGE" />
