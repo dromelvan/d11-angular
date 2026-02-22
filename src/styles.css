@@ -86,6 +86,11 @@
     .p-tablist-tab-list {
         @apply justify-between;
     }
+
+    .p-avatar img {
+        @apply object-cover object-top;
+    }
+
 }
 
 .vertical-align-test {

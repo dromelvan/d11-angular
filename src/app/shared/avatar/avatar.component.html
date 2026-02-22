@@ -1,3 +1,9 @@
 <div class="app-avatar flex items-center justify-center">
-  <p-avatar [image]="imageUrl()" [size]="size()" shape="circle" (onImageError)="onImageError()" />
+  <p-avatar
+    [image]="imageUrl()"
+    [size]="size()"
+    shape="circle"
+    (onImageError)="onImageError()"
+    class="overflow-hidden"
+  />
 </div>
