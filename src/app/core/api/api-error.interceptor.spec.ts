@@ -6,12 +6,14 @@ import {
   withInterceptors,
 } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
+import { Router } from '@angular/router';
 import { firstValueFrom } from 'rxjs';
 import { apiErrorInterceptor } from './api-error.interceptor';
 
 describe('apiErrorInterceptor', () => {
   let http: HttpClient;
   let httpMock: HttpTestingController;
+  let router: Router;
 
   async function postRequest(status: number): Promise<void> {
     const promise = firstValueFrom(http.post('/api', {}));
@@ -27,15 +29,21 @@ describe('apiErrorInterceptor', () => {
   }
 
   beforeEach(() => {
+    const routerMock = {
+      navigateByUrl: vi.fn(),
+    };
+
     TestBed.configureTestingModule({
       providers: [
         provideHttpClient(withInterceptors([apiErrorInterceptor])),
         provideHttpClientTesting(),
+        { provide: Router, useValue: routerMock },
       ],
     });
 
     http = TestBed.inject(HttpClient);
     httpMock = TestBed.inject(HttpTestingController);
+    router = TestBed.inject(Router);
 
     vi.spyOn(console, 'error').mockImplementation(() => {
       // Not doing anything here
@@ -82,7 +90,7 @@ describe('apiErrorInterceptor', () => {
     );
   });
 
-  it.each([400, 401, 403, 404, 409])('logs API error for HTTP status %i', async (status) => {
+  it.each([400, 401, 403, 409])('logs API error for HTTP status %i', async (status) => {
     await postRequest(status);
 
     expect(console.error).toHaveBeenCalledWith(
@@ -93,6 +101,12 @@ describe('apiErrorInterceptor', () => {
         url: `/api`,
       }),
     );
+  });
+
+  it('navigates to root for HTTP status 404', async () => {
+    await postRequest(404);
+
+    expect(router.navigateByUrl).toHaveBeenCalledWith('/');
   });
 
   // 500 might be handled differently than the known statuses when proper user notification is added

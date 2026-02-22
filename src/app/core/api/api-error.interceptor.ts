@@ -1,11 +1,14 @@
 import { HttpErrorResponse, HttpInterceptorFn } from '@angular/common/http';
+import { inject } from '@angular/core';
+import { Router } from '@angular/router';
 import { throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 
 export const apiErrorInterceptor: HttpInterceptorFn = (request, next) => {
+  const router = inject(Router);
   return next(request).pipe(
     catchError((response: HttpErrorResponse) => {
-      handleHttpError(response, request);
+      handleHttpError(response, request, router);
       return throwError(() => response);
     }),
   );
@@ -14,6 +17,7 @@ export const apiErrorInterceptor: HttpInterceptorFn = (request, next) => {
 function handleHttpError(
   response: HttpErrorResponse,
   request: { url: string; method: string },
+  router: Router,
 ): void {
   if (response.status === 0) {
     // TODO User feedback
@@ -29,6 +33,7 @@ function handleHttpError(
     case 403:
       break;
     case 404:
+      router.navigateByUrl('/');
       break;
     case 409:
       break;
