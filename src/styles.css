@@ -83,8 +83,16 @@
     }
 
     /* PrimeNG things that can't be styled in theme */
-    .p-tablist-tab-list {
+    .justify-evenly .p-tablist-tab-list {
+        @apply justify-evenly;
+    }
+
+    .justify-between .p-tablist-tab-list {
         @apply justify-between;
+    }
+
+    .p-tab {
+        @apply text-sm;
     }
 
     .p-avatar img {

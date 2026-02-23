@@ -1,0 +1,37 @@
+@if (!isLoading()) {
+  @let model = this.model();
+  <div class="app-player-page app-col max-w-sm mx-auto">
+    <app-player-header-card [player]="model.player" [playerSeasonStat]="model.playerSeasonStat" />
+    <p-tabs [(value)]="activeTab">
+      <p-tablist
+        [class.justify-between]="model.hasPlayerSeasonStat"
+        [class.justify-evenly]="!model.hasPlayerSeasonStat"
+      >
+        <p-tab value="0">Overview</p-tab>
+        @if (model.hasPlayerSeasonStat) {
+          <p-tab value="1">Matches</p-tab>
+          <p-tab value="2">Stats</p-tab>
+        }
+        <p-tab value="3">Career</p-tab>
+      </p-tablist>
+      <p-tabpanels>
+        <p-tabpanel value="0" class="app-col">
+          <app-player-info-card [player]="model.player" />
+          <app-player-season-stat-card [playerSeasonStat]="model.playerSeasonStat" />
+        </p-tabpanel>
+
+        <p-tabpanel value="1">
+          <p>Match history coming soon</p>
+        </p-tabpanel>
+
+        <p-tabpanel value="2">
+          <p>Detailed statistics coming soon</p>
+        </p-tabpanel>
+
+        <p-tabpanel value="3">
+          <p>Career history coming soon</p>
+        </p-tabpanel>
+      </p-tabpanels>
+    </p-tabs>
+  </div>
+}
