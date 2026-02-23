@@ -1,19 +1,18 @@
-import { computed, DestroyRef, Injectable, signal } from '@angular/core';
-import { LoadableResource } from './loadable-resource.model';
+import { computed, DestroyRef, Injectable, signal, Signal } from '@angular/core';
 
 @Injectable({
   providedIn: 'root',
 })
 export class LoadingService {
-  isLoading = computed(() => this.resources().some((resource) => resource.isLoading()));
+  readonly isLoading = computed(() => this.loadingSignals().some((loading) => loading()));
 
-  private resources = signal<LoadableResource[]>([]);
+  private readonly loadingSignals = signal<Signal<boolean>[]>([]);
 
-  register(destroyRef: DestroyRef, ...resources: LoadableResource[]): void {
-    this.resources.update((current) => [...current, ...resources]);
+  register(destroyRef: DestroyRef, ...signals: Signal<boolean>[]): void {
+    this.loadingSignals.update((current) => [...current, ...signals]);
 
     destroyRef.onDestroy(() => {
-      this.resources.update((current) => current.filter((r) => !resources.includes(r)));
+      this.loadingSignals.update((current) => current.filter((s) => !signals.includes(s)));
     });
   }
 }

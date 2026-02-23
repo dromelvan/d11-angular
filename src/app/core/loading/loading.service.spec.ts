@@ -1,6 +1,6 @@
 // noinspection JSUnusedGlobalSymbols
 
-import { DestroyRef } from '@angular/core';
+import { computed, DestroyRef } from '@angular/core';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { LoadingService } from './loading.service';
 
@@ -21,17 +21,17 @@ describe('LoadingService', () => {
 
   it('returns true with a loading resource', () => {
     const mockDestroyRef = { onDestroy: vi.fn() } as unknown as DestroyRef;
-    const loadingResource = { isLoading: () => true };
+    const resource = computed(() => true);
 
-    service.register(mockDestroyRef, loadingResource);
+    service.register(mockDestroyRef, resource);
 
     expect(service.isLoading()).toBe(true);
   });
 
   it('returns false with no loading resources', () => {
     const mockDestroyRef = { onDestroy: vi.fn() } as unknown as DestroyRef;
-    const resource1 = { isLoading: () => false };
-    const resource2 = { isLoading: () => false };
+    const resource1 = computed(() => false);
+    const resource2 = computed(() => false);
 
     service.register(mockDestroyRef, resource1, resource2);
 
@@ -40,9 +40,9 @@ describe('LoadingService', () => {
 
   it('returns true with at least one loading resource', () => {
     const mockDestroyRef = { onDestroy: vi.fn() } as unknown as DestroyRef;
-    const resource1 = { isLoading: () => false };
-    const resource2 = { isLoading: () => true };
-    const resource3 = { isLoading: () => false };
+    const resource1 = computed(() => false);
+    const resource2 = computed(() => true);
+    const resource3 = computed(() => false);
 
     service.register(mockDestroyRef, resource1, resource2, resource3);
 
@@ -51,7 +51,7 @@ describe('LoadingService', () => {
 
   it('registers destroy callback', () => {
     const mockDestroyRef = { onDestroy: vi.fn() } as unknown as DestroyRef;
-    const resource = { isLoading: () => false };
+    const resource = computed(() => false);
 
     service.register(mockDestroyRef, resource);
 
@@ -67,9 +67,9 @@ describe('LoadingService', () => {
       }),
     } as unknown as DestroyRef;
 
-    const resource1 = { isLoading: () => true };
-    const resource2 = { isLoading: () => false };
-    const resource3 = { isLoading: () => true };
+    const resource1 = computed(() => true);
+    const resource2 = computed(() => false);
+    const resource3 = computed(() => true);
 
     service.register(mockDestroyRef, resource1, resource2, resource3);
     expect(service.isLoading()).toBe(true);
@@ -85,7 +85,7 @@ describe('LoadingService', () => {
         destroyCallback = callback;
       }),
     } as unknown as DestroyRef;
-    const resource = { isLoading: () => true };
+    const resource = computed(() => true);
 
     service.register(mockDestroyRef, resource);
     expect(service.isLoading()).toBe(true);
@@ -110,8 +110,8 @@ describe('LoadingService', () => {
       }),
     } as unknown as DestroyRef;
 
-    const resource1 = { isLoading: () => true };
-    const resource2 = { isLoading: () => true };
+    const resource1 = computed(() => true);
+    const resource2 = computed(() => true);
 
     service.register(mockDestroyRef1, resource1);
     service.register(mockDestroyRef2, resource2);
@@ -134,9 +134,9 @@ describe('LoadingService', () => {
         }),
       }) as unknown as DestroyRef;
 
-    const resource1 = { isLoading: () => true };
-    const resource2 = { isLoading: () => false };
-    const resource3 = { isLoading: () => true };
+    const resource1 = computed(() => true);
+    const resource2 = computed(() => false);
+    const resource3 = computed(() => true);
 
     service.register(createMockDestroyRef(), resource1);
     service.register(createMockDestroyRef(), resource2);
