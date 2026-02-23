@@ -3,6 +3,7 @@ import { FormsModule } from '@angular/forms';
 import { AutoComplete } from 'primeng/autocomplete';
 import { PlayerApiService, PlayerSearchResult } from '@app/core/api';
 import { AvatarComponent } from '@app/shared/avatar/avatar.component';
+import { RouterService } from '@app/core/router/router.service';
 
 @Component({
   selector: 'app-search-autocomplete',
@@ -13,7 +14,9 @@ import { AvatarComponent } from '@app/shared/avatar/avatar.component';
 export class SearchAutocompleteComponent {
   result = signal<PlayerSearchResult[]>([]);
   selectedValue = signal<PlayerSearchResult | null>(null);
+
   private playerApiService = inject(PlayerApiService);
+  private routerService = inject(RouterService);
 
   search(event: { query: string }) {
     if (event.query.length >= 3) {
@@ -27,7 +30,8 @@ export class SearchAutocompleteComponent {
   }
 
   onSelect() {
-    console.log(this.selectedValue());
-    this.selectedValue.set(null);
+    this.routerService.navigateToPlayer(this.selectedValue()!.id).then(() => {
+      this.selectedValue.set(null);
+    });
   }
 }

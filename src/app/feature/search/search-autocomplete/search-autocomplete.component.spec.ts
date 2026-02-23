@@ -1,8 +1,9 @@
 import { Component } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { render, screen } from '@testing-library/angular';
-import { of, throwError } from 'rxjs';
 import { PlayerApiService, PlayerSearchResult } from '@app/core/api';
+import { RouterService } from '@app/core/router/router.service';
+import { render, screen, waitFor } from '@testing-library/angular';
+import { of, throwError } from 'rxjs';
 import { SearchAutocompleteComponent } from './search-autocomplete.component';
 
 @Component({
@@ -93,15 +94,37 @@ describe('SearchAutocompleteComponent', () => {
 
       expect(component.result()).toEqual([]);
     });
+  });
 
-    it('handles selected player', () => {
-      const consoleSpy = vi.spyOn(console, 'log');
+  describe('onSelect', () => {
+    it('handles selected player', async () => {
+      const mockRouterService = {
+        navigateToPlayer: vi.fn().mockResolvedValue(true),
+      };
+
+      await TestBed.configureTestingModule({
+        imports: [SearchAutocompleteComponent],
+        providers: [
+          { provide: PlayerApiService, useValue: service },
+          { provide: RouterService, useValue: mockRouterService },
+        ],
+      }).compileComponents();
+
+      const fixture = TestBed.createComponent(SearchAutocompleteComponent);
+      const component = fixture.componentInstance;
+      await fixture.whenStable();
 
       component.selectedValue.set(playerSearchResult);
-      component.onSelect();
 
-      expect(consoleSpy).toHaveBeenCalledWith(playerSearchResult);
-      expect(component.selectedValue()).toBe(null);
+      await waitFor(() => {
+        component.onSelect();
+      });
+
+      expect(mockRouterService.navigateToPlayer).toHaveBeenCalledExactlyOnceWith(
+        playerSearchResult.id,
+      );
+
+      expect(component.selectedValue()).toBeNull();
     });
   });
 });
