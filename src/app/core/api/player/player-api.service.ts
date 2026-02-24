@@ -8,6 +8,8 @@ import { map, Observable } from 'rxjs';
 import { PlayerResponseBody } from './player-response-body.model';
 import { PlayerSearchResultsResponseBody } from './player-search-results-response-body.model';
 import { PlayerSeasonStatsResponseBody } from './player-season-stats-response-body.model';
+import { PlayerMatchStat } from '@app/core/api';
+import { PlayerMatchStatsResponseBody } from '@app/core/api/player/player-match-stats-response-body.model';
 
 @Injectable({
   providedIn: 'root',
@@ -33,6 +35,21 @@ export class PlayerApiService {
         endpoint: 'player-season-stats',
       })
       .pipe(map((result) => result.playerSeasonStats));
+  }
+
+  getPlayerMatchStatsByPlayerIdAndSeasonId(
+    playerId: number,
+    seasonId: number,
+  ): Observable<PlayerMatchStat[]> {
+    const params = new HttpParams().set('seasonId', seasonId);
+    return this.apiService
+      .get<PlayerMatchStatsResponseBody>({
+        namespace: this.namespace,
+        id: playerId,
+        endpoint: 'player-match-stats',
+        options: { params: params },
+      })
+      .pipe(map((result) => result.playerMatchStats));
   }
 
   search(name: string): Observable<PlayerSearchResult[]> {

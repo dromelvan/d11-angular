@@ -3,7 +3,11 @@ import { TestBed } from '@angular/core/testing';
 import { ApiService } from '@app/core/api/api.service';
 import { PlayerSearchResult } from '@app/core/api/model/player-search-result.model';
 import { GetFn } from '@app/core/api/test/api.mock';
-import { fakePlayer, fakePlayerSeasonStat } from '@app/core/api/test/faker-util';
+import {
+  fakePlayer,
+  fakePlayerMatchStat,
+  fakePlayerSeasonStat,
+} from '@app/core/api/test/faker-util';
 import { firstValueFrom, of, throwError } from 'rxjs';
 import { beforeEach, describe } from 'vitest';
 import { PlayerApiService } from './player-api.service';
@@ -55,6 +59,10 @@ describe('PlayerApiService', () => {
           }),
         }),
       );
+
+      const calledParams: HttpParams = (apiServiceMock.get as ReturnType<typeof vi.fn>).mock
+        .calls[0][0].options.params;
+      expect(calledParams.get('name')).toBe(String(searchName));
     });
 
     it('maps the result on search', async () => {
@@ -175,6 +183,64 @@ describe('PlayerApiService', () => {
 
       expect(
         firstValueFrom(playerApi.getPlayerSeasonStatsByPlayerId(playerId)),
+      ).rejects.toBeInstanceOf(Error);
+    });
+  });
+
+  // getPlayerMatchStatsByPlayerIdAndSeasonId -----------------------------------------------------
+
+  describe('getPlayerMatchStatsByPlayerIdAndSeasonId', () => {
+    const playerId = 42;
+    const seasonId = 1;
+    const playerMatchStats = [fakePlayerMatchStat(), fakePlayerMatchStat()];
+    const response = { playerMatchStats: playerMatchStats };
+
+    it('calls get on getPlayerMatchStatsByPlayerIdAndSeasonId', async () => {
+      apiServiceMock.get = vi.fn().mockReturnValue(of(response)) as GetFn;
+
+      await firstValueFrom(playerApi.getPlayerMatchStatsByPlayerIdAndSeasonId(playerId, seasonId));
+
+      expect(apiServiceMock.get).toHaveBeenCalledExactlyOnceWith(
+        expect.objectContaining({
+          namespace: playerApi.namespace,
+          id: playerId,
+          endpoint: 'player-match-stats',
+          options: expect.objectContaining({
+            params: expect.any(HttpParams),
+          }),
+        }),
+      );
+
+      const calledParams: HttpParams = (apiServiceMock.get as ReturnType<typeof vi.fn>).mock
+        .calls[0][0].options.params;
+      expect(calledParams.get('seasonId')).toBe(String(seasonId));
+    });
+
+    it('maps the result on getPlayerMatchStatsByPlayerIdAndSeasonId', async () => {
+      apiServiceMock.get = vi.fn().mockReturnValue(of(response)) as GetFn;
+
+      const result = await firstValueFrom(
+        playerApi.getPlayerMatchStatsByPlayerIdAndSeasonId(playerId, seasonId),
+      );
+      expect(result).toEqual(playerMatchStats);
+    });
+
+    it('propagates errors on getPlayerMatchStatsByPlayerIdAndSeasonId', async () => {
+      const httpError = new Error('NOT_FOUND');
+
+      apiServiceMock.get = vi.fn().mockReturnValue(throwError(() => httpError)) as GetFn;
+
+      expect(
+        firstValueFrom(playerApi.getPlayerMatchStatsByPlayerIdAndSeasonId(playerId, seasonId)),
+      ).rejects.toThrow(httpError.message);
+    });
+
+    it('does not map the result on getPlayerMatchStatsByPlayerIdAndSeasonId error', async () => {
+      apiServiceMock.get = vi
+        .fn()
+        .mockReturnValue(throwError(() => new Error('NOT_FOUND'))) as GetFn;
+      expect(
+        firstValueFrom(playerApi.getPlayerMatchStatsByPlayerIdAndSeasonId(playerId, seasonId)),
       ).rejects.toBeInstanceOf(Error);
     });
   });

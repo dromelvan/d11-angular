@@ -1,5 +1,9 @@
 import { D11TeamBase } from '@app/core/api/model/d11-team-base.model';
+import { Lineup } from '@app/core/api/model/lineup.model';
+import { MatchBase } from '@app/core/api/model/match-base.model';
+import { MatchWeekBase } from '@app/core/api/model/match-week-base.model';
 import { PlayerBase } from '@app/core/api/model/player-base.model';
+import { PlayerMatchStat } from '@app/core/api/model/player-match-stat.model';
 import { PlayerSeasonStat } from '@app/core/api/model/player-season-stat.model';
 import { Player } from '@app/core/api/model/player.model';
 import { Position } from '@app/core/api/model/position.model';
@@ -43,6 +47,21 @@ export const fakeSeason = (): Season => ({
   status: faker.helpers.arrayElement([Status.ACTIVE, Status.FINISHED, Status.PENDING]),
   date: faker.date.past().toISOString().split('T')[0],
   legacy: faker.datatype.boolean(),
+});
+
+const fakeMatchWeekBase = (): MatchWeekBase => ({
+  id: faker.number.int({ min: 1, max: 38 }),
+  matchWeekNumber: faker.number.int({ min: 1, max: 38 }),
+});
+
+const fakeMatchBase = (): MatchBase => ({
+  id: faker.number.int({ min: 1, max: 10000 }),
+  datetime: faker.date.recent().toISOString(),
+  homeTeamGoalsScored: faker.number.int({ min: 0, max: 10 }),
+  awayTeamGoalsScored: faker.number.int({ min: 0, max: 10 }),
+  homeTeam: fakeTeamBase(),
+  awayTeam: fakeTeamBase(),
+  matchWeek: fakeMatchWeekBase(),
 });
 
 export const fakePlayerBase = (): PlayerBase => ({
@@ -102,6 +121,28 @@ export const fakePlayerSeasonStat = (): PlayerSeasonStat => ({
   minutesPlayed: faker.number.int({ min: 0, max: 3420 }),
   player: fakePlayerBase(),
   season: fakeSeason(),
+  team: fakeTeamBase(),
+  d11Team: fakeD11TeamBase(),
+  position: fakePosition(),
+});
+
+export const fakePlayerMatchStat = (): PlayerMatchStat => ({
+  playedPosition: faker.string.alpha(2).toUpperCase(),
+  lineup: faker.helpers.arrayElement(Object.values(Lineup)),
+  substitutionOnTime: faker.number.int({ min: 0, max: 90 }),
+  substitutionOffTime: faker.number.int({ min: 0, max: 90 }),
+  goals: faker.number.int({ min: 0, max: 5 }),
+  goalAssists: faker.number.int({ min: 0, max: 5 }),
+  ownGoals: faker.number.int({ min: 0, max: 2 }),
+  goalsConceded: faker.number.int({ min: 0, max: 5 }),
+  yellowCardTime: faker.number.int({ min: 0, max: 90 }),
+  redCardTime: faker.number.int({ min: 0, max: 90 }),
+  manOfTheMatch: faker.number.int({ min: 0, max: 1 }),
+  sharedManOfTheMatch: faker.number.int({ min: 0, max: 1 }),
+  rating: faker.number.float({ min: 0, max: 10 }),
+  points: faker.number.int({ min: -5, max: 25 }),
+  player: fakePlayerBase(),
+  match: fakeMatchBase(),
   team: fakeTeamBase(),
   d11Team: fakeD11TeamBase(),
   position: fakePosition(),
