@@ -3,19 +3,19 @@ import type { PlayerSeasonStat } from '@app/core/api';
 import { fakePlayerSeasonStat } from '@app/core/api/test/faker-util';
 import { render, screen } from '@testing-library/angular';
 import { expect } from 'vitest';
-import { PlayerSeasonStatCardComponent } from './player-season-stat-card.component';
+import { PlayerSeasonSummaryCardComponent } from './player-season-summary-card.component';
 
 let playerSeasonStat: PlayerSeasonStat;
 
 @Component({
-  template: ` <app-player-season-stat-card [playerSeasonStat]="playerSeasonStat" /> `,
-  imports: [PlayerSeasonStatCardComponent],
+  template: ` <app-player-season-summary-card [playerSeasonStat]="playerSeasonStat" /> `,
+  imports: [PlayerSeasonSummaryCardComponent],
 })
 class HostComponent {
   playerSeasonStat = playerSeasonStat;
 }
 
-describe('PlayerSeasonStatCardComponent', () => {
+describe('PlayerSeasonSummaryCardComponent', () => {
   beforeEach(async () => {
     playerSeasonStat = fakePlayerSeasonStat();
     playerSeasonStat.fee = 10;
@@ -23,7 +23,7 @@ describe('PlayerSeasonStatCardComponent', () => {
   });
 
   it('renders card', async () => {
-    const card = document.querySelector('.app-player-season-stat-card');
+    const card = document.querySelector('.app-player-season-summary-card');
     expect(card).toBeInTheDocument();
   });
 
@@ -52,23 +52,23 @@ describe('PlayerSeasonStatCardComponent', () => {
   });
 });
 
-describe('PlayerSeasonStatCardComponent with undefined playerSeasonStat', () => {
+describe('PlayerSeasonSummaryCardComponent with undefined playerSeasonStat', () => {
   it('does not render card', async () => {
     @Component({
-      template: ` <app-player-season-stat-card [playerSeasonStat]="playerSeasonStat" /> `,
-      imports: [PlayerSeasonStatCardComponent],
+      template: ` <app-player-season-summary-card [playerSeasonStat]="playerSeasonStat" /> `,
+      imports: [PlayerSeasonSummaryCardComponent],
     })
     class UndefinedHostComponent {
       playerSeasonStat = undefined;
     }
 
     await render(UndefinedHostComponent, {});
-    const card = document.querySelector('.app-player-season-stat-card');
+    const card = document.querySelector('.app-player-season-summary-card');
     expect(card).not.toBeInTheDocument();
   });
 });
 
-describe('PlayerSeasonStatCardComponent with no fee', async () => {
+describe('PlayerSeasonSummaryCardComponent with no fee', async () => {
   it('does not render fee', async () => {
     playerSeasonStat = fakePlayerSeasonStat();
     playerSeasonStat.fee = 0;

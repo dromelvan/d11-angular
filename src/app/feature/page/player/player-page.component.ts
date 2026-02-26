@@ -11,7 +11,7 @@ import { LoadingService } from '@app/core/loading/loading.service';
 import { PlayerHeaderCardComponent } from '@app/feature/page/player/player-header-card/player-header-card.component';
 import { Tab, TabList, TabPanel, TabPanels, Tabs } from 'primeng/tabs';
 import { PlayerInfoCardComponent } from './player-info-card/player-info-card.component';
-import { PlayerSeasonStatCardComponent } from './player-season-stat-card/player-season-stat-card.component';
+import { PlayerSeasonSummaryCardComponent } from '@app/feature/page/player/player-season-summary-card/player-season-summary-card.component';
 import { PlayerMatchStatsCardComponent } from '@app/feature/page/player/player-match-stats-card/player-match-stats-card.component';
 
 @Component({
@@ -23,7 +23,7 @@ import { PlayerMatchStatsCardComponent } from '@app/feature/page/player/player-m
     TabList,
     Tab,
     PlayerInfoCardComponent,
-    PlayerSeasonStatCardComponent,
+    PlayerSeasonSummaryCardComponent,
     PlayerHeaderCardComponent,
     PlayerMatchStatsCardComponent,
   ],

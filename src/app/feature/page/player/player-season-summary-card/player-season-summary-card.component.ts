@@ -4,10 +4,10 @@ import { FeePipe } from '@app/shared/pipes';
 import { Card } from 'primeng/card';
 
 @Component({
-  selector: 'app-player-season-stat-card',
+  selector: 'app-player-season-summary-card',
   imports: [Card, FeePipe],
-  templateUrl: './player-season-stat-card.component.html',
+  templateUrl: './player-season-summary-card.component.html',
 })
-export class PlayerSeasonStatCardComponent {
+export class PlayerSeasonSummaryCardComponent {
   playerSeasonStat = input.required<PlayerSeasonStat | undefined>();
 }
