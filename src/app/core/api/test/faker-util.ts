@@ -54,7 +54,7 @@ const fakeMatchWeekBase = (): MatchWeekBase => ({
   matchWeekNumber: faker.number.int({ min: 1, max: 38 }),
 });
 
-const fakeMatchBase = (): MatchBase => ({
+export const fakeMatchBase = (): MatchBase => ({
   id: faker.number.int({ min: 1, max: 10000 }),
   datetime: faker.date.recent().toISOString(),
   homeTeamGoalsScored: faker.number.int({ min: 0, max: 10 }),

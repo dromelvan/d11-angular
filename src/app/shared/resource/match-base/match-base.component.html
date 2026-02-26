@@ -1,0 +1,17 @@
+@let m = match();
+@let t = team();
+<span class="app-match-base app-row flex-1 items-center justify-center gap-0.5 text-sm">
+  <span class="w-10 sm:w-45 shrink-0 text-right" [class.font-bold]="m.homeTeam.id === t?.id">
+    <span class="sm:hidden">{{ m.homeTeam.code }}</span>
+    <span class="hidden sm:block">{{ m.homeTeam.name }}</span>
+  </span>
+  <app-team-img class="shrink-0" [team]="m.homeTeam" />
+  <span class="app-row-result-container">
+    {{ m.homeTeamGoalsScored }}&ndash;{{ m.awayTeamGoalsScored }}
+  </span>
+  <app-team-img class="shrink-0" [team]="m.awayTeam" />
+  <span class="w-10 sm:w-45 shrink-0 text-left" [class.font-bold]="m.awayTeam.id === t?.id">
+    <span class="sm:hidden">{{ m.awayTeam.code }}</span>
+    <span class="hidden sm:block">{{ m.awayTeam.name }}</span>
+  </span>
+</span>
