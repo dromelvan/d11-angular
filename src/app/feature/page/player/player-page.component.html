@@ -21,7 +21,9 @@
         </p-tabpanel>
 
         <p-tabpanel value="1">
-          <p>Match history coming soon</p>
+          @defer (when activeTab === '1') {
+            <app-player-match-stats [playerSeasonStat]="model.playerSeasonStat!" />
+          }
         </p-tabpanel>
 
         <p-tabpanel value="2">

@@ -12,6 +12,7 @@ import { PlayerHeaderCardComponent } from '@app/feature/page/player/player-heade
 import { Tab, TabList, TabPanel, TabPanels, Tabs } from 'primeng/tabs';
 import { PlayerInfoCardComponent } from './player-info-card/player-info-card.component';
 import { PlayerSeasonStatCardComponent } from './player-season-stat-card/player-season-stat-card.component';
+import { PlayerMatchStatsCardComponent } from '@app/feature/page/player/player-match-stats-card/player-match-stats-card.component';
 
 @Component({
   selector: 'app-player-page',
@@ -24,6 +25,7 @@ import { PlayerSeasonStatCardComponent } from './player-season-stat-card/player-
     PlayerInfoCardComponent,
     PlayerSeasonStatCardComponent,
     PlayerHeaderCardComponent,
+    PlayerMatchStatsCardComponent,
   ],
   templateUrl: './player-page.component.html',
 })
