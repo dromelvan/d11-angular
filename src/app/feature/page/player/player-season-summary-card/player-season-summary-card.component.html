@@ -1,23 +1,23 @@
 @if (playerSeasonStat(); as pss) {
   <p-card class="app-player-season-summary-card" [header]="`Season ${pss.season.name}`">
     <div class="grid grid-cols-3 gap-3 text-center">
-      <div class="app-stat-card-container">
-        <div class="app-stat-card-label">
+      <div class="app-stat-widget">
+        <div class="app-text-highest-emphasis">
           @if (pss.fee > 0) {
             {{ pss.fee | fee }}m
           } @else {
             None
           }
         </div>
-        <div class="app-stat-card-value">Fee</div>
+        <div class="app-text-low-emphasis">Fee</div>
       </div>
-      <div class="app-stat-card-container">
-        <div class="app-stat-card-label">#{{ pss.ranking }}</div>
-        <div class="app-stat-card-value">Ranking</div>
+      <div class="app-stat-widget">
+        <div class="app-text-highest-emphasis">#{{ pss.ranking }}</div>
+        <div class="app-text-low-emphasis">Ranking</div>
       </div>
-      <div class="app-stat-card-container">
-        <div class="app-stat-card-label">{{ pss.points }}</div>
-        <div class="app-stat-card-value">Points</div>
+      <div class="app-stat-widget">
+        <div class="app-text-highest-emphasis">{{ pss.points }}</div>
+        <div class="app-text-low-emphasis">Points</div>
       </div>
     </div>
   </p-card>

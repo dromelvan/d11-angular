@@ -10,10 +10,10 @@
       [text]="true"
       [styleClass]="`${textClass()} absolute! top-2 right-2 z-2`"
     />
-    <div class="app-row gap-4">
+    <div class="app-row-md">
       <app-player-img [player]="p" [width]="ImgWidth.XLARGE" />
 
-      <div class="app-col gap-0">
+      <div class="app-col-sm">
         @if (p.firstName) {
           <h1 class="text-2xl">{{ p.firstName }}</h1>
         }
@@ -21,16 +21,16 @@
         <h1 class="text-3xl font-bold">{{ p.lastName }}</h1>
 
         @if (playerSeasonStat(); as pss) {
-          <div class="position text-sm mt-2">
+          <div class="position text-sm py-1">
             <span>{{ pss.position.name }}</span>
           </div>
 
           @if (!pss.team.dummy) {
-            <app-team-base [team]="pss.team" class="mt-3" />
+            <app-team-base [team]="pss.team" />
           }
 
           @if (!pss.d11Team.dummy) {
-            <app-d11-team-base [d11Team]="pss.d11Team" class="mt-1" />
+            <app-d11-team-base [d11Team]="pss.d11Team" />
           }
         }
       </div>

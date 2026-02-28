@@ -30,6 +30,19 @@
 }
 
 @layer components {
+    /* Layout styling */
+    .app-flex {
+        @apply flex items-center;
+    }
+
+    .app-col-none {
+        @apply flex flex-col gap-0;
+    }
+
+    .app-col-sm {
+        @apply flex flex-col gap-1;
+    }
+
     .app-col {
         @apply flex flex-col gap-4;
     }
@@ -44,6 +57,14 @@
         }
     }
 
+    .app-row-sm {
+        @apply flex flex-row gap-2;
+    }
+
+    .app-row-md {
+        @apply flex flex-row gap-4;
+    }
+
     .app-row {
         @apply flex flex-row gap-10;
     }
@@ -54,60 +75,42 @@
         }
     }
 
-    .app-row-header {
-        @apply text-xs text-muted-color font-semibold uppercase tracking-wide gap-2 pb-1.5;
+    /* Text styling */
+    .app-text-lowest-emphasis {
+        @apply text-xs text-surface-500;
     }
 
-    .app-row-muted {
-        @apply text-xs text-muted-color;
+    .app-text-low-emphasis {
+        @apply text-sm text-surface-500;
     }
 
-    .app-row-result-container {
-        @apply text-center bg-surface-100 rounded px-1.5 py-0.5 text-xs font-bold tabular-nums w-10 shrink-0;
+    .app-text-high-emphasis {
+        @apply font-semibold;
     }
 
-    .app-row-lineup {
-        @apply text-right text-xs font-semibold text-muted-color;
-    }
-
-    .app-row-rating {
-        @apply text-right text-sm tabular-nums;
-    }
-
-    .app-row-points {
-        @apply text-right text-sm font-semibold tabular-nums;
-    }
-
-    .app-row-separator {
-        @apply border-b border-surface-100 last:border-0;
-    }
-
-    .app-flex {
-        @apply flex items-center;
-    }
-
-    .app-info-card-label {
-        @apply text-xs text-surface-500 tracking-wider mb-1;
-    }
-
-    .app-info-card-value {
-        @apply flex items-center gap-2 text-base font-semibold;
-    }
-
-    .app-stat-card-container {
-        @apply py-4 bg-primary-50 rounded-lg;
-    }
-
-    .app-stat-card-label {
+    .app-text-highest-emphasis {
         @apply text-2xl font-bold text-primary-500;
     }
 
-    .app-stat-card-value {
-        @apply text-sm text-surface-600 mt-1;
+    .app-text-grid-header {
+        @apply text-xs font-semibold uppercase;
     }
 
+    .app-text-grid {
+        @apply text-sm;
+    }
+
+    .app-text-grid-number {
+        @apply text-sm text-right tabular-nums;
+    }
+
+    /* Component styling */
     .app-bg-header {
         @apply bg-[url('/images/header-background.png')]! bg-cover! bg-center!
+    }
+
+    .app-stat-widget {
+        @apply flex flex-col gap-1 py-4 bg-primary-50 rounded-lg;
     }
 
     /* PrimeNG things that can't be styled in theme */
@@ -120,7 +123,7 @@
     }
 
     .p-tab {
-        @apply text-sm;
+        @apply text-xs uppercase;
     }
 
     .p-avatar img {

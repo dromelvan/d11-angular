@@ -2,7 +2,7 @@
 <p-card class="app-player-match-stats-card" [header]="`Matches ${pss.season.name}`">
   @if (playerMatchStats(); as playerMatchStats) {
     <div class="app-col gap-0">
-      <div class="app-row app-row-header">
+      <div class="app-row-sm app-text-grid-header">
         <span class="w-8">Date</span>
         <span class="flex-1 text-center">Match</span>
         <span class="w-8 text-right">Rtg</span>
@@ -10,7 +10,7 @@
       </div>
       @for (playerMatchStat of playerMatchStats; track playerMatchStat.match.id) {
         <div class="app-row app-row-separator items-center gap-2 py-2.5">
-          <span class="app-row-muted w-8">{{ playerMatchStat.match.datetime | date: 'd.M' }}</span>
+          <span class="app-text-grid w-8">{{ playerMatchStat.match.datetime | date: 'd.M' }}</span>
           <app-match-base
             class="flex-1"
             [match]="playerMatchStat.match"
@@ -22,12 +22,12 @@
               playerMatchStat.substitutionOnTime <= 0)
           ) {
             <span class="w-8"></span>
-            <span class="app-row-lineup w-9">{{
+            <span class="app-text-grid w-9">{{
               playerMatchStat.lineup === Lineup.DID_NOT_PARTICIPATE ? 'DNP' : 'SUB'
             }}</span>
           } @else {
-            <span class="app-row-rating w-8">{{ playerMatchStat.rating | rating }}</span>
-            <span class="app-row-points w-9">{{ playerMatchStat.points }}</span>
+            <span class="app-text-grid-number w-8">{{ playerMatchStat.rating | rating }}</span>
+            <span class="app-text-grid-number font-semibold w-9">{{ playerMatchStat.points }}</span>
           }
         </div>
       } @empty {
