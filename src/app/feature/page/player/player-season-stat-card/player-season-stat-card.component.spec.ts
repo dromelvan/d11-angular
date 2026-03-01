@@ -82,6 +82,14 @@ describe('PlayerSeasonStatCardComponent', () => {
     });
   });
 
+  it('renders ranking', async () => {
+    await waitFor(() => {
+      expect(screen.getByText('Ranking').nextElementSibling?.textContent?.trim()).toBe(
+        `#${pss.ranking}`,
+      );
+    });
+  });
+
   it('renders rating', async () => {
     await waitFor(() => {
       expect(screen.getByText('Rating').nextElementSibling?.textContent?.trim()).toBe(
