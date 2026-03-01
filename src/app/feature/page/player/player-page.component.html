@@ -27,7 +27,9 @@
         </p-tabpanel>
 
         <p-tabpanel value="2">
-          <p>Detailed statistics coming soon</p>
+          @defer (when activeTab === '2') {
+            <app-player-season-stat-card [playerSeasonStat]="model.playerSeasonStat!" />
+          }
         </p-tabpanel>
 
         <p-tabpanel value="3">
