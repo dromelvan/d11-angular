@@ -14,6 +14,7 @@ import { PlayerInfoCardComponent } from './player-info-card/player-info-card.com
 import { PlayerSeasonSummaryCardComponent } from './player-season-summary-card/player-season-summary-card.component';
 import { PlayerMatchStatsCardComponent } from './player-match-stats-card/player-match-stats-card.component';
 import { PlayerSeasonStatCardComponent } from './player-season-stat-card/player-season-stat-card.component';
+import { PlayerCareerCardComponent } from '@app/feature/page/player/player-career-card/player-career-card.component';
 
 @Component({
   selector: 'app-player-page',
@@ -28,6 +29,7 @@ import { PlayerSeasonStatCardComponent } from './player-season-stat-card/player-
     PlayerHeaderCardComponent,
     PlayerMatchStatsCardComponent,
     PlayerSeasonStatCardComponent,
+    PlayerCareerCardComponent,
   ],
   templateUrl: './player-page.component.html',
 })

@@ -8,7 +8,7 @@
       <div class="app-grid-header app-grid-number">Pts</div>
 
       @for (playerMatchStat of playerMatchStats; track playerMatchStat.match.id) {
-        <div class="app-grid-cell app-text-grid">
+        <div class="app-grid-cell">
           {{ playerMatchStat.match.datetime | date: 'd.M' }}
         </div>
         <app-match-base

@@ -33,7 +33,9 @@
         </p-tabpanel>
 
         <p-tabpanel value="3">
-          <p>Career history coming soon</p>
+          @defer (when activeTab === '3') {
+            <app-player-career-card [playerSeasonStats]="model.playerSeasonStats!" />
+          }
         </p-tabpanel>
       </p-tabpanels>
     </p-tabs>
