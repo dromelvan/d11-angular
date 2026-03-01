@@ -1,9 +1,11 @@
+@let s = size();
 <div class="app-avatar flex items-center justify-center">
   <p-avatar
     [image]="imageUrl()"
-    [size]="size()"
+    [size]="s === '2xlarge' ? 'xlarge' : s"
     shape="circle"
     (onImageError)="onImageError()"
     class="overflow-hidden"
+    [class]="s === '2xlarge' ? 'h-25! w-25!' : ''"
   />
 </div>

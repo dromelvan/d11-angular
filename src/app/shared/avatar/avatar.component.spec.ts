@@ -12,6 +12,7 @@ const resource = 'test-resource';
     <app-avatar data-testid="set-extension" [resource]="resource" [id]="id" extension="jpg" />
     <app-avatar data-testid="default-size" [resource]="resource" [id]="id" />
     <app-avatar data-testid="set-size" [resource]="resource" [id]="id" size="large" />
+    <app-avatar data-testid="2xlarge-size" [resource]="resource" [id]="id" size="2xlarge" />
   `,
   standalone: true,
   imports: [AvatarComponent],
@@ -70,6 +71,21 @@ describe('AvatarComponent', () => {
 
     const dataP = pAvatar?.getAttribute('data-p');
     expect(dataP).toBe('circle large');
+  });
+
+  it('renders 2xlarge size as xlarge with override classes', async () => {
+    const avatar = screen.getByTestId('2xlarge-size');
+
+    expect(avatar).toBeInTheDocument();
+
+    const pAvatar = avatar.querySelector('p-avatar');
+    expect(pAvatar).toBeInTheDocument();
+
+    const dataP = pAvatar?.getAttribute('data-p');
+    expect(dataP).toBe('circle xlarge');
+
+    expect(pAvatar).toHaveClass('h-25!');
+    expect(pAvatar).toHaveClass('w-25!');
   });
 
   it('renders circle shape', async () => {
