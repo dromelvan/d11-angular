@@ -75,6 +75,26 @@
         }
     }
 
+    .app-grid-header {
+        @apply text-xs font-semibold uppercase pb-2;
+    }
+
+    .app-grid-sub-header {
+        @apply text-xs font-semibold uppercase py-2 mt-3;
+    }
+
+    .app-grid-cell {
+        @apply flex text-sm items-center py-2.5;
+    }
+
+    .app-grid-separator {
+        @apply border-b border-surface-200 last:border-0;
+    }
+
+    .app-grid-number {
+        @apply tabular-nums text-right justify-end;
+    }
+
     /* Text styling */
     .app-text-lowest-emphasis {
         @apply text-xs text-surface-500;
@@ -90,18 +110,6 @@
 
     .app-text-highest-emphasis {
         @apply text-2xl font-bold text-primary-500;
-    }
-
-    .app-text-grid-header {
-        @apply text-xs font-semibold uppercase;
-    }
-
-    .app-text-grid {
-        @apply text-sm;
-    }
-
-    .app-text-grid-number {
-        @apply text-sm text-right tabular-nums;
     }
 
     /* Component styling */
