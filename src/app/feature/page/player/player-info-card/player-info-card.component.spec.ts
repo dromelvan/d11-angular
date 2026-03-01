@@ -61,7 +61,7 @@ describe('PlayerInfoCardComponent', () => {
     const date = new DatePipe('en-US').transform(new Date(player.dateOfBirth!), 'd.M yyyy');
     const age = new AgePipe().transform(player.dateOfBirth);
 
-    const value = dateOfBirth.querySelector('.app-info-card-value');
+    const value = dateOfBirth.querySelector('.app-text-high-emphasis');
     expect(value).toBeInTheDocument();
     expect(value).toHaveTextContent(`${date} age ${age}`);
 
@@ -107,12 +107,12 @@ describe('PlayerInfoCardComponent with undefined properties', () => {
     player.dateOfBirth = undefined;
 
     const dobLabel = screen.getByText('Date of Birth');
-    const dobValue = dobLabel.parentElement?.querySelector('.app-info-card-value');
+    const dobValue = dobLabel.parentElement?.querySelector('.app-text-high-emphasis');
 
     expect(dobValue).toHaveTextContent('Unknown');
 
     const heightLabel = screen.getByText('Height');
-    const heightValue = heightLabel.parentElement?.querySelector('.app-info-card-value');
+    const heightValue = heightLabel.parentElement?.querySelector('.app-text-high-emphasis');
 
     expect(heightValue).toHaveTextContent('Unknown');
   });
@@ -128,12 +128,12 @@ describe('PlayerInfoCardComponent with invalid properties', () => {
     player.dateOfBirth = undefined;
 
     const heightLabel = screen.getByText('Height');
-    const heightValue = heightLabel.parentElement?.querySelector('.app-info-card-value');
+    const heightValue = heightLabel.parentElement?.querySelector('.app-text-high-emphasis');
 
     expect(heightValue).toHaveTextContent('Unknown');
 
     const dobLabel = screen.getByText('Date of Birth');
-    const dobValue = dobLabel.parentElement?.querySelector('.app-info-card-value');
+    const dobValue = dobLabel.parentElement?.querySelector('.app-text-high-emphasis');
 
     expect(dobValue).toHaveTextContent('Unknown');
   });

@@ -24,8 +24,10 @@
             playerMatchStat.lineup === Lineup.DID_NOT_PARTICIPATE ? 'DNP' : 'SUB'
           }}</span>
         } @else {
-          <span class="app-grid-cell app-grid-number">{{ playerMatchStat.rating | rating }}</span>
-          <span class="app-grid-cell app-grid-number font-semibold">
+          <span class="app-grid-cell app-grid-number" data-testid="rating">
+            {{ playerMatchStat.rating | rating }}
+          </span>
+          <span class="app-grid-cell app-grid-number font-semibold" data-testid="points">
             {{ playerMatchStat.points }}
           </span>
         }

@@ -59,23 +59,26 @@ describe('PlayerMatchStatsCardComponent', () => {
 
   it('renders a row for each match stat', async () => {
     await waitFor(() => {
-      const rows = document.querySelectorAll('.app-row-separator');
+      const rows = document.querySelectorAll('.app-grid-separator');
       expect(rows).toHaveLength(playerMatchStats.length);
     });
   });
 
   it('renders rating for normal lineup', async () => {
-    const stat = playerMatchStats[0];
-    stat.lineup = Lineup.STARTING_LINEUP;
+    playerMatchStats[0].lineup = Lineup.STARTING_LINEUP;
+    playerMatchStats[1].lineup = Lineup.DID_NOT_PARTICIPATE;
 
     await waitFor(() => {
-      expect(document.querySelector('.app-row-rating')).toBeInTheDocument();
+      expect(screen.getByTestId('rating')).toBeInTheDocument();
     });
   });
 
   it('renders points for normal lineup', async () => {
+    playerMatchStats[0].lineup = Lineup.STARTING_LINEUP;
+    playerMatchStats[1].lineup = Lineup.DID_NOT_PARTICIPATE;
+
     await waitFor(() => {
-      expect(document.querySelector('.app-row-points')).toBeInTheDocument();
+      expect(screen.getByTestId('points')).toBeInTheDocument();
     });
   });
 });
@@ -96,7 +99,7 @@ describe('PlayerMatchStatsCardComponent with DID_NOT_PARTICIPATE', () => {
 
   it('does not render rating', async () => {
     await waitFor(() => {
-      expect(document.querySelector('.app-row-rating')).not.toBeInTheDocument();
+      expect(screen.queryByTestId('rating')).not.toBeInTheDocument();
     });
   });
 });
@@ -118,7 +121,7 @@ describe('PlayerMatchStatsCardComponent with unused SUBSTITUTE', () => {
 
   it('does not render rating', async () => {
     await waitFor(() => {
-      expect(document.querySelector('.app-row-rating')).not.toBeInTheDocument();
+      expect(screen.queryByTestId('rating')).not.toBeInTheDocument();
     });
   });
 });
