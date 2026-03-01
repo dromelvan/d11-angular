@@ -39,7 +39,7 @@ describe('PlayerCareerCardComponent', () => {
   it('renders season stats', async () => {
     await waitFor(() => {
       expect(document.querySelectorAll('.app-grid-separator')).toHaveLength(
-        playerSeasonStats.length + 1,
+        playerSeasonStats.length,
       );
     });
   });
@@ -72,29 +72,15 @@ describe('PlayerCareerCardComponent with single stat', () => {
     await renderComponent([stat]);
   });
 
-  it('renders rating when rating > 0', async () => {
+  it('renders ranking', async () => {
     await waitFor(() => {
-      expect(screen.getByTestId('rating').textContent?.trim()).toBe((stat.rating / 100).toFixed(2));
+      expect(screen.getByTestId('ranking').textContent?.trim()).toBe(`#${stat.ranking}`);
     });
   });
 
   it('renders points', async () => {
     await waitFor(() => {
       expect(screen.getByTestId('points').textContent?.trim()).toBe(String(stat.points));
-    });
-  });
-});
-
-describe('PlayerCareerCardComponent with unrated stat', () => {
-  beforeEach(async () => {
-    const stat = fakePlayerSeasonStat();
-    stat.rating = 0;
-    await renderComponent([stat]);
-  });
-
-  it('does not render rating value when rating is 0', async () => {
-    await waitFor(() => {
-      expect(screen.getByTestId('rating').textContent?.trim()).toBe('');
     });
   });
 });
@@ -139,7 +125,7 @@ describe('PlayerCareerCardComponent summary', () => {
     });
   });
 
-  it('renders 0.00 average rating when no stats have rating > 0', async () => {
+  it('does not render average rating when no stats have rating > 0', async () => {
     const stats = [fakePlayerSeasonStat()];
     stats[0].rating = 0;
     await renderComponent(stats);

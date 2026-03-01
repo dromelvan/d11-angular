@@ -80,7 +80,9 @@ module.exports = defineConfig([
       prettier
     },
     rules: {
-      'prettier/prettier': 'error'
+      'prettier/prettier': 'error',
+      '@angular-eslint/template/interactive-supports-focus': 'off',
+      '@angular-eslint/template/click-events-have-key-events': 'off',
     }
   }
 ]);

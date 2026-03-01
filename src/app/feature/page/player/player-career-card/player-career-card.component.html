@@ -4,7 +4,7 @@
     <div class="grid grid-cols-[3.5rem_1fr_2.5rem_3rem] gap-0">
       <div class="app-grid-header">Season</div>
       <div class="app-grid-header">Team</div>
-      <div class="app-grid-header app-grid-number">Rtg</div>
+      <div class="app-grid-header app-grid-number">Rank</div>
       <div class="app-grid-header app-grid-number">Pts</div>
 
       @for (playerSeasonStat of stats; track playerSeasonStat.season.id) {
@@ -16,8 +16,8 @@
         } @else {
           &nbsp;
         }
-        <span class="app-grid-cell app-grid-number" data-testid="rating">
-          {{ playerSeasonStat.rating > 0 ? (playerSeasonStat.rating | rating) : '&nbsp;' }}
+        <span class="app-grid-cell app-grid-number" data-testid="ranking">
+          #{{ playerSeasonStat.ranking }}
         </span>
         <span class="app-grid-cell app-grid-number font-semibold" data-testid="points">
           {{ playerSeasonStat.points }}
@@ -26,12 +26,16 @@
       }
 
       @let sum = summary();
+
+      <div class="app-grid-sub-header col-span-2">Seasons</div>
+      <div class="app-grid-sub-header app-grid-number">Rating</div>
+      <div class="app-grid-sub-header app-grid-number">Pts</div>
+
       <div class="app-grid-cell col-span-2">{{ sum.seasons }} seasons</div>
       <div class="app-grid-cell app-grid-number">
         {{ sum.rating > 0 ? (sum.rating | rating) : '&nbsp;' }}
       </div>
       <div class="app-grid-cell app-grid-number font-semibold">{{ sum.points }}</div>
-      <div class="app-grid-separator col-span-4"></div>
     </div>
   } @else {
     <div class="app-text-low-emphasis">No season stats found</div>
