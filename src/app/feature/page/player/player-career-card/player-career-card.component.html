@@ -1,41 +1,47 @@
 @let stats = playerSeasonStats();
 <p-card class="app-player-season-stat-card" header="Career stats">
   @if (stats.length > 0) {
-    <div class="grid grid-cols-[3.5rem_1fr_2.5rem_3rem] gap-0">
-      <div class="app-grid-header">Season</div>
-      <div class="app-grid-header">Team</div>
-      <div class="app-grid-header app-grid-number">Rank</div>
-      <div class="app-grid-header app-grid-number">Pts</div>
+    <div class="app-col">
+      <div class="grid grid-cols-[3.5rem_1fr_2.5rem_3rem] gap-0">
+        <div class="app-grid-header">Season</div>
+        <div class="app-grid-header">Team</div>
+        <div class="app-grid-header app-grid-number">Rank</div>
+        <div class="app-grid-header app-grid-number">Pts</div>
 
-      @for (playerSeasonStat of stats; track playerSeasonStat.season.id) {
-        <div class="app-grid-cell">
-          {{ playerSeasonStat.season.shortName }}
-        </div>
-        @if (!playerSeasonStat.team.dummy) {
-          <app-team-base class="app-grid-cell" [team]="playerSeasonStat.team" />
-        } @else {
-          &nbsp;
+        @for (playerSeasonStat of stats; track playerSeasonStat.season.id) {
+          <div
+            class="col-span-4 grid grid-cols-subgrid cursor-pointer"
+            (click)="navigateToPlayer(playerSeasonStat)"
+          >
+            <div class="app-grid-cell">{{ playerSeasonStat.season.shortName }}</div>
+            @if (!playerSeasonStat.team.dummy) {
+              <app-team-base class="app-grid-cell" [team]="playerSeasonStat.team" />
+            } @else {
+              <div class="app-grid-cell">&nbsp;</div>
+            }
+            <span class="app-grid-cell app-grid-number" data-testid="ranking">
+              #{{ playerSeasonStat.ranking }}
+            </span>
+            <span class="app-grid-cell app-grid-number font-semibold" data-testid="points">
+              {{ playerSeasonStat.points }}
+            </span>
+          </div>
+          <div class="app-grid-separator col-span-4"></div>
         }
-        <span class="app-grid-cell app-grid-number" data-testid="ranking">
-          #{{ playerSeasonStat.ranking }}
-        </span>
-        <span class="app-grid-cell app-grid-number font-semibold" data-testid="points">
-          {{ playerSeasonStat.points }}
-        </span>
-        <div class="app-grid-separator col-span-4"></div>
-      }
-
-      @let sum = summary();
-
-      <div class="app-grid-sub-header col-span-2">Seasons</div>
-      <div class="app-grid-sub-header app-grid-number">Rating</div>
-      <div class="app-grid-sub-header app-grid-number">Pts</div>
-
-      <div class="app-grid-cell col-span-2">{{ sum.seasons }} seasons</div>
-      <div class="app-grid-cell app-grid-number">
-        {{ sum.rating > 0 ? (sum.rating | rating) : '&nbsp;' }}
       </div>
-      <div class="app-grid-cell app-grid-number font-semibold">{{ sum.points }}</div>
+      <div class="grid grid-cols-[1fr_2.5rem_3rem] gap-0">
+        @let sum = summary();
+
+        <div class="app-grid-header">Seasons</div>
+        <div class="app-grid-header app-grid-number">Rating</div>
+        <div class="app-grid-header app-grid-number">Pts</div>
+
+        <div class="app-grid-cell">{{ sum.seasons }} seasons</div>
+        <div class="app-grid-cell app-grid-number">
+          {{ sum.rating > 0 ? (sum.rating | rating) : '&nbsp;' }}
+        </div>
+        <div class="app-grid-cell app-grid-number font-semibold">{{ sum.points }}</div>
+      </div>
     </div>
   } @else {
     <div class="app-text-low-emphasis">No season stats found</div>

@@ -1,11 +1,13 @@
 import { Component } from '@angular/core';
 import type { PlayerSeasonStat } from '@app/core/api';
 import { fakePlayerSeasonStat } from '@app/core/api/test/faker-util';
+import { RouterService } from '@app/core/router/router.service';
 import { render, screen, waitFor } from '@testing-library/angular';
+import userEvent from '@testing-library/user-event';
 import { expect } from 'vitest';
 import { PlayerCareerCardComponent } from './player-career-card.component';
 
-const renderComponent = (playerSeasonStats: PlayerSeasonStat[]) => {
+const renderComponent = (playerSeasonStats: PlayerSeasonStat[], routerService?: RouterService) => {
   @Component({
     template: ` <app-player-career-card [playerSeasonStats]="playerSeasonStats" />`,
     standalone: true,
@@ -15,7 +17,9 @@ const renderComponent = (playerSeasonStats: PlayerSeasonStat[]) => {
     playerSeasonStats = playerSeasonStats;
   }
 
-  return render(HostComponent);
+  const providers = routerService ? [{ provide: RouterService, useValue: routerService }] : [];
+
+  return render(HostComponent, { providers });
 };
 
 describe('PlayerCareerCardComponent', () => {
@@ -145,5 +149,23 @@ describe('PlayerCareerCardComponent with no stats', () => {
     await waitFor(() => {
       expect(screen.getByText('No season stats found')).toBeInTheDocument();
     });
+  });
+});
+
+describe('PlayerCareerCardComponent navigation', () => {
+  it('navigates to player with player id and season id when row is clicked', async () => {
+    const stat = fakePlayerSeasonStat();
+    stat.team.dummy = false;
+    const routerService = {
+      navigateToPlayer: vi.fn().mockResolvedValue(true),
+    } as unknown as RouterService;
+    await renderComponent([stat], routerService);
+
+    await userEvent.click(screen.getByText(stat.season.shortName));
+
+    expect(routerService.navigateToPlayer).toHaveBeenCalledExactlyOnceWith(
+      stat.player.id,
+      stat.season.id,
+    );
   });
 });

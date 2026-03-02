@@ -1,5 +1,6 @@
-import { Component, computed, input } from '@angular/core';
+import { Component, computed, inject, input } from '@angular/core';
 import { PlayerSeasonStat } from '@app/core/api';
+import { RouterService } from '@app/core/router/router.service';
 import { Card } from 'primeng/card';
 import { RatingPipe } from '@app/shared/pipes/rating.pipe';
 import { TeamBaseComponent } from '@app/shared/resource';
@@ -23,4 +24,10 @@ export class PlayerCareerCardComponent {
     const points = stats.reduce((sum, s) => sum + s.points, 0);
     return { seasons, rating, points };
   });
+
+  private routerService = inject(RouterService);
+
+  protected navigateToPlayer(playerSeasonStat: PlayerSeasonStat): void {
+    this.routerService.navigateToPlayer(playerSeasonStat.player.id, playerSeasonStat.season.id);
+  }
 }

@@ -1,4 +1,12 @@
-import { Component, computed, DestroyRef, inject, input, numberAttribute } from '@angular/core';
+import {
+  Component,
+  computed,
+  DestroyRef,
+  effect,
+  inject,
+  input,
+  numberAttribute,
+} from '@angular/core';
 import { rxResource } from '@angular/core/rxjs-interop';
 import {
   Player,
@@ -87,5 +95,11 @@ export class PlayerPageComponent {
 
   constructor() {
     this.loadingService.register(inject(DestroyRef), this.isLoading);
+    effect(() => {
+      this.playerId();
+      this.seasonId();
+      this.activeTab = '0';
+      window.scrollTo({ top: 0 });
+    });
   }
 }
