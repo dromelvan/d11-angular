@@ -18,6 +18,13 @@ class HostComponent {}
 })
 class HostWithSizeComponent {}
 
+@Component({
+  template: ` <app-button-icon data-testid="button-icon" icon="${ICON}" [disabled]="true" /> `,
+  standalone: true,
+  imports: [ButtonIconComponent],
+})
+class HostWithDisabledComponent {}
+
 describe('ButtonIconComponent', () => {
   it('renders', async () => {
     await render(HostComponent);
@@ -48,6 +55,24 @@ describe('ButtonIconComponent', () => {
 
       expect(span).toHaveClass('!text-lg');
       expect(span).not.toHaveClass('!text-xl');
+    });
+  });
+
+  describe('disabled', () => {
+    it('is not disabled by default', async () => {
+      await render(HostComponent);
+
+      const button = screen.getByTestId('button-icon').querySelector('button');
+
+      expect(button).not.toBeDisabled();
+    });
+
+    it('disables the button when true', async () => {
+      await render(HostWithDisabledComponent);
+
+      const button = screen.getByTestId('button-icon').querySelector('button');
+
+      expect(button).toBeDisabled();
     });
   });
 });

@@ -9,6 +9,7 @@ import { Button } from 'primeng/button';
 export class ButtonIconComponent {
   icon = input<string>();
   size = input<string>('xl');
+  disabled = input<boolean>(false);
 
   protected iconClass = computed(() => `pi pi-${this.icon()} !text-${this.size()}`);
 }
