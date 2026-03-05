@@ -1,5 +1,5 @@
 import { Component, computed, DestroyRef, inject, input } from '@angular/core';
-import { PlayerApiService, PlayerSeasonStat } from '@app/core/api';
+import { PlayerApiService, PlayerMatchStat, PlayerSeasonStat } from '@app/core/api';
 import { Lineup } from '@app/core/api/model/lineup.model';
 import { rxResource } from '@angular/core/rxjs-interop';
 import { LoadingService } from '@app/core/loading/loading.service';
@@ -7,6 +7,7 @@ import { DatePipe } from '@angular/common';
 import { Card } from 'primeng/card';
 import { RatingPipe } from '@app/shared/pipes/rating.pipe';
 import { MatchBaseComponent } from '@app/shared/resource/match-base/match-base.component';
+import { DynamicDialogService } from '@app/shared/dialog/dynamic-dialog-service/dynamic-dialog.service';
 
 @Component({
   selector: 'app-player-match-stats',
@@ -36,8 +37,13 @@ export class PlayerMatchStatsCardComponent {
 
   private playerApiService = inject(PlayerApiService);
   private loadingService = inject(LoadingService);
+  private dynamicDialogService = inject(DynamicDialogService);
 
   constructor() {
     this.loadingService.register(inject(DestroyRef), this.isLoading);
+  }
+
+  protected openDialog(playerMatchStat: PlayerMatchStat): void {
+    this.dynamicDialogService.openPlayerMatchStat(playerMatchStat, this.playerMatchStats() ?? []);
   }
 }

@@ -35,5 +35,13 @@ export const D11Light = definePreset(Aura, {
         padding: '1rem 0rem',
       },
     },
+    dialog: {
+      root: {
+        borderRadius: '25px',
+      },
+      footer: {
+        padding: '1rem',
+      },
+    },
   },
 });

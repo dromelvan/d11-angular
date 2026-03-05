@@ -3,14 +3,21 @@ import { PlayerApiService, type PlayerMatchStat, type PlayerSeasonStat } from '@
 import { Lineup } from '@app/core/api/model/lineup.model';
 import { fakePlayerMatchStat, fakePlayerSeasonStat } from '@app/core/api/test/faker-util';
 import { LoadingService } from '@app/core/loading/loading.service';
+import { DynamicDialogService } from '@app/shared/dialog/dynamic-dialog-service/dynamic-dialog.service';
 import { render, screen, waitFor } from '@testing-library/angular';
+import { userEvent } from '@testing-library/user-event';
 import { of } from 'rxjs';
-import { expect } from 'vitest';
+import { expect, vi } from 'vitest';
 import { PlayerMatchStatsCardComponent } from './player-match-stats-card.component';
+
+function buildDynamicDialogService() {
+  return { openPlayerMatchStat: vi.fn() } as unknown as DynamicDialogService;
+}
 
 const renderComponent = (
   playerSeasonStat: PlayerSeasonStat,
   playerMatchStats: PlayerMatchStat[],
+  dynamicDialogService = buildDynamicDialogService(),
 ) => {
   @Component({
     template: ` <app-player-match-stats [playerSeasonStat]="playerSeasonStat" />`,
@@ -27,12 +34,15 @@ const renderComponent = (
 
   const loadingService = { register: vi.fn() } as unknown as LoadingService;
 
-  return render(HostComponent, {
+  const promise = render(HostComponent, {
     providers: [
       { provide: PlayerApiService, useValue: playerApi },
       { provide: LoadingService, useValue: loadingService },
+      { provide: DynamicDialogService, useValue: dynamicDialogService },
     ],
   });
+
+  return Object.assign(promise, { dynamicDialogService });
 };
 
 describe('PlayerMatchStatsCardComponent', () => {
@@ -135,5 +145,50 @@ describe('PlayerMatchStatsCardComponent with no match stats', () => {
     await waitFor(() => {
       expect(screen.getByText('No matches played this season.')).toBeInTheDocument();
     });
+  });
+});
+
+describe('PlayerMatchStatsCardComponent open dialog', () => {
+  let playerSeasonStat: PlayerSeasonStat;
+  let playerMatchStats: PlayerMatchStat[];
+  let dynamicDialogService: DynamicDialogService;
+
+  beforeEach(async () => {
+    playerSeasonStat = fakePlayerSeasonStat();
+    playerMatchStats = [fakePlayerMatchStat(), fakePlayerMatchStat()];
+    dynamicDialogService = buildDynamicDialogService();
+
+    await renderComponent(playerSeasonStat, playerMatchStats, dynamicDialogService);
+  });
+
+  it('opens the dialog with the clicked stat', async () => {
+    await waitFor(() => {
+      expect(document.querySelectorAll('.app-grid-separator')).toHaveLength(
+        playerMatchStats.length,
+      );
+    });
+
+    const rows = document.querySelectorAll<HTMLElement>('.cursor-pointer');
+    await userEvent.click(rows[0]);
+
+    expect(dynamicDialogService.openPlayerMatchStat).toHaveBeenCalledWith(
+      playerMatchStats[0],
+      playerMatchStats,
+    );
+  });
+
+  it('passes all match stats as the list', async () => {
+    await waitFor(() => {
+      expect(document.querySelectorAll('.app-grid-separator')).toHaveLength(
+        playerMatchStats.length,
+      );
+    });
+
+    const rows = document.querySelectorAll<HTMLElement>('.cursor-pointer');
+    await userEvent.click(rows[0]);
+
+    const openMock = dynamicDialogService.openPlayerMatchStat as ReturnType<typeof vi.fn>;
+    const [, list] = openMock.mock.calls[0];
+    expect(list).toBe(playerMatchStats);
   });
 });
