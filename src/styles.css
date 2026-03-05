@@ -117,6 +117,10 @@
         @apply bg-[url('/images/header-background.png')]! bg-cover! bg-center!
     }
 
+    .app-dialog-header {
+        @apply p-4 rounded-t-(--p-dialog-border-radius);
+    }
+
     .app-stat-widget {
         @apply flex flex-col gap-1 py-4 bg-primary-50 rounded-lg;
     }
@@ -136,6 +140,18 @@
 
     .p-avatar img {
         @apply object-cover object-top;
+    }
+
+    .p-dialog-header {
+        @apply block! p-0!;
+    }
+
+    .p-dialog-header-actions {
+        @apply hidden!;
+    }
+
+    .p-dialog-footer {
+        @apply block! border-t border-surface-200;
     }
 
 }
