@@ -1,0 +1,15 @@
+<div class="app-row text-sm justify-between w-full">
+  @if (action(); as a) {
+    <a class="app-row gap-2" (click)="onAction()">
+      @if (a.icon) {
+        <i class="pi pi-{{ a.icon }}"></i>
+      }
+      <span>
+        {{ a.label }}
+      </span>
+    </a>
+  } @else {
+    <span>&nbsp;</span>
+  }
+  <a (click)="close()">Done</a>
+</div>
