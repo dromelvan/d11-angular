@@ -1,4 +1,4 @@
-import { Component, input } from '@angular/core';
+import { Component, computed, input } from '@angular/core';
 import { Button } from 'primeng/button';
 
 @Component({
@@ -8,4 +8,7 @@ import { Button } from 'primeng/button';
 })
 export class ButtonIconComponent {
   icon = input<string>();
+  size = input<string>('xl');
+
+  protected iconClass = computed(() => `pi pi-${this.icon()} !text-${this.size()}`);
 }
