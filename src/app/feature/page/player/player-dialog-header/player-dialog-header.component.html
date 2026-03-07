@@ -3,17 +3,12 @@
   [ngClass]="textClass()"
   [style.background-color]="backgroundColor()"
 >
-  <app-button-icon
-    icon="chevron-left"
-    size="3xl"
-    [disabled]="!hasPrevious()"
-    (click)="onPrevious()"
-  />
+  <app-button-icon icon="chevron-left" [disabled]="!hasPrevious()" (click)="onPrevious()" />
 
   <div class="app-col gap-2 text-center flex-1">
     <app-avatar resource="player" [id]="player().id" size="xlarge" />
     <div class="font-semibold">{{ player().name }}</div>
   </div>
 
-  <app-button-icon icon="chevron-right" size="3xl" [disabled]="!hasNext()" (click)="onNext()" />
+  <app-button-icon icon="chevron-right" [disabled]="!hasNext()" (click)="onNext()" />
 </div>

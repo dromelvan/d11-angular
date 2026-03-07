@@ -25,6 +25,13 @@ class HostWithSizeComponent {}
 })
 class HostWithDisabledComponent {}
 
+@Component({
+  template: ` <app-button-icon data-testid="button-icon" icon="${ICON}" [transparent]="true" /> `,
+  standalone: true,
+  imports: [ButtonIconComponent],
+})
+class HostWithTransparentComponent {}
+
 describe('ButtonIconComponent', () => {
   it('renders', async () => {
     await render(HostComponent);
@@ -45,7 +52,7 @@ describe('ButtonIconComponent', () => {
 
       const span = screen.getByTestId('button-icon').querySelector('span');
 
-      expect(span).toHaveClass('!text-xl');
+      expect(span).toHaveClass('text-xl!');
     });
 
     it('applies custom size', async () => {
@@ -53,8 +60,8 @@ describe('ButtonIconComponent', () => {
 
       const span = screen.getByTestId('button-icon').querySelector('span');
 
-      expect(span).toHaveClass('!text-lg');
-      expect(span).not.toHaveClass('!text-xl');
+      expect(span).toHaveClass('text-lg!');
+      expect(span).not.toHaveClass('text-xl!');
     });
   });
 
@@ -73,6 +80,26 @@ describe('ButtonIconComponent', () => {
       const button = screen.getByTestId('button-icon').querySelector('button');
 
       expect(button).toBeDisabled();
+    });
+  });
+
+  describe('transparent', () => {
+    it('uses semi-transparent bg classes by default', async () => {
+      await render(HostComponent);
+
+      const button = screen.getByTestId('button-icon').querySelector('button');
+
+      expect(button).not.toHaveClass('bg-transparent!');
+      expect(button).toHaveClass('bg-black/20!');
+    });
+
+    it('uses transparent bg classes when true', async () => {
+      await render(HostWithTransparentComponent);
+
+      const button = screen.getByTestId('button-icon').querySelector('button');
+
+      expect(button).toHaveClass('bg-transparent!');
+      expect(button).not.toHaveClass('bg-black/20!');
     });
   });
 });
