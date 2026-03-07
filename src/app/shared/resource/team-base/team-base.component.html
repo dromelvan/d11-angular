@@ -1,7 +1,11 @@
 <div
-  class="team-base app-row items-center gap-2"
+  class="team-base app-row items-center gap-1"
   [ngClass]="justify() ? 'justify-' + justify() : null"
 >
-  <app-team-img [team]="team()" />
+  @if (imgWidth(); as w) {
+    <app-team-img [team]="team()" [width]="w" />
+  } @else {
+    <app-team-img [team]="team()" />
+  }
   <span class="text-l">{{ team().name }}</span>
 </div>

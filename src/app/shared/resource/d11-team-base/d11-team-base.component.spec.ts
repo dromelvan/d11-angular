@@ -1,27 +1,31 @@
 import { Component } from '@angular/core';
 import type { D11TeamBase } from '@app/core/api';
 import { fakeD11TeamBase } from '@app/core/api/test/faker-util';
+import { ImgWidth } from '@app/shared/img/img-width';
 import { render, screen } from '@testing-library/angular';
 import { expect } from 'vitest';
 import { D11TeamBaseComponent } from './d11-team-base.component';
 
 let d11Team: D11TeamBase;
 let justify: 'start' | 'center' | 'end' | undefined;
+let imgWidth: string | undefined;
 
 @Component({
-  template: ` <app-d11-team-base [d11Team]="d11Team" [justify]="justify" /> `,
+  template: ` <app-d11-team-base [d11Team]="d11Team" [justify]="justify" [imgWidth]="imgWidth" /> `,
   standalone: true,
   imports: [D11TeamBaseComponent],
 })
 class HostComponent {
   d11Team = d11Team;
   justify = justify;
+  imgWidth = imgWidth;
 }
 
 describe('D11TeamBaseComponent', () => {
   beforeEach(async () => {
     d11Team = fakeD11TeamBase();
     justify = undefined;
+    imgWidth = undefined;
     await render(HostComponent, {});
   });
 
@@ -60,5 +64,28 @@ describe('D11TeamBaseComponent justify', () => {
     expect(d11TeamElement).not.toHaveClass('justify-start');
     expect(d11TeamElement).not.toHaveClass('justify-center');
     expect(d11TeamElement).not.toHaveClass('justify-end');
+  });
+});
+
+describe('D11TeamBaseComponent d11 team image', () => {
+  it('has propagated imgWidth', async () => {
+    d11Team = fakeD11TeamBase();
+    imgWidth = ImgWidth.LARGE;
+
+    await render(HostComponent, {});
+
+    const img = screen.getByAltText(d11Team.name) as HTMLImageElement;
+
+    expect(img).toHaveAttribute('width', ImgWidth.LARGE);
+  });
+
+  it('has default width when no imgWidth provided', async () => {
+    d11Team = fakeD11TeamBase();
+    imgWidth = undefined;
+    await render(HostComponent, {});
+
+    const img = screen.getByAltText(d11Team.name) as HTMLImageElement;
+
+    expect(img).toHaveAttribute('width', '32');
   });
 });

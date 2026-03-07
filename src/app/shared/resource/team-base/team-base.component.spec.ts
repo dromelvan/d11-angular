@@ -1,27 +1,31 @@
 import { Component } from '@angular/core';
 import type { TeamBase } from '@app/core/api';
 import { fakeTeamBase } from '@app/core/api/test/faker-util';
+import { ImgWidth } from '@app/shared/img/img-width';
 import { render, screen } from '@testing-library/angular';
 import { expect } from 'vitest';
 import { TeamBaseComponent } from './team-base.component';
 
 let team: TeamBase;
 let justify: 'start' | 'center' | 'end' | undefined;
+let imgWidth: string | undefined;
 
 @Component({
-  template: ` <app-team-base [team]="team" [justify]="justify" /> `,
+  template: ` <app-team-base [team]="team" [justify]="justify" [imgWidth]="imgWidth" /> `,
   standalone: true,
   imports: [TeamBaseComponent],
 })
 class HostComponent {
   team = team;
   justify = justify;
+  imgWidth = imgWidth;
 }
 
 describe('TeamBaseComponent', () => {
   beforeEach(async () => {
     team = fakeTeamBase();
     justify = undefined;
+    imgWidth = undefined;
     await render(HostComponent, {});
   });
 
@@ -60,5 +64,27 @@ describe('TeamBaseComponent justify', () => {
     expect(teamElement).not.toHaveClass('justify-start');
     expect(teamElement).not.toHaveClass('justify-center');
     expect(teamElement).not.toHaveClass('justify-end');
+  });
+});
+
+describe('TeamBaseComponent team image', () => {
+  it('has propagated imgWidth', async () => {
+    team = fakeTeamBase();
+    imgWidth = ImgWidth.LARGE;
+    await render(HostComponent, {});
+
+    const img = screen.getByAltText(team.name) as HTMLImageElement;
+
+    expect(img).toHaveAttribute('width', ImgWidth.LARGE);
+  });
+
+  it('has default width when no imgWidth provided', async () => {
+    team = fakeTeamBase();
+    imgWidth = undefined;
+    await render(HostComponent, {});
+
+    const img = screen.getByAltText(team.name) as HTMLImageElement;
+
+    expect(img).toHaveAttribute('width', '32');
   });
 });

@@ -11,4 +11,5 @@ import { NgClass } from '@angular/common';
 export class D11TeamBaseComponent {
   d11Team = input.required<D11TeamBase>();
   justify = input<'start' | 'center' | 'end'>();
+  imgWidth = input<string>();
 }
