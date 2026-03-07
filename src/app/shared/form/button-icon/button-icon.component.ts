@@ -11,5 +11,5 @@ export class ButtonIconComponent {
   size = input<string>('xl');
   disabled = input<boolean>(false);
 
-  protected iconClass = computed(() => `pi pi-${this.icon()} !text-${this.size()}`);
+  protected iconClass = computed(() => `pi pi-${this.icon()} text-${this.size()}!`);
 }
