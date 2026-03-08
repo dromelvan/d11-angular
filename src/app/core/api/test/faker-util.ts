@@ -11,6 +11,7 @@ import { Season } from '@app/core/api/model/season.model';
 import { Status } from '@app/core/api/model/status.model';
 import { TeamBase } from '@app/core/api/model/team-base.model';
 import { faker } from '@faker-js/faker';
+import { StadiumBase } from '@app/core/api';
 
 export const fakeTeamBase = (): TeamBase => ({
   id: faker.number.int({ min: 1, max: 100 }),
@@ -49,6 +50,12 @@ export const fakeSeason = (): Season => ({
   legacy: faker.datatype.boolean(),
 });
 
+export const fakeStadiumBase = (): StadiumBase => ({
+  id: faker.number.int({ min: 1, max: 38 }),
+  name: faker.string.alpha(10).toUpperCase(),
+  city: faker.string.alpha(10).toUpperCase(),
+});
+
 const fakeMatchWeekBase = (): MatchWeekBase => ({
   id: faker.number.int({ min: 1, max: 38 }),
   matchWeekNumber: faker.number.int({ min: 1, max: 38 }),
@@ -59,9 +66,12 @@ export const fakeMatchBase = (): MatchBase => ({
   datetime: faker.date.recent().toISOString(),
   homeTeamGoalsScored: faker.number.int({ min: 0, max: 10 }),
   awayTeamGoalsScored: faker.number.int({ min: 0, max: 10 }),
+  elapsed: faker.helpers.arrayElement(['N/A', '3', 'HT', '78', 'FT']),
+  status: faker.helpers.arrayElement([Status.ACTIVE, Status.FINISHED, Status.PENDING]),
   homeTeam: fakeTeamBase(),
   awayTeam: fakeTeamBase(),
   matchWeek: fakeMatchWeekBase(),
+  stadium: fakeStadiumBase(),
 });
 
 export const fakePlayerBase = (): PlayerBase => ({
@@ -137,8 +147,8 @@ export const fakePlayerMatchStat = (): PlayerMatchStat => ({
   goalsConceded: faker.number.int({ min: 0, max: 5 }),
   yellowCardTime: faker.number.int({ min: 0, max: 90 }),
   redCardTime: faker.number.int({ min: 0, max: 90 }),
-  manOfTheMatch: faker.number.int({ min: 0, max: 1 }),
-  sharedManOfTheMatch: faker.number.int({ min: 0, max: 1 }),
+  manOfTheMatch: faker.datatype.boolean(),
+  sharedManOfTheMatch: faker.datatype.boolean(),
   rating: faker.number.float({ min: 0, max: 10 }),
   points: faker.number.int({ min: -5, max: 25 }),
   player: fakePlayerBase(),
