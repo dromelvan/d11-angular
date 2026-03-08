@@ -39,6 +39,22 @@
         @apply bg-(--p-success);
     }
 
+    .text-error {
+        @apply text-(--p-error);
+    }
+
+    .bg-error {
+        @apply bg-(--p-error);
+    }
+
+    .text-warning {
+        @apply text-(--p-warning);
+    }
+
+    .bg-warning {
+        @apply bg-(--p-warning);
+    }
+
     /* Layout styling */
     .app-flex {
         @apply flex items-center;
