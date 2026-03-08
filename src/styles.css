@@ -30,6 +30,15 @@
 }
 
 @layer components {
+    /* Colour styling */
+    .text-success {
+        @apply text-(--p-success);
+    }
+
+    .bg-success {
+        @apply bg-(--p-success);
+    }
+
     /* Layout styling */
     .app-flex {
         @apply flex items-center;

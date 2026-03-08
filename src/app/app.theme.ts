@@ -11,6 +11,7 @@ export const D11Light = definePreset(Aura, {
         primary: {
           hoverColor: 'var(--p-primary-400)',
         },
+        success: '{green.600}',
       },
     },
     disabledOpacity: 0.75,
