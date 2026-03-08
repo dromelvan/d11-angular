@@ -22,7 +22,7 @@ describe('UtilityBarComponent', () => {
 
     const buttonIcon = component.querySelector('app-button-icon');
     expect(buttonIcon).toBeInTheDocument();
-    expect(buttonIcon).toHaveClass('sm:!hidden');
+    expect(buttonIcon).toHaveClass('sm:hidden!');
 
     const span = buttonIcon?.querySelector('span');
     expect(span).toBeInTheDocument();

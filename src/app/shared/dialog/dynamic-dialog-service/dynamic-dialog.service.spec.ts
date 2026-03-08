@@ -56,12 +56,12 @@ describe('DynamicDialogService', () => {
       expect(data.list).toBe(stats);
     });
 
-    it('sets data.action.label to "Match stats"', () => {
+    it('sets data.action.label to "Match Details"', () => {
       const stat = fakePlayerMatchStat();
       service.openPlayerMatchStat(stat, [stat]);
 
       const { data } = dialogService.open.mock.calls[0][1];
-      expect(data.action.label).toBe('Match stats');
+      expect(data.action.label).toBe('Match Details');
     });
 
     it('sets data.action.icon to "calendar"', () => {

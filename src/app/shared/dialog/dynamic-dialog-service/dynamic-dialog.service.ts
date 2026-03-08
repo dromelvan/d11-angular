@@ -29,7 +29,7 @@ export class DynamicDialogService {
         current: current,
         list: playerMatchStats,
         action: {
-          label: 'Match stats',
+          label: 'Match Details',
           icon: 'calendar',
           onClick: () => console.log(`TODO: Match ${playerMatchStat.match.id}`),
         },

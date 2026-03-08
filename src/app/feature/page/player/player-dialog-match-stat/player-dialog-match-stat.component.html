@@ -1,0 +1,130 @@
+@let pms = playerMatchStat();
+<div class="app-col pt-4 min-h-95 max-h-95">
+  <div class="grid grid-cols-[1fr_2.1rem_2.1rem_2.1rem_1fr] items-center">
+    <span
+      class="app-grid-cell justify-end pr-1"
+      [class.font-bold]="pms.match.homeTeam.id === pms.team.id"
+    >
+      {{ pms.match.homeTeam.shortName }}
+    </span>
+    <app-team-img [team]="pms.match.homeTeam" />
+
+    <div class="app-grid-cell min-w-2.5 flex justify-center">
+      {{ pms.match.homeTeamGoalsScored }}&ndash;{{ pms.match.awayTeamGoalsScored }}
+    </div>
+    <app-team-img [team]="pms.match.awayTeam" />
+    <div
+      class="app-grid-cell text-left pl-1"
+      [class.font-bold]="pms.match.awayTeam.id === pms.team.id"
+    >
+      {{ pms.match.awayTeam.shortName }}
+    </div>
+
+    <div class="app-grid-cell col-span-2 pt-2 justify-center">{{ pms.match.stadium.name }}</div>
+    <div class="app-grid-cell justify-center pt-2">{{ pms.match.elapsed }}</div>
+    <div class="app-grid-cell col-span-2 pt-2 justify-center">
+      {{ pms.match.datetime | date: 'd.M yyyy&nbsp;&nbsp;H:mm' }}
+    </div>
+  </div>
+
+  <div class="grid grid-cols-2">
+    <div class="app-grid-sub-header mt-0 col-span-2">D11</div>
+
+    @if (!pms.d11Team.dummy) {
+      <span class="app-grid-cell">D11 team</span>
+      <span class="app-grid-cell justify-end">
+        <app-d11-team-base [d11Team]="pms.d11Team" [imgWidth]="ImgWidth.TINY" />
+      </span>
+      <div class="app-grid-separator col-span-2"></div>
+    }
+
+    <span class="app-grid-cell">Position</span>
+    <span class="app-grid-cell justify-end">{{ pms.position.name }}</span>
+    <div class="app-grid-separator col-span-2"></div>
+
+    @if (pms.rating > 0) {
+      <span class="app-grid-cell">Rating</span>
+      <span class="app-grid-cell justify-end">{{ pms.rating | rating }}</span>
+      <div class="app-grid-separator col-span-2"></div>
+    }
+
+    @if (pms.manOfTheMatch || pms.sharedManOfTheMatch) {
+      <span class="app-grid-cell">Man of the Match</span>
+      <span class="app-grid-cell justify-end">
+        @if (pms.manOfTheMatch) {
+          <i class="pi pi-star-fill text-primary-500"></i>
+        } @else {
+          <i class="pi pi-star-half-fill text-primary-500"></i>
+        }
+      </span>
+      <div class="app-grid-separator col-span-2"></div>
+    }
+
+    <span class="app-grid-cell">Points</span>
+    <span class="app-grid-cell justify-end">{{ pms.points }}</span>
+
+    @if (pms.lineup === Lineup.DID_NOT_PARTICIPATE) {
+      <div class="flex justify-center items-center flex-1 col-span-2 pt-4">Did not participate</div>
+    } @else if (pms.lineup === Lineup.SUBSTITUTE && pms.substitutionOnTime <= 0) {
+      <div class="flex justify-center items-center flex-1 col-span-2 pt-4">Unused substitute</div>
+    } @else {
+      <div class="app-grid-sub-header col-span-2">Match stats</div>
+
+      @if (pms.goals > 0) {
+        <span class="app-grid-cell">Goals</span>
+        <span class="app-grid-cell justify-end">{{ pms.goals }}</span>
+        <div class="app-grid-separator col-span-2"></div>
+      }
+
+      @if (pms.goalAssists > 0) {
+        <span class="app-grid-cell">Assists</span>
+        <span class="app-grid-cell justify-end">{{ pms.goalAssists }}</span>
+        <div class="app-grid-separator col-span-2"></div>
+      }
+
+      @if (pms.ownGoals > 0) {
+        <span class="app-grid-cell">Own goals</span>
+        <span class="app-grid-cell justify-end">{{ pms.ownGoals }}</span>
+      }
+
+      @if (pms.goalsConceded === 0 && pms.position.id < 5) {
+        <span class="app-grid-cell">Clean sheet</span>
+        <span class="app-grid-cell justify-end">
+          <i class="pi pi-check text-success"></i>
+        </span>
+      }
+
+      @if (pms.goalsConceded > 0 && pms.position.defender) {
+        <span class="app-grid-cell">Goals conceded</span>
+        <span class="app-grid-cell justify-end">{{ pms.goalsConceded }}</span>
+      }
+
+      @if (pms.yellowCardTime > 0) {
+        <span class="app-grid-cell">Yellow card</span>
+        <span class="app-grid-cell justify-end"> {{ pms.yellowCardTime }}'</span>
+        <div class="app-grid-separator col-span-2"></div>
+      }
+
+      @if (pms.redCardTime > 0) {
+        <span class="app-grid-cell">Red card</span>
+        <span class="app-grid-cell justify-end"> {{ pms.redCardTime }}'</span>
+        <div class="app-grid-separator col-span-2"></div>
+      }
+
+      @if (pms.substitutionOnTime > 0) {
+        <span class="app-grid-cell">Substituted on</span>
+        <span class="app-grid-cell justify-end"> {{ pms.substitutionOnTime }}'</span>
+        <div class="app-grid-separator col-span-2"></div>
+      }
+
+      @if (pms.substitutionOffTime > 0) {
+        <span class="app-grid-cell">Substituted off</span>
+        <span class="app-grid-cell justify-end"> {{ pms.substitutionOffTime }}'</span>
+        <div class="app-grid-separator col-span-2"></div>
+      }
+
+      <span class="app-grid-cell">Minutes played</span>
+      <span class="app-grid-cell justify-end"> {{ minutesPlayed() }}</span>
+    }
+  </div>
+</div>
