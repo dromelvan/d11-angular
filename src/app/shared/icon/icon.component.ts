@@ -1,6 +1,13 @@
 import { Component, computed, input } from '@angular/core';
 
-export type IconPreset = 'account_circle' | 'check' | 'test';
+export type IconPreset =
+  | 'account_circle'
+  | 'check'
+  | 'mom'
+  | 'red_card'
+  | 'shared_mom'
+  | 'yellow_card'
+  | 'test';
 
 export const ICON_PRESETS: Record<
   IconPreset,
@@ -14,6 +21,10 @@ export const ICON_PRESETS: Record<
 > = {
   account_circle: { name: 'account_circle', weight: 300 },
   check: { name: 'check', weight: 600, class: 'text-success' },
+  mom: { name: 'star', fill: true, weight: 400, class: 'text-primary' },
+  red_card: { name: 'crop_portrait', fill: true, weight: 400, class: 'text-error' },
+  shared_mom: { name: 'star_half', fill: true, weight: 400, class: 'text-primary' },
+  yellow_card: { name: 'crop_portrait', fill: true, weight: 400, class: 'text-warning' },
 
   test: { name: 'bug_report', fill: true, weight: 700, size: 56, class: 'text-2xl' },
 };

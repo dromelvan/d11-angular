@@ -146,9 +146,13 @@ describe('PlayerDialogMatchStatComponent', () => {
 
       const element = screen.getByText('Man of the Match');
       expect(element).toBeInTheDocument();
-      expect(element.nextElementSibling?.querySelector('.pi-star-fill')).toBeInTheDocument();
+
+      const icon = element.nextElementSibling?.querySelector('app-icon');
+      expect(icon).toBeInTheDocument();
+      expect(icon).toHaveAttribute('icon', 'mom');
+
       expect(
-        element.nextElementSibling?.querySelector('.pi-star-half-fill'),
+        element.nextElementSibling?.querySelector('[icon="shared_mom"]'),
       ).not.toBeInTheDocument();
     });
 
@@ -163,8 +167,12 @@ describe('PlayerDialogMatchStatComponent', () => {
 
       const element = screen.getByText('Man of the Match');
       expect(element).toBeInTheDocument();
-      expect(element.nextElementSibling?.querySelector('.pi-star-half-fill')).toBeInTheDocument();
-      expect(element.nextElementSibling?.querySelector('.pi-star-fill')).not.toBeInTheDocument();
+
+      const icon = element.nextElementSibling?.querySelector('app-icon');
+      expect(icon).toBeInTheDocument();
+      expect(icon).toHaveAttribute('icon', 'shared_mom');
+
+      expect(element.nextElementSibling?.querySelector('[icon="mom"]')).not.toBeInTheDocument();
     });
 
     it('does not render non man of the match', async () => {

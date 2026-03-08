@@ -52,9 +52,9 @@
       <span class="app-grid-cell">Man of the Match</span>
       <span class="app-grid-cell justify-end">
         @if (pms.manOfTheMatch) {
-          <i class="pi pi-star-fill text-primary-500"></i>
+          <app-icon icon="mom" />
         } @else {
-          <i class="pi pi-star-half-fill text-primary-500"></i>
+          <app-icon icon="shared_mom" />
         }
       </span>
       <div class="app-grid-separator col-span-2"></div>
@@ -101,7 +101,10 @@
 
       @if (pms.yellowCardTime > 0) {
         <span class="app-grid-cell">Yellow card</span>
-        <span class="app-grid-cell justify-end"> {{ pms.yellowCardTime }}'</span>
+        <span class="app-grid-cell justify-end">
+          <app-icon icon="yellow_card" />
+          {{ pms.yellowCardTime }}'
+        </span>
         <div class="app-grid-separator col-span-2"></div>
       }
 
