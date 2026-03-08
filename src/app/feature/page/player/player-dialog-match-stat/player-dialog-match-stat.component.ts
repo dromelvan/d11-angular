@@ -5,10 +5,11 @@ import { DynamicDialogConfig } from 'primeng/dynamicdialog';
 import { ImgWidth, TeamImgComponent } from '@app/shared/img';
 import { DatePipe } from '@angular/common';
 import { D11TeamBaseComponent } from '@app/shared/resource';
+import { IconComponent } from '@app/shared/icon/icon.component';
 
 @Component({
   selector: 'app-player-match-stat-dialog',
-  imports: [RatingPipe, TeamImgComponent, DatePipe, D11TeamBaseComponent],
+  imports: [RatingPipe, TeamImgComponent, DatePipe, D11TeamBaseComponent, IconComponent],
   templateUrl: './player-dialog-match-stat.component.html',
 })
 export class PlayerDialogMatchStatComponent {

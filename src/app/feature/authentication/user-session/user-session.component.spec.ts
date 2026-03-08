@@ -34,8 +34,9 @@ describe('UserSessionComponent', () => {
     const component = screen.getByTestId('user-session');
     expect(component).toBeInTheDocument();
 
-    const icon = component.querySelector('app-icon-user-circle');
+    const icon = component.querySelector('app-icon');
     expect(icon).toBeInTheDocument();
+    expect(icon).toHaveAttribute('icon', 'account_circle');
 
     const avatar = component.querySelector('app-avatar');
     expect(avatar).not.toBeInTheDocument();

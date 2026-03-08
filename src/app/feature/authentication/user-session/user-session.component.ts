@@ -1,13 +1,13 @@
 import { Component, inject } from '@angular/core';
 import { UserSessionService } from '@app/core/auth/user-session.service';
 import { AvatarComponent } from '@app/shared/avatar/avatar.component';
-import { IconUserCircleComponent } from '@app/shared/icon/user-circle/icon-user-circle.component';
 import { MenuItem } from 'primeng/api';
 import { Menu } from 'primeng/menu';
+import { IconComponent } from '@app/shared/icon/icon.component';
 
 @Component({
   selector: 'app-user-session',
-  imports: [AvatarComponent, IconUserCircleComponent, Menu],
+  imports: [AvatarComponent, Menu, IconComponent],
   templateUrl: './user-session.component.html',
 })
 export class UserSessionComponent {

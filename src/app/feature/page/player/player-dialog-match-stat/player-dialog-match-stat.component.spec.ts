@@ -333,7 +333,11 @@ describe('PlayerDialogMatchStatComponent', () => {
 
       const element = screen.getByText('Clean sheet');
       expect(element).toBeInTheDocument();
-      expect(element.nextElementSibling?.querySelector('.pi-check')).toBeInTheDocument();
+
+      const icon = element.nextElementSibling?.querySelector('app-icon');
+      expect(icon).toBeInTheDocument();
+      expect(icon).toHaveAttribute('icon', 'check');
+
       expect(screen.queryByText('Goals conceded')).not.toBeInTheDocument();
     });
 
