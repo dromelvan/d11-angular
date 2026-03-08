@@ -10,6 +10,7 @@ export * from './model/player-search-result.model';
 export * from './model/player-season-stat.model';
 export * from './model/position.model';
 export * from './model/season.model';
+export * from './model/stadium-base.model';
 export * from './model/status.model';
 export * from './model/team-base.model';
 export * from './model/user.model';

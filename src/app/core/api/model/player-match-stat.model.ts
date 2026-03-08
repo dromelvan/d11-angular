@@ -16,8 +16,8 @@ export interface PlayerMatchStat {
   goalsConceded: number;
   yellowCardTime: number;
   redCardTime: number;
-  manOfTheMatch: number;
-  sharedManOfTheMatch: number;
+  manOfTheMatch: boolean;
+  sharedManOfTheMatch: boolean;
   rating: number;
   points: number;
   player: PlayerBase;
