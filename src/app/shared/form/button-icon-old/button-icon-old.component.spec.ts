@@ -1,34 +1,36 @@
 import { Component } from '@angular/core';
 import { render, screen } from '@testing-library/angular';
-import { ButtonIconComponent } from './button-icon.component';
+import { ButtonIconOldComponent } from './button-icon-old.component';
 
 const ICON = 'user';
 
 @Component({
-  template: ` <app-button-icon data-testid="button-icon" icon="${ICON}" /> `,
+  template: ` <app-button-icon-old data-testid="button-icon" icon="${ICON}" /> `,
   standalone: true,
-  imports: [ButtonIconComponent],
+  imports: [ButtonIconOldComponent],
 })
 class HostComponent {}
 
 @Component({
-  template: ` <app-button-icon data-testid="button-icon" icon="${ICON}" [size]="48" /> `,
+  template: ` <app-button-icon-old data-testid="button-icon" icon="${ICON}" size="lg" /> `,
   standalone: true,
-  imports: [ButtonIconComponent],
+  imports: [ButtonIconOldComponent],
 })
 class HostWithSizeComponent {}
 
 @Component({
-  template: ` <app-button-icon data-testid="button-icon" icon="${ICON}" [disabled]="true" /> `,
+  template: ` <app-button-icon-old data-testid="button-icon" icon="${ICON}" [disabled]="true" /> `,
   standalone: true,
-  imports: [ButtonIconComponent],
+  imports: [ButtonIconOldComponent],
 })
 class HostWithDisabledComponent {}
 
 @Component({
-  template: ` <app-button-icon data-testid="button-icon" icon="${ICON}" [transparent]="true" /> `,
+  template: `
+    <app-button-icon-old data-testid="button-icon" icon="${ICON}" [transparent]="true" />
+  `,
   standalone: true,
-  imports: [ButtonIconComponent],
+  imports: [ButtonIconOldComponent],
 })
 class HostWithTransparentComponent {}
 
@@ -40,24 +42,28 @@ describe('ButtonIconComponent', () => {
 
     expect(component).toBeInTheDocument();
 
-    const icon = screen.getByText(ICON);
+    const span = component.querySelector('span');
 
-    expect(icon).toBeInTheDocument();
-    expect(icon).toHaveTextContent(ICON);
+    expect(span).toBeInTheDocument();
+    expect(span).toHaveClass(`pi-${ICON}`);
   });
 
   describe('size', () => {
-    it('defaults to 24', async () => {
+    it('defaults to xl', async () => {
       await render(HostComponent);
 
-      expect(screen.getByText(ICON)).toHaveStyle('font-size: 24px');
+      const span = screen.getByTestId('button-icon').querySelector('span');
+
+      expect(span).toHaveClass('text-xl!');
     });
 
     it('applies custom size', async () => {
       await render(HostWithSizeComponent);
 
-      expect(screen.getByText(ICON)).toHaveStyle('font-size: 48px');
-      expect(screen.getByText(ICON)).not.toHaveStyle('font-size: 24px');
+      const span = screen.getByTestId('button-icon').querySelector('span');
+
+      expect(span).toHaveClass('text-lg!');
+      expect(span).not.toHaveClass('text-xl!');
     });
   });
 

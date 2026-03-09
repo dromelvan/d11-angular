@@ -40,7 +40,9 @@ describe('PlayerDialogHeaderComponent', () => {
     it('disables left and enables right at first item', async () => {
       await setup(0);
 
-      const [left, right] = document.querySelectorAll<HTMLButtonElement>('app-button-icon button');
+      const [left, right] = document.querySelectorAll<HTMLButtonElement>(
+        'app-button-icon-old button',
+      );
 
       expect(left).toBeDisabled();
       expect(right).not.toBeDisabled();
@@ -49,7 +51,9 @@ describe('PlayerDialogHeaderComponent', () => {
     it('enables left and disables right at last item', async () => {
       await setup(2);
 
-      const [left, right] = document.querySelectorAll<HTMLButtonElement>('app-button-icon button');
+      const [left, right] = document.querySelectorAll<HTMLButtonElement>(
+        'app-button-icon-old button',
+      );
 
       expect(left).not.toBeDisabled();
       expect(right).toBeDisabled();
@@ -58,7 +62,9 @@ describe('PlayerDialogHeaderComponent', () => {
     it('enables both when in the middle', async () => {
       await setup(1);
 
-      const [left, right] = document.querySelectorAll<HTMLButtonElement>('app-button-icon button');
+      const [left, right] = document.querySelectorAll<HTMLButtonElement>(
+        'app-button-icon-old button',
+      );
 
       expect(left).not.toBeDisabled();
       expect(right).not.toBeDisabled();

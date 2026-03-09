@@ -22,11 +22,8 @@ describe('UtilityBarComponent', () => {
 
     const buttonIcon = component.querySelector('app-button-icon');
     expect(buttonIcon).toBeInTheDocument();
+    expect(buttonIcon).toHaveTextContent('search');
     expect(buttonIcon).toHaveClass('sm:hidden!');
-
-    const span = buttonIcon?.querySelector('span');
-    expect(span).toBeInTheDocument();
-    expect(span).toHaveClass(`pi-search`);
 
     const autocomplete = component.querySelector('app-search-autocomplete');
     expect(autocomplete).toBeInTheDocument();
