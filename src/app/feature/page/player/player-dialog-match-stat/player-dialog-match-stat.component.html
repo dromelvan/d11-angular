@@ -110,19 +110,22 @@
 
       @if (pms.redCardTime > 0) {
         <span class="app-grid-cell">Red card</span>
-        <span class="app-grid-cell justify-end"> {{ pms.redCardTime }}'</span>
+        <span class="app-grid-cell justify-end">
+          <app-icon icon="red_card" />
+          {{ pms.redCardTime }}'
+        </span>
         <div class="app-grid-separator col-span-2"></div>
       }
 
       @if (pms.substitutionOnTime > 0) {
         <span class="app-grid-cell">Substituted on</span>
-        <span class="app-grid-cell justify-end"> {{ pms.substitutionOnTime }}'</span>
+        <span class="app-grid-cell justify-end">{{ pms.substitutionOnTime }}'</span>
         <div class="app-grid-separator col-span-2"></div>
       }
 
       @if (pms.substitutionOffTime > 0) {
         <span class="app-grid-cell">Substituted off</span>
-        <span class="app-grid-cell justify-end"> {{ pms.substitutionOffTime }}'</span>
+        <span class="app-grid-cell justify-end">{{ pms.substitutionOffTime }}'</span>
         <div class="app-grid-separator col-span-2"></div>
       }
 
