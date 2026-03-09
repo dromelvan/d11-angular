@@ -2,12 +2,14 @@ import { D11TeamBase } from '@app/core/api/model/d11-team-base.model';
 import { Lineup } from '@app/core/api/model/lineup.model';
 import { MatchBase } from '@app/core/api/model/match-base.model';
 import { MatchWeekBase } from '@app/core/api/model/match-week-base.model';
+import { Match } from '@app/core/api/model/match.model';
 import { PlayerBase } from '@app/core/api/model/player-base.model';
 import { PlayerMatchStat } from '@app/core/api/model/player-match-stat.model';
 import { PlayerSeasonStat } from '@app/core/api/model/player-season-stat.model';
 import { Player } from '@app/core/api/model/player.model';
 import { Position } from '@app/core/api/model/position.model';
 import { Season } from '@app/core/api/model/season.model';
+import { Stadium } from '@app/core/api/model/stadium.model';
 import { Status } from '@app/core/api/model/status.model';
 import { TeamBase } from '@app/core/api/model/team-base.model';
 import { faker } from '@faker-js/faker';
@@ -56,6 +58,13 @@ export const fakeStadiumBase = (): StadiumBase => ({
   city: faker.string.alpha(10).toUpperCase(),
 });
 
+export const fakeStadium = (): Stadium => ({
+  ...fakeStadiumBase(),
+  capacity: faker.number.int({ min: 10000, max: 90000 }),
+  opened: faker.number.int({ min: 1900, max: 2020 }),
+  photoFileName: `${faker.system.fileName()}.jpg`,
+});
+
 const fakeMatchWeekBase = (): MatchWeekBase => ({
   id: faker.number.int({ min: 1, max: 38 }),
   matchWeekNumber: faker.number.int({ min: 1, max: 38 }),
@@ -72,6 +81,13 @@ export const fakeMatchBase = (): MatchBase => ({
   awayTeam: fakeTeamBase(),
   matchWeek: fakeMatchWeekBase(),
   stadium: fakeStadiumBase(),
+});
+
+export const fakeMatch = (): Match => ({
+  ...fakeMatchBase(),
+  statSourceId: faker.number.int({ min: 1, max: 999999 }),
+  previousHomeTeamGoalsScored: faker.number.int({ min: 0, max: 10 }),
+  previousAwayTeamGoalsScored: faker.number.int({ min: 0, max: 10 }),
 });
 
 export const fakePlayerBase = (): PlayerBase => ({
