@@ -3,9 +3,17 @@ import { Component, computed, input } from '@angular/core';
 export type IconPreset =
   | 'account_circle'
   | 'check'
+  | 'goal'
+  | 'league_table'
+  | 'match'
+  | 'match_week'
   | 'mom'
+  | 'own_goal'
+  | 'player'
   | 'red_card'
   | 'shared_mom'
+  | 'substitution_off'
+  | 'substitution_on'
   | 'yellow_card'
   | 'test';
 
@@ -21,9 +29,17 @@ export const ICON_PRESETS: Record<
 > = {
   account_circle: { name: 'account_circle', weight: 300 },
   check: { name: 'check', weight: 600, class: 'text-success' },
+  goal: { name: 'sports_and_outdoors', weight: 200, size: 22 },
+  league_table: { name: 'table_rows_narrow', weight: 300 },
+  match: { name: 'date_range', weight: 300, size: 32 },
+  match_week: { name: 'date_range', weight: 300 },
   mom: { name: 'star', fill: true, weight: 400, class: 'text-primary' },
+  own_goal: { name: 'sports_and_outdoors', weight: 200, size: 22, class: 'text-error' },
+  player: { name: 'person', fill: true, weight: 200 },
   red_card: { name: 'crop_portrait', fill: true, weight: 400, class: 'text-error' },
   shared_mom: { name: 'star_half', fill: true, weight: 400, class: 'text-primary' },
+  substitution_off: { name: 'arrow_downward', fill: true, weight: 400, class: 'text-error' },
+  substitution_on: { name: 'arrow_upward', fill: true, weight: 400, class: 'text-success' },
   yellow_card: { name: 'crop_portrait', fill: true, weight: 400, class: 'text-warning' },
 
   test: { name: 'bug_report', fill: true, weight: 700, size: 56, class: 'text-2xl' },
