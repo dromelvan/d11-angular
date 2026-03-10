@@ -18,7 +18,7 @@ export class DynamicDialogService {
 
     this.dialogRef = this.dialogService.open(PlayerDialogMatchStatComponent, {
       modal: true,
-      styleClass: 'w-full sm:w-[25rem] sm:max-h-[50rem]! mx-4! border-0!',
+      styleClass: 'w-full sm:w-[25rem] sm:max-h-[50rem]! mx-4! border-0! overflow-hidden',
       closable: true,
       templates: {
         header: PlayerDialogHeaderComponent,

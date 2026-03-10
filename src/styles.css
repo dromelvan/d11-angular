@@ -143,7 +143,7 @@
     }
 
     .app-dialog-header {
-        @apply p-4 rounded-t-(--p-dialog-border-radius);
+        @apply p-4;
     }
 
     .app-stat-widget {
