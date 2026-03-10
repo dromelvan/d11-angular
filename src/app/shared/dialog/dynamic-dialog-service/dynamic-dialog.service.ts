@@ -3,7 +3,10 @@ import { DialogService, DynamicDialogRef } from 'primeng/dynamicdialog';
 import { PlayerMatchStat } from '@app/core/api';
 import { PlayerDialogMatchStatComponent } from '@app/feature/page/player/player-dialog-match-stat/player-dialog-match-stat.component';
 import { PlayerDialogHeaderComponent } from '@app/feature/page/player/player-dialog-header/player-dialog-header.component';
-import { DynamicDialogFooterComponent } from '@app/shared/dialog/dynamic-dialog-footer/dynamic-dialog-footer.component';
+import {
+  DialogFooterAction,
+  DynamicDialogFooterComponent,
+} from '@app/shared/dialog/dynamic-dialog-footer/dynamic-dialog-footer.component';
 
 @Injectable({
   providedIn: 'root',
@@ -12,7 +15,11 @@ export class DynamicDialogService {
   private dialogService = inject(DialogService);
   private dialogRef: DynamicDialogRef | null | undefined;
 
-  openPlayerMatchStat(playerMatchStat: PlayerMatchStat, playerMatchStats: PlayerMatchStat[]): void {
+  openPlayerMatchStat(
+    playerMatchStat: PlayerMatchStat,
+    playerMatchStats: PlayerMatchStat[],
+    action: DialogFooterAction,
+  ): void {
     this.dialogRef?.close();
     const current = signal<PlayerMatchStat>(playerMatchStat);
 
@@ -28,11 +35,7 @@ export class DynamicDialogService {
         player: playerMatchStat.player,
         current: current,
         list: playerMatchStats,
-        action: {
-          label: 'Match Details',
-          icon: 'calendar',
-          onClick: () => console.log(`TODO: Match ${playerMatchStat.match.id}`),
-        },
+        action,
       },
     });
   }

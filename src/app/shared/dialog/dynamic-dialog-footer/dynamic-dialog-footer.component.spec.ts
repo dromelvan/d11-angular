@@ -6,15 +6,21 @@ import {
   DynamicDialogFooterComponent,
 } from './dynamic-dialog-footer.component';
 import { vi } from 'vitest';
+import { signal } from '@angular/core';
+import { fakePlayerMatchStat } from '@app/core/api/test/faker-util';
 
 function buildRef() {
   return { close: vi.fn() };
 }
 
 function buildProviders(action?: DialogFooterAction) {
+  const current = signal(fakePlayerMatchStat());
   return [
     { provide: DynamicDialogRef, useValue: buildRef() },
-    { provide: DynamicDialogConfig, useValue: { data: action ? { action } : {} } },
+    {
+      provide: DynamicDialogConfig,
+      useValue: { data: action ? { action, current } : { current } },
+    },
   ];
 }
 
@@ -28,11 +34,12 @@ describe('DynamicDialogFooterComponent', () => {
 
     it('closes the dialog when clicked', async () => {
       const ref = buildRef();
+      const current = signal(fakePlayerMatchStat());
 
       await render(DynamicDialogFooterComponent, {
         providers: [
           { provide: DynamicDialogRef, useValue: ref },
-          { provide: DynamicDialogConfig, useValue: { data: {} } },
+          { provide: DynamicDialogConfig, useValue: { data: { current } } },
         ],
       });
       await userEvent.click(screen.getByText('Done'));
@@ -56,12 +63,12 @@ describe('DynamicDialogFooterComponent', () => {
       expect(screen.getByText('View player')).toBeInTheDocument();
     });
 
-    it('renders the icon when provided', async () => {
+    it('renders an icon when provided', async () => {
       await render(DynamicDialogFooterComponent, {
-        providers: buildProviders({ label: 'View', icon: 'user', onClick: vi.fn() }),
+        providers: buildProviders({ label: 'View', icon: 'match', onClick: vi.fn() }),
       });
 
-      expect(document.querySelector('.pi-user')).toBeInTheDocument();
+      expect(document.querySelector('app-icon')).toBeInTheDocument();
     });
 
     it('does not render an icon when not provided', async () => {
@@ -69,26 +76,29 @@ describe('DynamicDialogFooterComponent', () => {
         providers: buildProviders({ label: 'View', onClick: vi.fn() }),
       });
 
-      expect(document.querySelector('[class^="pi-"]')).not.toBeInTheDocument();
+      expect(document.querySelector('app-icon')).not.toBeInTheDocument();
     });
 
-    it('calls onClick and closes the dialog when clicked', async () => {
+    it('calls onClick with current and closes the dialog when clicked', async () => {
       const onClick = vi.fn();
       const ref = buildRef();
+      const stat = fakePlayerMatchStat();
+      const current = signal(stat);
 
       await render(DynamicDialogFooterComponent, {
         providers: [
           { provide: DynamicDialogRef, useValue: ref },
           {
             provide: DynamicDialogConfig,
-            useValue: { data: { action: { label: 'View player', onClick } } },
+            useValue: { data: { current, action: { label: 'View player', onClick } } },
           },
         ],
       });
       await userEvent.click(screen.getByText('View player'));
 
-      expect(onClick).toHaveBeenCalled();
+      expect(onClick).toHaveBeenCalledWith(stat);
       expect(ref.close).toHaveBeenCalled();
     });
   });
 });
+

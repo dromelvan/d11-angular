@@ -1,5 +1,6 @@
 import { Component, computed } from '@angular/core';
-import { Player } from '@app/core/api';
+import { PlayerMatchStat } from '@app/core/api';
+import { PlayerBase } from '@app/core/api/model/player-base.model';
 import { AvatarComponent } from '@app/shared/avatar/avatar.component';
 import { NgClass } from '@angular/common';
 import { DynamicListDialogHeaderComponent } from '@app/shared/dialog/dynamic-list-dialog-header/dynamic-list-dialog-header.component';
@@ -11,5 +12,5 @@ import { ButtonIconOldComponent } from '@app/shared/form';
   templateUrl: './player-dialog-header.component.html',
 })
 export class PlayerDialogHeaderComponent extends DynamicListDialogHeaderComponent {
-  protected player = computed<Player>(() => this.config.data.player);
+  protected player = computed<PlayerBase>(() => (this.current() as PlayerMatchStat).player);
 }

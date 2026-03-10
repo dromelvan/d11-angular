@@ -1,8 +1,8 @@
 <div class="app-row text-sm justify-between w-full">
   @if (action(); as a) {
-    <a class="app-row gap-2" (click)="onAction()">
+    <a class="app-row gap-1" (click)="onAction()">
       @if (a.icon) {
-        <i class="pi pi-{{ a.icon }}"></i>
+        <app-icon [icon]="a.icon" [size]="22" />
       }
       <span>
         {{ a.label }}

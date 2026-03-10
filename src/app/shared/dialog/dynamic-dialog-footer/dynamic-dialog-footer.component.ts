@@ -1,15 +1,17 @@
 import { Component, computed, inject } from '@angular/core';
 import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
+import { IconComponent, IconPreset } from '@app/shared/icon/icon.component';
+import { TeamBaseContainer } from '@app/core/api/model/team-base-container';
 
 export interface DialogFooterAction {
   label: string;
-  icon?: string;
-  onClick: () => void;
+  icon?: IconPreset;
+  onClick: (current: TeamBaseContainer) => void;
 }
 
 @Component({
   selector: 'app-dynamic-dialog-footer',
-  imports: [],
+  imports: [IconComponent],
   templateUrl: './dynamic-dialog-footer.component.html',
 })
 export class DynamicDialogFooterComponent {
@@ -23,7 +25,7 @@ export class DynamicDialogFooterComponent {
   }
 
   protected onAction(): void {
-    this.action()?.onClick();
+    this.action()?.onClick(this.config.data.current());
     this.close();
   }
 }
