@@ -23,91 +23,127 @@ class HostComponent {
 }
 
 describe('AvatarComponent', () => {
-  let renderResult: RenderResult<HostComponent, HostComponent>;
+  describe('static rendering', () => {
+    let renderResult: RenderResult<HostComponent, HostComponent>;
 
-  beforeEach(async () => {
-    renderResult = await render(HostComponent, {});
+    beforeEach(async () => {
+      renderResult = await render(HostComponent, {});
+    });
+
+    it('renders default extension', async () => {
+      const avatar = screen.getByTestId('default-extension');
+
+      expect(avatar).toBeInTheDocument();
+
+      const img = avatar.querySelector('img');
+      expect(img).toBeInTheDocument();
+      expect(img).toHaveAttribute('src', `${environment.imageHost}/images/${resource}/${id}.png`);
+    });
+
+    it('renders set extension', async () => {
+      const avatar = screen.getByTestId('set-extension');
+
+      expect(avatar).toBeInTheDocument();
+
+      const img = avatar.querySelector('img');
+      expect(img).toBeInTheDocument();
+      expect(img).toHaveAttribute('src', `${environment.imageHost}/images/${resource}/${id}.jpg`);
+    });
+
+    it('does not render default size attribute', async () => {
+      const avatar = screen.getByTestId('default-size');
+
+      expect(avatar).toBeInTheDocument();
+
+      const pAvatar = avatar.querySelector('p-avatar');
+      expect(pAvatar).toBeInTheDocument();
+
+      const dataP = pAvatar?.getAttribute('data-p');
+      expect(dataP).toBe('circle');
+    });
+
+    it('renders set size attribute', async () => {
+      const avatar = screen.getByTestId('set-size');
+
+      expect(avatar).toBeInTheDocument();
+
+      const pAvatar = avatar.querySelector('p-avatar');
+      expect(pAvatar).toBeInTheDocument();
+
+      const dataP = pAvatar?.getAttribute('data-p');
+      expect(dataP).toBe('circle large');
+    });
+
+    it('renders 2xlarge size as xlarge with override classes', async () => {
+      const avatar = screen.getByTestId('2xlarge-size');
+
+      expect(avatar).toBeInTheDocument();
+
+      const pAvatar = avatar.querySelector('p-avatar');
+      expect(pAvatar).toBeInTheDocument();
+
+      const dataP = pAvatar?.getAttribute('data-p');
+      expect(dataP).toBe('circle xlarge');
+
+      expect(pAvatar).toHaveClass('h-25!');
+      expect(pAvatar).toHaveClass('w-25!');
+    });
+
+    it('renders circle shape', async () => {
+      const avatar = screen.getByTestId('default-extension');
+
+      const pAvatar = avatar.querySelector('p-avatar');
+      expect(pAvatar).toBeInTheDocument();
+      expect(pAvatar).toHaveAttribute('shape', 'circle');
+    });
+
+    it('renders default image on image load error', () => {
+      const { container, fixture } = renderResult;
+
+      const img = container.querySelector('img');
+      expect(img).toBeInTheDocument();
+
+      expect(img).toHaveAttribute('src', `${environment.imageHost}/images/${resource}/${id}.png`);
+
+      const avatar = container.querySelector('p-avatar');
+      avatar?.dispatchEvent(new Event('onImageError'));
+      fixture.detectChanges();
+
+      expect(img).toHaveAttribute('src', `${environment.imageHost}/images/${resource}/default.png`);
+    });
   });
 
-  it('renders default extension', async () => {
-    const avatar = screen.getByTestId('default-extension');
+  describe('image error reset', () => {
+    let img: HTMLImageElement | null;
+    let fixture: RenderResult<AvatarComponent>['fixture'];
 
-    expect(avatar).toBeInTheDocument();
+    beforeEach(async () => {
+      const result = await render(AvatarComponent, {
+        inputs: { resource, id, extension: 'png' },
+      });
+      fixture = result.fixture;
+      img = result.container.querySelector('img');
 
-    const img = avatar.querySelector('img');
-    expect(img).toBeInTheDocument();
-    expect(img).toHaveAttribute('src', `${environment.imageHost}/images/${resource}/${id}.png`);
-  });
+      result.container.querySelector('p-avatar')?.dispatchEvent(new Event('onImageError'));
+      fixture.detectChanges();
+    });
 
-  it('renders set extension', async () => {
-    const avatar = screen.getByTestId('set-extension');
+    it('resets to real image URL when id changes after an error', () => {
+      expect(img).toHaveAttribute('src', `${environment.imageHost}/images/${resource}/default.png`);
 
-    expect(avatar).toBeInTheDocument();
+      fixture.componentRef.setInput('id', 99);
+      fixture.detectChanges();
 
-    const img = avatar.querySelector('img');
-    expect(img).toBeInTheDocument();
-    expect(img).toHaveAttribute('src', `${environment.imageHost}/images/${resource}/${id}.jpg`);
-  });
+      expect(img).toHaveAttribute('src', `${environment.imageHost}/images/${resource}/99.png`);
+    });
 
-  it('does not render default size attribute', async () => {
-    const avatar = screen.getByTestId('default-size');
+    it('resets to real image URL when resource changes after an error', () => {
+      expect(img).toHaveAttribute('src', `${environment.imageHost}/images/${resource}/default.png`);
 
-    expect(avatar).toBeInTheDocument();
+      fixture.componentRef.setInput('resource', 'new-resource');
+      fixture.detectChanges();
 
-    const pAvatar = avatar.querySelector('p-avatar');
-    expect(pAvatar).toBeInTheDocument();
-
-    const dataP = pAvatar?.getAttribute('data-p');
-    expect(dataP).toBe('circle');
-  });
-
-  it('renders set size attribute', async () => {
-    const avatar = screen.getByTestId('set-size');
-
-    expect(avatar).toBeInTheDocument();
-
-    const pAvatar = avatar.querySelector('p-avatar');
-    expect(pAvatar).toBeInTheDocument();
-
-    const dataP = pAvatar?.getAttribute('data-p');
-    expect(dataP).toBe('circle large');
-  });
-
-  it('renders 2xlarge size as xlarge with override classes', async () => {
-    const avatar = screen.getByTestId('2xlarge-size');
-
-    expect(avatar).toBeInTheDocument();
-
-    const pAvatar = avatar.querySelector('p-avatar');
-    expect(pAvatar).toBeInTheDocument();
-
-    const dataP = pAvatar?.getAttribute('data-p');
-    expect(dataP).toBe('circle xlarge');
-
-    expect(pAvatar).toHaveClass('h-25!');
-    expect(pAvatar).toHaveClass('w-25!');
-  });
-
-  it('renders circle shape', async () => {
-    const avatar = screen.getByTestId('default-extension');
-
-    const pAvatar = avatar.querySelector('p-avatar');
-    expect(pAvatar).toBeInTheDocument();
-    expect(pAvatar).toHaveAttribute('shape', 'circle');
-  });
-
-  it('renders default image on image load error', () => {
-    const { container, fixture } = renderResult;
-
-    const img = container.querySelector('img');
-    expect(img).toBeInTheDocument();
-
-    expect(img).toHaveAttribute('src', `${environment.imageHost}/images/${resource}/${id}.png`);
-
-    const avatar = container.querySelector('p-avatar');
-    avatar?.dispatchEvent(new Event('onImageError'));
-    fixture.detectChanges();
-
-    expect(img).toHaveAttribute('src', `${environment.imageHost}/images/${resource}/default.png`);
+      expect(img).toHaveAttribute('src', `${environment.imageHost}/images/new-resource/${id}.png`);
+    });
   });
 });

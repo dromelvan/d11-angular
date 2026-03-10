@@ -19,9 +19,11 @@ export class AvatarComponent {
       : `${environment.imageHost}/images/${this.resource()}/${this.id()}.${this.extension()}`,
   );
 
-  private imageError = signal(false);
+  private inputKey = computed(() => `${this.resource()}-${this.id()}`);
+  private imageErrorKey = signal<string | undefined>(undefined);
+  private imageError = computed(() => this.imageErrorKey() === this.inputKey());
 
   protected onImageError() {
-    this.imageError.set(true);
+    this.imageErrorKey.set(this.inputKey());
   }
 }
