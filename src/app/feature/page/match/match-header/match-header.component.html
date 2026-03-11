@@ -1,0 +1,51 @@
+@if (match(); as m) {
+  <div class="">
+    <div class="app-row justify-between gap-4">
+      <div class="app-col flex-1 items-center gap-1">
+        <app-team-img [team]="m.homeTeam" width="56" />
+        <span class="app-text-medium-emphasis">
+          <span class="sm:hidden">{{ m.homeTeam.shortName }}</span>
+          <span class="hidden sm:block">{{ m.homeTeam.name }}</span>
+        </span>
+      </div>
+
+      @if (m.status !== Status.PENDING) {
+        <div class="app-col items-center gap-1">
+          <span class="text-4xl font-bold tracking-wide">
+            {{ m.homeTeamGoalsScored }}&ndash;{{ m.awayTeamGoalsScored }}
+          </span>
+          <span class="text-xs uppercase">{{ m.elapsed }}</span>
+        </div>
+      }
+      <div class="app-col items-center gap-1 flex-1">
+        <app-team-img [team]="m.awayTeam" width="56" />
+        <span class="app-text-medium-emphasis">
+          <span class="sm:hidden">{{ m.awayTeam.shortName }}</span>
+          <span class="hidden sm:block">{{ m.awayTeam.name }}</span>
+        </span>
+      </div>
+    </div>
+
+    <div class="app-col items-center gap-0.5 mt-3">
+      @if (stadium(); as s) {
+        <span class="text-xs" data-testid="stadium">{{ s.name }}, {{ s.city }}</span>
+      }
+      <span class="text-xs" data-testid="datetime">
+        {{ m.datetime | date: 'MMM dd, yyyy, H:mm' }}
+      </span>
+    </div>
+
+    @if (links()) {
+      <div class="app-row gap-0">
+        <div class="app-row gap-1 text-sm font-semibold mt-3 px-4">
+          <app-icon icon="match_week" />
+          Match week {{ m.matchWeek.matchWeekNumber }}
+        </div>
+        <div class="app-row flex-1 gap-1 text-sm font-semibold justify-end mt-3 px-4">
+          League table
+          <app-icon icon="league_table" />
+        </div>
+      </div>
+    }
+  </div>
+}
