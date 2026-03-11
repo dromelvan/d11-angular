@@ -1,4 +1,5 @@
 import { D11TeamBase } from '@app/core/api/model/d11-team-base.model';
+import { GoalBase } from '@app/core/api/model/goal-base.model';
 import { Lineup } from '@app/core/api/model/lineup.model';
 import { MatchBase } from '@app/core/api/model/match-base.model';
 import { MatchWeekBase } from '@app/core/api/model/match-week-base.model';
@@ -97,6 +98,15 @@ export const fakePlayerBase = (): PlayerBase => ({
   name: faker.person.fullName(),
   shortName: `${faker.person.firstName().charAt(0)}. ${faker.person.lastName()}`,
   parameterizedName: faker.helpers.slugify(faker.person.fullName()).toLowerCase(),
+});
+
+export const fakeGoal = (): GoalBase => ({
+  id: faker.number.int({ min: 1, max: 10000 }),
+  time: faker.number.int({ min: 1, max: 90 }),
+  addedTime: faker.number.int({ min: 0, max: 5 }),
+  penalty: false,
+  ownGoal: false,
+  player: fakePlayerBase(),
 });
 
 export const fakePlayer = (): Player => ({
