@@ -1,7 +1,7 @@
 import { Match, PlayerMatchStat } from '@app/core/api';
 import { MatchEvent, MatchEventType } from '@app/shared/model';
 
-export function toMatchEvents(match: Match, playerMatchStats?: PlayerMatchStat[]): MatchEvent[] {
+export function matchEvents(match: Match, playerMatchStats?: PlayerMatchStat[]): MatchEvent[] {
   const events: MatchEvent[] = [];
 
   match.homeTeamGoals?.forEach((goal) => {

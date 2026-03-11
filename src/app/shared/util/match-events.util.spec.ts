@@ -6,7 +6,7 @@ import {
   fakeTeamBase,
 } from '@app/core/api/test/faker-util';
 import { describe, expect, it } from 'vitest';
-import { toMatchEvents } from './match-events.util';
+import { matchEvents } from './match-events.util';
 
 describe('toMatchEvents', () => {
   describe('home goals', () => {
@@ -18,7 +18,7 @@ describe('toMatchEvents', () => {
           { ...fakeGoal(), time: 55 },
         ],
       };
-      const events = toMatchEvents(match);
+      const events = matchEvents(match);
       const homeEvents = events.filter((e: { team: string }) => e.team === 'home');
 
       expect(homeEvents).toHaveLength(2);
@@ -26,7 +26,7 @@ describe('toMatchEvents', () => {
 
     it('sets type to goal for a regular goal', () => {
       const match: Match = { ...fakeMatch(), homeTeamGoals: [{ ...fakeGoal(), time: 20 }] };
-      const [event] = toMatchEvents(match);
+      const [event] = matchEvents(match);
 
       expect(event.type).toBe('goal');
     });
@@ -36,7 +36,7 @@ describe('toMatchEvents', () => {
         ...fakeMatch(),
         homeTeamGoals: [{ ...fakeGoal(), time: 20, penalty: true }],
       };
-      const [event] = toMatchEvents(match);
+      const [event] = matchEvents(match);
 
       expect(event.type).toBe('penalty');
     });
@@ -46,7 +46,7 @@ describe('toMatchEvents', () => {
         ...fakeMatch(),
         homeTeamGoals: [{ ...fakeGoal(), time: 20, ownGoal: true }],
       };
-      const [event] = toMatchEvents(match);
+      const [event] = matchEvents(match);
 
       expect(event.type).toBe('ownGoal');
     });
@@ -54,7 +54,7 @@ describe('toMatchEvents', () => {
     it('maps the correct player and time', () => {
       const goal = { ...fakeGoal(), time: 33 };
       const match: Match = { ...fakeMatch(), homeTeamGoals: [goal] };
-      const [event] = toMatchEvents(match);
+      const [event] = matchEvents(match);
 
       expect(event.player).toBe(goal.player);
       expect(event.time).toBe(33);
@@ -70,7 +70,7 @@ describe('toMatchEvents', () => {
           { ...fakeGoal(), time: 80 },
         ],
       };
-      const events = toMatchEvents(match);
+      const events = matchEvents(match);
       const awayEvents = events.filter((e: { team: string }) => e.team === 'away');
 
       expect(awayEvents).toHaveLength(2);
@@ -78,7 +78,7 @@ describe('toMatchEvents', () => {
 
     it('sets type to goal for a regular goal', () => {
       const match: Match = { ...fakeMatch(), awayTeamGoals: [{ ...fakeGoal(), time: 60 }] };
-      const [event] = toMatchEvents(match);
+      const [event] = matchEvents(match);
 
       expect(event.type).toBe('goal');
     });
@@ -88,7 +88,7 @@ describe('toMatchEvents', () => {
         ...fakeMatch(),
         awayTeamGoals: [{ ...fakeGoal(), time: 60, penalty: true }],
       };
-      const [event] = toMatchEvents(match);
+      const [event] = matchEvents(match);
 
       expect(event.type).toBe('penalty');
     });
@@ -98,7 +98,7 @@ describe('toMatchEvents', () => {
         ...fakeMatch(),
         awayTeamGoals: [{ ...fakeGoal(), time: 60, ownGoal: true }],
       };
-      const [event] = toMatchEvents(match);
+      const [event] = matchEvents(match);
 
       expect(event.type).toBe('ownGoal');
     });
@@ -108,7 +108,7 @@ describe('toMatchEvents', () => {
     it('includes a red card event when redCardTime > 0', () => {
       const match = fakeMatch();
       const pms = { ...fakePlayerMatchStat(), redCardTime: 55, team: match.homeTeam };
-      const events = toMatchEvents(match, [pms]);
+      const events = matchEvents(match, [pms]);
 
       expect(events).toHaveLength(1);
       expect(events[0].type).toBe('redCard');
@@ -119,13 +119,13 @@ describe('toMatchEvents', () => {
       const match = fakeMatch();
       const pms = { ...fakePlayerMatchStat(), redCardTime: 0, team: match.homeTeam };
 
-      expect(toMatchEvents(match, [pms])).toHaveLength(0);
+      expect(matchEvents(match, [pms])).toHaveLength(0);
     });
 
     it('assigns team home when pms team id matches match homeTeam id', () => {
       const match = fakeMatch();
       const pms = { ...fakePlayerMatchStat(), redCardTime: 40, team: match.homeTeam };
-      const [event] = toMatchEvents(match, [pms]);
+      const [event] = matchEvents(match, [pms]);
 
       expect(event.team).toBe('home');
     });
@@ -134,7 +134,7 @@ describe('toMatchEvents', () => {
       const match = fakeMatch();
       const awayTeam = fakeTeamBase();
       const pms = { ...fakePlayerMatchStat(), redCardTime: 70, team: awayTeam };
-      const [event] = toMatchEvents(match, [pms]);
+      const [event] = matchEvents(match, [pms]);
 
       expect(event.team).toBe('away');
     });
@@ -142,7 +142,7 @@ describe('toMatchEvents', () => {
     it('maps the correct player', () => {
       const match = fakeMatch();
       const pms = { ...fakePlayerMatchStat(), redCardTime: 60, team: match.homeTeam };
-      const [event] = toMatchEvents(match, [pms]);
+      const [event] = matchEvents(match, [pms]);
 
       expect(event.player).toBe(pms.player);
     });
@@ -160,7 +160,7 @@ describe('toMatchEvents', () => {
         ],
         awayTeamGoals: [{ ...fakeGoal(), time: 45 }],
       };
-      const events = toMatchEvents(match);
+      const events = matchEvents(match);
 
       expect(events.map((e: { time: number }) => e.time)).toEqual([20, 45, 75]);
     });
@@ -173,7 +173,7 @@ describe('toMatchEvents', () => {
         homeTeamGoals: [{ ...fakeGoal(), time: 10 }],
         awayTeamGoals: [{ ...fakeGoal(), time: 55 }],
       };
-      const events = toMatchEvents(matchWithGoals, [pms]);
+      const events = matchEvents(matchWithGoals, [pms]);
 
       expect(events.map((e: { time: number }) => e.time)).toEqual([10, 30, 55]);
     });
@@ -181,17 +181,17 @@ describe('toMatchEvents', () => {
 
   describe('empty / missing data', () => {
     it('returns empty array when there are no goals or playerMatchStats', () => {
-      expect(toMatchEvents(fakeMatch())).toEqual([]);
+      expect(matchEvents(fakeMatch())).toEqual([]);
     });
 
     it('returns empty array when playerMatchStats is undefined', () => {
-      expect(toMatchEvents(fakeMatch(), undefined)).toEqual([]);
+      expect(matchEvents(fakeMatch(), undefined)).toEqual([]);
     });
 
     it('returns only goals when playerMatchStats is empty', () => {
       const match: Match = { ...fakeMatch(), homeTeamGoals: [fakeGoal()] };
 
-      expect(toMatchEvents(match, [])).toHaveLength(1);
+      expect(matchEvents(match, [])).toHaveLength(1);
     });
   });
 });

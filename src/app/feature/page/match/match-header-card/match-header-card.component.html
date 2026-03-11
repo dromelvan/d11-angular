@@ -1,0 +1,26 @@
+@if (match(); as m) {
+  @if (matchEvents().length > 0) {
+    <p-card class="app-match-header-card overflow-hidden">
+      <ng-template #header>
+        <div
+          class="app-bg-header py-4"
+          [ngClass]="textClass()"
+          [style.background-color]="backgroundColor()"
+        >
+          <app-match-header [match]="m" [stadium]="stadium()" />
+        </div>
+      </ng-template>
+
+      <app-match-events [matchEvents]="matchEvents()" />
+    </p-card>
+  } @else {
+    <p-card
+      class="app-match-header-card overflow-hidden app-bg-header"
+      [ngClass]="textClass()"
+      [style.background-color]="backgroundColor()"
+      [pt]="{ body: { class: 'px-0!' } }"
+    >
+      <app-match-header [match]="m" [stadium]="stadium()" />
+    </p-card>
+  }
+}

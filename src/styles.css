@@ -129,6 +129,10 @@
         @apply text-sm text-surface-500;
     }
 
+    .app-text-medium-emphasis {
+        @apply text-sm font-semibold;
+    }
+
     .app-text-high-emphasis {
         @apply font-semibold;
     }
