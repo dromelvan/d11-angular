@@ -83,20 +83,20 @@
     }
 
     .app-row-sm {
-        @apply flex flex-row gap-2;
+        @apply flex flex-row gap-2 items-center;
     }
 
     .app-row-md {
-        @apply flex flex-row gap-4;
+        @apply flex flex-row gap-4 items-center;
     }
 
     .app-row {
-        @apply flex flex-row gap-10;
+        @apply flex flex-row gap-10 items-center;
     }
 
     @media (min-width: 40rem) {
         .sm\:app-row {
-            @apply flex flex-row gap-4;
+            @apply flex flex-row gap-4 items-center;
         }
     }
 

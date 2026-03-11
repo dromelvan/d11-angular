@@ -1,0 +1,24 @@
+@let event = matchEvent();
+<div
+  class="app-match-event app-flex text-sm"
+  [class.flex-row-reverse]="isAway()"
+  data-testid="match-event"
+>
+  <div class="app-flex flex-1 justify-end gap-1" [class.flex-row-reverse]="isAway()">
+    <span class="sm:hidden">{{ displayName() }}</span>
+    <span class="hidden sm:inline">{{ event.player.name }}</span>
+    @if (event.type === 'goal') {
+      <app-icon icon="goal" />
+    } @else if (event.type === 'ownGoal') {
+      <span class="app-text-lowest-emphasis">(OG)</span>
+      <app-icon icon="own_goal" />
+    } @else if (event.type === 'penalty') {
+      <span class="app-text-lowest-emphasis">(P)</span>
+      <app-icon icon="goal" />
+    } @else if (event.type === 'redCard') {
+      <app-icon icon="red_card" />
+    }
+  </div>
+  <span class="app-text-lowest-emphasis w-8 text-center shrink-0">{{ event.time }}'</span>
+  <div class="flex-1">&nbsp;</div>
+</div>
