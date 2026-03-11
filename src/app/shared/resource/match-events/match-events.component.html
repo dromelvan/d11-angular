@@ -1,0 +1,7 @@
+@if (matchEvents().length > 0) {
+  <div class="app-match-events app-col gap-0.5">
+    @for (event of matchEvents(); track event) {
+      <app-match-event [matchEvent]="event" />
+    }
+  </div>
+}
