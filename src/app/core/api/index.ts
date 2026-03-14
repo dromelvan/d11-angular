@@ -1,4 +1,5 @@
 export * from './model/country.model';
+export * from './model/d11-match-base.model';
 export * from './model/d11-team-base.model';
 export * from './model/goal-base.model';
 export * from './model/lineup.model';
