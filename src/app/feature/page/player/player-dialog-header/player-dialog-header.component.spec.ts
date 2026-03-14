@@ -2,11 +2,11 @@ import { signal } from '@angular/core';
 import { render, screen } from '@testing-library/angular';
 import { DynamicDialogConfig } from 'primeng/dynamicdialog';
 import { PlayerDialogHeaderComponent } from './player-dialog-header.component';
-import { fakePlayer, fakeTeamBase } from '@app/core/api/test/faker-util';
-import { TeamBaseContainer } from '@app/core/api/model/team-base-container';
+import { fakePlayer, fakePlayerMatchStat } from '@app/core/api/test/faker-util';
+import { type PlayerMatchStat } from '@app/core/api';
 
-function fakeItem(): TeamBaseContainer {
-  return { team: fakeTeamBase() };
+function fakeItem(): PlayerMatchStat {
+  return fakePlayerMatchStat();
 }
 
 function fakeConfig(initialIndex = 0) {
@@ -27,7 +27,7 @@ describe('PlayerDialogHeaderComponent', () => {
   it('renders player name', async () => {
     const config = await setup();
 
-    expect(screen.getByText(config.data.player.name)).toBeInTheDocument();
+    expect(screen.getByText(config.data.list[0].player.name)).toBeInTheDocument();
   });
 
   it('renders avatar', async () => {
