@@ -8,6 +8,7 @@ import { Card } from 'primeng/card';
 import { RatingPipe } from '@app/shared/pipes/rating.pipe';
 import { MatchBaseComponent } from '@app/shared/resource/match-base/match-base.component';
 import { DynamicDialogService } from '@app/shared/dialog/dynamic-dialog-service/dynamic-dialog.service';
+import { RouterService } from '@app/core/router/router.service';
 
 @Component({
   selector: 'app-player-match-stats',
@@ -38,12 +39,18 @@ export class PlayerMatchStatsCardComponent {
   private playerApiService = inject(PlayerApiService);
   private loadingService = inject(LoadingService);
   private dynamicDialogService = inject(DynamicDialogService);
+  private routerService = inject(RouterService);
 
   constructor() {
     this.loadingService.register(inject(DestroyRef), this.isLoading);
   }
 
   protected openDialog(playerMatchStat: PlayerMatchStat): void {
-    this.dynamicDialogService.openPlayerMatchStat(playerMatchStat, this.playerMatchStats() ?? []);
+    this.dynamicDialogService.openPlayerMatchStat(playerMatchStat, this.playerMatchStats() ?? [], {
+      label: 'Match details',
+      icon: 'match',
+      onClick: (current) =>
+        this.routerService.navigateToMatch((current as PlayerMatchStat).match.id),
+    });
   }
 }

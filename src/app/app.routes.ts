@@ -1,9 +1,13 @@
 import { Routes } from '@angular/router';
-import { PlayerPageComponent } from '@app/feature/page';
+import { MatchPageComponent, PlayerPageComponent } from '@app/feature/page';
 
 export const routes: Routes = [
   {
     path: 'players/:playerId',
     component: PlayerPageComponent,
+  },
+  {
+    path: 'matches/:matchId',
+    component: MatchPageComponent,
   },
 ];

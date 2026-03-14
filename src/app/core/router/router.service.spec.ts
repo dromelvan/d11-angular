@@ -19,6 +19,14 @@ describe('RouterService', () => {
     service = TestBed.inject(RouterService);
   });
 
+  it('should navigate to match', async () => {
+    const matchId = 1;
+    const result = await service.navigateToMatch(matchId);
+
+    expect(mockRouter.navigate).toHaveBeenCalledWith(['matches', matchId]);
+    expect(result).toBe(true);
+  });
+
   it('should navigate to player without seasonId', async () => {
     const playerId = 1;
     const result = await service.navigateToPlayer(playerId);

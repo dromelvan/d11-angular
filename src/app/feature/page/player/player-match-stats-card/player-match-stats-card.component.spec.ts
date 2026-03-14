@@ -3,6 +3,7 @@ import { PlayerApiService, type PlayerMatchStat, type PlayerSeasonStat } from '@
 import { Lineup } from '@app/core/api/model/lineup.model';
 import { fakePlayerMatchStat, fakePlayerSeasonStat } from '@app/core/api/test/faker-util';
 import { LoadingService } from '@app/core/loading/loading.service';
+import { RouterService } from '@app/core/router/router.service';
 import { DynamicDialogService } from '@app/shared/dialog/dynamic-dialog-service/dynamic-dialog.service';
 import { render, screen, waitFor } from '@testing-library/angular';
 import { userEvent } from '@testing-library/user-event';
@@ -33,11 +34,13 @@ const renderComponent = (
   } as unknown as PlayerApiService;
 
   const loadingService = { register: vi.fn() } as unknown as LoadingService;
+  const routerService = { navigateToMatch: vi.fn() } as unknown as RouterService;
 
   const promise = render(HostComponent, {
     providers: [
       { provide: PlayerApiService, useValue: playerApi },
       { provide: LoadingService, useValue: loadingService },
+      { provide: RouterService, useValue: routerService },
       { provide: DynamicDialogService, useValue: dynamicDialogService },
     ],
   });
@@ -174,6 +177,7 @@ describe('PlayerMatchStatsCardComponent open dialog', () => {
     expect(dynamicDialogService.openPlayerMatchStat).toHaveBeenCalledWith(
       playerMatchStats[0],
       playerMatchStats,
+      expect.objectContaining({ label: 'Match details', icon: 'match' }),
     );
   });
 

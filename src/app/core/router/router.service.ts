@@ -11,4 +11,8 @@ export class RouterService {
     const extras = seasonId ? { queryParams: { seasonId: seasonId } } : {};
     return this.router.navigate(['players', playerId], extras);
   }
+
+  public navigateToMatch(matchId: number): Promise<boolean> {
+    return this.router.navigate(['matches', matchId]);
+  }
 }

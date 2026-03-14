@@ -1,0 +1,13 @@
+@if (!isLoading()) {
+  @let model = this.model();
+  <div class="app-match-page app-col max-w-sm mx-auto">
+    <app-match-header-card
+      [match]="model.match"
+      [stadium]="model.stadium"
+      [playerMatchStats]="model.playerMatchStats"
+    />
+    @if (model.match?.status !== Status.PENDING) {
+      <app-match-player-match-stats-card [playerMatchStats]="model.playerMatchStats" />
+    }
+  </div>
+}
