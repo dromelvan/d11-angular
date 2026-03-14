@@ -1,8 +1,7 @@
 import { TestBed } from '@angular/core/testing';
 import { ApiService } from '@app/core/api/api.service';
 import { Lineup } from '@app/core/api';
-import { GetFn } from '@app/core/api/test/api.mock';
-import { fakeMatch, fakePlayerMatchStat, fakeStadium } from '@app/core/api/test/faker-util';
+import { fakeMatch, fakePlayerMatchStat, fakeStadium, GetFn } from '@app/test';
 import { firstValueFrom, of, throwError } from 'rxjs';
 import { beforeEach, describe } from 'vitest';
 import { MatchApiService } from './match-api.service';

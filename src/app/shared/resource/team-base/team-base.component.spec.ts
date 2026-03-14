@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import type { TeamBase } from '@app/core/api';
-import { fakeTeamBase } from '@app/core/api/test/faker-util';
+import { fakeTeamBase } from '@app/test';
 import { ImgWidth } from '@app/shared/img/img-width';
 import { render, screen } from '@testing-library/angular';
 import { expect } from 'vitest';

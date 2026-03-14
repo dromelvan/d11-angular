@@ -2,7 +2,7 @@ import { TestBed } from '@angular/core/testing';
 import { vi } from 'vitest';
 import { DialogService } from 'primeng/dynamicdialog';
 import { DynamicDialogService } from './dynamic-dialog.service';
-import { fakePlayerMatchStat } from '@app/core/api/test/faker-util';
+import { fakePlayerMatchStat } from '@app/test';
 import { PlayerDialogMatchStatComponent } from '@app/feature/page/player/player-dialog-match-stat/player-dialog-match-stat.component';
 import { DialogFooterAction } from '@app/shared/dialog/dynamic-dialog-footer/dynamic-dialog-footer.component';
 

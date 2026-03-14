@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { fireEvent, render, screen } from '@testing-library/angular';
-import { fakeMatchBase, fakePlayerMatchStat, fakeTeamBase } from '@app/core/api/test/faker-util';
+import { fakeMatchBase, fakePlayerMatchStat, fakeTeamBase } from '@app/test';
 import { Lineup, MatchBase, PlayerMatchStat, TeamBase } from '@app/core/api';
 import { DynamicDialogService } from '@app/shared/dialog/dynamic-dialog-service/dynamic-dialog.service';
 import { RouterService } from '@app/core/router/router.service';

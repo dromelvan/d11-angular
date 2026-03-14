@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import type { Player, PlayerSeasonStat, Season } from '@app/core/api';
 import { PlayerApiService, SeasonApiService } from '@app/core/api';
-import { fakePlayer, fakePlayerSeasonStat, fakeSeason } from '@app/core/api/test/faker-util';
+import { fakePlayer, fakePlayerSeasonStat, fakeSeason } from '@app/test';
 import { LoadingService } from '@app/core/loading/loading.service';
 import { render, screen, waitFor } from '@testing-library/angular';
 import { of } from 'rxjs';

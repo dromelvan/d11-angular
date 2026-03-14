@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { render, screen } from '@testing-library/angular';
 import { expect } from 'vitest';
-import { fakePlayerBase } from '@app/core/api/test/faker-util';
+import { fakePlayerBase } from '@app/test';
 import { MatchEvent, MatchEventType } from '@app/shared/model';
 import { MatchEventComponent } from './match-event.component';
 

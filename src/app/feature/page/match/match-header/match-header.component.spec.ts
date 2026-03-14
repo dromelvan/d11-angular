@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { DatePipe } from '@angular/common';
 import { render, screen } from '@testing-library/angular';
-import { fakeMatch, fakeStadium } from '@app/core/api/test/faker-util';
+import { fakeMatch, fakeStadium } from '@app/test';
 import { Match, Stadium, Status } from '@app/core/api';
 import { expect } from 'vitest';
 import { MatchHeaderComponent } from './match-header.component';

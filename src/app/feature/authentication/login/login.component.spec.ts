@@ -4,7 +4,7 @@ import { render, screen } from '@testing-library/angular';
 import userEvent from '@testing-library/user-event';
 import { UserCredentialsModel } from '@app/core/api';
 import { UserSessionService } from '@app/core/auth/user-session.service';
-import { userCredentials } from '@app/core/api/test/user-credentials.mock';
+import { userCredentials } from '@app/test';
 import { LoginComponent } from './login.component';
 
 @Component({

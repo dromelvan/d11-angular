@@ -2,7 +2,7 @@ import { signal } from '@angular/core';
 import { render, screen } from '@testing-library/angular';
 import { DynamicDialogConfig } from 'primeng/dynamicdialog';
 import { PlayerDialogHeaderComponent } from './player-dialog-header.component';
-import { fakePlayer, fakePlayerMatchStat } from '@app/core/api/test/faker-util';
+import { fakePlayer, fakePlayerMatchStat } from '@app/test';
 import { type PlayerMatchStat } from '@app/core/api';
 
 function fakeItem(): PlayerMatchStat {

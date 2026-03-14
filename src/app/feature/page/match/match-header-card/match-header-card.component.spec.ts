@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { render, screen } from '@testing-library/angular';
-import { fakeGoal, fakeMatch, fakeTeamBase } from '@app/core/api/test/faker-util';
+import { fakeGoal, fakeMatch, fakeTeamBase } from '@app/test';
 import { Match, PlayerMatchStat } from '@app/core/api';
 import { expect } from 'vitest';
 import { MatchHeaderCardComponent } from './match-header-card.component';

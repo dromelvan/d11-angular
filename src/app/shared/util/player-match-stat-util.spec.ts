@@ -6,7 +6,7 @@ import {
   fakePlayerMatchStat,
   fakePosition,
   fakeTeamBase,
-} from '@app/core/api/test/faker-util';
+} from '@app/test';
 import {
   D11MatchBase,
   D11TeamBase,

@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { fakeTeamBase } from '@app/core/api/test/faker-util';
+import { fakeTeamBase } from '@app/test';
 import { fireEvent, render, screen, within } from '@testing-library/angular';
 import { environment } from '../../../../environments/environment';
 import { ImgWidth } from '../img-width';

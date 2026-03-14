@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import type { Player, PlayerSeasonStat } from '@app/core/api';
-import { fakePlayer, fakePlayerSeasonStat } from '@app/core/api/test/faker-util';
+import { fakePlayer, fakePlayerSeasonStat } from '@app/test';
 import { render, screen } from '@testing-library/angular';
 import { expect } from 'vitest';
 import { PlayerHeaderCardComponent } from './player-header-card.component';

@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { PlayerApiService, type PlayerMatchStat, type PlayerSeasonStat } from '@app/core/api';
 import { Lineup } from '@app/core/api/model/lineup.model';
-import { fakePlayerMatchStat, fakePlayerSeasonStat } from '@app/core/api/test/faker-util';
+import { fakePlayerMatchStat, fakePlayerSeasonStat } from '@app/test';
 import { LoadingService } from '@app/core/loading/loading.service';
 import { RouterService } from '@app/core/router/router.service';
 import { DynamicDialogService } from '@app/shared/dialog/dynamic-dialog-service/dynamic-dialog.service';

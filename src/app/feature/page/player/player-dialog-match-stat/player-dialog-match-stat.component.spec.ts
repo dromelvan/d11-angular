@@ -2,7 +2,7 @@ import { signal } from '@angular/core';
 import { render, screen } from '@testing-library/angular';
 import { DynamicDialogConfig } from 'primeng/dynamicdialog';
 import { PlayerDialogMatchStatComponent } from './player-dialog-match-stat.component';
-import { fakeD11TeamBase, fakePlayerMatchStat, fakePosition } from '@app/core/api/test/faker-util';
+import { fakeD11TeamBase, fakePlayerMatchStat, fakePosition } from '@app/test';
 import { Lineup } from '@app/core/api';
 import { RatingPipe } from '@app/shared/pipes/rating.pipe';
 

@@ -1,12 +1,7 @@
 import { Component } from '@angular/core';
 import { MatchContext, PlayerMatchStat, Status } from '@app/core/api';
 import { MatchApiService } from '@app/core/api/match/match-api.service';
-import {
-  fakeMatch,
-  fakePlayerMatchStat,
-  fakeStadium,
-  fakeTeamBase,
-} from '@app/core/api/test/faker-util';
+import { fakeMatch, fakePlayerMatchStat, fakeStadium, fakeTeamBase } from '@app/test';
 import { LoadingService } from '@app/core/loading/loading.service';
 import { RouterService } from '@app/core/router/router.service';
 import { DynamicDialogService } from '@app/shared/dialog/dynamic-dialog-service/dynamic-dialog.service';

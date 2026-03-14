@@ -7,7 +7,7 @@ import {
 } from './dynamic-dialog-footer.component';
 import { vi } from 'vitest';
 import { signal } from '@angular/core';
-import { fakePlayerMatchStat } from '@app/core/api/test/faker-util';
+import { fakePlayerMatchStat } from '@app/test';
 
 function buildRef() {
   return { close: vi.fn() };
@@ -101,4 +101,3 @@ describe('DynamicDialogFooterComponent', () => {
     });
   });
 });
-

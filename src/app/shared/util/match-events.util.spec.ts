@@ -1,10 +1,5 @@
 import { Match } from '@app/core/api';
-import {
-  fakeGoal,
-  fakeMatch,
-  fakePlayerMatchStat,
-  fakeTeamBase,
-} from '@app/core/api/test/faker-util';
+import { fakeGoal, fakeMatch, fakePlayerMatchStat, fakeTeamBase } from '@app/test';
 import { describe, expect, it } from 'vitest';
 import { matchEvents } from './match-events.util';
 

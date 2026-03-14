@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import type { PlayerSeasonStat } from '@app/core/api';
-import { fakePlayerSeasonStat } from '@app/core/api/test/faker-util';
+import { fakePlayerSeasonStat } from '@app/test';
 import { RouterService } from '@app/core/router/router.service';
 import { render, screen, waitFor } from '@testing-library/angular';
 import userEvent from '@testing-library/user-event';

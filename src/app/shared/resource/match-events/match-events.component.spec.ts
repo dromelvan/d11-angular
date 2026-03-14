@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { render, screen } from '@testing-library/angular';
-import { fakePlayerBase } from '@app/core/api/test/faker-util';
+import { fakePlayerBase } from '@app/test';
 import { MatchEvent } from '@app/shared/model';
 import { expect } from 'vitest';
 import { MatchEventsComponent } from './match-events.component';
@@ -8,7 +8,7 @@ import { MatchEventsComponent } from './match-events.component';
 let matchEvents: MatchEvent[];
 
 @Component({
-  template: `<app-match-events [matchEvents]="matchEvents" />`,
+  template: ` <app-match-events [matchEvents]="matchEvents" />`,
   standalone: true,
   imports: [MatchEventsComponent],
 })

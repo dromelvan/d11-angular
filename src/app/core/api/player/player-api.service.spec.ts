@@ -2,12 +2,7 @@ import { HttpParams } from '@angular/common/http';
 import { TestBed } from '@angular/core/testing';
 import { ApiService } from '@app/core/api/api.service';
 import { PlayerSearchResult } from '@app/core/api/model/player-search-result.model';
-import { GetFn } from '@app/core/api/test/api.mock';
-import {
-  fakePlayer,
-  fakePlayerMatchStat,
-  fakePlayerSeasonStat,
-} from '@app/core/api/test/faker-util';
+import { fakePlayer, fakePlayerMatchStat, fakePlayerSeasonStat, GetFn } from '@app/test';
 import { firstValueFrom, of, throwError } from 'rxjs';
 import { beforeEach, describe } from 'vitest';
 import { PlayerApiService } from './player-api.service';

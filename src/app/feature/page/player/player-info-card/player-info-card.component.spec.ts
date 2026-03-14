@@ -1,7 +1,7 @@
 import { DatePipe } from '@angular/common';
 import { Component } from '@angular/core';
 import type { Player } from '@app/core/api';
-import { fakePlayer } from '@app/core/api/test/faker-util';
+import { fakePlayer } from '@app/test';
 import { AgePipe } from '@app/shared/pipes';
 import { render, screen } from '@testing-library/angular';
 import { within } from '@testing-library/dom';

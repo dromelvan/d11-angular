@@ -4,7 +4,7 @@ import { userEvent } from '@testing-library/user-event';
 import { NgClass } from '@angular/common';
 import { DynamicDialogConfig } from 'primeng/dynamicdialog';
 import { DynamicListDialogHeaderComponent } from './dynamic-list-dialog-header.component';
-import { fakeTeamBase } from '@app/core/api/test/faker-util';
+import { fakeTeamBase } from '@app/test';
 import { TeamBaseContainer } from '@app/core/api/model/team-base-container';
 import { PRIMARY } from '@app/app.theme';
 

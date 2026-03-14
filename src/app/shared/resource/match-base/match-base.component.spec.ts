@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import type { MatchBase, TeamBase } from '@app/core/api';
-import { fakeMatchBase, fakeTeamBase } from '@app/core/api/test/faker-util';
+import { fakeMatchBase, fakeTeamBase } from '@app/test';
 import { render, screen } from '@testing-library/angular';
 import { expect } from 'vitest';
 import { MatchBaseComponent } from './match-base.component';

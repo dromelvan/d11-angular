@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import type { PlayerSeasonStat } from '@app/core/api';
-import { fakePlayerSeasonStat } from '@app/core/api/test/faker-util';
+import { fakePlayerSeasonStat } from '@app/test';
 import { render, screen, waitFor } from '@testing-library/angular';
 import { expect } from 'vitest';
 import { PlayerSeasonStatCardComponent } from './player-season-stat-card.component';
