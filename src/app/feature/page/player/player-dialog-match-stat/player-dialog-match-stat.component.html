@@ -1,35 +1,8 @@
 @let pms = playerMatchStat();
-<div class="app-col pt-4 min-h-95 max-h-95">
-  <div class="grid grid-cols-[1fr_2.1rem_2.1rem_2.1rem_1fr] items-center">
-    <span
-      class="app-grid-cell justify-end pr-1"
-      [class.font-bold]="pms.match.homeTeam.id === pms.team.id"
-    >
-      {{ pms.match.homeTeam.shortName }}
-    </span>
-    <app-team-img [team]="pms.match.homeTeam" />
-
-    <div class="app-grid-cell min-w-2.5 flex justify-center">
-      {{ pms.match.homeTeamGoalsScored }}&ndash;{{ pms.match.awayTeamGoalsScored }}
-    </div>
-    <app-team-img [team]="pms.match.awayTeam" />
-    <div
-      class="app-grid-cell text-left pl-1"
-      [class.font-bold]="pms.match.awayTeam.id === pms.team.id"
-    >
-      {{ pms.match.awayTeam.shortName }}
-    </div>
-
-    <div class="app-grid-cell col-span-2 pt-2 justify-center">{{ pms.match.stadium.name }}</div>
-    <div class="app-grid-cell justify-center pt-2">{{ pms.match.elapsed }}</div>
-    <div class="app-grid-cell col-span-2 pt-2 justify-center">
-      {{ pms.match.datetime | date: 'd.M yyyy&nbsp;&nbsp;H:mm' }}
-    </div>
-  </div>
+<div class="app-col gap-2 pt-4 min-h-95 max-h-95">
+  <app-match-header [match]="pms.match" [emphasised]="false" [links]="false" />
 
   <div class="grid grid-cols-2">
-    <div class="app-grid-sub-header mt-0 col-span-2">D11</div>
-
     @if (!pms.d11Team.dummy) {
       <span class="app-grid-cell">D11 team</span>
       <span class="app-grid-cell justify-end">

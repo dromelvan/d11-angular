@@ -2,8 +2,8 @@ import { signal } from '@angular/core';
 import { render, screen } from '@testing-library/angular';
 import { DynamicDialogConfig } from 'primeng/dynamicdialog';
 import { PlayerDialogMatchStatComponent } from './player-dialog-match-stat.component';
-import { fakeD11TeamBase, fakePlayerMatchStat, fakePosition } from '@app/test';
-import { Lineup } from '@app/core/api';
+import { fakeD11TeamBase, fakeMatchBase, fakePlayerMatchStat, fakePosition } from '@app/test';
+import { Lineup, Status } from '@app/core/api';
 import { RatingPipe } from '@app/shared/pipes/rating.pipe';
 
 function fakeConfig(playerMatchStat = fakePlayerMatchStat()) {
@@ -50,11 +50,18 @@ describe('PlayerDialogMatchStatComponent', () => {
 
       await setup(playerMatchStat);
 
-      expect(screen.getByText(playerMatchStat.match.stadium.name)).toBeInTheDocument();
+      expect(
+        screen.getByText(
+          `${playerMatchStat.match.stadium.name}, ${playerMatchStat.match.stadium.city}`,
+        ),
+      ).toBeInTheDocument();
     });
 
     it('renders elapsed', async () => {
-      const playerMatchStat = fakePlayerMatchStat();
+      const playerMatchStat = {
+        ...fakePlayerMatchStat(),
+        match: { ...fakeMatchBase(), status: Status.FINISHED, elapsed: 'test-elapsed' },
+      };
 
       await setup(playerMatchStat);
 
@@ -62,13 +69,19 @@ describe('PlayerDialogMatchStatComponent', () => {
     });
 
     it('renders score', async () => {
-      const playerMatchStat = fakePlayerMatchStat();
+      const playerMatchStat = {
+        ...fakePlayerMatchStat(),
+        match: { ...fakeMatchBase(), status: Status.FINISHED },
+      };
 
       await setup(playerMatchStat);
 
       expect(
         screen.getByText(
           `${playerMatchStat.match.homeTeamGoalsScored}\u2013${playerMatchStat.match.awayTeamGoalsScored}`,
+          {
+            exact: false,
+          },
         ),
       ).toBeInTheDocument();
     });
@@ -563,7 +576,7 @@ describe('PlayerDialogMatchStatComponent', () => {
       const element = screen.getByText('Minutes played');
       expect(element).toBeInTheDocument();
       expect(element.nextElementSibling).toHaveTextContent(
-        `${playerMatchStat.substitutionOnTime - playerMatchStat.substitutionOnTime}`,
+        `${playerMatchStat.substitutionOffTime - playerMatchStat.substitutionOnTime}`,
       );
     });
   });

@@ -2,14 +2,14 @@ import { Component, computed, inject } from '@angular/core';
 import { Lineup, PlayerMatchStat } from '@app/core/api';
 import { RatingPipe } from '@app/shared/pipes/rating.pipe';
 import { DynamicDialogConfig } from 'primeng/dynamicdialog';
-import { ImgWidth, TeamImgComponent } from '@app/shared/img';
-import { DatePipe } from '@angular/common';
+import { ImgWidth } from '@app/shared/img';
 import { D11TeamBaseComponent } from '@app/shared/resource';
 import { IconComponent } from '@app/shared/icon/icon.component';
+import { MatchHeaderComponent } from '@app/feature/page/match/match-header/match-header.component';
 
 @Component({
   selector: 'app-player-match-stat-dialog',
-  imports: [RatingPipe, TeamImgComponent, DatePipe, D11TeamBaseComponent, IconComponent],
+  imports: [RatingPipe, D11TeamBaseComponent, IconComponent, MatchHeaderComponent],
   templateUrl: './player-dialog-match-stat.component.html',
 })
 export class PlayerDialogMatchStatComponent {
