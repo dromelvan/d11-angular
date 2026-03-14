@@ -3,20 +3,23 @@ import { DatePipe } from '@angular/common';
 import { render, screen } from '@testing-library/angular';
 import { fakeMatchBase } from '@app/test';
 import { MatchBase, Status } from '@app/core/api';
+import { ImgWidth } from '@app/shared/img/img-width';
 import { expect } from 'vitest';
 import { MatchHeaderComponent } from './match-header.component';
 
 let match: MatchBase | undefined;
 let links: boolean;
+let emphasised: boolean;
 
 @Component({
-  template: ` <app-match-header [match]="match" [links]="links" />`,
+  template: ` <app-match-header [match]="match" [links]="links" [emphasised]="emphasised" />`,
   standalone: true,
   imports: [MatchHeaderComponent],
 })
 class HostComponent {
   match = match;
   links = links;
+  emphasised = emphasised;
 }
 
 describe('MatchHeaderComponent', () => {
@@ -122,6 +125,43 @@ describe('MatchHeaderComponent', () => {
         screen.queryByText(`Match week ${match!.matchWeek.matchWeekNumber}`, { exact: false }),
       ).not.toBeInTheDocument();
       expect(screen.queryByText('League table')).not.toBeInTheDocument();
+    });
+  });
+
+  describe('emphasised', () => {
+    beforeEach(async () => {
+      match = { ...fakeMatchBase(), status: Status.FINISHED };
+      links = false;
+      emphasised = true;
+      await render(HostComponent, {});
+    });
+
+    it('renders score with large text when emphasised', () => {
+      expect(document.querySelector('.text-4xl')).toBeInTheDocument();
+    });
+
+    it('renders team images with large width when emphasised', () => {
+      const images = document.querySelectorAll<HTMLImageElement>('app-team-img img');
+      images.forEach((img) => expect(img).toHaveAttribute('width', ImgWidth.LARGE));
+    });
+  });
+
+  describe('de-emphasised', () => {
+    beforeEach(async () => {
+      match = { ...fakeMatchBase(), status: Status.FINISHED };
+      links = false;
+      emphasised = false;
+      await render(HostComponent, {});
+    });
+
+    it('renders score with smaller text when not emphasised', () => {
+      expect(document.querySelector('.text-2xl')).toBeInTheDocument();
+      expect(document.querySelector('.text-4xl')).not.toBeInTheDocument();
+    });
+
+    it('renders team images with small width when not emphasised', () => {
+      const images = document.querySelectorAll<HTMLImageElement>('app-team-img img');
+      images.forEach((img) => expect(img).toHaveAttribute('width', ImgWidth.SMALL));
     });
   });
 });

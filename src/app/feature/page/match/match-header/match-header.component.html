@@ -1,8 +1,9 @@
 @if (match(); as m) {
+  @let emph = emphasised();
   <div class="">
     <div class="app-row justify-between gap-4">
       <div class="app-col flex-1 items-center gap-1">
-        <app-team-img [team]="m.homeTeam" width="56" />
+        <app-team-img [team]="m.homeTeam" [width]="emph ? ImgWidth.LARGE : ImgWidth.SMALL" />
         <span class="app-text-medium-emphasis">
           <span class="sm:hidden">{{ m.homeTeam.shortName }}</span>
           <span class="hidden sm:block">{{ m.homeTeam.name }}</span>
@@ -11,14 +12,14 @@
 
       @if (m.status !== Status.PENDING) {
         <div class="app-col items-center gap-1">
-          <span class="text-4xl font-bold tracking-wide">
+          <span class="font-bold tracking-wide" [ngClass]="emph ? 'text-4xl' : 'text-2xl'">
             {{ m.homeTeamGoalsScored }}&ndash;{{ m.awayTeamGoalsScored }}
           </span>
           <span class="text-xs uppercase">{{ m.elapsed }}</span>
         </div>
       }
       <div class="app-col items-center gap-1 flex-1">
-        <app-team-img [team]="m.awayTeam" width="56" />
+        <app-team-img [team]="m.awayTeam" [width]="emph ? ImgWidth.LARGE : ImgWidth.SMALL" />
         <span class="app-text-medium-emphasis">
           <span class="sm:hidden">{{ m.awayTeam.shortName }}</span>
           <span class="hidden sm:block">{{ m.awayTeam.name }}</span>
