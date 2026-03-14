@@ -27,9 +27,7 @@
     </div>
 
     <div class="app-col items-center gap-0.5 mt-3">
-      @if (stadium(); as s) {
-        <span class="text-xs" data-testid="stadium">{{ s.name }}, {{ s.city }}</span>
-      }
+      <span class="text-xs" data-testid="stadium">{{ m.stadium.name }}, {{ m.stadium.city }}</span>
       <span class="text-xs" data-testid="datetime">
         {{ m.datetime | date: 'MMM dd, yyyy, H:mm' }}
       </span>

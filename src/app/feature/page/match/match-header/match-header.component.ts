@@ -1,5 +1,5 @@
 import { Component, input } from '@angular/core';
-import { Match, type Stadium, Status } from '@app/core/api';
+import { MatchBase, Status } from '@app/core/api';
 import { DatePipe } from '@angular/common';
 import { TeamImgComponent } from '@app/shared/img';
 import { IconComponent } from '@app/shared/icon/icon.component';
@@ -10,8 +10,7 @@ import { IconComponent } from '@app/shared/icon/icon.component';
   templateUrl: './match-header.component.html',
 })
 export class MatchHeaderComponent {
-  match = input<Match | undefined>();
-  stadium = input<Stadium | undefined>();
+  match = input<MatchBase | undefined>();
   links = input<boolean>(true);
 
   protected readonly Status = Status;

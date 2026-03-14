@@ -1,6 +1,6 @@
 import { Component, computed, DestroyRef, inject, input, numberAttribute } from '@angular/core';
 import { rxResource } from '@angular/core/rxjs-interop';
-import { MatchContext, PlayerMatchStat, Status } from '@app/core/api';
+import { Match, PlayerMatchStat, Status } from '@app/core/api';
 import { MatchApiService } from '@app/core/api/match/match-api.service';
 import { LoadingService } from '@app/core/loading/loading.service';
 import { MatchHeaderCardComponent } from '@app/feature/page/match/match-header-card/match-header-card.component';
@@ -17,7 +17,7 @@ export class MatchPageComponent {
 
   protected readonly Status = Status;
 
-  protected rxMatch = rxResource<MatchContext, number>({
+  protected rxMatch = rxResource<Match, number>({
     params: () => this.matchId(),
     stream: ({ params }) => this.matchApiService.getById(params),
   });
@@ -27,10 +27,7 @@ export class MatchPageComponent {
   });
 
   protected model = computed(() => {
-    const matchContext = this.rxMatch.value();
-
-    const match = matchContext?.match;
-    const stadium = matchContext?.stadium;
+    const match = this.rxMatch.value();
 
     const playerMatchStats =
       match && this.rxPlayerMatchStats.value()
@@ -39,7 +36,6 @@ export class MatchPageComponent {
 
     return {
       match,
-      stadium,
       playerMatchStats,
     };
   });

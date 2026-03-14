@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
-import { MatchContext, PlayerMatchStat, Status } from '@app/core/api';
+import { Match, PlayerMatchStat, Status } from '@app/core/api';
 import { MatchApiService } from '@app/core/api/match/match-api.service';
-import { fakeMatch, fakePlayerMatchStat, fakeStadium, fakeTeamBase } from '@app/test';
+import { fakeMatch, fakePlayerMatchStat, fakeTeamBase } from '@app/test';
 import { LoadingService } from '@app/core/loading/loading.service';
 import { RouterService } from '@app/core/router/router.service';
 import { DynamicDialogService } from '@app/shared/dialog/dynamic-dialog-service/dynamic-dialog.service';
@@ -10,7 +10,7 @@ import { of } from 'rxjs';
 import { expect, vi } from 'vitest';
 import { MatchPageComponent } from './match-page.component';
 
-let matchContext: MatchContext;
+let match: Match;
 let playerMatchStats: PlayerMatchStat[];
 
 let matchApi: MatchApiService;
@@ -33,11 +33,10 @@ describe('MatchPageComponent', () => {
     beforeEach(async () => {
       const homeTeam = fakeTeamBase();
       const awayTeam = fakeTeamBase();
-      const match = { ...fakeMatch(), homeTeam, awayTeam, status: Status.PENDING };
-      matchContext = { match, stadium: fakeStadium() };
+      match = { ...fakeMatch(), homeTeam, awayTeam, status: Status.PENDING };
 
       matchApi = {
-        getById: vi.fn().mockReturnValue(of(matchContext)),
+        getById: vi.fn().mockReturnValue(of(match)),
         getPlayerMatchStatsByMatchId: vi.fn().mockReturnValue(of([])),
       } as unknown as MatchApiService;
 
@@ -76,8 +75,7 @@ describe('MatchPageComponent', () => {
     beforeEach(async () => {
       const homeTeam = fakeTeamBase();
       const awayTeam = fakeTeamBase();
-      const match = { ...fakeMatch(), homeTeam, awayTeam, status: Status.FINISHED };
-      matchContext = { match, stadium: fakeStadium() };
+      match = { ...fakeMatch(), homeTeam, awayTeam, status: Status.FINISHED };
 
       const playerMatchStat = fakePlayerMatchStat();
       playerMatchStat.match = { ...playerMatchStat.match, homeTeam, awayTeam };
@@ -85,7 +83,7 @@ describe('MatchPageComponent', () => {
       playerMatchStats = [playerMatchStat];
 
       matchApi = {
-        getById: vi.fn().mockReturnValue(of(matchContext)),
+        getById: vi.fn().mockReturnValue(of(match)),
         getPlayerMatchStatsByMatchId: vi.fn().mockReturnValue(of(playerMatchStats)),
       } as unknown as MatchApiService;
 

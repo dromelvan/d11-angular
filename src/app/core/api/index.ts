@@ -5,7 +5,6 @@ export * from './model/goal-base.model';
 export * from './model/lineup.model';
 export * from './model/match.model';
 export * from './model/match-base.model';
-export * from './model/match-context.model';
 export * from './model/match-week-base.model';
 export * from './model/player.model';
 export * from './model/player-base.model';

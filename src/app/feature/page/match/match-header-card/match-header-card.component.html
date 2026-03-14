@@ -7,7 +7,7 @@
           [ngClass]="textClass()"
           [style.background-color]="backgroundColor()"
         >
-          <app-match-header [match]="m" [stadium]="stadium()" />
+          <app-match-header [match]="m" />
         </div>
       </ng-template>
 
@@ -20,7 +20,7 @@
       [style.background-color]="backgroundColor()"
       [pt]="{ body: { class: 'px-0!' } }"
     >
-      <app-match-header [match]="m" [stadium]="stadium()" />
+      <app-match-header [match]="m" />
     </p-card>
   }
 }

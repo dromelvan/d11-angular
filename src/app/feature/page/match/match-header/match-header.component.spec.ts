@@ -1,23 +1,21 @@
 import { Component } from '@angular/core';
 import { DatePipe } from '@angular/common';
 import { render, screen } from '@testing-library/angular';
-import { fakeMatch, fakeStadium } from '@app/test';
-import { Match, Stadium, Status } from '@app/core/api';
+import { fakeMatchBase } from '@app/test';
+import { MatchBase, Status } from '@app/core/api';
 import { expect } from 'vitest';
 import { MatchHeaderComponent } from './match-header.component';
 
-let match: Match | undefined;
-let stadium: Stadium | undefined;
+let match: MatchBase | undefined;
 let links: boolean;
 
 @Component({
-  template: ` <app-match-header [match]="match" [stadium]="stadium" [links]="links" />`,
+  template: ` <app-match-header [match]="match" [links]="links" />`,
   standalone: true,
   imports: [MatchHeaderComponent],
 })
 class HostComponent {
   match = match;
-  stadium = stadium;
   links = links;
 }
 
@@ -25,7 +23,6 @@ describe('MatchHeaderComponent', () => {
   describe('no match', () => {
     beforeEach(async () => {
       match = undefined;
-      stadium = undefined;
       links = true;
       await render(HostComponent, {});
     });
@@ -37,8 +34,7 @@ describe('MatchHeaderComponent', () => {
 
   describe('with match', () => {
     beforeEach(async () => {
-      match = { ...fakeMatch(), status: Status.FINISHED };
-      stadium = undefined;
+      match = { ...fakeMatchBase(), status: Status.FINISHED };
       links = true;
       await render(HostComponent, {});
     });
@@ -71,6 +67,12 @@ describe('MatchHeaderComponent', () => {
       expect(screen.getByText(match!.elapsed)).toBeInTheDocument();
     });
 
+    it('renders stadium', () => {
+      expect(
+        screen.getByText(`${match!.stadium!.name}, ${match!.stadium!.city}`),
+      ).toBeInTheDocument();
+    });
+
     it('renders datetime', () => {
       const formatted = new DatePipe('en-US').transform(match!.datetime, 'MMM dd, yyyy, H:mm');
       expect(screen.getByText(formatted!)).toBeInTheDocument();
@@ -79,8 +81,7 @@ describe('MatchHeaderComponent', () => {
 
   describe('pending match', () => {
     beforeEach(async () => {
-      match = { ...fakeMatch(), status: Status.PENDING };
-      stadium = undefined;
+      match = { ...fakeMatchBase(), status: Status.PENDING };
       links = true;
       await render(HostComponent, {});
     });
@@ -94,36 +95,9 @@ describe('MatchHeaderComponent', () => {
     });
   });
 
-  describe('with stadium', () => {
-    beforeEach(async () => {
-      match = { ...fakeMatch(), status: Status.FINISHED };
-      stadium = fakeStadium();
-      links = true;
-      await render(HostComponent, {});
-    });
-
-    it('renders stadium', () => {
-      expect(screen.getByText(`${stadium!.name}, ${stadium!.city}`)).toBeInTheDocument();
-    });
-  });
-
-  describe('without stadium', () => {
-    beforeEach(async () => {
-      match = { ...fakeMatch(), status: Status.FINISHED };
-      stadium = undefined;
-      links = true;
-      await render(HostComponent, {});
-    });
-
-    it('does not render stadium', () => {
-      expect(screen.queryByTestId('stadium')).not.toBeInTheDocument();
-    });
-  });
-
   describe('with links', () => {
     beforeEach(async () => {
-      match = { ...fakeMatch(), status: Status.FINISHED };
-      stadium = undefined;
+      match = { ...fakeMatchBase(), status: Status.FINISHED };
       links = true;
       await render(HostComponent, {});
     });
@@ -138,8 +112,7 @@ describe('MatchHeaderComponent', () => {
 
   describe('without links', () => {
     beforeEach(async () => {
-      match = { ...fakeMatch(), status: Status.FINISHED };
-      stadium = undefined;
+      match = { ...fakeMatchBase(), status: Status.FINISHED };
       links = false;
       await render(HostComponent, {});
     });

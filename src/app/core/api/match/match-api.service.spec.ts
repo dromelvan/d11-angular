@@ -51,7 +51,7 @@ describe('MatchApiService', () => {
 
       const result = await firstValueFrom(matchApi.getById(matchId));
 
-      expect(result).toEqual({ match, stadium });
+      expect(result).toEqual(match);
     });
 
     it('propagates errors on getById', async () => {
