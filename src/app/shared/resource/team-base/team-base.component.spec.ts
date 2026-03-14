@@ -70,12 +70,12 @@ describe('TeamBaseComponent justify', () => {
 describe('TeamBaseComponent team image', () => {
   it('has propagated imgWidth', async () => {
     team = fakeTeamBase();
-    imgWidth = ImgWidth.LARGE;
+    imgWidth = ImgWidth.XLARGE;
     await render(HostComponent, {});
 
     const img = screen.getByAltText(team.name) as HTMLImageElement;
 
-    expect(img).toHaveAttribute('width', ImgWidth.LARGE);
+    expect(img).toHaveAttribute('width', ImgWidth.XLARGE);
   });
 
   it('has default width when no imgWidth provided', async () => {

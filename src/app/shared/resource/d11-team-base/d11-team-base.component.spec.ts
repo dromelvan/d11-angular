@@ -70,13 +70,13 @@ describe('D11TeamBaseComponent justify', () => {
 describe('D11TeamBaseComponent d11 team image', () => {
   it('has propagated imgWidth', async () => {
     d11Team = fakeD11TeamBase();
-    imgWidth = ImgWidth.LARGE;
+    imgWidth = ImgWidth.XLARGE;
 
     await render(HostComponent, {});
 
     const img = screen.getByAltText(d11Team.name) as HTMLImageElement;
 
-    expect(img).toHaveAttribute('width', ImgWidth.LARGE);
+    expect(img).toHaveAttribute('width', ImgWidth.XLARGE);
   });
 
   it('has default width when no imgWidth provided', async () => {
