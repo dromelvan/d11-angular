@@ -11,6 +11,7 @@ export type IconPreset =
   | 'own_goal'
   | 'player'
   | 'red_card'
+  | 'search'
   | 'shared_mom'
   | 'substitution_off'
   | 'substitution_on'
@@ -37,6 +38,7 @@ export const ICON_PRESETS: Record<
   own_goal: { name: 'sports_and_outdoors', weight: 200, size: 22, class: 'text-error' },
   player: { name: 'person', fill: true, weight: 200 },
   red_card: { name: 'crop_portrait', fill: true, weight: 400, class: 'text-error' },
+  search: { name: 'search', weight: 200 },
   shared_mom: { name: 'star_half', fill: true, weight: 400, class: 'text-primary' },
   substitution_off: { name: 'arrow_downward', fill: true, weight: 400, class: 'text-error' },
   substitution_on: { name: 'arrow_upward', fill: true, weight: 400, class: 'text-success' },
