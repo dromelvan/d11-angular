@@ -7,6 +7,7 @@ import { MatchWeekBase } from '@app/core/api/model/match-week-base.model';
 import { Match } from '@app/core/api/model/match.model';
 import { PlayerBase } from '@app/core/api/model/player-base.model';
 import { PlayerMatchStat } from '@app/core/api/model/player-match-stat.model';
+import { PlayerSearchResult } from '@app/core/api/model/player-search-result.model';
 import { PlayerSeasonStat } from '@app/core/api/model/player-season-stat.model';
 import { Player } from '@app/core/api/model/player.model';
 import { Position } from '@app/core/api/model/position.model';
@@ -16,6 +17,13 @@ import { Status } from '@app/core/api/model/status.model';
 import { TeamBase } from '@app/core/api/model/team-base.model';
 import { faker } from '@faker-js/faker';
 import { StadiumBase } from '@app/core/api';
+
+export const fakePlayerSearchResult = (): PlayerSearchResult => ({
+  id: faker.number.int({ min: 1, max: 10000 }),
+  name: faker.person.fullName(),
+  teamId: faker.number.int({ min: 2, max: 100 }),
+  teamName: faker.company.name(),
+});
 
 export const fakeTeamBase = (): TeamBase => ({
   id: faker.number.int({ min: 1, max: 100 }),

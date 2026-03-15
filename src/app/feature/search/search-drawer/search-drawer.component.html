@@ -1,0 +1,47 @@
+<div
+  class="app-search-drawer-backdrop fixed inset-0 z-50 bg-black/50 transition-opacity duration-200"
+  [class]="visible ? 'opacity-100' : 'opacity-0 pointer-events-none'"
+  (click)="onClose()"
+></div>
+
+<div
+  class="app-search-drawer fixed top-0 left-0 right-0 z-50 bg-surface-0 shadow-lg transition-transform duration-200 rounded-b-[25px]"
+  [class]="visible ? 'translate-y-0' : '-translate-y-full'"
+>
+  <div class="app-row gap-3 bg-primary p-4 max-h-15">
+    <div class="relative flex-1">
+      <app-icon
+        icon="search"
+        class="app-text-low-emphasis absolute left-3 top-1/2 -translate-y-1/2"
+      />
+      <input
+        #searchInput
+        pInputText
+        type="text"
+        placeholder="Search players..."
+        class="w-full rounded-full! pl-10! max-h-12"
+        [value]="value()"
+        (input)="onInput($any($event.target).value)"
+      />
+    </div>
+    <button class="text-sm primary-contrast" (click)="onClose()">Close</button>
+  </div>
+
+  <div [ngClass]="results().length > 0 ? 'inline' : 'hidden'">
+    <div class="p-4">
+      <ul class="app-col max-h-[70vh] overflow-y-auto">
+        @for (player of results(); track player.id) {
+          <li class="app-row gap-4 px-2" (click)="select(player)">
+            <app-avatar resource="player" [id]="player.id" size="large" />
+            <div class="text-sm">
+              <span>{{ player.name }}</span>
+              @if (player.teamId > 1) {
+                <span class="app-text-low-emphasis block">{{ player.teamName }}</span>
+              }
+            </div>
+          </li>
+        }
+      </ul>
+    </div>
+  </div>
+</div>
