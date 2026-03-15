@@ -1,11 +1,21 @@
-import { App } from './app';
-import { render, screen } from '@testing-library/angular';
+import { render } from '@testing-library/angular';
 import { expect } from 'vitest';
+import { App } from './app';
 
 describe('App', () => {
-  test('Hello is visible', async () => {
+  beforeEach(async () => {
     await render(App);
+  });
 
-    expect(screen.getByText('Hello, d11-angular')).toBeVisible();
+  it('renders header', () => {
+    expect(document.querySelector('app-header')).toBeInTheDocument();
+  });
+
+  it('renders loading', () => {
+    expect(document.querySelector('app-loading')).toBeInTheDocument();
+  });
+
+  it('renders router outlet', () => {
+    expect(document.querySelector('router-outlet')).toBeInTheDocument();
   });
 });
