@@ -1,3 +1,5 @@
+export * from './match/match-api.service';
+export * from './match-week/match-week-api.service';
 export * from './model/country.model';
 export * from './model/d11-match-base.model';
 export * from './model/d11-team-base.model';
@@ -5,7 +7,9 @@ export * from './model/goal-base.model';
 export * from './model/lineup.model';
 export * from './model/match.model';
 export * from './model/match-base.model';
+export * from './model/match-week.model';
 export * from './model/match-week-base.model';
+export * from './model/most-valuable-player.model';
 export * from './model/player.model';
 export * from './model/player-base.model';
 export * from './model/player-match-stat.model';

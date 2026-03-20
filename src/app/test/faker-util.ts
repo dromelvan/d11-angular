@@ -4,6 +4,7 @@ import { GoalBase } from '@app/core/api/model/goal-base.model';
 import { Lineup } from '@app/core/api/model/lineup.model';
 import { MatchBase } from '@app/core/api/model/match-base.model';
 import { MatchWeekBase } from '@app/core/api/model/match-week-base.model';
+import { MatchWeek } from '@app/core/api/model/match-week.model';
 import { Match } from '@app/core/api/model/match.model';
 import { PlayerBase } from '@app/core/api/model/player-base.model';
 import { PlayerMatchStat } from '@app/core/api/model/player-match-stat.model';
@@ -78,6 +79,13 @@ export const fakeStadium = (): Stadium => ({
 const fakeMatchWeekBase = (): MatchWeekBase => ({
   id: faker.number.int({ min: 1, max: 38 }),
   matchWeekNumber: faker.number.int({ min: 1, max: 38 }),
+});
+
+export const fakeMatchWeek = (): MatchWeek => ({
+  ...fakeMatchWeekBase(),
+  date: faker.date.recent().toISOString(),
+  elapsed: faker.number.int({ min: 0, max: 90 }),
+  status: faker.helpers.enumValue(Status),
 });
 
 export const fakeMatchBase = (): MatchBase => ({
