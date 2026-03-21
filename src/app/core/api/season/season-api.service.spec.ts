@@ -54,20 +54,20 @@ describe('SeasonApiService', () => {
       expect(results).toEqual(seasons);
     });
 
-    it('propagates errors on getAll', async () => {
+    it('propagates errors', async () => {
       const httpError = new Error('NOT_FOUND');
 
       apiServiceMock.get = vi.fn().mockReturnValue(throwError(() => httpError)) as GetFn;
 
-      await expect(firstValueFrom(seasonApi.getAll())).rejects.toThrow(httpError.message);
+      expect(firstValueFrom(seasonApi.getAll())).rejects.toThrow(httpError.message);
     });
 
-    it('does not map the result on getAll error', async () => {
+    it('does not map the result on error', async () => {
       apiServiceMock.get = vi
         .fn()
         .mockReturnValue(throwError(() => new Error('NOT_FOUND'))) as GetFn;
 
-      await expect(firstValueFrom(seasonApi.getAll())).rejects.toBeInstanceOf(Error);
+      expect(firstValueFrom(seasonApi.getAll())).rejects.toBeInstanceOf(Error);
     });
 
     it('retrieves cached in memory result', async () => {
@@ -93,6 +93,75 @@ describe('SeasonApiService', () => {
       const result = await firstValueFrom(newSeasonApi.getAll());
 
       expect(result).toEqual(seasons);
+      expect(apiServiceMock.get).toHaveBeenCalledOnce();
+    });
+  });
+
+  // getCurrentSeason ------------------------------------------------------------------------------
+
+  describe('getCurrentSeason', () => {
+    it('calls get with namespace', async () => {
+      const season = fakeSeason();
+      const seasonsResponse: SeasonsResponseBody = { seasons: [season] };
+      apiServiceMock.get = vi.fn().mockReturnValue(of(seasonsResponse)) as GetFn;
+
+      await firstValueFrom(seasonApi.getCurrentSeason());
+
+      expect(apiServiceMock.get).toHaveBeenCalledExactlyOnceWith({
+        namespace: seasonApi.namespace,
+      });
+    });
+
+    it('maps the result', async () => {
+      const first = { ...fakeSeason(), date: '2023-01-01' };
+      const current = { ...fakeSeason(), date: '2025-01-01' };
+      const second = { ...fakeSeason(), date: '2024-06-01' };
+      const seasonsResponse: SeasonsResponseBody = { seasons: [first, current, second] };
+      apiServiceMock.get = vi.fn().mockReturnValue(of(seasonsResponse)) as GetFn;
+
+      const result = await firstValueFrom(seasonApi.getCurrentSeason());
+
+      expect(result).toEqual(current);
+    });
+
+    it('propagates errors', async () => {
+      const httpError = new Error('NOT_FOUND');
+      apiServiceMock.get = vi.fn().mockReturnValue(throwError(() => httpError)) as GetFn;
+
+      expect(firstValueFrom(seasonApi.getCurrentSeason())).rejects.toThrow(httpError.message);
+    });
+
+    it('does not map the result on error', async () => {
+      apiServiceMock.get = vi
+        .fn()
+        .mockReturnValue(throwError(() => new Error('NOT_FOUND'))) as GetFn;
+
+      expect(firstValueFrom(seasonApi.getCurrentSeason())).rejects.toBeInstanceOf(Error);
+    });
+
+    it('retrieves cached in memory result', async () => {
+      const season = fakeSeason();
+      const seasonsResponse: SeasonsResponseBody = { seasons: [season] };
+      apiServiceMock.get = vi.fn().mockReturnValue(of(seasonsResponse)) as GetFn;
+
+      await firstValueFrom(seasonApi.getCurrentSeason());
+      await firstValueFrom(seasonApi.getCurrentSeason());
+
+      expect(apiServiceMock.get).toHaveBeenCalledOnce();
+    });
+
+    it('retrieves cached localStorage result on new service instance', async () => {
+      const season = fakeSeason();
+      const seasonsResponse: SeasonsResponseBody = { seasons: [season] };
+      apiServiceMock.get = vi.fn().mockReturnValue(of(seasonsResponse)) as GetFn;
+
+      await firstValueFrom(seasonApi.getCurrentSeason());
+      expect(apiServiceMock.get).toHaveBeenCalledOnce();
+
+      const newSeasonApi = TestBed.inject(SeasonApiService);
+      const result = await firstValueFrom(newSeasonApi.getCurrentSeason());
+
+      expect(result).toEqual(season);
       expect(apiServiceMock.get).toHaveBeenCalledOnce();
     });
   });

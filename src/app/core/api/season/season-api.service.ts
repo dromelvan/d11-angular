@@ -25,4 +25,10 @@ export class SeasonApiService {
   getAll(): Observable<Season[]> {
     return this.seasonsCache.get();
   }
+
+  getCurrentSeason(): Observable<Season> {
+    return this.seasonsCache
+      .get()
+      .pipe(map((seasons) => [...seasons].sort((a, b) => b.date.localeCompare(a.date))[0]));
+  }
 }
