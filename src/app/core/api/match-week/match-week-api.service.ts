@@ -2,7 +2,9 @@ import { inject, Injectable } from '@angular/core';
 import { ApiService } from '@app/core/api/api.service';
 import { map, Observable } from 'rxjs';
 import { MatchWeek } from '@app/core/api';
-import { MatchWeekResponseBody } from '@app/core/api/match-week/match-week-response-body.model';
+import { MatchWeekResponseBody } from './match-week-response-body.model';
+import { MatchWeeksResponseBody } from './match-weeks-response-body.model';
+import { HttpParams } from '@angular/common/http';
 
 @Injectable({
   providedIn: 'root',
@@ -18,5 +20,15 @@ export class MatchWeekApiService {
         id: id,
       })
       .pipe(map((result) => result.matchWeek));
+  }
+
+  getMatchWeeksBySeasonId(seasonId: number): Observable<MatchWeek[]> {
+    const params = new HttpParams().set('seasonId', seasonId);
+    return this.apiService
+      .get<MatchWeeksResponseBody>({
+        namespace: this.namespace,
+        options: { params: params },
+      })
+      .pipe(map((result) => result.matchWeeks));
   }
 }
