@@ -73,6 +73,50 @@ describe('MatchWeekApiService', () => {
     });
   });
 
+  // getCurrentMatchWeek ---------------------------------------------------------------------------
+
+  describe('getCurrentMatchWeek', () => {
+    const matchWeek = fakeMatchWeek();
+    const matchWeekResponse: MatchWeekResponseBody = { matchWeek };
+
+    it('calls get', async () => {
+      apiServiceMock.get = vi.fn().mockReturnValue(of(matchWeekResponse)) as GetFn;
+
+      await firstValueFrom(matchWeekApi.getCurrentMatchWeek());
+
+      expect(apiServiceMock.get).toHaveBeenCalledExactlyOnceWith(
+        expect.objectContaining({
+          namespace: matchWeekApi.namespace,
+          endpoint: 'current',
+        }),
+      );
+    });
+
+    it('maps the result', async () => {
+      apiServiceMock.get = vi.fn().mockReturnValue(of(matchWeekResponse)) as GetFn;
+
+      const result = await firstValueFrom(matchWeekApi.getCurrentMatchWeek());
+
+      expect(result).toEqual(matchWeek);
+    });
+
+    it('propagates errors', async () => {
+      const httpError = new Error('NOT_FOUND');
+
+      apiServiceMock.get = vi.fn().mockReturnValue(throwError(() => httpError)) as GetFn;
+
+      expect(firstValueFrom(matchWeekApi.getCurrentMatchWeek())).rejects.toThrow(httpError.message);
+    });
+
+    it('does not map the result on error', async () => {
+      apiServiceMock.get = vi
+        .fn()
+        .mockReturnValue(throwError(() => new Error('NOT_FOUND'))) as GetFn;
+
+      expect(firstValueFrom(matchWeekApi.getCurrentMatchWeek())).rejects.toBeInstanceOf(Error);
+    });
+  });
+
   // getMatchWeeksBySeasonId -----------------------------------------------------------------------
 
   describe('getMatchWeeksBySeasonId', () => {

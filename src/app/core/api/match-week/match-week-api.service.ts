@@ -22,6 +22,15 @@ export class MatchWeekApiService {
       .pipe(map((result) => result.matchWeek));
   }
 
+  getCurrentMatchWeek(): Observable<MatchWeek> {
+    return this.apiService
+      .get<MatchWeekResponseBody>({
+        namespace: this.namespace,
+        endpoint: 'current',
+      })
+      .pipe(map((result) => result.matchWeek));
+  }
+
   getMatchWeeksBySeasonId(seasonId: number): Observable<MatchWeek[]> {
     const params = new HttpParams().set('seasonId', seasonId);
     return this.apiService
