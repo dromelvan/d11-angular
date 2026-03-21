@@ -20,6 +20,19 @@ export const D11Light = definePreset(Aura, {
   },
 
   components: {
+    button: {
+      colorScheme: {
+        light: {
+          root: {
+            secondary: {
+              background: '{gray.100}',
+              hoverBackground: '{gray.200}',
+              activeBackground: '{gray.300}',
+            },
+          },
+        },
+      },
+    },
     card: {
       title: {
         fontWeight: 'bold',
