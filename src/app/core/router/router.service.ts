@@ -12,6 +12,10 @@ export class RouterService {
     return this.router.navigate(['players', playerId], extras);
   }
 
+  public navigateToMatchWeek(matchWeekId: number): Promise<boolean> {
+    return this.router.navigate(['match-weeks', matchWeekId]);
+  }
+
   public navigateToMatch(matchId: number): Promise<boolean> {
     return this.router.navigate(['matches', matchId]);
   }
