@@ -96,6 +96,39 @@ describe('MatchHeaderComponent', () => {
         }),
       ).not.toBeInTheDocument();
     });
+
+    it('renders vs', () => {
+      expect(screen.getByText('vs')).toBeInTheDocument();
+    });
+  });
+
+  describe('postponed match', () => {
+    beforeEach(async () => {
+      match = { ...fakeMatchBase(), status: Status.POSTPONED };
+      links = false;
+      await render(HostComponent, {});
+    });
+
+    it('does not render score', () => {
+      expect(
+        screen.queryByText(`${match!.homeTeamGoalsScored}\u2013${match!.awayTeamGoalsScored}`, {
+          exact: false,
+        }),
+      ).not.toBeInTheDocument();
+    });
+
+    it('renders vs', () => {
+      expect(screen.getByText('vs')).toBeInTheDocument();
+    });
+
+    it('renders postponed', () => {
+      expect(screen.getByTestId('datetime')).toHaveTextContent('Postponed');
+    });
+
+    it('does not render datetime', () => {
+      const formatted = new DatePipe('en-US').transform(match!.datetime, 'MMM dd, yyyy, H:mm');
+      expect(screen.queryByText(formatted!)).not.toBeInTheDocument();
+    });
   });
 
   describe('with links', () => {
