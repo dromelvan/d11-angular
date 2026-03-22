@@ -1,5 +1,5 @@
 import { Component, input } from '@angular/core';
-import { MatchBase, TeamBase } from '@app/core/api';
+import { MatchBase, Status, TeamBase } from '@app/core/api';
 import { TeamImgComponent } from '@app/shared/img';
 
 @Component({
@@ -10,4 +10,5 @@ import { TeamImgComponent } from '@app/shared/img';
 export class MatchBaseComponent {
   match = input.required<MatchBase>();
   team = input<TeamBase | undefined>();
+  protected readonly Status = Status;
 }

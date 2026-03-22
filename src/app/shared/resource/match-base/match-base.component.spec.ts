@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import type { MatchBase, TeamBase } from '@app/core/api';
+import { Status } from '@app/core/api';
 import { fakeMatchBase, fakeTeamBase } from '@app/test';
 import { render, screen } from '@testing-library/angular';
 import { expect } from 'vitest';
@@ -23,7 +24,7 @@ describe('MatchBaseComponent', () => {
   let match: MatchBase;
 
   beforeEach(async () => {
-    match = fakeMatchBase();
+    match = { ...fakeMatchBase(), status: Status.FINISHED };
     await renderMatchBase(match);
   });
 
@@ -111,5 +112,23 @@ describe('MatchBaseComponent when team is the away team', () => {
   it('does not render home team code bold', () => {
     const element = screen.getAllByText(match.homeTeam.code)[0].closest('span')?.parentElement;
     expect(element).not.toHaveClass('font-bold');
+  });
+});
+
+describe('MatchBaseComponent PENDING', () => {
+  it('renders vs', async () => {
+    const match = { ...fakeMatchBase(), status: Status.PENDING };
+    await renderMatchBase(match);
+
+    expect(screen.getByText('vs')).toBeInTheDocument();
+  });
+});
+
+describe('MatchBaseComponent POSTPONED', () => {
+  it('renders PP', async () => {
+    const match = { ...fakeMatchBase(), status: Status.POSTPONED };
+    await renderMatchBase(match);
+
+    expect(screen.getByText('PP')).toBeInTheDocument();
   });
 });
