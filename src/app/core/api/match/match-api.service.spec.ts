@@ -1,5 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 import { ApiService } from '@app/core/api/api.service';
+import { HttpParams } from '@angular/common/http';
 import { Lineup } from '@app/core/api';
 import { fakeMatch, fakePlayerMatchStat, fakeStadium, GetFn } from '@app/test';
 import { firstValueFrom, of, throwError } from 'rxjs';
@@ -68,6 +69,55 @@ describe('MatchApiService', () => {
         .mockReturnValue(throwError(() => new Error('NOT_FOUND'))) as GetFn;
 
       expect(firstValueFrom(matchApi.getById(matchId))).rejects.toBeInstanceOf(Error);
+    });
+  });
+
+  // getMatchesByMatchWeekId -----------------------------------------------------------------------
+
+  describe('getMatchesByMatchWeekId', () => {
+    const matchWeekId = 7;
+    const matches = [fakeMatch(), fakeMatch()];
+    const response: { matches: typeof matches } = { matches };
+
+    it('calls get with matchWeekId param', async () => {
+      apiServiceMock.get = vi.fn().mockReturnValue(of(response)) as GetFn;
+
+      await firstValueFrom(matchApi.getMatchesByMatchWeekId(matchWeekId));
+
+      expect(apiServiceMock.get).toHaveBeenCalledExactlyOnceWith(
+        expect.objectContaining({
+          namespace: matchApi.namespace,
+          options: { params: new HttpParams().set('matchWeekId', matchWeekId) },
+        }),
+      );
+    });
+
+    it('maps the result', async () => {
+      apiServiceMock.get = vi.fn().mockReturnValue(of(response)) as GetFn;
+
+      const result = await firstValueFrom(matchApi.getMatchesByMatchWeekId(matchWeekId));
+
+      expect(result).toEqual(matches);
+    });
+
+    it('propagates errors', async () => {
+      const httpError = new Error('NOT_FOUND');
+
+      apiServiceMock.get = vi.fn().mockReturnValue(throwError(() => httpError)) as GetFn;
+
+      expect(firstValueFrom(matchApi.getMatchesByMatchWeekId(matchWeekId))).rejects.toThrow(
+        httpError.message,
+      );
+    });
+
+    it('does not map the result on error', async () => {
+      apiServiceMock.get = vi
+        .fn()
+        .mockReturnValue(throwError(() => new Error('NOT_FOUND'))) as GetFn;
+
+      expect(firstValueFrom(matchApi.getMatchesByMatchWeekId(matchWeekId))).rejects.toBeInstanceOf(
+        Error,
+      );
     });
   });
 
