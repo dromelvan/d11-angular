@@ -5,13 +5,16 @@ export const routes: Routes = [
   {
     path: 'players/:playerId',
     component: PlayerPageComponent,
+    data: { section: 'Players' },
   },
   {
     path: 'matches/:matchId',
     component: MatchPageComponent,
+    data: { section: 'Matches' },
   },
   {
     path: 'match-weeks/:matchWeekId',
     component: MatchWeekPageComponent,
+    data: { section: 'Matches' },
   },
 ];
