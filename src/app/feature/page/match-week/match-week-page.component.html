@@ -1,0 +1,30 @@
+<div class="app-match-week-page app-col max-w-sm mx-auto pb-4">
+  @if (model().matchWeek; as matchWeek) {
+    <div class="app-row gap-0">
+      <app-material-icon-button
+        icon="chevron_left"
+        severity="secondary"
+        [disabled]="!hasPrevious()"
+        (click)="navigateToPrevious()"
+      />
+
+      <div class="font-semibold text-center flex-1">
+        Week {{ matchWeek.matchWeekNumber }} -
+        @if (model().season; as season) {
+          {{ season.name }}
+        }
+      </div>
+
+      <app-material-icon-button
+        icon="chevron_right"
+        severity="secondary"
+        [disabled]="!hasNext()"
+        (click)="navigateToNext()"
+      />
+    </div>
+
+    @if (model().matches.length > 0) {
+      <app-match-week-matches-card [matches]="model().matches" />
+    }
+  }
+</div>

@@ -1,0 +1,97 @@
+import { Component } from '@angular/core';
+import { Match, MatchWeek, Season } from '@app/core/api';
+import { MatchApiService } from '@app/core/api/match/match-api.service';
+import { MatchWeekApiService } from '@app/core/api/match-week/match-week-api.service';
+import { SeasonApiService } from '@app/core/api/season/season-api.service';
+import { fakeMatch, fakeMatchWeek, fakeSeason } from '@app/test';
+import { LoadingService } from '@app/core/loading/loading.service';
+import { RouterService } from '@app/core/router/router.service';
+import { render, screen, waitFor } from '@testing-library/angular';
+import { of } from 'rxjs';
+import { expect, vi } from 'vitest';
+import { MatchWeekPageComponent } from './match-week-page.component';
+
+let matchWeek: MatchWeek;
+let season: Season;
+let matches: Match[];
+let matchWeekApi: MatchWeekApiService;
+let seasonApi: SeasonApiService;
+let matchApi: MatchApiService;
+let loadingService: LoadingService;
+let routerService: RouterService;
+
+@Component({
+  template: `<app-match-week [matchWeekId]="matchWeekId" />`,
+  standalone: true,
+  imports: [MatchWeekPageComponent],
+})
+class HostComponent {
+  matchWeekId = matchWeek.id;
+}
+
+describe('MatchWeekPageComponent', () => {
+  beforeEach(async () => {
+    matchWeek = fakeMatchWeek();
+    season = fakeSeason();
+    matches = [fakeMatch(), fakeMatch()];
+
+    matchWeekApi = {
+      getById: vi.fn().mockReturnValue(of(matchWeek)),
+    } as unknown as MatchWeekApiService;
+
+    seasonApi = {
+      getCurrentSeason: vi.fn().mockReturnValue(of(season)),
+    } as unknown as SeasonApiService;
+
+    matchApi = {
+      getMatchesByMatchWeekId: vi.fn().mockReturnValue(of(matches)),
+    } as unknown as MatchApiService;
+
+    loadingService = { register: vi.fn() } as unknown as LoadingService;
+    routerService = {
+      navigateToMatchWeek: vi.fn(),
+      navigateToMatch: vi.fn(),
+    } as unknown as RouterService;
+
+    await render(HostComponent, {
+      providers: [
+        { provide: MatchWeekApiService, useValue: matchWeekApi },
+        { provide: SeasonApiService, useValue: seasonApi },
+        { provide: MatchApiService, useValue: matchApi },
+        { provide: LoadingService, useValue: loadingService },
+        { provide: RouterService, useValue: routerService },
+      ],
+    });
+  });
+
+  it('renders', async () => {
+    await waitFor(() => {
+      expect(document.querySelector('.app-match-week-page')).toBeInTheDocument();
+    });
+  });
+
+  it('renders match week number', async () => {
+    await waitFor(() => {
+      expect(
+        screen.getByText(`Week ${matchWeek.matchWeekNumber}`, { exact: false }),
+      ).toBeInTheDocument();
+    });
+  });
+
+  it('renders season name', async () => {
+    await waitFor(() => {
+      expect(screen.getByText(season.name, { exact: false })).toBeInTheDocument();
+    });
+  });
+
+  it('renders matches card', async () => {
+    await waitFor(() => {
+      expect(screen.getByText('Premier League')).toBeInTheDocument();
+
+      for (const match of matches) {
+        expect(screen.getByText(match.homeTeam.code)).toBeInTheDocument();
+        expect(screen.getByText(match.awayTeam.code)).toBeInTheDocument();
+      }
+    });
+  });
+});

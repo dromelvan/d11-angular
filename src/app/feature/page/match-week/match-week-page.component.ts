@@ -1,0 +1,64 @@
+import { Component, computed, DestroyRef, inject, input, numberAttribute } from '@angular/core';
+import { rxResource } from '@angular/core/rxjs-interop';
+import { MatchBase, MatchWeek, Season } from '@app/core/api';
+import { MatchApiService } from '@app/core/api/match/match-api.service';
+import { MatchWeekApiService } from '@app/core/api/match-week/match-week-api.service';
+import { SeasonApiService } from '@app/core/api/season/season-api.service';
+import { LoadingService } from '@app/core/loading/loading.service';
+import { RouterService } from '@app/core/router/router.service';
+import { IconButtonComponent } from '@app/shared/button/icon-button/icon-button.component';
+import { MatchWeekMatchesCardComponent } from './match-week-matches-card/match-week-matches-card.component';
+
+@Component({
+  selector: 'app-match-week',
+  imports: [IconButtonComponent, MatchWeekMatchesCardComponent],
+  templateUrl: './match-week-page.component.html',
+})
+export class MatchWeekPageComponent {
+  matchWeekId = input.required({ transform: numberAttribute });
+
+  protected rxMatchWeek = rxResource<MatchWeek, number>({
+    params: () => this.matchWeekId(),
+    stream: ({ params }) => this.matchWeekApiService.getById(params),
+  });
+
+  protected rxSeason = rxResource<Season, void>({
+    stream: () => this.seasonApiService.getCurrentSeason(),
+  });
+
+  protected rxMatches = rxResource<MatchBase[], number>({
+    params: () => this.matchWeekId(),
+    stream: ({ params }) => this.matchApiService.getMatchesByMatchWeekId(params),
+  });
+
+  protected model = computed(() => ({
+    matchWeek: this.rxMatchWeek.value(),
+    season: this.rxSeason.value(),
+    matches: this.rxMatches.value() ?? [],
+  }));
+
+  protected isLoading = computed(
+    () => this.rxMatchWeek.isLoading() || this.rxSeason.isLoading() || this.rxMatches.isLoading(),
+  );
+
+  protected hasPrevious = computed(() => (this.rxMatchWeek.value()?.matchWeekNumber ?? 1) > 1);
+  protected hasNext = computed(() => (this.rxMatchWeek.value()?.matchWeekNumber ?? 38) < 38);
+
+  private matchWeekApiService = inject(MatchWeekApiService);
+  private matchApiService = inject(MatchApiService);
+  private seasonApiService = inject(SeasonApiService);
+  private routerService = inject(RouterService);
+  private loadingService = inject(LoadingService);
+
+  constructor() {
+    this.loadingService.register(inject(DestroyRef), this.isLoading);
+  }
+
+  protected navigateToPrevious(): void {
+    this.routerService.navigateToMatchWeek(this.matchWeekId() - 1);
+  }
+
+  protected navigateToNext(): void {
+    this.routerService.navigateToMatchWeek(this.matchWeekId() + 1);
+  }
+}
