@@ -1,5 +1,5 @@
-import { Match } from '@app/core/api';
+import { MatchBase } from '@app/core/api';
 
 export interface MatchesResponseBody {
-  matches: Match[];
+  matches: MatchBase[];
 }

@@ -4,7 +4,7 @@ import { HttpParams } from '@angular/common/http';
 import { map, Observable } from 'rxjs';
 import { MatchResponseBody } from './match-response-body.model';
 import { MatchesResponseBody } from './matches-response-body.model';
-import { Match, PlayerMatchStat } from '@app/core/api';
+import { Match, MatchBase, PlayerMatchStat } from '@app/core/api';
 import { PlayerMatchStatsResponseBody } from '@app/core/api/player/player-match-stats-response-body.model';
 
 @Injectable({
@@ -23,7 +23,7 @@ export class MatchApiService {
       .pipe(map((result) => result.match));
   }
 
-  getMatchesByMatchWeekId(matchWeekId: number): Observable<Match[]> {
+  getMatchesByMatchWeekId(matchWeekId: number): Observable<MatchBase[]> {
     const params = new HttpParams().set('matchWeekId', matchWeekId);
     return this.apiService
       .get<MatchesResponseBody>({
