@@ -41,7 +41,7 @@ export class SearchDrawerComponent {
 
   protected select(player: PlayerSearchResult): void {
     this.onClose();
-    this.routerService.navigateToPlayer(player.id);
+    this.routerService.navigateToPlayer(player.id, undefined, false);
   }
 
   protected onClose(): void {

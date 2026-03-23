@@ -140,7 +140,7 @@ describe('SearchDrawerComponent', () => {
       await waitFor(() => screen.getByText(player.name));
       await userEvent.click(screen.getByText(player.name));
 
-      expect(mockRouterService.navigateToPlayer).toHaveBeenCalledWith(player.id);
+      expect(mockRouterService.navigateToPlayer).toHaveBeenCalledWith(player.id, undefined, false);
     });
   });
 });
