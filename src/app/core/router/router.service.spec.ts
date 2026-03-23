@@ -118,6 +118,7 @@ describe('RouterService', () => {
           RouterService,
           provideRouter([
             { path: '', component: BlankComponent },
+            { path: 'match-weeks', component: BlankComponent },
             { path: 'match-weeks/:id', component: BlankComponent },
             { path: 'matches/:id', component: BlankComponent },
             { path: 'players/:id', component: BlankComponent },
@@ -183,6 +184,17 @@ describe('RouterService', () => {
 
       service.clearStack();
 
+      expect(service.hasStack()).toBe(false);
+    });
+
+    it('navigateToCurrentMatchWeek navigates to match-weeks and clears the stack', async () => {
+      const router = TestBed.inject(Router);
+      await router.navigate(['/match-weeks/1']);
+      await service.navigateToMatch(1);
+
+      await service.navigateToCurrentMatchWeek();
+
+      await waitFor(() => expect(router.url).toBe('/match-weeks'));
       expect(service.hasStack()).toBe(false);
     });
   });

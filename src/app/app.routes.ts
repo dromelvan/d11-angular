@@ -13,6 +13,11 @@ export const routes: Routes = [
     data: { section: 'Matches' },
   },
   {
+    path: 'match-weeks',
+    component: MatchWeekPageComponent,
+    data: { section: 'Matches' },
+  },
+  {
     path: 'match-weeks/:matchWeekId',
     component: MatchWeekPageComponent,
     data: { section: 'Matches' },

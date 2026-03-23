@@ -15,20 +15,25 @@ import { MatchWeekMatchesCardComponent } from './match-week-matches-card/match-w
   templateUrl: './match-week-page.component.html',
 })
 export class MatchWeekPageComponent {
-  matchWeekId = input.required({ transform: numberAttribute });
+  readonly matchWeekId = input<number | undefined, unknown>(undefined, {
+    transform: (v: unknown) => (v != null && v !== '' ? numberAttribute(v as string) : undefined),
+  });
 
-  protected rxMatchWeek = rxResource<MatchWeek, number>({
-    params: () => this.matchWeekId(),
-    stream: ({ params }) => this.matchWeekApiService.getById(params),
+  protected rxMatchWeek = rxResource<MatchWeek, number | null>({
+    params: () => this.matchWeekId() ?? null,
+    stream: ({ params: id }) =>
+      id !== null
+        ? this.matchWeekApiService.getById(id)
+        : this.matchWeekApiService.getCurrentMatchWeek(),
   });
 
   protected rxSeason = rxResource<Season, void>({
     stream: () => this.seasonApiService.getCurrentSeason(),
   });
 
-  protected rxMatches = rxResource<MatchBase[], number>({
-    params: () => this.matchWeekId(),
-    stream: ({ params }) => this.matchApiService.getMatchesByMatchWeekId(params),
+  protected rxMatches = rxResource<MatchBase[], number | undefined>({
+    params: () => this.rxMatchWeek.value()?.id,
+    stream: ({ params }) => this.matchApiService.getMatchesByMatchWeekId(params!),
   });
 
   protected model = computed(() => ({
@@ -55,10 +60,12 @@ export class MatchWeekPageComponent {
   }
 
   protected navigateToPrevious(): void {
-    this.routerService.navigateToMatchWeek(this.matchWeekId() - 1);
+    const id = this.matchWeekId() ?? this.rxMatchWeek.value()?.id;
+    if (id) this.routerService.navigateToMatchWeek(id - 1);
   }
 
   protected navigateToNext(): void {
-    this.routerService.navigateToMatchWeek(this.matchWeekId() + 1);
+    const id = this.matchWeekId() ?? this.rxMatchWeek.value()?.id;
+    if (id) this.routerService.navigateToMatchWeek(id + 1);
   }
 }

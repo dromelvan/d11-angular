@@ -26,17 +26,35 @@ let routerService: RouterService;
   imports: [MatchWeekPageComponent],
 })
 class HostComponent {
-  matchWeekId = matchWeek.id;
+  matchWeekId: number | undefined = matchWeek.id;
+}
+
+@Component({
+  template: `<app-match-week />`,
+  standalone: true,
+  imports: [MatchWeekPageComponent],
+})
+class NoIdHostComponent {}
+
+function makeProviders() {
+  return [
+    { provide: MatchWeekApiService, useValue: matchWeekApi },
+    { provide: SeasonApiService, useValue: seasonApi },
+    { provide: MatchApiService, useValue: matchApi },
+    { provide: LoadingService, useValue: loadingService },
+    { provide: RouterService, useValue: routerService },
+  ];
 }
 
 describe('MatchWeekPageComponent', () => {
-  beforeEach(async () => {
+  beforeEach(() => {
     matchWeek = fakeMatchWeek();
     season = fakeSeason();
     matches = [fakeMatch(), fakeMatch()];
 
     matchWeekApi = {
       getById: vi.fn().mockReturnValue(of(matchWeek)),
+      getCurrentMatchWeek: vi.fn().mockReturnValue(of(matchWeek)),
     } as unknown as MatchWeekApiService;
 
     seasonApi = {
@@ -52,46 +70,72 @@ describe('MatchWeekPageComponent', () => {
       navigateToMatchWeek: vi.fn(),
       navigateToMatch: vi.fn(),
     } as unknown as RouterService;
+  });
 
-    await render(HostComponent, {
-      providers: [
-        { provide: MatchWeekApiService, useValue: matchWeekApi },
-        { provide: SeasonApiService, useValue: seasonApi },
-        { provide: MatchApiService, useValue: matchApi },
-        { provide: LoadingService, useValue: loadingService },
-        { provide: RouterService, useValue: routerService },
-      ],
+  describe('with matchWeekId', () => {
+    beforeEach(async () => {
+      await render(HostComponent, { providers: makeProviders() });
+    });
+
+    it('renders', async () => {
+      await waitFor(() => {
+        expect(document.querySelector('.app-match-week-page')).toBeInTheDocument();
+      });
+    });
+
+    it('renders match week number', async () => {
+      await waitFor(() => {
+        expect(
+          screen.getByText(`Week ${matchWeek.matchWeekNumber}`, { exact: false }),
+        ).toBeInTheDocument();
+      });
+    });
+
+    it('renders season name', async () => {
+      await waitFor(() => {
+        expect(screen.getByText(season.name, { exact: false })).toBeInTheDocument();
+      });
+    });
+
+    it('renders matches card', async () => {
+      await waitFor(() => {
+        expect(screen.getByText('Premier League')).toBeInTheDocument();
+
+        for (const match of matches) {
+          expect(screen.getByText(match.homeTeam.code)).toBeInTheDocument();
+          expect(screen.getByText(match.awayTeam.code)).toBeInTheDocument();
+        }
+      });
+    });
+
+    it('calls getById with matchWeekId', () => {
+      expect(matchWeekApi.getById).toHaveBeenCalledWith(matchWeek.id);
+      expect(matchWeekApi.getCurrentMatchWeek).not.toHaveBeenCalled();
     });
   });
 
-  it('renders', async () => {
-    await waitFor(() => {
-      expect(document.querySelector('.app-match-week-page')).toBeInTheDocument();
+  describe('without matchWeekId', () => {
+    beforeEach(async () => {
+      await render(NoIdHostComponent, { providers: makeProviders() });
     });
-  });
 
-  it('renders match week number', async () => {
-    await waitFor(() => {
-      expect(
-        screen.getByText(`Week ${matchWeek.matchWeekNumber}`, { exact: false }),
-      ).toBeInTheDocument();
+    it('calls getCurrentMatchWeek', () => {
+      expect(matchWeekApi.getCurrentMatchWeek).toHaveBeenCalled();
+      expect(matchWeekApi.getById).not.toHaveBeenCalled();
     });
-  });
 
-  it('renders season name', async () => {
-    await waitFor(() => {
-      expect(screen.getByText(season.name, { exact: false })).toBeInTheDocument();
+    it('renders match week number', async () => {
+      await waitFor(() => {
+        expect(
+          screen.getByText(`Week ${matchWeek.matchWeekNumber}`, { exact: false }),
+        ).toBeInTheDocument();
+      });
     });
-  });
 
-  it('renders matches card', async () => {
-    await waitFor(() => {
-      expect(screen.getByText('Premier League')).toBeInTheDocument();
-
-      for (const match of matches) {
-        expect(screen.getByText(match.homeTeam.code)).toBeInTheDocument();
-        expect(screen.getByText(match.awayTeam.code)).toBeInTheDocument();
-      }
+    it('renders matches card', async () => {
+      await waitFor(() => {
+        expect(screen.getByText('Premier League')).toBeInTheDocument();
+      });
     });
   });
 });

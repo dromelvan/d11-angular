@@ -43,6 +43,11 @@ export class RouterService {
     return this.router.navigate(['matches', matchId]);
   }
 
+  public navigateToCurrentMatchWeek(): Promise<boolean> {
+    this.stack.set([]);
+    return this.router.navigate(['match-weeks']);
+  }
+
   public navigateToPrevious(): Promise<boolean> {
     const stack = this.stack();
     if (stack.length === 0) {
