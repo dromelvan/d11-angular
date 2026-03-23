@@ -122,6 +122,7 @@ describe('RouterService', () => {
             { path: 'match-weeks/:id', component: BlankComponent },
             { path: 'matches/:id', component: BlankComponent },
             { path: 'players/:id', component: BlankComponent },
+            { path: 'tables', component: BlankComponent },
           ]),
         ],
       });
@@ -195,6 +196,17 @@ describe('RouterService', () => {
       await service.navigateToCurrentMatchWeek();
 
       await waitFor(() => expect(router.url).toBe('/match-weeks'));
+      expect(service.hasStack()).toBe(false);
+    });
+
+    it('navigateToTable navigates to tables and clears the stack', async () => {
+      const router = TestBed.inject(Router);
+      await router.navigate(['/match-weeks/1']);
+      await service.navigateToMatch(1);
+
+      await service.navigateToTable();
+
+      await waitFor(() => expect(router.url).toBe('/tables'));
       expect(service.hasStack()).toBe(false);
     });
   });

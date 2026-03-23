@@ -1,5 +1,5 @@
 import { Routes } from '@angular/router';
-import { MatchPageComponent, MatchWeekPageComponent, PlayerPageComponent } from '@app/feature/page';
+import { MatchPageComponent, MatchWeekPageComponent, PlayerPageComponent, TableComponent } from '@app/feature/page';
 
 export const routes: Routes = [
   {
@@ -21,5 +21,10 @@ export const routes: Routes = [
     path: 'match-weeks/:matchWeekId',
     component: MatchWeekPageComponent,
     data: { section: 'Matches' },
+  },
+  {
+    path: 'tables',
+    component: TableComponent,
+    data: { section: 'Tables' },
   },
 ];

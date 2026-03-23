@@ -5,7 +5,7 @@ interface NavItem {
   label: string;
   icon: string;
   url?: string;
-  navigateTo?: 'currentMatchWeek';
+  navigateTo?: 'currentMatchWeek' | 'table';
 }
 
 @Component({
@@ -16,7 +16,7 @@ interface NavItem {
 export class NavbarIconComponent {
   protected readonly links: NavItem[] = [
     { label: 'Matches', icon: 'pi pi-calendar', navigateTo: 'currentMatchWeek' },
-    { label: 'Tables', icon: 'pi pi-trophy', url: '#' },
+    { label: 'Tables', icon: 'pi pi-trophy', navigateTo: 'table' },
     { label: 'Players', icon: 'pi pi-users', url: '#' },
     { label: 'Transfers', icon: 'pi pi-arrow-right-arrow-left', url: '#' },
     { label: 'More', icon: 'pi pi-ellipsis-h', url: '#' },
@@ -27,6 +27,8 @@ export class NavbarIconComponent {
   protected navigate(item: NavItem): void {
     if (item.navigateTo === 'currentMatchWeek') {
       this.routerService.navigateToCurrentMatchWeek();
+    } else if (item.navigateTo === 'table') {
+      this.routerService.navigateToTable();
     }
   }
 }

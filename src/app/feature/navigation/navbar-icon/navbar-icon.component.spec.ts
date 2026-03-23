@@ -5,11 +5,11 @@ import userEvent from '@testing-library/user-event';
 import { beforeEach, expect, vi } from 'vitest';
 import { NavbarIconComponent } from './navbar-icon.component';
 
-const mockRouterService = { navigateToCurrentMatchWeek: vi.fn() };
+const mockRouterService = { navigateToCurrentMatchWeek: vi.fn(), navigateToTable: vi.fn() };
 const providers = [{ provide: RouterService, useValue: mockRouterService }];
 
 @Component({
-  template: `<app-navbar-icon data-testid="navbar-icon" />`,
+  template: ` <app-navbar-icon data-testid="navbar-icon" />`,
   standalone: true,
   imports: [NavbarIconComponent],
 })
@@ -34,7 +34,7 @@ describe('NavbarIconComponent', () => {
   });
 
   it('renders other nav links', () => {
-    for (const label of ['Tables', 'Players', 'Transfers', 'More']) {
+    for (const label of ['Players', 'Transfers', 'More']) {
       expect(screen.getByRole('link', { name: label })).toBeInTheDocument();
     }
   });
@@ -43,5 +43,15 @@ describe('NavbarIconComponent', () => {
     await userEvent.click(screen.getByText('Matches'));
 
     expect(mockRouterService.navigateToCurrentMatchWeek).toHaveBeenCalledOnce();
+  });
+
+  it('renders Tables link', () => {
+    expect(screen.getByText('Tables')).toBeInTheDocument();
+  });
+
+  it('calls navigateToTable on Tables click', async () => {
+    await userEvent.click(screen.getByText('Tables'));
+
+    expect(mockRouterService.navigateToTable).toHaveBeenCalledOnce();
   });
 });
