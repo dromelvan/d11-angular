@@ -1,11 +1,27 @@
 import { inject, Injectable } from '@angular/core';
-import { Router } from '@angular/router';
+import { toSignal } from '@angular/core/rxjs-interop';
+import { NavigationEnd, Router } from '@angular/router';
+import { filter, map } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
 })
 export class RouterService {
-  private router = inject(Router);
+  private readonly router = inject(Router);
+
+  // eslint-disable-next-line @typescript-eslint/member-ordering
+  readonly section = toSignal(
+    this.router.events.pipe(
+      filter((event) => event instanceof NavigationEnd),
+      map(() => {
+        let route = this.router.routerState.snapshot.root;
+        while (route.firstChild) {
+          route = route.firstChild;
+        }
+        return (route.data['section'] as string) ?? null;
+      }),
+    ),
+  );
 
   public navigateToPlayer(playerId: number, seasonId?: number): Promise<boolean> {
     const extras = seasonId ? { queryParams: { seasonId: seasonId } } : {};
