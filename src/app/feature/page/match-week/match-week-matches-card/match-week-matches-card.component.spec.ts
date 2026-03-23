@@ -29,7 +29,19 @@ describe('MatchWeekMatchesCardComponent', () => {
 
   describe('renders', () => {
     beforeEach(async () => {
-      matches = [fakeMatch(), fakeMatch()];
+      const [m1, m2] = [fakeMatch(), fakeMatch()];
+      matches = [
+        {
+          ...m1,
+          homeTeam: { ...m1.homeTeam, code: 'AAA' },
+          awayTeam: { ...m1.awayTeam, code: 'BBB' },
+        },
+        {
+          ...m2,
+          homeTeam: { ...m2.homeTeam, code: 'CCC' },
+          awayTeam: { ...m2.awayTeam, code: 'DDD' },
+        },
+      ];
       await render(HostComponent, { providers });
     });
 
