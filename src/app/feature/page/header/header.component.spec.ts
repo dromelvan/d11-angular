@@ -1,35 +1,109 @@
-import { Component } from '@angular/core';
+import { Component, signal } from '@angular/core';
+import { RouterService } from '@app/core/router/router.service';
 import { render, screen } from '@testing-library/angular';
-import { expect } from 'vitest';
+import userEvent from '@testing-library/user-event';
+import { expect, vi } from 'vitest';
 import { HeaderComponent } from './header.component';
 
 @Component({
-  template: ` <app-header data-testid="header" /> `,
+  template: ` <app-header data-testid="header" />`,
   standalone: true,
-  imports: [HeaderComponent, HeaderComponent],
+  imports: [HeaderComponent],
 })
 class HostComponent {}
 
+function mockRouterService(hasStack: boolean) {
+  return {
+    hasStack: signal(hasStack),
+    section: signal(null),
+    navigateToPrevious: vi.fn().mockResolvedValue(true),
+  };
+}
+
 describe('HeaderComponent', () => {
-  it('renders', async () => {
-    await render(HostComponent, {});
+  describe('renders', () => {
+    it('renders', async () => {
+      await render(HostComponent, {
+        providers: [{ provide: RouterService, useValue: mockRouterService(false) }],
+      });
 
-    const component = screen.getByTestId('header');
+      expect(screen.getByTestId('header')).toBeInTheDocument();
+    });
 
-    expect(component).toBeInTheDocument();
+    it('renders router section', async () => {
+      await render(HostComponent, {
+        providers: [{ provide: RouterService, useValue: mockRouterService(false) }],
+      });
 
-    const icon = component.querySelector('app-d11-lion-light-img');
-    expect(icon).toBeInTheDocument();
+      const routerSection = document.querySelector('app-router-section');
+      expect(routerSection).toBeInTheDocument();
+      expect(routerSection).toHaveClass('lg:hidden');
+    });
 
-    const routerSection = component.querySelector('app-router-section');
-    expect(routerSection).toBeInTheDocument();
-    expect(routerSection).toHaveClass('lg:hidden');
+    it('renders navbar link', async () => {
+      await render(HostComponent, {
+        providers: [{ provide: RouterService, useValue: mockRouterService(false) }],
+      });
 
-    const navbarLink = component.querySelector('app-navbar-link');
-    expect(navbarLink).toBeInTheDocument();
-    expect(navbarLink).toHaveClass('hidden lg:block');
+      const navbarLink = document.querySelector('app-navbar-link');
+      expect(navbarLink).toBeInTheDocument();
+      expect(navbarLink).toHaveClass('hidden lg:block');
+    });
 
-    const utilityBar = component.querySelector('app-utility-bar');
-    expect(utilityBar).toBeInTheDocument();
+    it('renders utility bar', async () => {
+      await render(HostComponent, {
+        providers: [{ provide: RouterService, useValue: mockRouterService(false) }],
+      });
+
+      expect(document.querySelector('app-utility-bar')).toBeInTheDocument();
+    });
+  });
+
+  // Stack -------------------------------------------------------------------------------
+
+  describe('no stack', () => {
+    let component: Element;
+
+    beforeEach(async () => {
+      await render(HostComponent, {
+        providers: [{ provide: RouterService, useValue: mockRouterService(false) }],
+      });
+      component = document.querySelector('.flex.flex-1')!;
+    });
+
+    it('renders D11 lion image', () => {
+      expect(component.querySelector('app-d11-lion-light-img')).toBeInTheDocument();
+    });
+
+    it('does not render chevron', () => {
+      expect(component.querySelector('app-icon')).not.toBeInTheDocument();
+    });
+  });
+
+  describe('has stack', () => {
+    let component: Element;
+    let routerService: ReturnType<typeof mockRouterService>;
+
+    beforeEach(async () => {
+      routerService = mockRouterService(true);
+      await render(HostComponent, {
+        providers: [{ provide: RouterService, useValue: routerService }],
+      });
+      component = document.querySelector('.flex.flex-1')!;
+    });
+
+    it('renders chevron', () => {
+      expect(component.querySelector('app-icon')).toBeInTheDocument();
+    });
+
+    it('does not render D11 lion image', () => {
+      expect(component.querySelector('app-d11-lion-light-img')).not.toBeInTheDocument();
+    });
+
+    it('calls navigateToPrevious on chevron click', async () => {
+      await userEvent.click(document.querySelector('.flex.flex-1 app-icon')!);
+
+      expect(routerService.navigateToPrevious).toHaveBeenCalledOnce();
+    });
   });
 });
