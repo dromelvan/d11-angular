@@ -23,6 +23,7 @@ describe('RouterService', () => {
     mockRouter = {
       navigate: vi.fn().mockResolvedValue(true),
       events: EMPTY,
+      url: '/',
       routerState: { snapshot: { root: { firstChild: null, data: {} } } } as Router['routerState'],
     };
 
@@ -69,7 +70,7 @@ describe('RouterService', () => {
     expect(result).toBe(true);
   });
 
-  // section -----------------------------------------------------------------------------------
+  // Section -----------------------------------------------------------------------------------
 
   describe('section', () => {
     beforeEach(() => {
@@ -104,6 +105,85 @@ describe('RouterService', () => {
       await router.navigate(['/']);
 
       await waitFor(() => expect(service.section()).toBeNull());
+    });
+  });
+
+  // Route stack -------------------------------------------------------------------------------
+
+  describe('route stack', () => {
+    beforeEach(() => {
+      TestBed.resetTestingModule();
+      TestBed.configureTestingModule({
+        providers: [
+          RouterService,
+          provideRouter([
+            { path: '', component: BlankComponent },
+            { path: 'match-weeks/:id', component: BlankComponent },
+            { path: 'matches/:id', component: BlankComponent },
+            { path: 'players/:id', component: BlankComponent },
+          ]),
+        ],
+      });
+      service = TestBed.inject(RouterService);
+    });
+
+    it('hasStack is false', () => {
+      expect(service.hasStack()).toBe(false);
+    });
+
+    it('pushes to stack on navigation', async () => {
+      const router = TestBed.inject(Router);
+      await router.navigate(['/match-weeks/1']);
+
+      await service.navigateToMatch(1);
+
+      expect(service.hasStack()).toBe(true);
+    });
+
+    it('does not push to stack on navigation to same component', async () => {
+      const router = TestBed.inject(Router);
+      await router.navigate(['/match-weeks/1']);
+
+      await service.navigateToMatchWeek(2);
+
+      expect(service.hasStack()).toBe(false);
+    });
+
+    it('clears the stack when push is false', async () => {
+      const router = TestBed.inject(Router);
+      await router.navigate(['/match-weeks/1']);
+      await service.navigateToMatch(1);
+
+      await service.navigateToMatchWeek(2, false);
+
+      expect(service.hasStack()).toBe(false);
+    });
+
+    it('navigates to previous and pops the stack', async () => {
+      const router = TestBed.inject(Router);
+      await router.navigate(['/match-weeks/1']);
+      await service.navigateToMatch(1);
+
+      await service.navigateToPrevious();
+
+      await waitFor(() => expect(router.url).toBe('/match-weeks/1'));
+      expect(service.hasStack()).toBe(false);
+    });
+
+    it('navigateToPrevious returns false on empty stack', async () => {
+      const result = await service.navigateToPrevious();
+
+      expect(result).toBe(false);
+    });
+
+    it('clearStack empties the stack', async () => {
+      const router = TestBed.inject(Router);
+      await router.navigate(['/match-weeks/1']);
+      await service.navigateToMatch(1);
+
+      service.clearStack();
+
+      expect(service.hasStack()).toBe(false);
     });
   });
 });
