@@ -1,9 +1,8 @@
 import { Component, computed, DestroyRef, inject, input, numberAttribute } from '@angular/core';
 import { rxResource } from '@angular/core/rxjs-interop';
-import { MatchBase, MatchWeek, Season } from '@app/core/api';
+import { MatchBase, MatchWeek } from '@app/core/api';
 import { MatchApiService } from '@app/core/api/match/match-api.service';
 import { MatchWeekApiService } from '@app/core/api/match-week/match-week-api.service';
-import { SeasonApiService } from '@app/core/api/season/season-api.service';
 import { LoadingService } from '@app/core/loading/loading.service';
 import { RouterService } from '@app/core/router/router.service';
 import { IconButtonComponent } from '@app/shared/button/icon-button/icon-button.component';
@@ -27,10 +26,6 @@ export class MatchWeekPageComponent {
         : this.matchWeekApiService.getCurrentMatchWeek(),
   });
 
-  protected rxSeason = rxResource<Season, void>({
-    stream: () => this.seasonApiService.getCurrentSeason(),
-  });
-
   protected rxMatches = rxResource<MatchBase[], number | undefined>({
     params: () => this.rxMatchWeek.value()?.id,
     stream: ({ params }) => this.matchApiService.getMatchesByMatchWeekId(params!),
@@ -38,20 +33,16 @@ export class MatchWeekPageComponent {
 
   protected model = computed(() => ({
     matchWeek: this.rxMatchWeek.value(),
-    season: this.rxSeason.value(),
     matches: this.rxMatches.value() ?? [],
   }));
 
-  protected isLoading = computed(
-    () => this.rxMatchWeek.isLoading() || this.rxSeason.isLoading() || this.rxMatches.isLoading(),
-  );
+  protected isLoading = computed(() => this.rxMatchWeek.isLoading() || this.rxMatches.isLoading());
 
   protected hasPrevious = computed(() => (this.rxMatchWeek.value()?.matchWeekNumber ?? 1) > 1);
   protected hasNext = computed(() => (this.rxMatchWeek.value()?.matchWeekNumber ?? 38) < 38);
 
   private matchWeekApiService = inject(MatchWeekApiService);
   private matchApiService = inject(MatchApiService);
-  private seasonApiService = inject(SeasonApiService);
   private routerService = inject(RouterService);
   private loadingService = inject(LoadingService);
 

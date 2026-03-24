@@ -9,10 +9,7 @@
       />
 
       <div class="font-semibold text-center flex-1">
-        Week {{ matchWeek.matchWeekNumber }} -
-        @if (model().season; as season) {
-          {{ season.name }}
-        }
+        Week {{ matchWeek.matchWeekNumber }} - {{ matchWeek.season.name }}
       </div>
 
       <app-material-icon-button

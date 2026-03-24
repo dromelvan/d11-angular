@@ -86,6 +86,7 @@ export const fakeMatchWeek = (): MatchWeek => ({
   date: faker.date.recent().toISOString(),
   elapsed: faker.number.int({ min: 0, max: 90 }),
   status: faker.helpers.enumValue(Status),
+  season: fakeSeason(),
 });
 
 export const fakeMatchBase = (): MatchBase => ({
