@@ -9,9 +9,17 @@ import { TeamBaseComponent } from './team-base.component';
 let team: TeamBase;
 let justify: 'start' | 'center' | 'end' | undefined;
 let imgWidth: string | undefined;
+let maxLength: number | undefined;
 
 @Component({
-  template: ` <app-team-base [team]="team" [justify]="justify" [imgWidth]="imgWidth" /> `,
+  template: `
+    <app-team-base
+      [team]="team"
+      [justify]="justify"
+      [imgWidth]="imgWidth"
+      [maxLength]="maxLength"
+    />
+  `,
   standalone: true,
   imports: [TeamBaseComponent],
 })
@@ -19,6 +27,7 @@ class HostComponent {
   team = team;
   justify = justify;
   imgWidth = imgWidth;
+  maxLength = maxLength;
 }
 
 describe('TeamBaseComponent', () => {
@@ -26,6 +35,7 @@ describe('TeamBaseComponent', () => {
     team = fakeTeamBase();
     justify = undefined;
     imgWidth = undefined;
+    maxLength = undefined;
     await render(HostComponent, {});
   });
 
@@ -86,5 +96,43 @@ describe('TeamBaseComponent team image', () => {
     const img = screen.getByAltText(team.name) as HTMLImageElement;
 
     expect(img).toHaveAttribute('width', '32');
+  });
+});
+
+describe('TeamBaseComponent maxLength', () => {
+  it('shows name below maxLength', async () => {
+    team = { ...fakeTeamBase(), name: 'ABCDEF', shortName: 'DCBA' };
+    maxLength = 15;
+    await render(HostComponent, {});
+
+    expect(screen.getByText('ABCDEF')).toBeInTheDocument();
+    expect(screen.queryByText('DCBA')).not.toBeInTheDocument();
+  });
+
+  it('shows name equals maxLength', async () => {
+    team = { ...fakeTeamBase(), name: 'ABCDEF', shortName: 'DCBA' };
+    maxLength = 6;
+    await render(HostComponent, {});
+
+    expect(screen.getByText('ABCDEF')).toBeInTheDocument();
+    expect(screen.queryByText('DCBA')).not.toBeInTheDocument();
+  });
+
+  it('shows shortName over maxLength', async () => {
+    team = { ...fakeTeamBase(), name: 'ABCDEF', shortName: 'DCBA' };
+    maxLength = 5;
+    await render(HostComponent, {});
+
+    expect(screen.getByText('DCBA')).toBeInTheDocument();
+    expect(screen.queryByText('ABCDEF')).not.toBeInTheDocument();
+  });
+
+  it('shows name undefined maxLength', async () => {
+    team = { ...fakeTeamBase(), name: 'ABCDEF', shortName: 'DCBA' };
+    maxLength = undefined;
+    await render(HostComponent, {});
+
+    expect(screen.getByText('ABCDEF')).toBeInTheDocument();
+    expect(screen.queryByText('DCBA')).not.toBeInTheDocument();
   });
 });
