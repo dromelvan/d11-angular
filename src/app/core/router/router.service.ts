@@ -48,9 +48,14 @@ export class RouterService {
     return this.router.navigate(['match-weeks']);
   }
 
-  public navigateToTable(): Promise<boolean> {
+  public navigateToCurrentSeason(): Promise<boolean> {
     this.stack.set([]);
-    return this.router.navigate(['tables']);
+    return this.router.navigate(['seasons']);
+  }
+
+  public navigateToSeason(seasonId: number): Promise<boolean> {
+    this.stack.set([]);
+    return this.router.navigate(['seasons', seasonId]);
   }
 
   public navigateToPrevious(): Promise<boolean> {

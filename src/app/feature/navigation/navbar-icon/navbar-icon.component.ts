@@ -28,7 +28,7 @@ export class NavbarIconComponent {
     if (item.navigateTo === 'currentMatchWeek') {
       this.routerService.navigateToCurrentMatchWeek();
     } else if (item.navigateTo === 'table') {
-      this.routerService.navigateToTable();
+      this.routerService.navigateToCurrentSeason();
     }
   }
 }

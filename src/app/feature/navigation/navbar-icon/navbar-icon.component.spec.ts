@@ -5,7 +5,7 @@ import userEvent from '@testing-library/user-event';
 import { beforeEach, expect, vi } from 'vitest';
 import { NavbarIconComponent } from './navbar-icon.component';
 
-const mockRouterService = { navigateToCurrentMatchWeek: vi.fn(), navigateToTable: vi.fn() };
+const mockRouterService = { navigateToCurrentMatchWeek: vi.fn(), navigateToCurrentSeason: vi.fn() };
 const providers = [{ provide: RouterService, useValue: mockRouterService }];
 
 @Component({
@@ -49,9 +49,9 @@ describe('NavbarIconComponent', () => {
     expect(screen.getByText('Tables')).toBeInTheDocument();
   });
 
-  it('calls navigateToTable on Tables click', async () => {
+  it('calls navigateToCurrentSeason on Tables click', async () => {
     await userEvent.click(screen.getByText('Tables'));
 
-    expect(mockRouterService.navigateToTable).toHaveBeenCalledOnce();
+    expect(mockRouterService.navigateToCurrentSeason).toHaveBeenCalledOnce();
   });
 });

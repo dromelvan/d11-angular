@@ -50,6 +50,28 @@ describe('RouterService', () => {
     expect(result).toBe(true);
   });
 
+  it('should navigate to current match week', async () => {
+    const result = await service.navigateToCurrentMatchWeek();
+
+    expect(mockRouter.navigate).toHaveBeenCalledWith(['match-weeks']);
+    expect(result).toBe(true);
+  });
+
+  it('should navigate to season', async () => {
+    const seasonId = 5;
+    const result = await service.navigateToSeason(seasonId);
+
+    expect(mockRouter.navigate).toHaveBeenCalledWith(['seasons', seasonId]);
+    expect(result).toBe(true);
+  });
+
+  it('should navigate to current season', async () => {
+    const result = await service.navigateToCurrentSeason();
+
+    expect(mockRouter.navigate).toHaveBeenCalledWith(['seasons']);
+    expect(result).toBe(true);
+  });
+
   it('should navigate to player without seasonId', async () => {
     const playerId = 1;
     const result = await service.navigateToPlayer(playerId);
@@ -122,7 +144,7 @@ describe('RouterService', () => {
             { path: 'match-weeks/:id', component: BlankComponent },
             { path: 'matches/:id', component: BlankComponent },
             { path: 'players/:id', component: BlankComponent },
-            { path: 'tables', component: BlankComponent },
+            { path: 'seasons', component: BlankComponent },
           ]),
         ],
       });
@@ -199,14 +221,14 @@ describe('RouterService', () => {
       expect(service.hasStack()).toBe(false);
     });
 
-    it('navigateToTable navigates to tables and clears the stack', async () => {
+    it('navigateToCurrentSeason navigates to seasons and clears the stack', async () => {
       const router = TestBed.inject(Router);
       await router.navigate(['/match-weeks/1']);
       await service.navigateToMatch(1);
 
-      await service.navigateToTable();
+      await service.navigateToCurrentSeason();
 
-      await waitFor(() => expect(router.url).toBe('/tables'));
+      await waitFor(() => expect(router.url).toBe('/seasons'));
       expect(service.hasStack()).toBe(false);
     });
   });
