@@ -1,17 +1,17 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { TableComponent } from './table.component';
+import { SeasonPageComponent } from './season-page.component';
 
 describe('TableComponent', () => {
-  let component: TableComponent;
-  let fixture: ComponentFixture<TableComponent>;
+  let component: SeasonPageComponent;
+  let fixture: ComponentFixture<SeasonPageComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [TableComponent],
+      imports: [SeasonPageComponent],
     }).compileComponents();
 
-    fixture = TestBed.createComponent(TableComponent);
+    fixture = TestBed.createComponent(SeasonPageComponent);
     component = fixture.componentInstance;
     await fixture.whenStable();
   });

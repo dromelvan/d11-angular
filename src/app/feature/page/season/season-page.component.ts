@@ -3,6 +3,6 @@ import { Component } from '@angular/core';
 @Component({
   selector: 'app-table',
   imports: [],
-  templateUrl: './table.component.html',
+  templateUrl: './season-page.component.html',
 })
-export class TableComponent {}
+export class SeasonPageComponent {}
