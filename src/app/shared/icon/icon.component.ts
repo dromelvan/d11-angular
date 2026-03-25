@@ -12,6 +12,8 @@ export type IconPreset =
   | 'mom'
   | 'own_goal'
   | 'player'
+  | 'ranking_down'
+  | 'ranking_up'
   | 'red_card'
   | 'search'
   | 'shared_mom'
@@ -41,6 +43,8 @@ export const ICON_PRESETS: Record<
   mom: { name: 'star', fill: true, weight: 400, class: 'text-primary' },
   own_goal: { name: 'sports_and_outdoors', weight: 200, size: 22, class: 'text-error' },
   player: { name: 'person', fill: true, weight: 200 },
+  ranking_down: { name: 'arrow_downward', fill: true, weight: 500, class: 'text-error' },
+  ranking_up: { name: 'arrow_upward', fill: true, weight: 500, class: 'text-success' },
   red_card: { name: 'crop_portrait', fill: true, weight: 400, class: 'text-error' },
   search: { name: 'search', weight: 200 },
   shared_mom: { name: 'star_half', fill: true, weight: 400, class: 'text-primary' },
