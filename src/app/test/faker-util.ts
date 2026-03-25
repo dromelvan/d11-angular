@@ -16,6 +16,7 @@ import { Season } from '@app/core/api/model/season.model';
 import { Stadium } from '@app/core/api/model/stadium.model';
 import { Status } from '@app/core/api/model/status.model';
 import { TeamBase } from '@app/core/api/model/team-base.model';
+import { TeamSeasonStat } from '@app/core/api/model/team-season-stat.model';
 import { faker } from '@faker-js/faker';
 import { StadiumBase } from '@app/core/api';
 
@@ -190,6 +191,25 @@ export const fakePlayerSeasonStat = (): PlayerSeasonStat => ({
   team: fakeTeamBase(),
   d11Team: fakeD11TeamBase(),
   position: fakePosition(),
+});
+
+export const fakeTeamSeasonStat = (): TeamSeasonStat => ({
+  id: faker.number.int({ min: 1, max: 10000 }),
+  winCount: faker.number.int({ min: 0, max: 38 }),
+  matchesPlayed: faker.number.int({ min: 0, max: 38 }),
+  matchesWon: faker.number.int({ min: 0, max: 38 }),
+  matchesDrawn: faker.number.int({ min: 0, max: 38 }),
+  matchesLost: faker.number.int({ min: 0, max: 38 }),
+  goalsFor: faker.number.int({ min: 0, max: 100 }),
+  goalsAgainst: faker.number.int({ min: 0, max: 100 }),
+  goalDifference: faker.number.int({ min: -100, max: 100 }),
+  points: faker.number.int({ min: 0, max: 114 }),
+  formPoints: faker.number.int({ min: 0, max: 15 }),
+  formMatchPoints: [faker.number.int(), faker.number.int(), faker.number.int()],
+  ranking: faker.number.int({ min: 1, max: 20 }),
+  previousRanking: faker.number.int({ min: 1, max: 20 }),
+  team: fakeTeamBase(),
+  season: fakeSeason(),
 });
 
 export const fakePlayerMatchStat = (): PlayerMatchStat => ({
