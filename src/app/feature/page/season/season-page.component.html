@@ -1,1 +1,25 @@
-<p>table works!</p>
+<div class="app-season-page app-col max-w-3xl mx-auto pb-4">
+  @if (model().season; as season) {
+    <div class="app-row gap-0">
+      <app-material-icon-button
+        icon="chevron_left"
+        severity="secondary"
+        [disabled]="!hasPrevious()"
+        (click)="navigateToPrevious()"
+      />
+
+      <div class="font-semibold text-center flex-1">{{ season.name }}</div>
+
+      <app-material-icon-button
+        icon="chevron_right"
+        severity="secondary"
+        [disabled]="!hasNext()"
+        (click)="navigateToNext()"
+      />
+    </div>
+
+    @if (model().teamSeasonStats.length > 0) {
+      <app-team-season-stats-card [teamSeasonStats]="model().teamSeasonStats" />
+    }
+  }
+</div>
