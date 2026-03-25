@@ -5,7 +5,7 @@ import { fakeTeamSeasonStat, GetFn } from '@app/test';
 import { firstValueFrom, of, throwError } from 'rxjs';
 import { beforeEach, describe } from 'vitest';
 import { TeamSeasonStatApiService } from './team-season-stat-api.service';
-import { TeamSeasonStatResponseBody } from './team-season-stat-response-body.model';
+import { TeamSeasonStatsResponseBody } from './team-season-stats-response-body.model';
 
 describe('TeamSeasonStatApiService', () => {
   let teamSeasonStatApi: TeamSeasonStatApiService;
@@ -27,26 +27,21 @@ describe('TeamSeasonStatApiService', () => {
     expect(teamSeasonStatApi).toBeTruthy();
   });
 
-  // getTeamSeasonStatByTeamIdAndSeasonId ----------------------------------------------------------
+  // getTeamSeasonStatsBySeasonId ----------------------------------------------------------------
 
-  describe('getTeamSeasonStatByTeamIdAndSeasonId', () => {
-    const teamId = 1;
+  describe('getTeamSeasonStatsBySeasonId', () => {
     const seasonId = 42;
-    const teamSeasonStat = fakeTeamSeasonStat();
-    const response: TeamSeasonStatResponseBody = { teamSeasonStat };
+    const teamSeasonStats = [fakeTeamSeasonStat(), fakeTeamSeasonStat()];
+    const response: TeamSeasonStatsResponseBody = { teamSeasonStats };
 
-    it('calls get with namespace and season id', async () => {
+    it('calls get with namespace and seasonId param', async () => {
       apiServiceMock.get = vi.fn().mockReturnValue(of(response)) as GetFn;
 
-      await firstValueFrom(
-        teamSeasonStatApi.getTeamSeasonStatByTeamIdAndSeasonId(teamId, seasonId),
-      );
+      await firstValueFrom(teamSeasonStatApi.getTeamSeasonStatsBySeasonId(seasonId));
 
       expect(apiServiceMock.get).toHaveBeenCalledExactlyOnceWith(
         expect.objectContaining({
           namespace: teamSeasonStatApi.namespace,
-          id: teamId,
-          endpoint: 'team-season-stats',
           options: expect.objectContaining({
             params: expect.any(HttpParams),
           }),
@@ -61,11 +56,9 @@ describe('TeamSeasonStatApiService', () => {
     it('maps the result', async () => {
       apiServiceMock.get = vi.fn().mockReturnValue(of(response)) as GetFn;
 
-      const result = await firstValueFrom(
-        teamSeasonStatApi.getTeamSeasonStatByTeamIdAndSeasonId(teamId, seasonId),
-      );
+      const result = await firstValueFrom(teamSeasonStatApi.getTeamSeasonStatsBySeasonId(seasonId));
 
-      expect(result).toEqual(teamSeasonStat);
+      expect(result).toEqual(teamSeasonStats);
     });
 
     it('propagates errors', async () => {
@@ -74,7 +67,7 @@ describe('TeamSeasonStatApiService', () => {
       apiServiceMock.get = vi.fn().mockReturnValue(throwError(() => httpError)) as GetFn;
 
       expect(
-        firstValueFrom(teamSeasonStatApi.getTeamSeasonStatByTeamIdAndSeasonId(teamId, seasonId)),
+        firstValueFrom(teamSeasonStatApi.getTeamSeasonStatsBySeasonId(seasonId)),
       ).rejects.toThrow(httpError.message);
     });
 
@@ -84,7 +77,7 @@ describe('TeamSeasonStatApiService', () => {
         .mockReturnValue(throwError(() => new Error('NOT_FOUND'))) as GetFn;
 
       expect(
-        firstValueFrom(teamSeasonStatApi.getTeamSeasonStatByTeamIdAndSeasonId(teamId, seasonId)),
+        firstValueFrom(teamSeasonStatApi.getTeamSeasonStatsBySeasonId(seasonId)),
       ).rejects.toBeInstanceOf(Error);
     });
   });

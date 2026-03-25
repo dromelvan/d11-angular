@@ -3,7 +3,7 @@ import { inject, Injectable } from '@angular/core';
 import { map, Observable } from 'rxjs';
 import { ApiService } from '@app/core/api/api.service';
 import { TeamSeasonStat } from '@app/core/api/model/team-season-stat.model';
-import { TeamSeasonStatResponseBody } from './team-season-stat-response-body.model';
+import { TeamSeasonStatsResponseBody } from './team-season-stats-response-body.model';
 
 @Injectable({
   providedIn: 'root',
@@ -13,15 +13,13 @@ export class TeamSeasonStatApiService {
 
   private apiService = inject(ApiService);
 
-  getTeamSeasonStatByTeamIdAndSeasonId(teamId: number, seasonId: number): Observable<TeamSeasonStat> {
+  getTeamSeasonStatsBySeasonId(seasonId: number): Observable<TeamSeasonStat[]> {
     const params = new HttpParams().set('seasonId', seasonId);
     return this.apiService
-      .get<TeamSeasonStatResponseBody>({
+      .get<TeamSeasonStatsResponseBody>({
         namespace: this.namespace,
-        id: teamId,
-        endpoint: 'team-season-stats',
-        options: { params: params },
+        options: { params },
       })
-      .pipe(map((result) => result.teamSeasonStat));
+      .pipe(map((result) => result.teamSeasonStats));
   }
 }
