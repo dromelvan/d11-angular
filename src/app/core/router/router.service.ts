@@ -48,6 +48,11 @@ export class RouterService {
     return this.router.navigate(['match-weeks']);
   }
 
+  public navigateToPlayers(): Promise<boolean> {
+    this.stack.set([]);
+    return this.router.navigate(['players']);
+  }
+
   public navigateToCurrentSeason(): Promise<boolean> {
     this.stack.set([]);
     return this.router.navigate(['seasons']);

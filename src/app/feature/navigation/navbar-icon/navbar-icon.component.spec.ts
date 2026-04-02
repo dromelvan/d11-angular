@@ -5,7 +5,11 @@ import userEvent from '@testing-library/user-event';
 import { beforeEach, expect, vi } from 'vitest';
 import { NavbarIconComponent } from './navbar-icon.component';
 
-const mockRouterService = { navigateToCurrentMatchWeek: vi.fn(), navigateToCurrentSeason: vi.fn() };
+const mockRouterService = {
+  navigateToCurrentMatchWeek: vi.fn(),
+  navigateToCurrentSeason: vi.fn(),
+  navigateToPlayers: vi.fn(),
+};
 const providers = [{ provide: RouterService, useValue: mockRouterService }];
 
 @Component({
@@ -35,8 +39,14 @@ describe('NavbarIconComponent', () => {
 
   it('renders other nav links', () => {
     for (const label of ['Players', 'Transfers', 'More']) {
-      expect(screen.getByRole('link', { name: label })).toBeInTheDocument();
+      expect(screen.getByText(label)).toBeInTheDocument();
     }
+  });
+
+  it('calls navigateToPlayers on Players click', async () => {
+    await userEvent.click(screen.getByText('Players'));
+
+    expect(mockRouterService.navigateToPlayers).toHaveBeenCalledOnce();
   });
 
   it('calls navigateToCurrentMatchWeek on Matches click', async () => {

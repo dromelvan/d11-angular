@@ -3,10 +3,16 @@ import {
   MatchPageComponent,
   MatchWeekPageComponent,
   PlayerPageComponent,
+  PlayersPageComponent,
   SeasonPageComponent,
 } from '@app/feature/page';
 
 export const routes: Routes = [
+  {
+    path: 'players',
+    component: PlayersPageComponent,
+    data: { section: 'Players' },
+  },
   {
     path: 'players/:playerId',
     component: PlayerPageComponent,
