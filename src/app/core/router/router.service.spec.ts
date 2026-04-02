@@ -75,7 +75,15 @@ describe('RouterService', () => {
   it('should navigate to players', async () => {
     const result = await service.navigateToPlayers();
 
-    expect(mockRouter.navigate).toHaveBeenCalledWith(['players']);
+    expect(mockRouter.navigate).toHaveBeenCalledWith(['players'], {});
+    expect(result).toBe(true);
+  });
+
+  it('should navigate to players with seasonId', async () => {
+    const seasonId = 5;
+    const result = await service.navigateToPlayers(seasonId);
+
+    expect(mockRouter.navigate).toHaveBeenCalledWith(['players'], { queryParams: { seasonId } });
     expect(result).toBe(true);
   });
 

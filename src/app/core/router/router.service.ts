@@ -48,9 +48,10 @@ export class RouterService {
     return this.router.navigate(['match-weeks']);
   }
 
-  public navigateToPlayers(): Promise<boolean> {
+  public navigateToPlayers(seasonId?: number): Promise<boolean> {
     this.stack.set([]);
-    return this.router.navigate(['players']);
+    const extras = seasonId ? { queryParams: { seasonId } } : {};
+    return this.router.navigate(['players'], extras);
   }
 
   public navigateToCurrentSeason(): Promise<boolean> {
