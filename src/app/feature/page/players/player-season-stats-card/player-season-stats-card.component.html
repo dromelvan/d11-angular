@@ -1,0 +1,80 @@
+<p-card header="Statistics" [pt]="{ root: { class: 'relative' } }">
+  <p-paginator
+    class="absolute top-4 right-5 p-0!"
+    [first]="model().page * 25"
+    [rows]="25"
+    [totalRecords]="model().totalElements"
+    [showPageLinks]="false"
+    [showJumpToPageDropdown]="false"
+    (onPageChange)="onPageChange($event)"
+  />
+  <div [class.min-h-360]="!model().isLastPage">
+    <div
+      [style.grid-template-columns]="rankingColWidth() + ' 1.5rem 1fr 2.5rem'"
+      class="grid sm:grid-cols-[2.2rem_1fr_1fr_2.5rem_2.5rem_2.5rem] gap-x-1 text-sm pb-10"
+    >
+      <div class="app-grid-header app-grid-number text-center">#</div>
+      <div class="app-grid-header sm:hidden col-span-2 pl-2">Player</div>
+      <div class="app-grid-header hidden sm:block pl-2">Player</div>
+      <div class="app-grid-header hidden sm:block pl-2">Team</div>
+      <div class="app-grid-header app-grid-number hidden sm:block text-center">G</div>
+      <div class="app-grid-header app-grid-number hidden sm:block text-center">Rtg</div>
+      <div class="app-grid-header app-grid-number text-center pr-2">Pts</div>
+
+      @for (stat of model().playerSeasonStats; track stat.id; let last = $last) {
+        <div
+          class="col-span-4 sm:col-span-6 grid grid-cols-subgrid px-2"
+          [class.app-grid-separator]="!last"
+        >
+          <div class="app-grid-cell app-grid-number justify-center" data-testid="ranking">
+            {{ stat.ranking }}
+          </div>
+          <div class="sm:hidden app-grid-cell justify-center">
+            @if (!stat.team.dummy) {
+              <app-team-img [team]="stat.team" width="20" />
+            }
+          </div>
+          <div class="app-grid-cell gap-2 w-full overflow-hidden">
+            <div class="flex flex-col overflow-hidden w-full">
+              <span class="truncate">{{ stat.player.name }}</span>
+              <span class="app-flex w-full">
+                <span class="truncate app-text-lowest-emphasis">
+                  {{ stat.position.name }}
+                  @if (!stat.d11Team.dummy) {
+                    - {{ stat.d11Team.name }}
+                  }
+                </span>
+              </span>
+            </div>
+          </div>
+          <div class="hidden sm:flex app-grid-cell overflow-hidden">
+            <span class="truncate">{{ stat.team.shortName }}</span>
+          </div>
+          <div class="hidden sm:flex app-grid-cell app-grid-number justify-center">
+            {{ stat.goals }}
+          </div>
+          <div
+            class="hidden sm:flex app-grid-cell app-grid-number justify-center"
+            data-testid="rating"
+          >
+            {{ stat.rating }}
+          </div>
+          <div class="app-grid-cell app-grid-number justify-center font-bold">
+            {{ stat.points }}
+          </div>
+        </div>
+      }
+    </div>
+  </div>
+  @if (model().playerSeasonStats.length > 0) {
+    <p-paginator
+      class="absolute bottom-4 right-5 p-0!"
+      [first]="model().page * 25"
+      [rows]="25"
+      [totalRecords]="model().totalElements"
+      [showPageLinks]="false"
+      [showJumpToPageDropdown]="false"
+      (onPageChange)="onPageChange($event)"
+    />
+  }
+</p-card>
