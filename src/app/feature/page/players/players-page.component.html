@@ -1,0 +1,23 @@
+<div class="app-players-page app-col max-w-3xl mx-auto pb-4">
+  @if (currentSeason(); as season) {
+    <div class="app-row gap-0">
+      <app-material-icon-button
+        icon="chevron_left"
+        severity="secondary"
+        [disabled]="!hasPrevious()"
+        (click)="navigateToPrevious()"
+      />
+
+      <div class="font-semibold text-center flex-1">{{ season.name }}</div>
+
+      <app-material-icon-button
+        icon="chevron_right"
+        severity="secondary"
+        [disabled]="!hasNext()"
+        (click)="navigateToNext()"
+      />
+    </div>
+
+    <app-player-season-stats-card [seasonId]="currentSeason()!.id" />
+  }
+</div>
