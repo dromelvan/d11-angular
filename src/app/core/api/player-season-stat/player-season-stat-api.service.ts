@@ -4,7 +4,7 @@ import { map, Observable } from 'rxjs';
 import { ApiService } from '@app/core/api/api.service';
 import { PlayerSeasonStatSort } from '../model/player-season-stat-sort.model';
 import { PlayerSeasonStatsResponseBody } from './player-season-stats-response-body.model';
-import { PlayerSeasonStat } from '@app/core/api';
+import { PlayerSeasonStatPage } from '@app/core/api';
 
 @Injectable({
   providedIn: 'root',
@@ -19,7 +19,7 @@ export class PlayerSeasonStatApiService {
     positionIds: number[],
     dummy?: boolean,
     sort?: PlayerSeasonStatSort,
-  ): Observable<PlayerSeasonStat[]> {
+  ): Observable<PlayerSeasonStatPage> {
     let params = new HttpParams().set('seasonId', seasonId).set('page', page);
 
     positionIds.forEach((id) => {
@@ -39,6 +39,6 @@ export class PlayerSeasonStatApiService {
         namespace: this.namespace,
         options: { params },
       })
-      .pipe(map((result) => result.playerSeasonStats));
+      .pipe(map(({ playerSeasonStats, ...rest }) => ({ ...rest, elements: playerSeasonStats })));
   }
 }

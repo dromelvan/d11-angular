@@ -131,7 +131,7 @@ describe('PlayerSeasonStatApiService', () => {
         playerSeasonStatApi.getPlayerSeasonStatsBySeasonId(seasonId, page, []),
       );
 
-      expect(result).toEqual(playerSeasonStats);
+      expect(result).toEqual({ page: response.page, totalPages: response.totalPages, totalElements: response.totalElements, elements: playerSeasonStats });
     });
 
     it('propagates errors on getPlayerSeasonStatsBySeasonId', async () => {
