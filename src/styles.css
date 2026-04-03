@@ -171,6 +171,10 @@
         @apply object-cover object-top;
     }
 
+    .p-button-text.p-button-primary {
+        @apply hover:bg-black/10! active:bg-black/20!;
+    }
+
     .p-dialog-header {
         @apply block! p-0!;
     }

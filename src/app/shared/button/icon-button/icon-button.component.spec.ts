@@ -42,4 +42,33 @@ describe('IconButtonComponent', () => {
       expect(screen.getByRole('button')).toBeDisabled();
     });
   });
+
+  describe('variant', () => {
+    it('applies no variant by default', async () => {
+      await render(IconButtonComponent, { inputs: { icon: 'test' } });
+
+      expect(screen.getByRole('button')).not.toHaveClass('p-button-text');
+      expect(screen.getByRole('button')).not.toHaveClass('p-button-outlined');
+    });
+
+    it('applies text variant', async () => {
+      await render(IconButtonComponent, { inputs: { icon: 'test', variant: 'text' } });
+
+      expect(screen.getByRole('button')).toHaveClass('p-button-text');
+    });
+
+    it('applies outlined variant', async () => {
+      await render(IconButtonComponent, { inputs: { icon: 'test', variant: 'outlined' } });
+
+      expect(screen.getByRole('button')).toHaveClass('p-button-outlined');
+    });
+  });
+
+  describe('iconClass', () => {
+    it('applies class to icon', async () => {
+      await render(IconButtonComponent, { inputs: { icon: 'test', iconClass: 'foo' } });
+
+      expect(document.querySelector('app-icon')).toHaveClass('foo');
+    });
+  });
 });

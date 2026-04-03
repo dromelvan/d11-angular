@@ -1,7 +1,7 @@
 <div class="max-h-10!">
-  <p-button [rounded]="true" [severity]="severity()" [disabled]="disabled()">
+  <p-button [rounded]="true" [severity]="severity()" [disabled]="disabled()" [variant]="variant()">
     <ng-template #icon>
-      <app-icon [icon]="iconPreset()" />
+      <app-icon [icon]="iconPreset()" [class]="iconClass()" />
     </ng-template>
   </p-button>
 </div>
