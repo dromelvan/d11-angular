@@ -64,8 +64,7 @@ describe('PlayerHeaderCardComponent', () => {
   });
 
   it('renders context button', async () => {
-    const button = document.querySelector('.pi-ellipsis-v');
-    expect(button).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /more_vert/i })).toBeInTheDocument();
   });
 });
 

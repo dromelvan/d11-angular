@@ -7,10 +7,19 @@ import { D11TeamBaseComponent, TeamBaseComponent } from '@app/shared/resource';
 import { contrastTextClass } from '@app/shared/util/contrast-text.util';
 import { Button } from 'primeng/button';
 import { Card } from 'primeng/card';
+import { IconButtonComponent } from '@app/shared/button/icon-button/icon-button.component';
 
 @Component({
   selector: 'app-player-header-card',
-  imports: [Card, Button, NgClass, PlayerImgComponent, TeamBaseComponent, D11TeamBaseComponent],
+  imports: [
+    Card,
+    Button,
+    NgClass,
+    PlayerImgComponent,
+    TeamBaseComponent,
+    D11TeamBaseComponent,
+    IconButtonComponent,
+  ],
   templateUrl: './player-header-card.component.html',
 })
 export class PlayerHeaderCardComponent {

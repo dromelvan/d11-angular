@@ -4,12 +4,13 @@
     [ngClass]="textClass()"
     [style.background-color]="backgroundColor()"
   >
-    <p-button
-      icon="pi pi-ellipsis-v"
-      [rounded]="true"
-      [text]="true"
-      [styleClass]="`${textClass()} absolute! top-2 right-2 z-2`"
+    <app-material-icon-button
+      icon="more_vertical"
+      variant="text"
+      class="absolute! top-2 right-2 z-2`"
+      iconClass="text-primary-contrast"
     />
+
     <div class="app-row-md">
       <app-player-img [player]="p" [width]="ImgWidth.XXLARGE" />
 
