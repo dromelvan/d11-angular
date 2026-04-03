@@ -1,6 +1,6 @@
 <p-card header="Statistics" [pt]="{ root: { class: 'relative' } }">
   <p-paginator
-    class="absolute top-4 right-5 p-0!"
+    class="absolute top-4 right-12 p-0! gap-0!"
     [first]="model().page * 25"
     [rows]="25"
     [totalRecords]="model().totalElements"
@@ -8,6 +8,13 @@
     [showJumpToPageDropdown]="false"
     (onPageChange)="onPageChange($event)"
   />
+  <app-material-icon-button
+    icon="more_vertical"
+    variant="text"
+    class="absolute! top-4 right-2 z-2`"
+    (click)="drawerVisible.set(true)"
+  />
+
   <div [class.min-h-360]="!model().isLastPage">
     <div
       [style.grid-template-columns]="rankingColWidth() + ' 1.5rem 1fr 2.5rem'"
@@ -78,3 +85,51 @@
     />
   }
 </p-card>
+
+<p-drawer
+  [(visible)]="drawerVisible"
+  position="bottom"
+  [closable]="false"
+  [pt]="{ root: { class: 'rounded-t-[25px] h-auto!' } }"
+>
+  <ng-template #header>
+    <div class="grid grid-cols-[1fr_auto_1fr] items-center w-full">
+      <span></span>
+      <span class="font-semibold">Filter and Sort</span>
+      <a (click)="drawerVisible.set(false)" class="text-sm justify-self-end">Done</a>
+    </div>
+  </ng-template>
+  <div class="flex flex-col gap-4">
+    <div class="flex flex-col gap-2">
+      <span class="text-sm font-medium">Availability</span>
+      <p-selectbutton
+        [options]="availabilityOptions"
+        [(ngModel)]="dummy"
+        optionLabel="label"
+        optionValue="value"
+        [pt]="{ pcToggleButton: { label: { class: 'text-sm!' } } }"
+      />
+    </div>
+    <div class="flex flex-col gap-2">
+      <span class="text-sm font-medium">Position</span>
+      <p-selectbutton
+        [options]="positionOptions"
+        [(ngModel)]="positions"
+        optionLabel="label"
+        optionValue="value"
+        [multiple]="true"
+        [pt]="{ pcToggleButton: { label: { class: 'text-xs!' } } }"
+      />
+    </div>
+    <div class="flex flex-col gap-2">
+      <span class="text-sm font-medium">Sort</span>
+      <p-selectbutton
+        [options]="sortOptions"
+        [(ngModel)]="sort"
+        optionLabel="label"
+        optionValue="value"
+        [pt]="{ pcToggleButton: { label: { class: 'text-sm!' } } }"
+      />
+    </div>
+  </div>
+</p-drawer>

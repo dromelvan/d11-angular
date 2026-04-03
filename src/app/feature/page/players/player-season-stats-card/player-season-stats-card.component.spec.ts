@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { PlayerSeasonStatApiService, PlayerSeasonStatPage } from '@app/core/api';
+import { PlayerSeasonStatSort } from '@app/core/api/model/player-season-stat-sort.model';
 import { LoadingService } from '@app/core/loading/loading.service';
 import { render, screen, waitFor } from '@testing-library/angular';
 import { userEvent } from '@testing-library/user-event';
@@ -87,6 +88,8 @@ describe('PlayerSeasonStatsCardComponent', () => {
       seasonId,
       0,
       positionIds,
+      undefined,
+      PlayerSeasonStatSort.RANKING,
     );
   });
 
@@ -139,6 +142,8 @@ describe('PlayerSeasonStatsCardComponent pagination', () => {
         seasonId,
         1,
         positionIds,
+        undefined,
+        PlayerSeasonStatSort.RANKING,
       );
     });
   });
@@ -166,6 +171,145 @@ describe('PlayerSeasonStatsCardComponent pagination', () => {
         seasonId,
         0,
         positionIds,
+        undefined,
+        PlayerSeasonStatSort.RANKING,
+      );
+    });
+  });
+});
+
+describe('PlayerSeasonStatsCardComponent filters', () => {
+  beforeEach(async () => {
+    playerSeasonStatApi = {
+      getPlayerSeasonStatsBySeasonId: vi
+        .fn()
+        .mockReturnValue(
+          of({ page: 0, totalPages: 1, totalElements: 1, elements: [fakePlayerSeasonStat()] }),
+        ),
+    } as unknown as PlayerSeasonStatApiService;
+    await render(HostComponent, {
+      providers: [
+        { provide: PlayerSeasonStatApiService, useValue: playerSeasonStatApi },
+        { provide: LoadingService, useValue: { register: vi.fn() } },
+      ],
+    });
+
+    await userEvent.click(screen.getByRole('button', { name: /more_vert/i }));
+  });
+
+  it('calls api with dummy=true', async () => {
+    await userEvent.click(screen.getByRole('button', { name: 'Available' }));
+    await waitFor(() => {
+      expect(playerSeasonStatApi.getPlayerSeasonStatsBySeasonId).toHaveBeenCalledWith(
+        seasonId,
+        0,
+        positionIds,
+        true,
+        PlayerSeasonStatSort.RANKING,
+      );
+    });
+  });
+
+  it('calls api with dummy=false', async () => {
+    await userEvent.click(screen.getByRole('button', { name: 'Unavailable' }));
+    await waitFor(() => {
+      expect(playerSeasonStatApi.getPlayerSeasonStatsBySeasonId).toHaveBeenCalledWith(
+        seasonId,
+        0,
+        positionIds,
+        false,
+        PlayerSeasonStatSort.RANKING,
+      );
+    });
+  });
+
+  it('calls api without Keeper positionId', async () => {
+    await userEvent.click(screen.getByRole('button', { name: 'Keeper' }));
+    await waitFor(() => {
+      expect(playerSeasonStatApi.getPlayerSeasonStatsBySeasonId).toHaveBeenCalledWith(
+        seasonId,
+        0,
+        [2, 3, 4, 5],
+        undefined,
+        PlayerSeasonStatSort.RANKING,
+      );
+    });
+  });
+
+  it('calls api without Defender positionIds', async () => {
+    await userEvent.click(screen.getByRole('button', { name: 'Defender' }));
+    await waitFor(() => {
+      expect(playerSeasonStatApi.getPlayerSeasonStatsBySeasonId).toHaveBeenCalledWith(
+        seasonId,
+        0,
+        [1, 4, 5],
+        undefined,
+        PlayerSeasonStatSort.RANKING,
+      );
+    });
+  });
+
+  it('calls api without Midfielder positionId', async () => {
+    await userEvent.click(screen.getByRole('button', { name: 'Midfielder' }));
+    await waitFor(() => {
+      expect(playerSeasonStatApi.getPlayerSeasonStatsBySeasonId).toHaveBeenCalledWith(
+        seasonId,
+        0,
+        [1, 2, 3, 5],
+        undefined,
+        PlayerSeasonStatSort.RANKING,
+      );
+    });
+  });
+
+  it('calls api without Forward positionId', async () => {
+    await userEvent.click(screen.getByRole('button', { name: 'Forward' }));
+    await waitFor(() => {
+      expect(playerSeasonStatApi.getPlayerSeasonStatsBySeasonId).toHaveBeenCalledWith(
+        seasonId,
+        0,
+        [1, 2, 3, 4],
+        undefined,
+        PlayerSeasonStatSort.RANKING,
+      );
+    });
+  });
+
+  it('calls api with GOALS sort', async () => {
+    await userEvent.click(screen.getByRole('button', { name: 'Goals' }));
+    await waitFor(() => {
+      expect(playerSeasonStatApi.getPlayerSeasonStatsBySeasonId).toHaveBeenCalledWith(
+        seasonId,
+        0,
+        positionIds,
+        undefined,
+        PlayerSeasonStatSort.GOALS,
+      );
+    });
+  });
+
+  it('calls api with RATING', async () => {
+    await userEvent.click(screen.getByRole('button', { name: 'Rating' }));
+    await waitFor(() => {
+      expect(playerSeasonStatApi.getPlayerSeasonStatsBySeasonId).toHaveBeenCalledWith(
+        seasonId,
+        0,
+        positionIds,
+        undefined,
+        PlayerSeasonStatSort.RATING,
+      );
+    });
+  });
+
+  it('calls api with FORM', async () => {
+    await userEvent.click(screen.getByRole('button', { name: 'Form' }));
+    await waitFor(() => {
+      expect(playerSeasonStatApi.getPlayerSeasonStatsBySeasonId).toHaveBeenCalledWith(
+        seasonId,
+        0,
+        positionIds,
+        undefined,
+        PlayerSeasonStatSort.FORM,
       );
     });
   });
