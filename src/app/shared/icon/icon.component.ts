@@ -10,6 +10,8 @@ export type IconPreset =
   | 'match'
   | 'match_week'
   | 'mom'
+  | 'more_horizontal'
+  | 'more_vertical'
   | 'own_goal'
   | 'player'
   | 'ranking_down'
@@ -41,6 +43,8 @@ export const ICON_PRESETS: Record<
   match: { name: 'date_range', weight: 300, size: 32 },
   match_week: { name: 'date_range', weight: 300 },
   mom: { name: 'star', fill: true, weight: 400, class: 'text-primary' },
+  more_horizontal: { name: 'more_horiz', fill: false, weight: 300, size: 28 },
+  more_vertical: { name: 'more_vert', fill: false, weight: 300, size: 28 },
   own_goal: { name: 'sports_and_outdoors', weight: 200, size: 22, class: 'text-error' },
   player: { name: 'person', fill: true, weight: 200 },
   ranking_down: { name: 'arrow_downward', fill: true, weight: 500, class: 'text-error' },
