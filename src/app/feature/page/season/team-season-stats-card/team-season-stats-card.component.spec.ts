@@ -17,7 +17,7 @@ class HostComponent {
 }
 
 function statWithRankings(ranking: number, previousRanking: number): TeamSeasonStat {
-  return { ...fakeTeamSeasonStat(), ranking, previousRanking };
+  return { ...fakeTeamSeasonStat(), ranking, previousRanking, goalDifference: 99 };
 }
 
 // Renders ---------------------------------------------------------------------------------------
@@ -71,25 +71,30 @@ describe('TeamSeasonStatsCardComponent', () => {
 
 describe('TeamSeasonStatsCardComponent goal difference', () => {
   it('shows positive goal difference', async () => {
-    teamSeasonStats = [{ ...fakeTeamSeasonStat(), goalDifference: 5 }];
+    teamSeasonStats = [
+      { ...fakeTeamSeasonStat(), ranking: 1, previousRanking: 1, goalDifference: 5 },
+    ];
     await render(HostComponent, {});
 
-    expect(screen.getByText('+5')).toBeInTheDocument();
+    expect(screen.getByTestId('goal-difference').textContent?.trim()).toBe('+5');
   });
 
   it('shows zero goal difference', async () => {
-    teamSeasonStats = [{ ...fakeTeamSeasonStat(), goalDifference: 0 }];
+    teamSeasonStats = [
+      { ...fakeTeamSeasonStat(), ranking: 1, previousRanking: 1, goalDifference: 0 },
+    ];
     await render(HostComponent, {});
 
-    expect(screen.getByText('0')).toBeInTheDocument();
-    expect(screen.queryByText('+0')).not.toBeInTheDocument();
+    expect(screen.getByTestId('goal-difference').textContent?.trim()).toBe('0');
   });
 
   it('shows negative goal difference', async () => {
-    teamSeasonStats = [{ ...fakeTeamSeasonStat(), goalDifference: -3 }];
+    teamSeasonStats = [
+      { ...fakeTeamSeasonStat(), ranking: 1, previousRanking: 1, goalDifference: -3 },
+    ];
     await render(HostComponent, {});
 
-    expect(screen.getByText('-3')).toBeInTheDocument();
+    expect(screen.getByTestId('goal-difference').textContent?.trim()).toBe('-3');
   });
 });
 

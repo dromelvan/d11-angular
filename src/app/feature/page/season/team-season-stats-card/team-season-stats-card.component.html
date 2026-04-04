@@ -64,7 +64,7 @@
         <div class="hidden sm:flex app-grid-cell app-grid-number justify-center">
           {{ stat.goalsAgainst }}
         </div>
-        <div class="app-grid-cell app-grid-number justify-center">
+        <div class="app-grid-cell app-grid-number justify-center" data-testid="goal-difference">
           {{ stat.goalDifference > 0 ? '+' : '' }}{{ stat.goalDifference }}
         </div>
         <div class="app-grid-cell app-grid-number font-bold" data-testid="points">
