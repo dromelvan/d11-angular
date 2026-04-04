@@ -3,6 +3,7 @@ import { PlayerSeasonStatApiService, PlayerSeasonStatPage, Season } from '@app/c
 import { SeasonApiService } from '@app/core/api/season/season-api.service';
 import { LoadingService } from '@app/core/loading/loading.service';
 import { RouterService } from '@app/core/router/router.service';
+import { DynamicDialogService } from '@app/shared/dialog/dynamic-dialog-service/dynamic-dialog.service';
 import { fakePlayerSeasonStat, fakeSeason } from '@app/test';
 import { render, screen, waitFor } from '@testing-library/angular';
 import userEvent from '@testing-library/user-event';
@@ -32,6 +33,8 @@ class HostComponent {
   imports: [PlayersPageComponent],
 })
 class NoIdHostComponent {}
+
+const mockDynamicDialogService = { openPlayerSeasonStat: vi.fn() };
 
 describe('PlayersPageComponent', () => {
   beforeEach(() => {
@@ -65,6 +68,7 @@ describe('PlayersPageComponent', () => {
     { provide: PlayerSeasonStatApiService, useValue: playerSeasonStatApi },
     { provide: LoadingService, useValue: loadingService },
     { provide: RouterService, useValue: routerService },
+    { provide: DynamicDialogService, useValue: mockDynamicDialogService },
   ];
 
   describe('with seasonId', () => {

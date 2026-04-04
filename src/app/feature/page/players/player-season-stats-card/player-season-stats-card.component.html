@@ -44,7 +44,11 @@
       </div>
 
       @for (stat of m.playerSeasonStats; track stat.id; let last = $last) {
-        <div class="col-span-4 grid grid-cols-subgrid" [class.app-grid-separator]="!last">
+        <div
+          class="col-span-4 grid grid-cols-subgrid cursor-pointer"
+          [class.app-grid-separator]="!last"
+          (click)="openDialog(stat)"
+        >
           <div class="app-grid-cell justify-center" data-testid="ranking">
             {{ stat.ranking }}
           </div>

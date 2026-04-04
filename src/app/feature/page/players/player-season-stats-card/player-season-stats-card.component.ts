@@ -7,6 +7,7 @@ import { PlayerSeasonStat, PlayerSeasonStatPage } from '@app/core/api';
 import { PlayerSeasonStatApiService } from '@app/core/api/player-season-stat/player-season-stat-api.service';
 import { PlayerSeasonStatSort } from '@app/core/api/model/player-season-stat-sort.model';
 import { LoadingService } from '@app/core/loading/loading.service';
+import { RouterService } from '@app/core/router/router.service';
 import { Card } from 'primeng/card';
 import { Drawer } from 'primeng/drawer';
 import { Paginator, PaginatorState } from 'primeng/paginator';
@@ -14,6 +15,7 @@ import { SelectButton } from 'primeng/selectbutton';
 import { TeamImgComponent } from '@app/shared/img';
 import { IconButtonComponent } from '@app/shared/button/icon-button/icon-button.component';
 import { RatingPipe } from '@app/shared/pipes/rating.pipe';
+import { DynamicDialogService } from '@app/shared/dialog/dynamic-dialog-service/dynamic-dialog.service';
 
 @Component({
   selector: 'app-player-season-stats-card',
@@ -112,6 +114,8 @@ export class PlayerSeasonStatsCardComponent {
 
   private playerSeasonStatApiService = inject(PlayerSeasonStatApiService);
   private loadingService = inject(LoadingService);
+  private dynamicDialogService = inject(DynamicDialogService);
+  private routerService = inject(RouterService);
 
   constructor() {
     this.loadingService.register(inject(DestroyRef), this.rxPlayerSeasonStats.isLoading);
@@ -136,6 +140,19 @@ export class PlayerSeasonStatsCardComponent {
       this.sort();
       this.drawerVisible.set(false);
     });
+  }
+
+  protected openDialog(playerSeasonStat: PlayerSeasonStat): void {
+    this.dynamicDialogService.openPlayerSeasonStat(
+      playerSeasonStat,
+      this.model().playerSeasonStats,
+      {
+        label: 'Player profile',
+        icon: 'player',
+        onClick: (current) =>
+          this.routerService.navigateToPlayer((current as PlayerSeasonStat).player.id),
+      },
+    );
   }
 
   protected onPageChange(event: PaginatorState): void {

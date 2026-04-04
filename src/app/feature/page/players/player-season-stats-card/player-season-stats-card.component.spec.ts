@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { PlayerSeasonStatApiService, PlayerSeasonStatPage } from '@app/core/api';
 import { PlayerSeasonStatSort } from '@app/core/api/model/player-season-stat-sort.model';
 import { LoadingService } from '@app/core/loading/loading.service';
+import { DynamicDialogService } from '@app/shared/dialog/dynamic-dialog-service/dynamic-dialog.service';
 import { render, screen, waitFor } from '@testing-library/angular';
 import { userEvent } from '@testing-library/user-event';
 import { expect, vi } from 'vitest';
@@ -22,6 +23,8 @@ let playerSeasonStatApi: PlayerSeasonStatApiService;
 let loadingService: LoadingService;
 const seasonId = 1;
 const positionIds = [1, 3, 4, 5, 2];
+
+const mockDynamicDialogService = { openPlayerSeasonStat: vi.fn() };
 
 @Component({
   template: ` <app-player-season-stats-card [seasonId]="seasonId" />`,
@@ -76,6 +79,7 @@ describe('PlayerSeasonStatsCardComponent', () => {
       providers: [
         { provide: PlayerSeasonStatApiService, useValue: playerSeasonStatApi },
         { provide: LoadingService, useValue: loadingService },
+        { provide: DynamicDialogService, useValue: mockDynamicDialogService },
       ],
     });
   });
@@ -132,6 +136,7 @@ describe('PlayerSeasonStatsCardComponent pagination', () => {
       providers: [
         { provide: PlayerSeasonStatApiService, useValue: playerSeasonStatApi },
         { provide: LoadingService, useValue: { register: vi.fn() } },
+        { provide: DynamicDialogService, useValue: mockDynamicDialogService },
       ],
     });
 
@@ -161,6 +166,7 @@ describe('PlayerSeasonStatsCardComponent pagination', () => {
       providers: [
         { provide: PlayerSeasonStatApiService, useValue: playerSeasonStatApi },
         { provide: LoadingService, useValue: { register: vi.fn() } },
+        { provide: DynamicDialogService, useValue: mockDynamicDialogService },
       ],
     });
 
@@ -192,6 +198,7 @@ describe('PlayerSeasonStatsCardComponent filters', () => {
       providers: [
         { provide: PlayerSeasonStatApiService, useValue: playerSeasonStatApi },
         { provide: LoadingService, useValue: { register: vi.fn() } },
+        { provide: DynamicDialogService, useValue: mockDynamicDialogService },
       ],
     });
 
@@ -348,6 +355,7 @@ describe('PlayerSeasonStatsCardComponent sort', () => {
       providers: [
         { provide: PlayerSeasonStatApiService, useValue: playerSeasonStatApi },
         { provide: LoadingService, useValue: { register: vi.fn() } },
+        { provide: DynamicDialogService, useValue: mockDynamicDialogService },
       ],
     });
 
@@ -428,6 +436,7 @@ describe('PlayerSeasonStatsCardComponent drawer', () => {
       providers: [
         { provide: LoadingService, useValue: { register: vi.fn() } },
         { provide: PlayerSeasonStatApiService, useValue: api },
+        { provide: DynamicDialogService, useValue: mockDynamicDialogService },
       ],
     });
 
@@ -454,6 +463,7 @@ describe('PlayerSeasonStatsCardComponent drawer', () => {
       providers: [
         { provide: PlayerSeasonStatApiService, useValue: api },
         { provide: LoadingService, useValue: { register: vi.fn() } },
+        { provide: DynamicDialogService, useValue: mockDynamicDialogService },
       ],
     });
 
@@ -482,6 +492,7 @@ describe('PlayerSeasonStatsCardComponent page reset', () => {
       providers: [
         { provide: PlayerSeasonStatApiService, useValue: api },
         { provide: LoadingService, useValue: { register: vi.fn() } },
+        { provide: DynamicDialogService, useValue: mockDynamicDialogService },
       ],
     });
 
@@ -510,5 +521,38 @@ describe('PlayerSeasonStatsCardComponent page reset', () => {
         PlayerSeasonStatSort.GOALS,
       );
     });
+  });
+});
+
+describe('PlayerSeasonStatsCardComponent open dialog', () => {
+  it('opens the dialog with correct params', async () => {
+    const stats = [fakePlayerSeasonStat(), fakePlayerSeasonStat()];
+    const dynamicDialogService = { openPlayerSeasonStat: vi.fn() };
+    const api = {
+      getPlayerSeasonStatsBySeasonId: vi
+        .fn()
+        .mockReturnValue(of({ page: 0, totalPages: 1, totalElements: 2, elements: stats })),
+    } as unknown as PlayerSeasonStatApiService;
+
+    await render(HostComponent, {
+      providers: [
+        { provide: PlayerSeasonStatApiService, useValue: api },
+        { provide: LoadingService, useValue: { register: vi.fn() } },
+        { provide: DynamicDialogService, useValue: dynamicDialogService },
+      ],
+    });
+
+    await waitFor(() => {
+      expect(document.querySelectorAll('.cursor-pointer')).toHaveLength(stats.length);
+    });
+
+    const rows = document.querySelectorAll<HTMLElement>('.cursor-pointer');
+    await userEvent.click(rows[0]);
+
+    expect(dynamicDialogService.openPlayerSeasonStat).toHaveBeenCalledWith(
+      stats[0],
+      stats,
+      expect.objectContaining({ label: 'Player profile', icon: 'player' }),
+    );
   });
 });
