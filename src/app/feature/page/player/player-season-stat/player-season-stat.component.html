@@ -43,6 +43,24 @@
   <span class="app-grid-cell app-text-low-emphasis">Points</span>
   <span class="app-grid-cell justify-end">{{ pss.points }}</span>
   <div class="app-grid-separator col-span-2"></div>
+  <span class="app-grid-cell app-text-low-emphasis">Form</span>
+  <span class="app-grid-cell justify-end">
+    <div class="flex gap-1">
+      @for (points of pss.formMatchPoints.slice(0, 5); track $index) {
+        <span
+          class="w-5 h-5 rounded-full flex items-center justify-center text-[0.6rem] text-white font-bold"
+          [ngClass]="{
+            'bg-success': points > 0,
+            'bg-error': points < 0,
+            'bg-neutral': points === 0,
+          }"
+        >
+          {{ points }}
+        </span>
+      }
+    </div>
+  </span>
+  <div class="app-grid-separator col-span-2"></div>
   <span class="app-grid-cell app-text-low-emphasis">Points / Appearance</span>
   <span class="app-grid-cell justify-end">
     {{ pss.pointsPerAppearance / 100 | number: '1.2-2' }}

@@ -1,4 +1,4 @@
-import { DecimalPipe } from '@angular/common';
+import { DecimalPipe, NgClass } from '@angular/common';
 import { Component, input } from '@angular/core';
 import { PlayerSeasonStat } from '@app/core/api';
 import { FeePipe } from '@app/shared/pipes';
@@ -8,7 +8,15 @@ import { D11TeamBaseComponent, TeamBaseComponent } from '@app/shared/resource';
 
 @Component({
   selector: 'app-player-season-stat',
-  imports: [FeePipe, RatingPipe, DecimalPipe, AvatarComponent, TeamBaseComponent, D11TeamBaseComponent],
+  imports: [
+    NgClass,
+    FeePipe,
+    RatingPipe,
+    DecimalPipe,
+    AvatarComponent,
+    TeamBaseComponent,
+    D11TeamBaseComponent,
+  ],
   templateUrl: './player-season-stat.component.html',
 })
 export class PlayerSeasonStatComponent {

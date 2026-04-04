@@ -108,6 +108,14 @@ describe('PlayerSeasonStatComponent', () => {
     });
   });
 
+  it('renders form match points circles', async () => {
+    await waitFor(() => {
+      for (const pts of pss.formMatchPoints.slice(0, 5)) {
+        expect(screen.getByText(String(pts))).toBeInTheDocument();
+      }
+    });
+  });
+
   it('renders points per appearance', async () => {
     const expected = new Intl.NumberFormat('en-US', {
       minimumFractionDigits: 2,
