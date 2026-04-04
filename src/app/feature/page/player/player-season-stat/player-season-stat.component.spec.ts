@@ -246,18 +246,6 @@ describe('PlayerSeasonStatComponent with showInfo', () => {
     });
   });
 
-  it('renders player avatar', async () => {
-    await waitFor(() => {
-      expect(document.querySelector('app-avatar')).toBeInTheDocument();
-    });
-  });
-
-  it('renders player name', async () => {
-    await waitFor(() => {
-      expect(screen.getByText(pss.player.name)).toBeInTheDocument();
-    });
-  });
-
   it('renders position name', async () => {
     await waitFor(() => {
       expect(screen.getByText(pss.position.name)).toBeInTheDocument();

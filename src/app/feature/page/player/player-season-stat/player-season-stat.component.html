@@ -1,35 +1,28 @@
 @let pss = playerSeasonStat();
 <div class="app-player-season-stat grid grid-cols-2">
   @if (showInfo()) {
-    <div class="col-span-2 flex justify-center">
-      <app-avatar resource="player" [id]="pss.player.id" size="2xlarge" />
-    </div>
-
     <div class="app-grid-sub-header col-span-2">Info</div>
-    <span class="app-grid-cell app-text-low-emphasis">Name</span>
-    <span class="app-grid-cell justify-end">
-      {{ pss.player.name }}
-    </span>
-    <div class="app-grid-separator col-span-2"></div>
     <span class="app-grid-cell app-text-low-emphasis">Position</span>
     <span class="app-grid-cell justify-end">
       {{ pss.position.name }}
     </span>
     <div class="app-grid-separator col-span-2"></div>
-    <span class="app-grid-cell app-text-low-emphasis">Team</span>
-    <span class="app-grid-cell justify-end">
-      <app-team-base [team]="pss.team" justify="end" />
-    </span>
+    <div class="col-span-2 app-row">
+      <span class="app-grid-cell app-text-low-emphasis">Team</span>
+      <span class="app-grid-cell justify-end w-full">
+        <app-team-base [team]="pss.team" imgWidth="24" justify="end" />
+      </span>
+    </div>
     <div class="app-grid-separator col-span-2"></div>
     <span class="app-grid-cell app-text-low-emphasis">D11 Team</span>
-    <span class="app-grid-cell justify-end">
-      <app-d11-team-base [d11Team]="pss.d11Team" justify="end" />
+    <span class="app-grid-cell justify-end whitespace-nowrap">
+      <app-d11-team-base [d11Team]="pss.d11Team" imgWidth="24" justify="end" />
     </span>
   }
 
   <div class="col-span-2" [class]="showInfo() ? 'app-grid-sub-header' : 'app-grid-header'">D11</div>
   <span class="app-grid-cell app-text-low-emphasis">Ranking</span>
-  <span class="app-grid-cell justify-end"> #{{ pss.ranking }} </span>
+  <span class="app-grid-cell font-semibold justify-end"> #{{ pss.ranking }} </span>
   <span class="app-grid-cell app-text-low-emphasis">Rating</span>
   <span class="app-grid-cell justify-end">
     {{ pss.rating | rating }}
@@ -41,7 +34,7 @@
   >
   <div class="app-grid-separator col-span-2"></div>
   <span class="app-grid-cell app-text-low-emphasis">Points</span>
-  <span class="app-grid-cell justify-end">{{ pss.points }}</span>
+  <span class="app-grid-cell font-semibold justify-end">{{ pss.points }}</span>
   <div class="app-grid-separator col-span-2"></div>
   <span class="app-grid-cell app-text-low-emphasis">Form</span>
   <span class="app-grid-cell justify-end">
