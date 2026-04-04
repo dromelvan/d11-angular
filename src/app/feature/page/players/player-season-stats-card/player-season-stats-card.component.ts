@@ -1,4 +1,5 @@
 import { Component, computed, DestroyRef, effect, inject, input, signal } from '@angular/core';
+import { NgClass } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { rxResource } from '@angular/core/rxjs-interop';
 import { of } from 'rxjs';
@@ -12,10 +13,12 @@ import { Paginator, PaginatorState } from 'primeng/paginator';
 import { SelectButton } from 'primeng/selectbutton';
 import { TeamImgComponent } from '@app/shared/img';
 import { IconButtonComponent } from '@app/shared/button/icon-button/icon-button.component';
+import { RatingPipe } from '@app/shared/pipes/rating.pipe';
 
 @Component({
   selector: 'app-player-season-stats-card',
   imports: [
+    NgClass,
     Card,
     Drawer,
     FormsModule,
@@ -23,6 +26,7 @@ import { IconButtonComponent } from '@app/shared/button/icon-button/icon-button.
     SelectButton,
     TeamImgComponent,
     IconButtonComponent,
+    RatingPipe,
   ],
   templateUrl: './player-season-stats-card.component.html',
 })
@@ -35,6 +39,13 @@ export class PlayerSeasonStatsCardComponent {
     { label: 'Unavailable', value: false },
   ];
 
+  protected readonly positionIdOptions = [
+    { label: 'Keeper', value: 1 },
+    { label: 'Defender', value: 3 },
+    { label: 'Midfielder', value: 4 },
+    { label: 'Forward', value: 5 },
+  ];
+
   protected readonly sortOptions = [
     { label: 'Ranking', value: PlayerSeasonStatSort.RANKING },
     { label: 'Goals', value: PlayerSeasonStatSort.GOALS },
@@ -42,23 +53,12 @@ export class PlayerSeasonStatsCardComponent {
     { label: 'Form', value: PlayerSeasonStatSort.FORM },
   ];
 
-  protected readonly positionOptions = [
-    { label: 'Keeper', value: 'GOALKEEPER', ids: [1] },
-    { label: 'Defender', value: 'DEFENDER', ids: [2, 3] },
-    { label: 'Midfielder', value: 'MIDFIELDER', ids: [4] },
-    { label: 'Forward', value: 'FORWARD', ids: [5] },
-  ];
-
-  protected currentPage = signal(0);
-  protected drawerVisible = signal(false);
+  protected page = signal(0);
   protected dummy = signal<boolean | undefined>(undefined);
-  protected positions = signal<string[]>(this.positionOptions.map((option) => option.value));
-  protected sort = signal<PlayerSeasonStatSort>(PlayerSeasonStatSort.RANKING);
+  protected positionIds = signal<number[]>(this.positionIdOptions.map((option) => option.value));
+  protected sort = signal<PlayerSeasonStatSort | null>(PlayerSeasonStatSort.RANKING);
 
-  protected positionIds = computed(() => {
-    const selected = new Set(this.positions());
-    return this.positionOptions.filter((o) => selected.has(o.value)).flatMap((o) => o.ids);
-  });
+  protected drawerVisible = signal(false);
 
   protected rxPlayerSeasonStats = rxResource<
     PlayerSeasonStatPage,
@@ -72,30 +72,32 @@ export class PlayerSeasonStatsCardComponent {
   >({
     params: () => ({
       seasonId: this.seasonId(),
-      page: this.currentPage(),
-      dummy: this.dummy(),
+      page: this.page(),
+      dummy: this.dummy() ?? undefined,
       positionIds: this.positionIds(),
-      sort: this.sort(),
+      sort: this.sort() ?? PlayerSeasonStatSort.RANKING,
     }),
     stream: ({ params }) => {
       if (params.positionIds.length === 0) {
         return of({ page: 0, totalPages: 0, totalElements: 0, elements: [] });
       }
+      // Full back position is deprecated so there won't be an option for it but include it
+      // if defender option is selected
+      const positionIds = params.positionIds.includes(3)
+        ? [...params.positionIds, 2]
+        : params.positionIds;
       return this.playerSeasonStatApiService.getPlayerSeasonStatsBySeasonId(
         params.seasonId,
         params.page,
-        params.positionIds,
+        positionIds,
         params.dummy,
         params.sort,
       );
     },
   });
 
-  protected rankingColWidth = signal('2rem');
-
   protected model = computed(() => {
     const result = this.rxPlayerSeasonStats.value();
-    const isLoading = this.rxPlayerSeasonStats.isLoading();
     const page = result?.page ?? 0;
     const totalPages = result?.totalPages ?? 0;
     return {
@@ -103,7 +105,8 @@ export class PlayerSeasonStatsCardComponent {
       page,
       totalElements: result?.totalElements ?? 0,
       totalPages,
-      isLastPage: !isLoading && totalPages > 0 && page >= totalPages - 1,
+      sort: this.sort() ?? PlayerSeasonStatSort.RANKING,
+      maxRanking: result?.elements?.length ? Math.max(...result.elements.map((p) => p.ranking)) : 0,
     };
   });
 
@@ -114,25 +117,28 @@ export class PlayerSeasonStatsCardComponent {
     this.loadingService.register(inject(DestroyRef), this.rxPlayerSeasonStats.isLoading);
 
     effect(() => {
-      const stats = this.model().playerSeasonStats;
-      if (stats.length > 0) {
-        const digits = String(stats[stats.length - 1].ranking).length;
-        // Make ranking column wider depending on how many digits will be shown
-        const widths: Record<number, string> = { 1: '2rem', 2: '2rem', 3: '3rem', 4: '4rem' };
-        this.rankingColWidth.set(widths[digits] ?? '4rem');
-      }
+      this.seasonId();
+      this.page.set(0);
+      this.dummy.set(undefined);
+      this.positionIds.set(this.positionIdOptions.map((option) => option.value));
+      this.sort.set(PlayerSeasonStatSort.RANKING);
     });
 
     effect(() => {
-      this.seasonId();
-      this.currentPage.set(0);
-      this.dummy.set(undefined);
-      this.positions.set(this.positionOptions.map((option) => option.value));
-      this.sort.set(PlayerSeasonStatSort.RANKING);
+      this.dummy();
+      this.positionIds();
+      this.sort();
+      this.page.set(0);
+    });
+
+    effect(() => {
+      this.dummy();
+      this.sort();
+      this.drawerVisible.set(false);
     });
   }
 
   protected onPageChange(event: PaginatorState): void {
-    this.currentPage.set(event.page ?? 0);
+    this.page.set(event.page ?? 0);
   }
 }

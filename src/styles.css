@@ -55,6 +55,14 @@
         @apply bg-(--p-warning);
     }
 
+    .text-neutral {
+        @apply text-(--p-neutral);
+    }
+
+    .bg-neutral {
+        @apply bg-(--p-neutral);
+    }
+
     /* Layout styling */
     .app-flex {
         @apply flex items-center;

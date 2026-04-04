@@ -15,12 +15,13 @@ import {
 } from '@app/test';
 import { of } from 'rxjs';
 import { PlayerSeasonStatsCardComponent } from './player-season-stats-card.component';
+import { RatingPipe } from '@app/shared/pipes/rating.pipe';
 
 let playerSeasonStatPage: PlayerSeasonStatPage;
 let playerSeasonStatApi: PlayerSeasonStatApiService;
 let loadingService: LoadingService;
 const seasonId = 1;
-const positionIds = [1, 2, 3, 4, 5];
+const positionIds = [1, 3, 4, 5, 2];
 
 @Component({
   template: ` <app-player-season-stats-card [seasonId]="seasonId" />`,
@@ -44,8 +45,8 @@ describe('PlayerSeasonStatsCardComponent', () => {
           points: 10,
           rating: 750,
           goals: 3,
-          player: { ...fakePlayerBase(), name: 'Alice Smith' },
-          team: { ...fakeTeamBase(), shortName: 'ARS' },
+          player: { ...fakePlayerBase(), name: 'Player1' },
+          team: { ...fakeTeamBase(), shortName: 'Team1' },
           d11Team: fakeD11TeamBase(),
           position: fakePosition(),
           season: fakeSeason(),
@@ -56,8 +57,8 @@ describe('PlayerSeasonStatsCardComponent', () => {
           points: 6,
           rating: 700,
           goals: 1,
-          player: { ...fakePlayerBase(), name: 'Bob Jones' },
-          team: { ...fakeTeamBase(), shortName: 'CHE' },
+          player: { ...fakePlayerBase(), name: 'Player2' },
+          team: { ...fakeTeamBase(), shortName: 'Team2' },
           d11Team: fakeD11TeamBase(),
           position: fakePosition(),
           season: fakeSeason(),
@@ -119,7 +120,7 @@ describe('PlayerSeasonStatsCardComponent', () => {
 });
 
 describe('PlayerSeasonStatsCardComponent pagination', () => {
-  it('fetches next page when next paginator button is clicked', async () => {
+  it('fetches next page', async () => {
     playerSeasonStatApi = {
       getPlayerSeasonStatsBySeasonId: vi
         .fn()
@@ -148,7 +149,7 @@ describe('PlayerSeasonStatsCardComponent pagination', () => {
     });
   });
 
-  it('fetches previous page when previous paginator button is clicked', async () => {
+  it('fetches previous page', async () => {
     playerSeasonStatApi = {
       getPlayerSeasonStatsBySeasonId: vi
         .fn()
@@ -229,7 +230,7 @@ describe('PlayerSeasonStatsCardComponent filters', () => {
       expect(playerSeasonStatApi.getPlayerSeasonStatsBySeasonId).toHaveBeenCalledWith(
         seasonId,
         0,
-        [2, 3, 4, 5],
+        [3, 4, 5, 2],
         undefined,
         PlayerSeasonStatSort.RANKING,
       );
@@ -255,7 +256,7 @@ describe('PlayerSeasonStatsCardComponent filters', () => {
       expect(playerSeasonStatApi.getPlayerSeasonStatsBySeasonId).toHaveBeenCalledWith(
         seasonId,
         0,
-        [1, 2, 3, 5],
+        [1, 3, 5, 2],
         undefined,
         PlayerSeasonStatSort.RANKING,
       );
@@ -268,7 +269,7 @@ describe('PlayerSeasonStatsCardComponent filters', () => {
       expect(playerSeasonStatApi.getPlayerSeasonStatsBySeasonId).toHaveBeenCalledWith(
         seasonId,
         0,
-        [1, 2, 3, 4],
+        [1, 3, 4, 2],
         undefined,
         PlayerSeasonStatSort.RANKING,
       );
@@ -310,6 +311,203 @@ describe('PlayerSeasonStatsCardComponent filters', () => {
         positionIds,
         undefined,
         PlayerSeasonStatSort.FORM,
+      );
+    });
+  });
+});
+
+describe('PlayerSeasonStatsCardComponent sort', () => {
+  const playerSeasonStats = [
+    {
+      ...fakePlayerSeasonStat(),
+      ranking: 11,
+      points: 13,
+      goals: 15,
+      rating: 170,
+      formMatchPoints: [17, -18, 19],
+    },
+    {
+      ...fakePlayerSeasonStat(),
+      ranking: 12,
+      points: 14,
+      goals: 16,
+      rating: 180,
+      formMatchPoints: [20, -21, 22],
+    },
+  ];
+
+  beforeEach(async () => {
+    playerSeasonStatApi = {
+      getPlayerSeasonStatsBySeasonId: vi
+        .fn()
+        .mockReturnValue(
+          of({ page: 0, totalPages: 1, totalElements: 1, elements: playerSeasonStats }),
+        ),
+    } as unknown as PlayerSeasonStatApiService;
+    await render(HostComponent, {
+      providers: [
+        { provide: PlayerSeasonStatApiService, useValue: playerSeasonStatApi },
+        { provide: LoadingService, useValue: { register: vi.fn() } },
+      ],
+    });
+
+    await userEvent.click(screen.getByRole('button', { name: /more_vert/i }));
+  });
+
+  it('default renders points column', async () => {
+    expect(screen.getByText('Pts')).toBeInTheDocument();
+    expect(screen.getByText(playerSeasonStats[0].ranking)).toBeInTheDocument();
+    expect(screen.getByText(playerSeasonStats[0].points)).toBeInTheDocument();
+    expect(screen.getByText(playerSeasonStats[1].ranking)).toBeInTheDocument();
+    expect(screen.getByText(playerSeasonStats[1].points)).toBeInTheDocument();
+  });
+
+  it('no sort renders points column', async () => {
+    await userEvent.click(screen.getByRole('button', { name: /more_vert/i }));
+    await userEvent.click(screen.getByRole('button', { name: 'Goals' }));
+
+    await userEvent.click(screen.getByRole('button', { name: /more_vert/i }));
+    await userEvent.click(screen.getByRole('button', { name: 'Goals' }));
+
+    expect(screen.getByText('Pts')).toBeInTheDocument();
+    expect(screen.getByText(playerSeasonStats[0].points)).toBeInTheDocument();
+    expect(screen.getByText(playerSeasonStats[0].ranking)).toBeInTheDocument();
+    expect(screen.getByText(playerSeasonStats[1].points)).toBeInTheDocument();
+    expect(screen.getByText(playerSeasonStats[1].ranking)).toBeInTheDocument();
+  });
+
+  it('GOALS renders goals column', async () => {
+    await userEvent.click(screen.getByRole('button', { name: /more_vert/i }));
+    await userEvent.click(screen.getByRole('button', { name: 'Goals' }));
+
+    expect(screen.getByText('Goals')).toBeInTheDocument();
+    expect(screen.getByText(playerSeasonStats[0].goals)).toBeInTheDocument();
+    expect(screen.getByText(playerSeasonStats[1].goals)).toBeInTheDocument();
+  });
+
+  it('RATING renders ratings column', async () => {
+    const pipe = new RatingPipe();
+
+    await userEvent.click(screen.getByRole('button', { name: /more_vert/i }));
+    await userEvent.click(screen.getByRole('button', { name: 'Rating' }));
+
+    expect(screen.getByText('Rtg')).toBeInTheDocument();
+    expect(
+      screen.getByText(pipe.transform(playerSeasonStats[0].rating as number) as string),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByText(pipe.transform(playerSeasonStats[1].rating as number) as string),
+    ).toBeInTheDocument();
+  });
+
+  it('FORM renders form column', async () => {
+    await userEvent.click(screen.getByRole('button', { name: /more_vert/i }));
+    await userEvent.click(screen.getByRole('button', { name: 'Form' }));
+
+    expect(screen.getByText('Form')).toBeInTheDocument();
+    for (const pts of [
+      ...playerSeasonStats[0].formMatchPoints,
+      ...playerSeasonStats[1].formMatchPoints,
+    ]) {
+      expect(screen.getByText(String(pts))).toBeInTheDocument();
+    }
+  });
+});
+
+describe('PlayerSeasonStatsCardComponent drawer', () => {
+  it('closes when availability filter is changed', async () => {
+    const api = {
+      getPlayerSeasonStatsBySeasonId: vi
+        .fn()
+        .mockReturnValue(
+          of({ page: 0, totalPages: 1, totalElements: 1, elements: [fakePlayerSeasonStat()] }),
+        ),
+    } as unknown as PlayerSeasonStatApiService;
+
+    await render(HostComponent, {
+      providers: [
+        { provide: LoadingService, useValue: { register: vi.fn() } },
+        { provide: PlayerSeasonStatApiService, useValue: api },
+      ],
+    });
+
+    await userEvent.click(screen.getByRole('button', { name: /more_vert/i }));
+    expect(screen.getByText('Filter and Sort')).toBeInTheDocument();
+
+    await userEvent.click(screen.getByRole('button', { name: 'Available' }));
+
+    await waitFor(() => {
+      expect(screen.queryByText('Filter and Sort')).not.toBeInTheDocument();
+    });
+  });
+
+  it('closes when sort filter is changed', async () => {
+    const api = {
+      getPlayerSeasonStatsBySeasonId: vi
+        .fn()
+        .mockReturnValue(
+          of({ page: 0, totalElements: 1, totalPages: 1, elements: [fakePlayerSeasonStat()] }),
+        ),
+    } as unknown as PlayerSeasonStatApiService;
+
+    await render(HostComponent, {
+      providers: [
+        { provide: PlayerSeasonStatApiService, useValue: api },
+        { provide: LoadingService, useValue: { register: vi.fn() } },
+      ],
+    });
+
+    await userEvent.click(screen.getByRole('button', { name: /more_vert/i }));
+    expect(screen.getByText('Filter and Sort')).toBeInTheDocument();
+
+    await userEvent.click(screen.getByRole('button', { name: 'Goals' }));
+
+    await waitFor(() => {
+      expect(screen.queryByText('Filter and Sort')).not.toBeInTheDocument();
+    });
+  });
+});
+
+describe('PlayerSeasonStatsCardComponent page reset', () => {
+  it('resets to page 0 when filter changes', async () => {
+    const api = {
+      getPlayerSeasonStatsBySeasonId: vi
+        .fn()
+        .mockReturnValue(
+          of({ page: 0, totalPages: 3, totalElements: 75, elements: [fakePlayerSeasonStat()] }),
+        ),
+    } as unknown as PlayerSeasonStatApiService;
+
+    await render(HostComponent, {
+      providers: [
+        { provide: PlayerSeasonStatApiService, useValue: api },
+        { provide: LoadingService, useValue: { register: vi.fn() } },
+      ],
+    });
+
+    const [nextButton] = screen.getAllByRole('button', { name: 'Next Page' });
+    await userEvent.click(nextButton);
+
+    await waitFor(() => {
+      expect(api.getPlayerSeasonStatsBySeasonId).toHaveBeenCalledWith(
+        seasonId,
+        1,
+        positionIds,
+        undefined,
+        PlayerSeasonStatSort.RANKING,
+      );
+    });
+
+    await userEvent.click(screen.getByRole('button', { name: /more_vert/i }));
+    await userEvent.click(screen.getByRole('button', { name: 'Goals' }));
+
+    await waitFor(() => {
+      expect(api.getPlayerSeasonStatsBySeasonId).toHaveBeenCalledWith(
+        seasonId,
+        0,
+        positionIds,
+        undefined,
+        PlayerSeasonStatSort.GOALS,
       );
     });
   });

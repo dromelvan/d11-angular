@@ -5,7 +5,6 @@ import type { Player, PlayerSeasonStat } from '@app/core/api';
 import { ImgWidth, PlayerImgComponent } from '@app/shared/img';
 import { D11TeamBaseComponent, TeamBaseComponent } from '@app/shared/resource';
 import { contrastTextClass } from '@app/shared/util/contrast-text.util';
-import { Button } from 'primeng/button';
 import { Card } from 'primeng/card';
 import { IconButtonComponent } from '@app/shared/button/icon-button/icon-button.component';
 
@@ -13,7 +12,6 @@ import { IconButtonComponent } from '@app/shared/button/icon-button/icon-button.
   selector: 'app-player-header-card',
   imports: [
     Card,
-    Button,
     NgClass,
     PlayerImgComponent,
     TeamBaseComponent,

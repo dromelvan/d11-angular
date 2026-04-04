@@ -1,9 +1,10 @@
+@let m = model();
 <p-card header="Statistics" [pt]="{ root: { class: 'relative' } }">
   <p-paginator
     class="absolute top-4 right-12 p-0! gap-0!"
-    [first]="model().page * 25"
+    [first]="m.page * 25"
     [rows]="25"
-    [totalRecords]="model().totalElements"
+    [totalRecords]="m.totalElements"
     [showPageLinks]="false"
     [showJumpToPageDropdown]="false"
     (onPageChange)="onPageChange($event)"
@@ -15,70 +16,91 @@
     (click)="drawerVisible.set(true)"
   />
 
-  <div [class.min-h-360]="!model().isLastPage">
+  <div [class.min-h-360]="m.playerSeasonStats.length >= 25">
     <div
-      [style.grid-template-columns]="rankingColWidth() + ' 1.5rem 1fr 2.5rem'"
-      class="grid sm:grid-cols-[2.2rem_1fr_1fr_2.5rem_2.5rem_2.5rem] gap-x-1 text-sm pb-10"
+      [style.grid-template-columns]="
+        (m.maxRanking < 1000 ? '1.5rem' : '2rem') +
+        (m.sort === 'FORM' ? ' 1.5rem 1fr 6.5rem' : ' 1.5rem 1fr 2.5rem')
+      "
+      class="grid gap-x-1 text-sm pb-10"
     >
-      <div class="app-grid-header app-grid-number text-center">#</div>
-      <div class="app-grid-header sm:hidden col-span-2 pl-2">Player</div>
-      <div class="app-grid-header hidden sm:block pl-2">Player</div>
-      <div class="app-grid-header hidden sm:block pl-2">Team</div>
-      <div class="app-grid-header app-grid-number hidden sm:block text-center">G</div>
-      <div class="app-grid-header app-grid-number hidden sm:block text-center">Rtg</div>
-      <div class="app-grid-header app-grid-number text-center pr-2">Pts</div>
+      <div class="app-grid-header text-center">#</div>
+      <div class="app-grid-header col-span-2">Player</div>
+      <div class="app-grid-header app-grid-number">
+        @switch (m.sort) {
+          @case ('GOALS') {
+            Goals
+          }
+          @case ('RATING') {
+            Rtg
+          }
+          @case ('FORM') {
+            Form
+          }
+          @default {
+            Pts
+          }
+        }
+      </div>
 
-      @for (stat of model().playerSeasonStats; track stat.id; let last = $last) {
-        <div
-          class="col-span-4 sm:col-span-6 grid grid-cols-subgrid px-2"
-          [class.app-grid-separator]="!last"
-        >
-          <div class="app-grid-cell app-grid-number justify-center" data-testid="ranking">
+      @for (stat of m.playerSeasonStats; track stat.id; let last = $last) {
+        <div class="col-span-4 grid grid-cols-subgrid" [class.app-grid-separator]="!last">
+          <div class="app-grid-cell justify-center" data-testid="ranking">
             {{ stat.ranking }}
           </div>
-          <div class="sm:hidden app-grid-cell justify-center">
+          <div class="app-grid-cell justify-center">
             @if (!stat.team.dummy) {
               <app-team-img [team]="stat.team" width="20" />
             }
           </div>
-          <div class="app-grid-cell gap-2 w-full overflow-hidden">
-            <div class="flex flex-col overflow-hidden w-full">
-              <span class="truncate">{{ stat.player.name }}</span>
-              <span class="app-flex w-full">
-                <span class="truncate app-text-lowest-emphasis">
-                  {{ stat.position.name }}
-                  @if (!stat.d11Team.dummy) {
-                    - {{ stat.d11Team.name }}
+          <div class="app-grid-cell app-col gap-0 w-full overflow-hidden">
+            <span class="w-full truncate">{{ stat.player.name }}</span>
+            <span class="app-text-lowest-emphasis w-full truncate">
+              {{ stat.position.name }}
+              @if (!stat.d11Team.dummy) {
+                - {{ stat.d11Team.name }}
+              }
+            </span>
+          </div>
+          <div class="app-grid-cell app-grid-number font-bold">
+            @switch (m.sort) {
+              @case ('GOALS') {
+                {{ stat.goals }}
+              }
+              @case ('RATING') {
+                {{ stat.rating | rating }}
+              }
+              @case ('FORM') {
+                <div class="app-row gap-0">
+                  @for (points of stat.formMatchPoints; track $index) {
+                    <span
+                      class="w-5 h-5 rounded-full flex items-center justify-center text-[0.6rem] text-primary-contrast"
+                      [ngClass]="{
+                        'bg-success': points > 0,
+                        'bg-error': points < 0,
+                        'bg-neutral': points === 0,
+                      }"
+                    >
+                      {{ points }}
+                    </span>
                   }
-                </span>
-              </span>
-            </div>
-          </div>
-          <div class="hidden sm:flex app-grid-cell overflow-hidden">
-            <span class="truncate">{{ stat.team.shortName }}</span>
-          </div>
-          <div class="hidden sm:flex app-grid-cell app-grid-number justify-center">
-            {{ stat.goals }}
-          </div>
-          <div
-            class="hidden sm:flex app-grid-cell app-grid-number justify-center"
-            data-testid="rating"
-          >
-            {{ stat.rating }}
-          </div>
-          <div class="app-grid-cell app-grid-number justify-center font-bold">
-            {{ stat.points }}
+                </div>
+              }
+              @default {
+                {{ stat.points }}
+              }
+            }
           </div>
         </div>
       }
     </div>
   </div>
-  @if (model().playerSeasonStats.length > 0) {
+  @if (m.playerSeasonStats.length > 0) {
     <p-paginator
-      class="absolute bottom-4 right-5 p-0!"
-      [first]="model().page * 25"
+      class="absolute bottom-4 right-5 p-0! gap-0!"
+      [first]="m.page * 25"
       [rows]="25"
-      [totalRecords]="model().totalElements"
+      [totalRecords]="m.totalElements"
       [showPageLinks]="false"
       [showJumpToPageDropdown]="false"
       (onPageChange)="onPageChange($event)"
@@ -99,8 +121,8 @@
       <a (click)="drawerVisible.set(false)" class="text-sm justify-self-end">Done</a>
     </div>
   </ng-template>
-  <div class="flex flex-col gap-4">
-    <div class="flex flex-col gap-2">
+  <div class="app-col">
+    <div class="app-col gap-2">
       <span class="text-sm font-medium">Availability</span>
       <p-selectbutton
         [options]="availabilityOptions"
@@ -110,18 +132,18 @@
         [pt]="{ pcToggleButton: { label: { class: 'text-sm!' } } }"
       />
     </div>
-    <div class="flex flex-col gap-2">
+    <div class="app-col gap-2">
       <span class="text-sm font-medium">Position</span>
       <p-selectbutton
-        [options]="positionOptions"
-        [(ngModel)]="positions"
+        [options]="positionIdOptions"
+        [(ngModel)]="positionIds"
         optionLabel="label"
         optionValue="value"
         [multiple]="true"
         [pt]="{ pcToggleButton: { label: { class: 'text-xs!' } } }"
       />
     </div>
-    <div class="flex flex-col gap-2">
+    <div class="app-col gap-2">
       <span class="text-sm font-medium">Sort</span>
       <p-selectbutton
         [options]="sortOptions"
