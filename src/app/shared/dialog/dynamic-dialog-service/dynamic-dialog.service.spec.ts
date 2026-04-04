@@ -2,8 +2,9 @@ import { TestBed } from '@angular/core/testing';
 import { vi } from 'vitest';
 import { DialogService } from 'primeng/dynamicdialog';
 import { DynamicDialogService } from './dynamic-dialog.service';
-import { fakePlayerMatchStat } from '@app/test';
+import { fakePlayerMatchStat, fakePlayerSeasonStat } from '@app/test';
 import { PlayerDialogMatchStatComponent } from '@app/feature/page/player/player-dialog-match-stat/player-dialog-match-stat.component';
+import { PlayerDialogSeasonStatComponent } from '@app/feature/page/player/player-dialog-season-stat/player-dialog-season-stat.component';
 import { DialogFooterAction } from '@app/shared/dialog/dynamic-dialog-footer/dynamic-dialog-footer.component';
 
 function buildDialogService() {
@@ -74,6 +75,54 @@ describe('DynamicDialogService', () => {
 
       const firstRef = dialogService.open.mock.results[0].value;
       service.openPlayerMatchStat(stats[1], stats, fakeAction());
+
+      expect(firstRef.close).toHaveBeenCalled();
+      expect(dialogService.open).toHaveBeenCalledTimes(2);
+    });
+  });
+
+  describe('openPlayerSeasonStat', () => {
+    it('opens the player season stat dialog component', () => {
+      const stat = fakePlayerSeasonStat();
+      service.openPlayerSeasonStat(stat, [stat], fakeAction());
+
+      expect(dialogService.open).toHaveBeenCalledWith(
+        PlayerDialogSeasonStatComponent,
+        expect.objectContaining({ modal: true }),
+      );
+    });
+
+    it('sets data.current as a signal pointing to the passed stat', () => {
+      const stat = fakePlayerSeasonStat();
+      service.openPlayerSeasonStat(stat, [stat], fakeAction());
+
+      const { data } = dialogService.open.mock.calls[0][1];
+      expect(data.current()).toBe(stat);
+    });
+
+    it('sets data.list to the provided playerSeasonStats array', () => {
+      const stats = [fakePlayerSeasonStat(), fakePlayerSeasonStat()];
+      service.openPlayerSeasonStat(stats[0], stats, fakeAction());
+
+      const { data } = dialogService.open.mock.calls[0][1];
+      expect(data.list).toBe(stats);
+    });
+
+    it('sets data.action to the provided action', () => {
+      const stat = fakePlayerSeasonStat();
+      const action = fakeAction();
+      service.openPlayerSeasonStat(stat, [stat], action);
+
+      const { data } = dialogService.open.mock.calls[0][1];
+      expect(data.action).toBe(action);
+    });
+
+    it('closes the previous dialog before opening a new one', () => {
+      const stats = [fakePlayerSeasonStat(), fakePlayerSeasonStat()];
+      service.openPlayerSeasonStat(stats[0], stats, fakeAction());
+
+      const firstRef = dialogService.open.mock.results[0].value;
+      service.openPlayerSeasonStat(stats[1], stats, fakeAction());
 
       expect(firstRef.close).toHaveBeenCalled();
       expect(dialogService.open).toHaveBeenCalledTimes(2);
