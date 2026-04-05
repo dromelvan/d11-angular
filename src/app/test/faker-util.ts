@@ -17,6 +17,11 @@ import { Stadium } from '@app/core/api/model/stadium.model';
 import { Status } from '@app/core/api/model/status.model';
 import { TeamBase } from '@app/core/api/model/team-base.model';
 import { TeamSeasonStat } from '@app/core/api/model/team-season-stat.model';
+import { Transfer } from '@app/core/api/model/transfer.model';
+import { TransferBid } from '@app/core/api/model/transfer-bid.model';
+import { TransferDay } from '@app/core/api/model/transfer-day.model';
+import { TransferListing } from '@app/core/api/model/transfer-listing.model';
+import { TransferWindow } from '@app/core/api/model/transfer-window.model';
 import { faker } from '@faker-js/faker';
 import { StadiumBase } from '@app/core/api';
 
@@ -232,4 +237,69 @@ export const fakePlayerMatchStat = (): PlayerMatchStat => ({
   team: fakeTeamBase(),
   d11Team: fakeD11TeamBase(),
   position: fakePosition(),
+});
+
+export const fakeTransferDay = (): TransferDay => ({
+  id: faker.number.int({ min: 1, max: 10000 }),
+  transferDayNumber: faker.number.int({ min: 1, max: 5 }),
+  status: faker.helpers.enumValue(Status),
+  datetime: faker.date.recent().toISOString(),
+});
+
+export const fakeTransferWindow = (): TransferWindow => ({
+  id: faker.number.int({ min: 1, max: 10000 }),
+  transferWindowNumber: faker.number.int({ min: 1, max: 10 }),
+  draft: faker.datatype.boolean(),
+  status: faker.helpers.enumValue(Status),
+  datetime: faker.date.recent().toISOString(),
+  matchWeek: fakeMatchWeekBase(),
+});
+
+export const fakeTransferListing = (): TransferListing => ({
+  id: faker.number.int({ min: 1, max: 10000 }),
+  ranking: faker.number.int({ min: 1, max: 20 }),
+  points: faker.number.int({ min: 0, max: 200 }),
+  formPoints: faker.number.int({ min: 0, max: 50 }),
+  formMatchPoints: [faker.number.int(), faker.number.int(), faker.number.int()],
+  pointsPerAppearance: faker.number.int({ min: 0, max: 1000 }),
+  goals: faker.number.int({ min: 0, max: 30 }),
+  goalAssists: faker.number.int({ min: 0, max: 20 }),
+  ownGoals: faker.number.int({ min: 0, max: 5 }),
+  goalsConceded: faker.number.int({ min: 0, max: 50 }),
+  cleanSheets: faker.number.int({ min: 0, max: 20 }),
+  yellowCards: faker.number.int({ min: 0, max: 10 }),
+  redCards: faker.number.int({ min: 0, max: 3 }),
+  substitutionsOn: faker.number.int({ min: 0, max: 10 }),
+  substitutionsOff: faker.number.int({ min: 0, max: 10 }),
+  manOfTheMatch: faker.number.int({ min: 0, max: 10 }),
+  sharedManOfTheMatch: faker.number.int({ min: 0, max: 5 }),
+  rating: faker.number.int({ min: 0, max: 1000 }),
+  gamesStarted: faker.number.int({ min: 0, max: 38 }),
+  gamesSubstitute: faker.number.int({ min: 0, max: 38 }),
+  gamesDidNotParticipate: faker.number.int({ min: 0, max: 38 }),
+  minutesPlayed: faker.number.int({ min: 0, max: 3420 }),
+  newPlayer: faker.datatype.boolean(),
+  player: fakePlayerBase(),
+  team: fakeTeamBase(),
+  d11Team: fakeD11TeamBase(),
+  position: fakePosition(),
+});
+
+export const fakeTransferBid = (): TransferBid => ({
+  id: faker.number.int({ min: 1, max: 10000 }),
+  playerRanking: faker.number.int({ min: 1, max: 500 }),
+  d11TeamRanking: faker.number.int({ min: 1, max: 20 }),
+  fee: faker.number.int({ min: 1, max: 100 }),
+  activeFee: faker.number.int({ min: 1, max: 100 }),
+  successful: faker.datatype.boolean(),
+  player: fakePlayerBase(),
+  d11Team: fakeD11TeamBase(),
+});
+
+export const fakeTransfer = (): Transfer => ({
+  id: faker.number.int({ min: 1, max: 10000 }),
+  fee: faker.number.int({ min: 1, max: 100 }),
+  transferDay: fakeTransferDay(),
+  player: fakePlayerBase(),
+  d11Team: fakeD11TeamBase(),
 });
