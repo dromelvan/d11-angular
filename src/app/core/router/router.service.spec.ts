@@ -107,6 +107,21 @@ describe('RouterService', () => {
     expect(result).toBe(true);
   });
 
+  it('should navigate to current transfer window', async () => {
+    const result = await service.navigateToCurrentTransferWindow();
+
+    expect(mockRouter.navigate).toHaveBeenCalledWith(['transfers']);
+    expect(result).toBe(true);
+  });
+
+  it('should navigate to transfer window with transferWindowId', async () => {
+    const transferWindowId = 1;
+    const result = await service.navigateToTransferWindow(transferWindowId);
+
+    expect(mockRouter.navigate).toHaveBeenCalledWith(['transfers', transferWindowId]);
+    expect(result).toBe(true);
+  });
+
   // Section -----------------------------------------------------------------------------------
 
   describe('section', () => {

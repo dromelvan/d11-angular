@@ -64,6 +64,16 @@ export class RouterService {
     return this.router.navigate(['seasons', seasonId]);
   }
 
+  public navigateToCurrentTransferWindow(): Promise<boolean> {
+    this.stack.set([]);
+    return this.router.navigate(['transfers']);
+  }
+
+  public navigateToTransferWindow(transferWindowId: number): Promise<boolean> {
+    this.stack.set([]);
+    return this.router.navigate(['transfers', transferWindowId]);
+  }
+
   public navigateToPrevious(): Promise<boolean> {
     const stack = this.stack();
     if (stack.length === 0) {

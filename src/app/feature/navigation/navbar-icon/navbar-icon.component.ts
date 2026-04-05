@@ -5,7 +5,7 @@ interface NavItem {
   label: string;
   icon: string;
   url?: string;
-  navigateTo?: 'currentMatchWeek' | 'players' | 'table';
+  navigateTo?: 'currentMatchWeek' | 'players' | 'table' | 'transfers';
 }
 
 @Component({
@@ -18,7 +18,7 @@ export class NavbarIconComponent {
     { label: 'Matches', icon: 'pi pi-calendar', navigateTo: 'currentMatchWeek' },
     { label: 'Tables', icon: 'pi pi-trophy', navigateTo: 'table' },
     { label: 'Players', icon: 'pi pi-users', navigateTo: 'players' },
-    { label: 'Transfers', icon: 'pi pi-arrow-right-arrow-left', url: '#' },
+    { label: 'Transfers', icon: 'pi pi-arrow-right-arrow-left', navigateTo: 'transfers' },
     { label: 'More', icon: 'pi pi-ellipsis-h', url: '#' },
   ];
 
@@ -31,6 +31,8 @@ export class NavbarIconComponent {
       this.routerService.navigateToPlayers();
     } else if (item.navigateTo === 'table') {
       this.routerService.navigateToCurrentSeason();
+    } else if (item.navigateTo === 'transfers') {
+      this.routerService.navigateToCurrentTransferWindow();
     }
   }
 }

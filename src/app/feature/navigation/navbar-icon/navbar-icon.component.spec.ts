@@ -9,6 +9,7 @@ const mockRouterService = {
   navigateToCurrentMatchWeek: vi.fn(),
   navigateToCurrentSeason: vi.fn(),
   navigateToPlayers: vi.fn(),
+  navigateToCurrentTransferWindow: vi.fn(),
 };
 const providers = [{ provide: RouterService, useValue: mockRouterService }];
 
@@ -63,5 +64,15 @@ describe('NavbarIconComponent', () => {
     await userEvent.click(screen.getByText('Tables'));
 
     expect(mockRouterService.navigateToCurrentSeason).toHaveBeenCalledOnce();
+  });
+
+  it('renders Transfers link', () => {
+    expect(screen.getByText('Transfers')).toBeInTheDocument();
+  });
+
+  it('calls navigateToCurrentTransferWindow on Transfers click', async () => {
+    await userEvent.click(screen.getByText('Transfers'));
+
+    expect(mockRouterService.navigateToCurrentTransferWindow).toHaveBeenCalledOnce();
   });
 });
