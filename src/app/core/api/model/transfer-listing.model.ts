@@ -1,10 +1,8 @@
 import { D11TeamBase } from './d11-team-base.model';
 import { PlayerBase } from './player-base.model';
-import { Position } from './position.model';
-import { TeamBase } from './team-base.model';
+import { TransferListingBase } from './transfer-listing-base.model';
 
-export interface TransferListing {
-  id: number;
+export interface TransferListing extends TransferListingBase {
   ranking: number;
   points: number;
   formPoints: number;
@@ -28,7 +26,5 @@ export interface TransferListing {
   minutesPlayed: number;
   newPlayer: boolean;
   player: PlayerBase;
-  team: TeamBase;
   d11Team: D11TeamBase;
-  position: Position;
 }

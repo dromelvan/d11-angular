@@ -12,8 +12,16 @@ export class TransferListingApiService {
   readonly namespace = 'transfer-listings';
   private apiService = inject(ApiService);
 
-  getTransferListingsByTransferDayId(transferDayId: number): Observable<TransferListing[]> {
-    const params = new HttpParams().set('transferDayId', transferDayId);
+  getTransferListingsByTransferDayId(
+    transferDayId: number,
+    dummy?: boolean,
+  ): Observable<TransferListing[]> {
+    let params = new HttpParams().set('transferDayId', transferDayId);
+
+    if (dummy !== undefined) {
+      params = params.set('dummy', dummy);
+    }
+
     return this.apiService
       .get<TransferListingsResponseBody>({
         namespace: this.namespace,
