@@ -1,29 +1,33 @@
-import { D11TeamBase } from '@app/core/api/model/d11-team-base.model';
-import { D11MatchBase } from '@app/core/api/model/d11-match-base.model';
-import { GoalBase } from '@app/core/api/model/goal-base.model';
-import { Lineup } from '@app/core/api/model/lineup.model';
-import { MatchBase } from '@app/core/api/model/match-base.model';
-import { MatchWeekBase } from '@app/core/api/model/match-week-base.model';
-import { MatchWeek } from '@app/core/api/model/match-week.model';
-import { Match } from '@app/core/api/model/match.model';
-import { PlayerBase } from '@app/core/api/model/player-base.model';
-import { PlayerMatchStat } from '@app/core/api/model/player-match-stat.model';
-import { PlayerSearchResult } from '@app/core/api/model/player-search-result.model';
-import { PlayerSeasonStat } from '@app/core/api/model/player-season-stat.model';
-import { Player } from '@app/core/api/model/player.model';
-import { Position } from '@app/core/api/model/position.model';
-import { Season } from '@app/core/api/model/season.model';
-import { Stadium } from '@app/core/api/model/stadium.model';
-import { Status } from '@app/core/api/model/status.model';
-import { TeamBase } from '@app/core/api/model/team-base.model';
-import { TeamSeasonStat } from '@app/core/api/model/team-season-stat.model';
-import { Transfer } from '@app/core/api/model/transfer.model';
-import { TransferBid } from '@app/core/api/model/transfer-bid.model';
-import { TransferDay } from '@app/core/api/model/transfer-day.model';
-import { TransferListing } from '@app/core/api/model/transfer-listing.model';
-import { TransferWindow } from '@app/core/api/model/transfer-window.model';
+import {
+  D11MatchBase,
+  D11TeamBase,
+  GoalBase,
+  Lineup,
+  Match,
+  MatchBase,
+  MatchWeek,
+  MatchWeekBase,
+  Player,
+  PlayerBase,
+  PlayerMatchStat,
+  PlayerSearchResult,
+  PlayerSeasonStat,
+  Position,
+  Season,
+  SeasonBase,
+  Stadium,
+  StadiumBase,
+  Status,
+  TeamBase,
+  TeamSeasonStat,
+  Transfer,
+  TransferBid,
+  TransferDay,
+  TransferListing,
+  TransferListingBase,
+  TransferWindow,
+} from '@app/core/api';
 import { faker } from '@faker-js/faker';
-import { StadiumBase } from '@app/core/api';
 
 export const fakePlayerSearchResult = (): PlayerSearchResult => ({
   id: faker.number.int({ min: 1, max: 10000 }),
@@ -56,6 +60,12 @@ export const fakePosition = (): Position => ({
   maxCount: faker.number.int({ min: 1, max: 5 }),
   defender: faker.datatype.boolean(),
   sortOrder: faker.number.int({ min: 1, max: 10 }),
+});
+
+export const fakeSeasonBase = (): SeasonBase => ({
+  id: faker.number.int({ min: 1, max: 100 }),
+  name: `${faker.date.past().getFullYear()}-${faker.date.past().getFullYear() + 1}`,
+  shortName: `${faker.number.int({ min: 20, max: 25 })}-${faker.number.int({ min: 20, max: 25 })}`,
 });
 
 export const fakeSeason = (): Season => ({
@@ -253,6 +263,13 @@ export const fakeTransferWindow = (): TransferWindow => ({
   status: faker.helpers.enumValue(Status),
   datetime: faker.date.recent().toISOString(),
   matchWeek: fakeMatchWeekBase(),
+  season: fakeSeasonBase(),
+});
+
+export const fakeTransferListingBase = (): TransferListingBase => ({
+  id: faker.number.int({ min: 1, max: 10000 }),
+  team: fakeTeamBase(),
+  position: fakePosition(),
 });
 
 export const fakeTransferListing = (): TransferListing => ({
@@ -302,4 +319,5 @@ export const fakeTransfer = (): Transfer => ({
   transferDay: fakeTransferDay(),
   player: fakePlayerBase(),
   d11Team: fakeD11TeamBase(),
+  transferListing: fakeTransferListingBase(),
 });

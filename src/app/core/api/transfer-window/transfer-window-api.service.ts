@@ -29,7 +29,14 @@ export class TransferWindowApiService {
         namespace: this.namespace,
         id,
       })
-      .pipe(map((result) => result.transferWindow));
+      .pipe(
+        map((result) => ({
+          ...result.transferWindow,
+          matchWeek: result.matchWeek,
+          season: result.season,
+          transferDays: result.transferDays,
+        })),
+      );
   }
 
   getCurrentTransferWindow(): Observable<TransferWindow> {
@@ -38,6 +45,13 @@ export class TransferWindowApiService {
         namespace: this.namespace,
         endpoint: 'current',
       })
-      .pipe(map((result) => result.transferWindow));
+      .pipe(
+        map((result) => ({
+          ...result.transferWindow,
+          matchWeek: result.matchWeek,
+          season: result.season,
+          transferDays: result.transferDays,
+        })),
+      );
   }
 }

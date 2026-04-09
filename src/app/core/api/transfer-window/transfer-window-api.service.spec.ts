@@ -84,7 +84,15 @@ describe('TransferWindowApiService', () => {
 
   describe('getTransferWindowById', () => {
     const transferWindow = fakeTransferWindow();
-    const response: TransferWindowResponseBody = { transferWindow };
+    const matchWeek = transferWindow.matchWeek;
+    const season = transferWindow.season;
+    const transferDays = transferWindow.transferDays!;
+    const response: TransferWindowResponseBody = {
+      transferWindow,
+      matchWeek,
+      season,
+      transferDays,
+    };
 
     it('calls get', async () => {
       apiServiceMock.get = vi.fn().mockReturnValue(of(response)) as GetFn;
@@ -133,7 +141,15 @@ describe('TransferWindowApiService', () => {
 
   describe('getCurrentTransferWindow', () => {
     const transferWindow = fakeTransferWindow();
-    const response: TransferWindowResponseBody = { transferWindow };
+    const matchWeek = transferWindow.matchWeek;
+    const season = transferWindow.season;
+    const transferDays = transferWindow.transferDays!;
+    const response: TransferWindowResponseBody = {
+      transferWindow,
+      matchWeek,
+      season,
+      transferDays,
+    };
 
     it('calls get', async () => {
       apiServiceMock.get = vi.fn().mockReturnValue(of(response)) as GetFn;
@@ -170,9 +186,9 @@ describe('TransferWindowApiService', () => {
         .fn()
         .mockReturnValue(throwError(() => new Error('INTERNAL_SERVER_ERROR'))) as GetFn;
 
-      expect(
-        firstValueFrom(transferWindowApi.getCurrentTransferWindow()),
-      ).rejects.toBeInstanceOf(Error);
+      expect(firstValueFrom(transferWindowApi.getCurrentTransferWindow())).rejects.toBeInstanceOf(
+        Error,
+      );
     });
   });
 });
