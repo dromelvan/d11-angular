@@ -31,13 +31,16 @@ describe('TransferListingApiService', () => {
 
   describe('getTransferListingsByTransferDayId', () => {
     const transferDayId = 1;
+    const page = 2;
     const transferListings = [fakeTransferListing(), fakeTransferListing()];
     const response: TransferListingsResponseBody = { transferListings };
 
     it('calls get', async () => {
       apiServiceMock.get = vi.fn().mockReturnValue(of(response)) as GetFn;
 
-      await firstValueFrom(transferListingApi.getTransferListingsByTransferDayId(transferDayId));
+      await firstValueFrom(
+        transferListingApi.getTransferListingsByTransferDayId(transferDayId, page),
+      );
 
       expect(apiServiceMock.get).toHaveBeenCalledExactlyOnceWith(
         expect.objectContaining({
@@ -49,12 +52,25 @@ describe('TransferListingApiService', () => {
       const calledParams: HttpParams = (apiServiceMock.get as ReturnType<typeof vi.fn>).mock
         .calls[0][0].options.params;
       expect(calledParams.get('transferDayId')).toBe(String(transferDayId));
+      expect(calledParams.get('page')).toBe(String(page));
+    });
+
+    it('calls get without page', async () => {
+      apiServiceMock.get = vi.fn().mockReturnValue(of(response)) as GetFn;
+
+      await firstValueFrom(transferListingApi.getTransferListingsByTransferDayId(transferDayId));
+
+      const calledParams: HttpParams = (apiServiceMock.get as ReturnType<typeof vi.fn>).mock
+        .calls[0][0].options.params;
+      expect(calledParams.has('page')).toBe(false);
     });
 
     it('calls get without dummy', async () => {
       apiServiceMock.get = vi.fn().mockReturnValue(of(response)) as GetFn;
 
-      await firstValueFrom(transferListingApi.getTransferListingsByTransferDayId(transferDayId));
+      await firstValueFrom(
+        transferListingApi.getTransferListingsByTransferDayId(transferDayId, page),
+      );
 
       const calledParams: HttpParams = (apiServiceMock.get as ReturnType<typeof vi.fn>).mock
         .calls[0][0].options.params;
@@ -65,7 +81,7 @@ describe('TransferListingApiService', () => {
       apiServiceMock.get = vi.fn().mockReturnValue(of(response)) as GetFn;
 
       await firstValueFrom(
-        transferListingApi.getTransferListingsByTransferDayId(transferDayId, true),
+        transferListingApi.getTransferListingsByTransferDayId(transferDayId, page, true),
       );
 
       const calledParams: HttpParams = (apiServiceMock.get as ReturnType<typeof vi.fn>).mock
@@ -77,7 +93,7 @@ describe('TransferListingApiService', () => {
       apiServiceMock.get = vi.fn().mockReturnValue(of(response)) as GetFn;
 
       await firstValueFrom(
-        transferListingApi.getTransferListingsByTransferDayId(transferDayId, false),
+        transferListingApi.getTransferListingsByTransferDayId(transferDayId, page, false),
       );
 
       const calledParams: HttpParams = (apiServiceMock.get as ReturnType<typeof vi.fn>).mock
@@ -85,11 +101,48 @@ describe('TransferListingApiService', () => {
       expect(calledParams.get('dummy')).toBe('false');
     });
 
+    it('calls get unpaged without dummy', async () => {
+      apiServiceMock.get = vi.fn().mockReturnValue(of(response)) as GetFn;
+
+      await firstValueFrom(transferListingApi.getTransferListingsByTransferDayId(transferDayId));
+
+      const calledParams: HttpParams = (apiServiceMock.get as ReturnType<typeof vi.fn>).mock
+        .calls[0][0].options.params;
+      expect(calledParams.has('page')).toBe(false);
+      expect(calledParams.has('dummy')).toBe(false);
+    });
+
+    it('calls get unpaged with dummy false', async () => {
+      apiServiceMock.get = vi.fn().mockReturnValue(of(response)) as GetFn;
+
+      await firstValueFrom(
+        transferListingApi.getTransferListingsByTransferDayId(transferDayId, undefined, false),
+      );
+
+      const calledParams: HttpParams = (apiServiceMock.get as ReturnType<typeof vi.fn>).mock
+        .calls[0][0].options.params;
+      expect(calledParams.has('page')).toBe(false);
+      expect(calledParams.get('dummy')).toBe('false');
+    });
+
+    it('calls get unpaged with dummy true', async () => {
+      apiServiceMock.get = vi.fn().mockReturnValue(of(response)) as GetFn;
+
+      await firstValueFrom(
+        transferListingApi.getTransferListingsByTransferDayId(transferDayId, undefined, true),
+      );
+
+      const calledParams: HttpParams = (apiServiceMock.get as ReturnType<typeof vi.fn>).mock
+        .calls[0][0].options.params;
+      expect(calledParams.has('page')).toBe(false);
+      expect(calledParams.get('dummy')).toBe('true');
+    });
+
     it('maps the result', async () => {
       apiServiceMock.get = vi.fn().mockReturnValue(of(response)) as GetFn;
 
       const result = await firstValueFrom(
-        transferListingApi.getTransferListingsByTransferDayId(transferDayId),
+        transferListingApi.getTransferListingsByTransferDayId(transferDayId, page),
       );
 
       expect(result).toEqual(transferListings);
@@ -100,7 +153,7 @@ describe('TransferListingApiService', () => {
       apiServiceMock.get = vi.fn().mockReturnValue(throwError(() => httpError)) as GetFn;
 
       expect(
-        firstValueFrom(transferListingApi.getTransferListingsByTransferDayId(transferDayId)),
+        firstValueFrom(transferListingApi.getTransferListingsByTransferDayId(transferDayId, page)),
       ).rejects.toThrow(httpError.message);
     });
 
@@ -110,7 +163,7 @@ describe('TransferListingApiService', () => {
         .mockReturnValue(throwError(() => new Error('BAD_REQUEST'))) as GetFn;
 
       expect(
-        firstValueFrom(transferListingApi.getTransferListingsByTransferDayId(transferDayId)),
+        firstValueFrom(transferListingApi.getTransferListingsByTransferDayId(transferDayId, page)),
       ).rejects.toBeInstanceOf(Error);
     });
   });

@@ -14,9 +14,14 @@ export class TransferListingApiService {
 
   getTransferListingsByTransferDayId(
     transferDayId: number,
+    page?: number,
     dummy?: boolean,
   ): Observable<TransferListing[]> {
     let params = new HttpParams().set('transferDayId', transferDayId);
+
+    if (page !== undefined) {
+      params = params.set('page', page);
+    }
 
     if (dummy !== undefined) {
       params = params.set('dummy', dummy);
