@@ -1,0 +1,14 @@
+<div
+  class="app-dialog-header app-row gap-0 app-bg-header items-center w-full"
+  [ngClass]="textClass()"
+  [style.background-color]="backgroundColor()"
+>
+  <app-button-icon-old icon="chevron-left" [disabled]="!hasPrevious()" (click)="onPrevious()" />
+
+  <div class="app-col gap-2 text-center flex-1">
+    <app-avatar resource="player" [id]="player().id" size="xlarge" />
+    <div class="font-semibold">{{ player().name }}</div>
+  </div>
+
+  <app-button-icon-old icon="chevron-right" [disabled]="!hasNext()" (click)="onNext()" />
+</div>
