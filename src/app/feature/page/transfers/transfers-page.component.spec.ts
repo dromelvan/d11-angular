@@ -6,6 +6,7 @@ import { TransferListingApiService } from '@app/core/api/transfer-listing/transf
 import { fakeTransferDay, fakeTransferWindow } from '@app/test';
 import { LoadingService } from '@app/core/loading/loading.service';
 import { RouterService } from '@app/core/router/router.service';
+import { DynamicDialogService } from '@app/shared/dialog/dynamic-dialog-service/dynamic-dialog.service';
 import { render, screen, waitFor } from '@testing-library/angular';
 import userEvent from '@testing-library/user-event';
 import { of } from 'rxjs';
@@ -45,6 +46,10 @@ function makeProviders() {
     {
       provide: TransferListingApiService,
       useValue: { getTransferListingsByTransferDayId: vi.fn().mockReturnValue(of([])) },
+    },
+    {
+      provide: DynamicDialogService,
+      useValue: { openTransferListing: vi.fn() },
     },
   ];
 }

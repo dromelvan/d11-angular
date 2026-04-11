@@ -3,6 +3,8 @@ import { rxResource } from '@angular/core/rxjs-interop';
 import { TransferDay, TransferListing } from '@app/core/api';
 import { TransferListingApiService } from '@app/core/api/transfer-listing/transfer-listing-api.service';
 import { LoadingService } from '@app/core/loading/loading.service';
+import { RouterService } from '@app/core/router/router.service';
+import { DynamicDialogService } from '@app/shared/dialog/dynamic-dialog-service/dynamic-dialog.service';
 import { D11TeamImgComponent } from '@app/shared/img/d11-team-img/d11-team-img.component';
 import { TeamImgComponent } from '@app/shared/img';
 import { Card } from 'primeng/card';
@@ -26,8 +28,19 @@ export class TransferDayTransferListingsCardComponent {
 
   private transferListingApiService = inject(TransferListingApiService);
   private loadingService = inject(LoadingService);
+  private dynamicDialogService = inject(DynamicDialogService);
+  private routerService = inject(RouterService);
 
   constructor() {
     this.loadingService.register(inject(DestroyRef), this.isLoading);
+  }
+
+  protected openDialog(transferListing: TransferListing): void {
+    this.dynamicDialogService.openTransferListing(transferListing, this.transferListings(), {
+      label: 'Player profile',
+      icon: 'player',
+      onClick: (current) =>
+        this.routerService.navigateToPlayer((current as TransferListing).player.id),
+    });
   }
 }

@@ -1,7 +1,10 @@
 import { Component } from '@angular/core';
 import { render, screen, waitFor } from '@testing-library/angular';
+import { userEvent } from '@testing-library/user-event';
 import { TransferDay, TransferListing, TransferListingApiService } from '@app/core/api';
 import { LoadingService } from '@app/core/loading/loading.service';
+import { RouterService } from '@app/core/router/router.service';
+import { DynamicDialogService } from '@app/shared/dialog/dynamic-dialog-service/dynamic-dialog.service';
 import { fakePlayerBase, fakeTransferDay, fakeTransferListing } from '@app/test';
 import { of } from 'rxjs';
 import { expect, vi } from 'vitest';
@@ -22,6 +25,8 @@ describe('TransferDayTransferListingsCardComponent', () => {
   describe('with transfer listings', () => {
     let transferListings: TransferListing[];
     let transferListingApi: { getTransferListingsByTransferDayId: ReturnType<typeof vi.fn> };
+    let dynamicDialogService: { openTransferListing: ReturnType<typeof vi.fn> };
+    let routerService: { navigateToPlayer: ReturnType<typeof vi.fn> };
 
     beforeEach(async () => {
       transferDay = fakeTransferDay();
@@ -33,11 +38,15 @@ describe('TransferDayTransferListingsCardComponent', () => {
       transferListingApi = {
         getTransferListingsByTransferDayId: vi.fn().mockReturnValue(of(transferListings)),
       };
+      dynamicDialogService = { openTransferListing: vi.fn() };
+      routerService = { navigateToPlayer: vi.fn() };
 
       await render(HostComponent, {
         providers: [
           { provide: TransferListingApiService, useValue: transferListingApi },
           { provide: LoadingService, useValue: { register: vi.fn() } },
+          { provide: DynamicDialogService, useValue: dynamicDialogService },
+          { provide: RouterService, useValue: routerService },
         ],
       });
     });
@@ -95,6 +104,28 @@ describe('TransferDayTransferListingsCardComponent', () => {
         }
       });
     });
+
+    it('opens dialog when a row is clicked', async () => {
+      await waitFor(() => screen.getByText('Player1'));
+
+      await userEvent.click(screen.getByText('Player1'));
+
+      expect(dynamicDialogService.openTransferListing).toHaveBeenCalledWith(
+        transferListings[0],
+        transferListings,
+        expect.objectContaining({ label: 'Player profile', icon: 'player' }),
+      );
+    });
+
+    it('action onClick navigates to the player', async () => {
+      await waitFor(() => screen.getByText('Player1'));
+      await userEvent.click(screen.getByText('Player1'));
+
+      const { onClick } = dynamicDialogService.openTransferListing.mock.calls[0][2];
+      onClick(transferListings[0]);
+
+      expect(routerService.navigateToPlayer).toHaveBeenCalledWith(transferListings[0].player.id);
+    });
   });
 
   describe('with no transfer listings', () => {
@@ -110,6 +141,8 @@ describe('TransferDayTransferListingsCardComponent', () => {
             },
           },
           { provide: LoadingService, useValue: { register: vi.fn() } },
+          { provide: DynamicDialogService, useValue: { openTransferListing: vi.fn() } },
+          { provide: RouterService, useValue: { navigateToPlayer: vi.fn() } },
         ],
       });
     });
