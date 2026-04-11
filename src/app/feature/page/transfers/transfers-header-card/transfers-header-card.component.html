@@ -1,0 +1,131 @@
+@if (transferWindow(); as transferWindow) {
+  @if (
+    transferWindow.status !== Status.PENDING && transferWindow.transferWindowPositionCounts?.length
+  ) {
+    <p-card class="app-transfers-header-card overflow-hidden">
+      <ng-template #header>
+        <div
+          class="app-bg-header py-4 px-4"
+          [ngClass]="textClass"
+          [style.background-color]="backgroundColor"
+        >
+          <div class="app-row gap-0 items-center">
+            <app-material-icon-button
+              icon="chevron_left"
+              severity="primary"
+              type="text"
+              [disabled]="!hasPrevious()"
+              (click)="previous.emit()"
+            />
+
+            <div class="flex-1 flex justify-center">
+              <div class="app-col gap-0 items-start">
+                <h1 class="text-2xl font-bold">
+                  Transfer Window {{ transferWindow.transferWindowNumber }}
+                </h1>
+                <div class="text-sm font-semibold">{{ transferWindow.season.name }}</div>
+                <div class="mt-2 text-xs">
+                  @if (!transferWindow.draft) {
+                    <div class="grid grid-cols-[auto_auto] gap-x-2 gap-y-0.5">
+                      <span>Listing deadline:</span>
+                      <span>{{ transferWindow.datetime | date: 'MMM dd, yyyy HH:mm' }}</span>
+                      <span>Bid deadline:</span>
+                      <span>{{
+                        (transferWindow.transferDays ?? [])[0]?.datetime
+                          | date: 'MMM dd, yyyy HH:mm'
+                      }}</span>
+                    </div>
+                  }
+                </div>
+              </div>
+            </div>
+
+            <app-material-icon-button
+              icon="chevron_right"
+              severity="primary"
+              [disabled]="!hasNext()"
+              (click)="next.emit()"
+            />
+          </div>
+          <div
+            class="app-row gap-1 text-sm font-semibold cursor-pointer mt-3"
+            (click)="navigateToMatchWeek()"
+          >
+            <app-icon icon="match_week" />
+            Match week {{ transferWindow.matchWeek.matchWeekNumber }}
+          </div>
+        </div>
+      </ng-template>
+
+      <div class="grid grid-cols-4 gap-x-2 gap-y-1 text-sm">
+        <div class="font-semibold">Position</div>
+        <div class="font-semibold text-right">Listed</div>
+        <div class="font-semibold text-right">Transfers</div>
+        <div class="font-semibold text-right">Needed</div>
+        @for (pc of transferWindow.transferWindowPositionCounts; track pc.position.id) {
+          <div>{{ pc.position.name }}</div>
+          <div class="text-right">{{ pc.transferListingCount }}</div>
+          <div class="text-right">{{ pc.transferCount }}</div>
+          <div class="text-right">{{ pc.transferListingCount - pc.transferCount }}</div>
+        }
+      </div>
+    </p-card>
+  } @else {
+    <p-card
+      class="app-transfers-header-card app-bg-header"
+      [ngClass]="textClass"
+      [style.background-color]="backgroundColor"
+    >
+      <div class="app-row gap-0 items-center">
+        <app-material-icon-button
+          icon="chevron_left"
+          severity="primary"
+          type="text"
+          [disabled]="!hasPrevious()"
+          (click)="previous.emit()"
+        />
+
+        <div class="flex-1 flex justify-center">
+          <div class="app-col gap-0 items-start">
+            <h1 class="text-2xl font-bold">
+              Transfer Window {{ transferWindow.transferWindowNumber }}
+            </h1>
+            <div class="text-sm font-semibold">{{ transferWindow.season.name }}</div>
+            <div class="mt-2 text-xs">
+              @if (!transferWindow.draft) {
+                <div class="grid grid-cols-[auto_auto] gap-x-2 gap-y-0.5">
+                  <span>Listing deadline:</span>
+                  <span>{{ transferWindow.datetime | date: 'MMM dd, yyyy HH:mm' }}</span>
+                  <span>Bid deadline:</span>
+                  <span>{{
+                    (transferWindow.transferDays ?? [])[0]?.datetime | date: 'MMM dd, yyyy HH:mm'
+                  }}</span>
+                </div>
+              } @else {
+                <div class="grid grid-cols-[auto_auto] gap-x-2 gap-y-0.5">
+                  <span>Draft time:</span>
+                  <span>{{ transferWindow.datetime | date: 'MMM dd, yyyy HH:mm' }}</span>
+                </div>
+              }
+            </div>
+          </div>
+        </div>
+
+        <app-material-icon-button
+          icon="chevron_right"
+          severity="primary"
+          [disabled]="!hasNext()"
+          (click)="next.emit()"
+        />
+      </div>
+
+      <div
+        class="app-row gap-1 text-sm font-semibold cursor-pointer mt-3"
+        (click)="navigateToMatchWeek()"
+      >
+        <app-icon icon="match_week" />
+        Match week {{ transferWindow.matchWeek.matchWeekNumber }}
+      </div>
+    </p-card>
+  }
+}
