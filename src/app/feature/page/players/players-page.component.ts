@@ -62,4 +62,3 @@ export class PlayersPageComponent {
     if (next) this.routerService.navigateToPlayers(next.id);
   }
 }
-

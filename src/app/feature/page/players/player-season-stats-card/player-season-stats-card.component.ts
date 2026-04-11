@@ -59,13 +59,14 @@ export class PlayerSeasonStatsCardComponent {
   protected dummy = signal<boolean | undefined>(undefined);
   protected positionIds = signal<number[]>(this.positionIdOptions.map((option) => option.value));
   protected sort = signal<PlayerSeasonStatSort | null>(PlayerSeasonStatSort.RANKING);
+  protected currentSeasonId = signal<number | undefined>(undefined);
 
   protected drawerVisible = signal(false);
 
   protected rxPlayerSeasonStats = rxResource<
     PlayerSeasonStatPage,
     {
-      seasonId: number;
+      seasonId: number | undefined;
       page: number;
       dummy: boolean | undefined;
       positionIds: number[];
@@ -73,14 +74,14 @@ export class PlayerSeasonStatsCardComponent {
     }
   >({
     params: () => ({
-      seasonId: this.seasonId(),
+      seasonId: this.currentSeasonId(),
       page: this.page(),
       dummy: this.dummy() ?? undefined,
       positionIds: this.positionIds(),
       sort: this.sort() ?? PlayerSeasonStatSort.RANKING,
     }),
     stream: ({ params }) => {
-      if (params.positionIds.length === 0) {
+      if (params.seasonId === undefined || params.positionIds.length === 0) {
         return of({ page: 0, totalPages: 0, totalElements: 0, elements: [] });
       }
       // Full back position is deprecated so there won't be an option for it but include it
@@ -121,7 +122,7 @@ export class PlayerSeasonStatsCardComponent {
     this.loadingService.register(inject(DestroyRef), this.rxPlayerSeasonStats.isLoading);
 
     effect(() => {
-      this.seasonId();
+      this.currentSeasonId.set(this.seasonId());
       this.page.set(0);
       this.dummy.set(undefined);
       this.positionIds.set(this.positionIdOptions.map((option) => option.value));
