@@ -1,0 +1,40 @@
+<p-card class="app-transfer-day-transfers-card">
+  <ng-template #header>
+    <div class="app-row gap-0 px-4 pt-4 items-end font-semibold">
+      <div class="text-2xl flex-1">Transfer Day {{ transferDay().transferDayNumber }}</div>
+      <div class="text-sm">
+        {{ transferDay().datetime | date: 'mediumDate' }}
+      </div>
+    </div>
+  </ng-template>
+  @if (transfers().length) {
+    <div class="grid grid-cols-[1.5rem_1fr_auto] gap-0">
+      <div class="app-grid-header col-span-2">Player</div>
+      <div class="app-grid-header app-grid-number">D11 Team / Fee</div>
+
+      @for (transfer of transfers(); track transfer.id; let last = $last) {
+        <div class="col-span-3 grid grid-cols-subgrid gap-2" [class.app-grid-separator]="!last">
+          <div class="app-grid-cell justify-center">
+            <app-team-img [team]="transfer.transferListing.team" width="20" />
+          </div>
+          <div class="app-grid-cell app-col gap-0 items-start overflow-hidden">
+            <span class="truncate">{{ transfer.player.name }}</span>
+            <span class="app-text-lowest-emphasis truncate"
+              >{{ transfer.transferListing.position.name }} -
+              {{ transfer.transferListing.team.shortName }}</span
+            >
+          </div>
+          <div class="app-grid-cell app-col items-end gap-0 overflow-hidden">
+            <div class="app-row gap-1">
+              <app-d11-team-img [d11Team]="transfer.d11Team" width="16" />
+              <span class="truncate">{{ transfer.d11Team.name }}</span>
+            </div>
+            <span class="text-xs truncate font-semibold">{{ transfer.fee | fee }}m</span>
+          </div>
+        </div>
+      }
+    </div>
+  } @else {
+    <div class="text-sm">No transfers</div>
+  }
+</p-card>
