@@ -1,0 +1,92 @@
+@let tl = transferListing();
+<div class="app-col gap-2 pt-4 min-h-95 max-h-95 overflow-y-auto">
+  <div class="grid grid-cols-2">
+    <div class="app-grid-sub-header col-span-2">Info</div>
+    <span class="app-grid-cell app-text-low-emphasis">Position</span>
+    <span class="app-grid-cell justify-end">{{ tl.position.name }}</span>
+    <div class="app-grid-separator col-span-2"></div>
+    <div class="col-span-2 app-row">
+      <span class="app-grid-cell app-text-low-emphasis">Team</span>
+      <span class="app-grid-cell justify-end w-full">
+        <app-team-base [team]="tl.team" imgWidth="24" justify="end" />
+      </span>
+    </div>
+    <div class="app-grid-separator col-span-2"></div>
+    <span class="app-grid-cell app-text-low-emphasis">D11 Team</span>
+    <span class="app-grid-cell justify-end whitespace-nowrap">
+      <app-d11-team-base [d11Team]="tl.d11Team" imgWidth="24" justify="end" />
+    </span>
+
+    <div class="app-grid-sub-header col-span-2">D11</div>
+    <span class="app-grid-cell app-text-low-emphasis">Ranking</span>
+    <span class="app-grid-cell font-semibold justify-end">#{{ tl.ranking }}</span>
+    <div class="app-grid-separator col-span-2"></div>
+    <span class="app-grid-cell app-text-low-emphasis">Rating</span>
+    <span class="app-grid-cell justify-end">{{ tl.rating | rating }}</span>
+    <div class="app-grid-separator col-span-2"></div>
+    <span class="app-grid-cell app-text-low-emphasis">Man of the Match</span>
+    <span class="app-grid-cell justify-end"
+      >{{ tl.manOfTheMatch }}/{{ tl.sharedManOfTheMatch }}</span
+    >
+    <div class="app-grid-separator col-span-2"></div>
+    <span class="app-grid-cell app-text-low-emphasis">Points</span>
+    <span class="app-grid-cell font-semibold justify-end">{{ tl.points }}</span>
+    <div class="app-grid-separator col-span-2"></div>
+    <span class="app-grid-cell app-text-low-emphasis">Form</span>
+    <span class="app-grid-cell justify-end">
+      <div class="flex gap-1">
+        @for (pts of tl.formMatchPoints.slice(0, 5); track $index) {
+          <span
+            class="w-5 h-5 rounded-full flex items-center justify-center text-[0.6rem] text-white font-bold"
+            [ngClass]="{
+              'bg-success': pts > 0,
+              'bg-error': pts < 0,
+              'bg-neutral': pts === 0,
+            }"
+          >
+            {{ pts }}
+          </span>
+        }
+      </div>
+    </span>
+    <div class="app-grid-separator col-span-2"></div>
+    <span class="app-grid-cell app-text-low-emphasis">Points / Appearance</span>
+    <span class="app-grid-cell justify-end">
+      {{ tl.pointsPerAppearance / 100 | number: '1.2-2' }}
+    </span>
+
+    <div class="app-grid-sub-header col-span-2">Appearances</div>
+    <span class="app-grid-cell app-text-low-emphasis">Started</span>
+    <span class="app-grid-cell justify-end">{{ tl.gamesStarted }}</span>
+    <div class="app-grid-separator col-span-2"></div>
+    <span class="app-grid-cell app-text-low-emphasis">Substitute</span>
+    <span class="app-grid-cell justify-end">{{ tl.gamesSubstitute }}</span>
+    <div class="app-grid-separator col-span-2"></div>
+    <span class="app-grid-cell border-none app-text-low-emphasis">Minutes played</span>
+    <span class="app-grid-cell border-none justify-end">{{ tl.minutesPlayed }}</span>
+
+    <div class="app-grid-sub-header col-span-2">Attack</div>
+    <span class="app-grid-cell app-text-low-emphasis">Goals</span>
+    <span class="app-grid-cell justify-end">{{ tl.goals }}</span>
+    <div class="app-grid-separator col-span-2"></div>
+    <span class="app-grid-cell app-text-low-emphasis">Assists</span>
+    <span class="app-grid-cell justify-end">{{ tl.goalAssists }}</span>
+
+    <div class="app-grid-sub-header col-span-2">Defence</div>
+    <span class="app-grid-cell app-text-low-emphasis">Goals conceded</span>
+    <span class="app-grid-cell justify-end">{{ tl.goalsConceded }}</span>
+    <div class="app-grid-separator col-span-2"></div>
+    <span class="app-grid-cell app-text-low-emphasis">Clean sheets</span>
+    <span class="app-grid-cell justify-end">{{ tl.cleanSheets }}</span>
+
+    <div class="app-grid-sub-header col-span-2">Discipline</div>
+    <span class="app-grid-cell app-text-low-emphasis">Yellow cards</span>
+    <span class="app-grid-cell justify-end">{{ tl.yellowCards }}</span>
+    <div class="app-grid-separator col-span-2"></div>
+    <span class="app-grid-cell app-text-low-emphasis">Red cards</span>
+    <span class="app-grid-cell justify-end">{{ tl.redCards }}</span>
+    <div class="app-grid-separator col-span-2"></div>
+    <span class="app-grid-cell app-text-low-emphasis">Own goals</span>
+    <span class="app-grid-cell justify-end">{{ tl.ownGoals }}</span>
+  </div>
+</div>
