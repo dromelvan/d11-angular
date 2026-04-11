@@ -1,0 +1,36 @@
+<p-card
+  class="app-transfer-day-transfer-listings-card"
+  [header]="'Transfer Day ' + transferDay().transferDayNumber"
+>
+  @if (transferListings().length) {
+    <div class="grid grid-cols-[1.5rem_1fr_auto] gap-0 text-sm">
+      <div class="app-grid-header col-span-2">Player</div>
+      <div class="app-grid-header app-grid-number">D11 Team / # / Pts</div>
+
+      @for (listing of transferListings(); track listing.id; let last = $last) {
+        <div class="col-span-3 grid grid-cols-subgrid gap-2" [class.app-grid-separator]="!last">
+          <div class="app-grid-cell justify-center">
+            <app-team-img [team]="listing.team" width="20" />
+          </div>
+          <div class="app-grid-cell app-col gap-0 items-start">
+            <span class="truncate">{{ listing.player.name }}</span>
+            <span class="app-text-lowest-emphasis truncate"
+              >{{ listing.position.name }} - {{ listing.team.shortName }}</span
+            >
+          </div>
+          <div class="app-grid-cell app-col items-end gap-0">
+            <div class="app-row gap-1">
+              <app-d11-team-img [d11Team]="listing.d11Team" width="16" />
+              <span class="truncate">{{ listing.d11Team.name }}</span>
+            </div>
+            <span class="text-xs tabular-nums"
+              >#{{ listing.ranking }} / {{ listing.points }} pts</span
+            >
+          </div>
+        </div>
+      }
+    </div>
+  } @else {
+    <div class="text-sm">No transfer listings</div>
+  }
+</p-card>
