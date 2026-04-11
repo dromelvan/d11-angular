@@ -1,1 +1,39 @@
-<p>transfers-page works!</p>
+<div class="app-transfers-page app-col max-w-sm mx-auto pb-4">
+  <app-transfers-header-card
+    [transferWindow]="model().transferWindow"
+    [hasPrevious]="hasPrevious()"
+    [hasNext]="hasNext()"
+    (previous)="navigateToPrevious()"
+    (next)="navigateToNext()"
+  />
+
+  @if (model().columns.length) {
+    <p-tabs value="0">
+      <p-tablist>
+        @for (column of model().columns; track column) {
+          <p-tab [value]="$index.toString()">{{ column }}</p-tab>
+        }
+      </p-tablist>
+      <p-tabpanels>
+        @for (column of model().columns; track column) {
+          <p-tabpanel [value]="$index.toString()">
+            @if (column === 'Transfers') {
+              <div class="app-col">
+                @for (transferDay of model().transferDays; track transferDay.id) {
+                  @if (transferDay.status === Status.FINISHED) {
+                    <app-transfer-day-transfers-card [transferDay]="transferDay" />
+                  }
+                }
+              </div>
+            }
+            @if (column === 'Transfer Listings') {
+              @if (model().lastTransferDay) {
+                <app-transfer-day-transfer-listings-card [transferDay]="model().lastTransferDay!" />
+              }
+            }
+          </p-tabpanel>
+        }
+      </p-tabpanels>
+    </p-tabs>
+  }
+</div>
