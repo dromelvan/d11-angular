@@ -2,9 +2,10 @@ import { TestBed } from '@angular/core/testing';
 import { vi } from 'vitest';
 import { DialogService } from 'primeng/dynamicdialog';
 import { DynamicDialogService } from './dynamic-dialog.service';
-import { fakePlayerMatchStat, fakePlayerSeasonStat } from '@app/test';
+import { fakePlayerMatchStat, fakePlayerSeasonStat, fakeTransferListing } from '@app/test';
 import { PlayerDialogMatchStatComponent } from '@app/feature/page/player/player-dialog-match-stat/player-dialog-match-stat.component';
 import { PlayerDialogSeasonStatComponent } from '@app/feature/page/player/player-dialog-season-stat/player-dialog-season-stat.component';
+import { TransferListingDialogComponent } from '@app/feature/page/transfers/transfer-listing-dialog/transfer-listing-dialog.component';
 import { DialogFooterAction } from '@app/shared/dialog/dynamic-dialog-footer/dynamic-dialog-footer.component';
 
 function buildDialogService() {
@@ -128,4 +129,53 @@ describe('DynamicDialogService', () => {
       expect(dialogService.open).toHaveBeenCalledTimes(2);
     });
   });
+
+  describe('openTransferListing', () => {
+    it('opens the transfer listing dialog component', () => {
+      const transferListing = fakeTransferListing();
+      service.openTransferListing(transferListing, [transferListing], fakeAction());
+
+      expect(dialogService.open).toHaveBeenCalledWith(
+        TransferListingDialogComponent,
+        expect.objectContaining({ modal: true }),
+      );
+    });
+
+    it('sets data.current as a signal pointing to the passed transfer listing', () => {
+      const transferListing = fakeTransferListing();
+      service.openTransferListing(transferListing, [transferListing], fakeAction());
+
+      const { data } = dialogService.open.mock.calls[0][1];
+      expect(data.current()).toBe(transferListing);
+    });
+
+    it('sets data.list to the provided transferListings array', () => {
+      const transferListings = [fakeTransferListing(), fakeTransferListing()];
+      service.openTransferListing(transferListings[0], transferListings, fakeAction());
+
+      const { data } = dialogService.open.mock.calls[0][1];
+      expect(data.list).toBe(transferListings);
+    });
+
+    it('sets data.action to the provided action', () => {
+      const transferListing = fakeTransferListing();
+      const action = fakeAction();
+      service.openTransferListing(transferListing, [transferListing], action);
+
+      const { data } = dialogService.open.mock.calls[0][1];
+      expect(data.action).toBe(action);
+    });
+
+    it('closes the previous dialog before opening a new one', () => {
+      const transferListings = [fakeTransferListing(), fakeTransferListing()];
+      service.openTransferListing(transferListings[0], transferListings, fakeAction());
+
+      const firstRef = dialogService.open.mock.results[0].value;
+      service.openTransferListing(transferListings[1], transferListings, fakeAction());
+
+      expect(firstRef.close).toHaveBeenCalled();
+      expect(dialogService.open).toHaveBeenCalledTimes(2);
+    });
+  });
 });
+
