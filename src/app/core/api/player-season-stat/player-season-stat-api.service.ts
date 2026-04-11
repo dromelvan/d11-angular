@@ -22,9 +22,7 @@ export class PlayerSeasonStatApiService {
   ): Observable<PlayerSeasonStatPage> {
     let params = new HttpParams().set('seasonId', seasonId).set('page', page);
 
-    positionIds.forEach((id) => {
-      params = params.append('positionIds', id);
-    });
+    params = params.set('positionIds', positionIds.join(','));
 
     if (dummy !== undefined) {
       params = params.set('dummy', dummy);

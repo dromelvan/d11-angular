@@ -71,7 +71,7 @@ describe('PlayerSeasonStatApiService', () => {
 
       const calledParams: HttpParams = (apiServiceMock.get as ReturnType<typeof vi.fn>).mock
         .calls[0][0].options.params;
-      expect(calledParams.getAll('positionIds')).toEqual(positionIds.map(String));
+      expect(calledParams.get('positionIds')).toBe(positionIds.join(','));
     });
 
     it('calls get with dummy on getPlayerSeasonStatsBySeasonId', async () => {
@@ -131,7 +131,12 @@ describe('PlayerSeasonStatApiService', () => {
         playerSeasonStatApi.getPlayerSeasonStatsBySeasonId(seasonId, page, []),
       );
 
-      expect(result).toEqual({ page: response.page, totalPages: response.totalPages, totalElements: response.totalElements, elements: playerSeasonStats });
+      expect(result).toEqual({
+        page: response.page,
+        totalPages: response.totalPages,
+        totalElements: response.totalElements,
+        elements: playerSeasonStats,
+      });
     });
 
     it('propagates errors on getPlayerSeasonStatsBySeasonId', async () => {
