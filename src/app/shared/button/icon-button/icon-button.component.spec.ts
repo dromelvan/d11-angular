@@ -27,6 +27,12 @@ describe('IconButtonComponent', () => {
 
       expect(screen.getByRole('button')).toHaveClass('p-button-secondary');
     });
+
+    it('applies contrast', async () => {
+      await render(IconButtonComponent, { inputs: { icon: 'test', severity: 'contrast' } });
+
+      expect(screen.getByRole('button')).toHaveClass('p-button-contrast');
+    });
   });
 
   describe('disabled', () => {
@@ -36,7 +42,7 @@ describe('IconButtonComponent', () => {
       expect(screen.getByRole('button')).not.toBeDisabled();
     });
 
-    it('applies provided', async () => {
+    it('applies disabled', async () => {
       await render(IconButtonComponent, { inputs: { icon: 'test', disabled: true } });
 
       expect(screen.getByRole('button')).toBeDisabled();
