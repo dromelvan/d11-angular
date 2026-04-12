@@ -80,4 +80,66 @@ describe('TransferBidApiService', () => {
       ).rejects.toBeInstanceOf(Error);
     });
   });
+
+  // getTransferBidsByTransferDayIdAndPlayerId -----------------------------------------------------
+
+  describe('getTransferBidsByTransferDayIdAndPlayerId', () => {
+    const transferDayId = 1;
+    const playerId = 2;
+    const transferBids = [fakeTransferBid(), fakeTransferBid()];
+    const response: TransferBidsResponseBody = { transferBids };
+
+    it('calls get', async () => {
+      apiServiceMock.get = vi.fn().mockReturnValue(of(response)) as GetFn;
+
+      await firstValueFrom(
+        transferBidApi.getTransferBidsByTransferDayIdAndPlayerId(transferDayId, playerId),
+      );
+
+      expect(apiServiceMock.get).toHaveBeenCalledExactlyOnceWith(
+        expect.objectContaining({
+          namespace: transferBidApi.namespace,
+          options: expect.objectContaining({ params: expect.any(HttpParams) }),
+        }),
+      );
+
+      const calledParams: HttpParams = (apiServiceMock.get as ReturnType<typeof vi.fn>).mock
+        .calls[0][0].options.params;
+      expect(calledParams.get('transferDayId')).toBe(String(transferDayId));
+      expect(calledParams.get('playerId')).toBe(String(playerId));
+    });
+
+    it('maps the result', async () => {
+      apiServiceMock.get = vi.fn().mockReturnValue(of(response)) as GetFn;
+
+      const result = await firstValueFrom(
+        transferBidApi.getTransferBidsByTransferDayIdAndPlayerId(transferDayId, playerId),
+      );
+
+      expect(result).toEqual(transferBids);
+    });
+
+    it('propagates errors', async () => {
+      const httpError = new Error('BAD_REQUEST');
+      apiServiceMock.get = vi.fn().mockReturnValue(throwError(() => httpError)) as GetFn;
+
+      expect(
+        firstValueFrom(
+          transferBidApi.getTransferBidsByTransferDayIdAndPlayerId(transferDayId, playerId),
+        ),
+      ).rejects.toThrow(httpError.message);
+    });
+
+    it('does not map the result on error', async () => {
+      apiServiceMock.get = vi
+        .fn()
+        .mockReturnValue(throwError(() => new Error('BAD_REQUEST'))) as GetFn;
+
+      expect(
+        firstValueFrom(
+          transferBidApi.getTransferBidsByTransferDayIdAndPlayerId(transferDayId, playerId),
+        ),
+      ).rejects.toBeInstanceOf(Error);
+    });
+  });
 });

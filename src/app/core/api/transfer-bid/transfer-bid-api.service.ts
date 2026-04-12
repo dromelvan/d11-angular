@@ -21,4 +21,18 @@ export class TransferBidApiService {
       })
       .pipe(map((result) => result.transferBids));
   }
+
+  getTransferBidsByTransferDayIdAndPlayerId(
+    transferDayId: number,
+    playerId: number,
+  ): Observable<TransferBid[]> {
+    const params = new HttpParams().set('transferDayId', transferDayId).set('playerId', playerId);
+
+    return this.apiService
+      .get<TransferBidsResponseBody>({
+        namespace: this.namespace,
+        options: { params },
+      })
+      .pipe(map((result) => result.transferBids));
+  }
 }
