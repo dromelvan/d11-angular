@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { render, screen, waitFor } from '@testing-library/angular';
 import { Transfer, TransferApiService, TransferDay } from '@app/core/api';
 import { LoadingService } from '@app/core/loading/loading.service';
-import { fakePlayerBase, fakeTransfer, fakeTransferDay } from '@app/test';
+import { fakePlayerBase, fakeTransfer, fakeTransferDay, fakeTransferListingBase } from '@app/test';
 import { of } from 'rxjs';
 import { expect, vi } from 'vitest';
 import { TransferDayTransfersCardComponent } from './transfer-day-transfers-card.component';
@@ -18,6 +18,15 @@ class HostComponent {
   transferDay = transferDay;
 }
 
+@Component({
+  template: ` <app-transfer-day-transfers-card [transferDay]="transferDay" [draft]="true" />`,
+  standalone: true,
+  imports: [TransferDayTransfersCardComponent],
+})
+class DraftHostComponent {
+  transferDay = transferDay;
+}
+
 describe('TransferDayTransfersCardComponent', () => {
   describe('with transfers', () => {
     let transfers: Transfer[];
@@ -26,8 +35,16 @@ describe('TransferDayTransfersCardComponent', () => {
     beforeEach(async () => {
       transferDay = fakeTransferDay();
       transfers = [
-        { ...fakeTransfer(), player: { ...fakePlayerBase(), name: 'Player1' } },
-        { ...fakeTransfer(), player: { ...fakePlayerBase(), name: 'Player2' } },
+        {
+          ...fakeTransfer(),
+          player: { ...fakePlayerBase(), name: 'Player1' },
+          transferListing: { ...fakeTransferListingBase(), ranking: 5 },
+        },
+        {
+          ...fakeTransfer(),
+          player: { ...fakePlayerBase(), name: 'Player2' },
+          transferListing: { ...fakeTransferListingBase(), ranking: 2 },
+        },
       ];
 
       transferApi = {
@@ -88,6 +105,72 @@ describe('TransferDayTransfersCardComponent', () => {
         for (const transfer of transfers) {
           expect(screen.getByText(`${(transfer.fee / 10).toFixed(1)}m`)).toBeInTheDocument();
         }
+      });
+    });
+
+    it('renders ranking', async () => {
+      await waitFor(() => {
+        for (const transfer of transfers) {
+          expect(
+            screen.getByText(`#${transfer.transferListing.ranking}`, { exact: false }),
+          ).toBeInTheDocument();
+        }
+      });
+    });
+
+    it('renders sorted transfers', async () => {
+      await waitFor(() => {
+        const names = screen.getAllByText(/Player\d/).map((el) => el.textContent?.trim());
+
+        expect(names).toEqual(['Player2', 'Player1']);
+      });
+    });
+  });
+
+  describe('draft', () => {
+    let transfers: Transfer[];
+
+    beforeEach(async () => {
+      transferDay = fakeTransferDay();
+      transfers = [
+        {
+          ...fakeTransfer(),
+          player: { ...fakePlayerBase(), name: 'Player1' },
+          transferListing: { ...fakeTransferListingBase(), ranking: 5 },
+        },
+        {
+          ...fakeTransfer(),
+          player: { ...fakePlayerBase(), name: 'Player2' },
+          transferListing: { ...fakeTransferListingBase(), ranking: 2 },
+        },
+      ];
+
+      await render(DraftHostComponent, {
+        providers: [
+          {
+            provide: TransferApiService,
+            useValue: { getTransfersByTransferDayId: vi.fn().mockReturnValue(of(transfers)) },
+          },
+          { provide: LoadingService, useValue: { register: vi.fn() } },
+        ],
+      });
+    });
+
+    it('does not render ranking', async () => {
+      await waitFor(() => screen.getByText('Player1'));
+
+      for (const transfer of transfers) {
+        expect(
+          screen.queryByText(`#${transfer.transferListing.ranking}`, { exact: false }),
+        ).not.toBeInTheDocument();
+      }
+    });
+
+    it('renders transfers', async () => {
+      await waitFor(() => {
+        const names = screen.getAllByText(/Player\d/).map((el) => el.textContent?.trim());
+
+        expect(names).toEqual(['Player1', 'Player2']);
       });
     });
   });

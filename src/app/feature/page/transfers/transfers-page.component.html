@@ -7,21 +7,26 @@
     (next)="navigateToNext()"
   />
 
-  @if (model().columns.length) {
+  @let columns = model().columns;
+
+  @if (columns.length) {
     <p-tabs value="0">
       <p-tablist>
-        @for (column of model().columns; track column) {
+        @for (column of columns; track column) {
           <p-tab [value]="$index.toString()">{{ column }}</p-tab>
         }
       </p-tablist>
       <p-tabpanels>
-        @for (column of model().columns; track column) {
+        @for (column of columns; track column) {
           <p-tabpanel [value]="$index.toString()">
             @if (column === 'Transfers') {
               <div class="app-col">
                 @for (transferDay of model().transferDays; track transferDay.id) {
                   @if (transferDay.status === Status.FINISHED) {
-                    <app-transfer-day-transfers-card [transferDay]="transferDay" />
+                    <app-transfer-day-transfers-card
+                      [transferDay]="transferDay"
+                      [draft]="model().transferWindow?.draft ?? false"
+                    />
                   }
                 }
               </div>

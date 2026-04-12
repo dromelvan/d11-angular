@@ -16,6 +16,7 @@ import { Card } from 'primeng/card';
 })
 export class TransferDayTransfersCardComponent {
   transferDay = input.required<TransferDay>();
+  draft = input<boolean>(false);
 
   protected readonly Status = Status;
 
@@ -24,7 +25,13 @@ export class TransferDayTransfersCardComponent {
     stream: ({ params: id }) => this.transferApiService.getTransfersByTransferDayId(id),
   });
 
-  protected transfers = computed(() => this.rxTransfers.value() ?? []);
+  protected transfers = computed(() =>
+    this.draft()
+      ? (this.rxTransfers.value() ?? [])
+      : (this.rxTransfers
+          .value()
+          ?.sort((a, b) => a.transferListing.ranking - b.transferListing.ranking) ?? []),
+  );
   protected isLoading = computed(() => this.rxTransfers.isLoading());
 
   private transferApiService = inject(TransferApiService);

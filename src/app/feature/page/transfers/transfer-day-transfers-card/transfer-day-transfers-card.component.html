@@ -19,10 +19,13 @@
           </div>
           <div class="app-grid-cell app-col gap-0 items-start overflow-hidden">
             <span class="truncate">{{ transfer.player.name }}</span>
-            <span class="app-text-lowest-emphasis truncate"
-              >{{ transfer.transferListing.position.name }} -
-              {{ transfer.transferListing.team.shortName }}</span
-            >
+            <span class="app-text-lowest-emphasis truncate">
+              {{ transfer.transferListing.position.name }} -
+              {{ transfer.transferListing.team.shortName }}
+              @if (!draft()) {
+                #{{ transfer.transferListing.ranking }}
+              }
+            </span>
           </div>
           <div class="app-grid-cell app-col items-end gap-0 overflow-hidden">
             <div class="app-row gap-1">

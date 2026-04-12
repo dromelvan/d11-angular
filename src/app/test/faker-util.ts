@@ -268,6 +268,7 @@ export const fakeTransferWindow = (): TransferWindow => ({
 
 export const fakeTransferListingBase = (): TransferListingBase => ({
   id: faker.number.int({ min: 1, max: 10000 }),
+  ranking: faker.number.int({ min: 1, max: 10000 }),
   team: fakeTeamBase(),
   position: fakePosition(),
 });
