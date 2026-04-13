@@ -4,8 +4,7 @@ import { RouterService } from '@app/core/router/router.service';
 interface NavItem {
   label: string;
   icon: string;
-  url?: string;
-  navigateTo?: 'currentMatchWeek' | 'players' | 'table' | 'transfers';
+  navigateTo: 'currentMatchWeek' | 'players' | 'table' | 'transfers' | 'more';
 }
 
 @Component({
@@ -19,7 +18,7 @@ export class NavbarIconComponent {
     { label: 'Tables', icon: 'pi pi-trophy', navigateTo: 'table' },
     { label: 'Players', icon: 'pi pi-users', navigateTo: 'players' },
     { label: 'Transfers', icon: 'pi pi-arrow-right-arrow-left', navigateTo: 'transfers' },
-    { label: 'More', icon: 'pi pi-ellipsis-h', url: '#' },
+    { label: 'More', icon: 'pi pi-ellipsis-h', navigateTo: 'more' },
   ];
 
   private readonly routerService = inject(RouterService);
@@ -33,6 +32,8 @@ export class NavbarIconComponent {
       this.routerService.navigateToCurrentSeason();
     } else if (item.navigateTo === 'transfers') {
       this.routerService.navigateToCurrentTransferWindow();
+    } else if (item.navigateTo === 'more') {
+      this.routerService.navigateToMore();
     }
   }
 }

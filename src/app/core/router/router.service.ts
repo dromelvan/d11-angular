@@ -74,6 +74,11 @@ export class RouterService {
     return this.router.navigate(['transfers', transferWindowId]);
   }
 
+  public navigateToMore(): Promise<boolean> {
+    this.stack.set([]);
+    return this.router.navigate(['more']);
+  }
+
   public navigateToPrevious(): Promise<boolean> {
     const stack = this.stack();
     if (stack.length === 0) {

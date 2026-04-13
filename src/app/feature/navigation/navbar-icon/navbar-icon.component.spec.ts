@@ -10,6 +10,7 @@ const mockRouterService = {
   navigateToCurrentSeason: vi.fn(),
   navigateToPlayers: vi.fn(),
   navigateToCurrentTransferWindow: vi.fn(),
+  navigateToMore: vi.fn(),
 };
 const providers = [{ provide: RouterService, useValue: mockRouterService }];
 
@@ -38,18 +39,6 @@ describe('NavbarIconComponent', () => {
     expect(screen.getByText('Matches')).toBeInTheDocument();
   });
 
-  it('renders other nav links', () => {
-    for (const label of ['Players', 'Transfers', 'More']) {
-      expect(screen.getByText(label)).toBeInTheDocument();
-    }
-  });
-
-  it('calls navigateToPlayers on Players click', async () => {
-    await userEvent.click(screen.getByText('Players'));
-
-    expect(mockRouterService.navigateToPlayers).toHaveBeenCalledOnce();
-  });
-
   it('calls navigateToCurrentMatchWeek on Matches click', async () => {
     await userEvent.click(screen.getByText('Matches'));
 
@@ -66,6 +55,16 @@ describe('NavbarIconComponent', () => {
     expect(mockRouterService.navigateToCurrentSeason).toHaveBeenCalledOnce();
   });
 
+  it('renders Players link', () => {
+    expect(screen.getByText('Players')).toBeInTheDocument();
+  });
+
+  it('calls navigateToPlayers on Players click', async () => {
+    await userEvent.click(screen.getByText('Players'));
+
+    expect(mockRouterService.navigateToPlayers).toHaveBeenCalledOnce();
+  });
+
   it('renders Transfers link', () => {
     expect(screen.getByText('Transfers')).toBeInTheDocument();
   });
@@ -74,5 +73,15 @@ describe('NavbarIconComponent', () => {
     await userEvent.click(screen.getByText('Transfers'));
 
     expect(mockRouterService.navigateToCurrentTransferWindow).toHaveBeenCalledOnce();
+  });
+
+  it('renders More link', () => {
+    expect(screen.getByText('More')).toBeInTheDocument();
+  });
+
+  it('calls navigateToMore on More click', async () => {
+    await userEvent.click(screen.getByText('More'));
+
+    expect(mockRouterService.navigateToMore).toHaveBeenCalledOnce();
   });
 });

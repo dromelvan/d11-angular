@@ -2,6 +2,7 @@ import { Routes } from '@angular/router';
 import {
   MatchPageComponent,
   MatchWeekPageComponent,
+  MorePageComponent,
   PlayerPageComponent,
   PlayersPageComponent,
   SeasonPageComponent,
@@ -53,5 +54,10 @@ export const routes: Routes = [
     path: 'transfers/:transferWindowId',
     component: TransfersPageComponent,
     data: { section: 'Transfers' },
+  },
+  {
+    path: 'more',
+    component: MorePageComponent,
+    data: { section: 'More' },
   },
 ];

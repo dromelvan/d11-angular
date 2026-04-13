@@ -122,6 +122,13 @@ describe('RouterService', () => {
     expect(result).toBe(true);
   });
 
+  it('should navigate to more', async () => {
+    const result = await service.navigateToMore();
+
+    expect(mockRouter.navigate).toHaveBeenCalledWith(['more']);
+    expect(result).toBe(true);
+  });
+
   // Section -----------------------------------------------------------------------------------
 
   describe('section', () => {
