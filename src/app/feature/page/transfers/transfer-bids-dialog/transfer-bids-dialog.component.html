@@ -1,0 +1,26 @@
+<div class="app-col gap-2 pt-4 min-h-95 max-h-95 h-full overflow-y-auto">
+  <div class="grid grid-cols-[1fr_auto_3rem] gap-0">
+    <div class="app-grid-header">D11 Team</div>
+    <div class="app-grid-header app-grid-number">Bid</div>
+    <div class="app-grid-header app-grid-number">Fee</div>
+
+    @for (bid of transferBids(); track bid.id; let last = $last) {
+      <div
+        class="col-span-3 grid grid-cols-subgrid gap-2"
+        [class.app-grid-separator]="!last"
+        [class.line-through]="bid.activeFee <= 0"
+      >
+        <div class="app-grid-cell overflow-hidden">
+          <app-d11-team-base [d11Team]="bid.d11Team" imgWidth="24" />
+        </div>
+        <div class="app-grid-cell app-grid-number app-row gap-0.5">
+          @if (bid.successful) {
+            <app-icon icon="check" />
+          }
+          {{ bid.fee | fee }}m
+        </div>
+        <div class="app-grid-cell app-grid-number font-semibold">{{ bid.activeFee | fee }}m</div>
+      </div>
+    }
+  </div>
+</div>

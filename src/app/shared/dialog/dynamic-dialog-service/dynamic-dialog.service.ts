@@ -1,9 +1,11 @@
 import { inject, Injectable, signal } from '@angular/core';
 import { DialogService, DynamicDialogRef } from 'primeng/dynamicdialog';
-import { PlayerMatchStat, PlayerSeasonStat, TransferListing } from '@app/core/api';
+import { PlayerMatchStat, PlayerSeasonStat, Transfer, TransferListing } from '@app/core/api';
 import { PlayerDialogMatchStatComponent } from '@app/feature/page/player/player-dialog-match-stat/player-dialog-match-stat.component';
 import { PlayerDialogSeasonStatComponent } from '@app/feature/page/player/player-dialog-season-stat/player-dialog-season-stat.component';
 import { PlayerDialogHeaderComponent } from '@app/feature/page/player/player-dialog-header/player-dialog-header.component';
+import { TransferBidsDialogComponent } from '@app/feature/page/transfers/transfer-bids-dialog/transfer-bids-dialog.component';
+import { TransferBidsDialogHeaderComponent } from '@app/feature/page/transfers/transfer-bids-dialog/transfer-bids-dialog-header/transfer-bids-dialog-header.component';
 import { TransferListingDialogComponent } from '@app/feature/page/transfers/transfer-listing-dialog/transfer-listing-dialog.component';
 import { TransferListingDialogHeaderComponent } from '@app/feature/page/transfers/transfer-listing-dialog/transfer-listing-dialog-header/transfer-listing-dialog-header.component';
 import {
@@ -65,6 +67,26 @@ export class DynamicDialogService {
         player: playerSeasonStat.player,
         current: current,
         list: playerSeasonStats,
+        action,
+      },
+    });
+  }
+
+  openTransfer(transfer: Transfer, transfers: Transfer[], action: DialogFooterAction): void {
+    this.dialogRef?.close();
+    const current = signal<Transfer>(transfer);
+
+    this.dialogRef = this.dialogService.open(TransferBidsDialogComponent, {
+      modal: true,
+      styleClass: this.styleClass,
+      closable: true,
+      templates: {
+        header: TransferBidsDialogHeaderComponent,
+        footer: DynamicDialogFooterComponent,
+      },
+      data: {
+        current,
+        list: transfers,
         action,
       },
     });
