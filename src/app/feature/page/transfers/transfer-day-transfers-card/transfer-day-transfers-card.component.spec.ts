@@ -1,7 +1,11 @@
 import { Component } from '@angular/core';
+import { TestBed } from '@angular/core/testing';
 import { render, screen, waitFor } from '@testing-library/angular';
+import { userEvent } from '@testing-library/user-event';
 import { Transfer, TransferApiService, TransferDay } from '@app/core/api';
 import { LoadingService } from '@app/core/loading/loading.service';
+import { RouterService } from '@app/core/router/router.service';
+import { DynamicDialogService } from '@app/shared/dialog/dynamic-dialog-service/dynamic-dialog.service';
 import { fakePlayerBase, fakeTransfer, fakeTransferDay, fakeTransferListingBase } from '@app/test';
 import { of } from 'rxjs';
 import { expect, vi } from 'vitest';
@@ -55,6 +59,8 @@ describe('TransferDayTransfersCardComponent', () => {
         providers: [
           { provide: TransferApiService, useValue: transferApi },
           { provide: LoadingService, useValue: { register: vi.fn() } },
+          { provide: DynamicDialogService, useValue: { openTransfer: vi.fn() } },
+          { provide: RouterService, useValue: { navigateToPlayer: vi.fn() } },
         ],
       });
     });
@@ -125,6 +131,32 @@ describe('TransferDayTransfersCardComponent', () => {
         expect(names).toEqual(['Player2', 'Player1']);
       });
     });
+
+    it('opens dialog', async () => {
+      await waitFor(() => screen.getByText('Player1'));
+
+      await userEvent.click(screen.getByText('Player1'));
+
+      expect(TestBed.inject(DynamicDialogService).openTransfer).toHaveBeenCalledWith(
+        transfers[1],
+        [transfers[0], transfers[1]],
+        expect.objectContaining({ label: 'Player profile', icon: 'player' }),
+      );
+    });
+
+    it('navigates to the player', async () => {
+      await waitFor(() => screen.getByText('Player1'));
+      await userEvent.click(screen.getByText('Player1'));
+
+      const { onClick } = (
+        TestBed.inject(DynamicDialogService).openTransfer as ReturnType<typeof vi.fn>
+      ).mock.calls[0][2];
+      onClick(transfers[1]);
+
+      expect(TestBed.inject(RouterService).navigateToPlayer).toHaveBeenCalledWith(
+        transfers[1].player.id,
+      );
+    });
   });
 
   describe('draft', () => {
@@ -152,6 +184,8 @@ describe('TransferDayTransfersCardComponent', () => {
             useValue: { getTransfersByTransferDayId: vi.fn().mockReturnValue(of(transfers)) },
           },
           { provide: LoadingService, useValue: { register: vi.fn() } },
+          { provide: DynamicDialogService, useValue: { openTransfer: vi.fn() } },
+          { provide: RouterService, useValue: { navigateToPlayer: vi.fn() } },
         ],
       });
     });
@@ -185,6 +219,8 @@ describe('TransferDayTransfersCardComponent', () => {
             useValue: { getTransfersByTransferDayId: vi.fn().mockReturnValue(of([])) },
           },
           { provide: LoadingService, useValue: { register: vi.fn() } },
+          { provide: DynamicDialogService, useValue: { openTransfer: vi.fn() } },
+          { provide: RouterService, useValue: { navigateToPlayer: vi.fn() } },
         ],
       });
     });
