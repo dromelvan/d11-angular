@@ -1,3 +1,17 @@
-<div class="app-more-page app-col max-w-3xl mx-auto pb-4">
-  <div class="font-semibold text-xl p-4">More</div>
+<div class="app-more-page app-col max-w-3xl mx-auto pb-4 p-6">
+  <div class="grid grid-cols-4 gap-6">
+    @for (item of items; track item.label) {
+      <button
+        class="app-col items-center gap-2 cursor-pointer active:scale-90 transition-transform"
+        (click)="item.navigate()"
+      >
+        <div
+          class="w-16 h-16 rounded-2xl bg-primary flex items-center justify-center shadow-md text-primary-contrast"
+        >
+          <app-icon [icon]="item.icon" [size]="32" />
+        </div>
+        <span class="text-xs font-medium text-center leading-tight">{{ item.label }}</span>
+      </button>
+    }
+  </div>
 </div>
