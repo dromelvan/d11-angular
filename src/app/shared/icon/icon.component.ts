@@ -17,6 +17,7 @@ export type IconPreset =
   | 'ranking_down'
   | 'ranking_up'
   | 'red_card'
+  | 'rules'
   | 'search'
   | 'shared_mom'
   | 'substitution_off'
@@ -50,6 +51,7 @@ export const ICON_PRESETS: Record<
   ranking_down: { name: 'arrow_downward', fill: true, weight: 500, class: 'text-error' },
   ranking_up: { name: 'arrow_upward', fill: true, weight: 500, class: 'text-success' },
   red_card: { name: 'crop_portrait', fill: true, weight: 400, class: 'text-error' },
+  rules: { name: 'gavel', fill: true, weight: 400 },
   search: { name: 'search', weight: 200 },
   shared_mom: { name: 'star_half', fill: true, weight: 400, class: 'text-primary' },
   substitution_off: { name: 'arrow_downward', fill: true, weight: 400, class: 'text-error' },
