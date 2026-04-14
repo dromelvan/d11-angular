@@ -79,6 +79,11 @@ export class RouterService {
     return this.router.navigate(['more']);
   }
 
+  public navigateToRules(): Promise<boolean> {
+    this.stack.set([]);
+    return this.router.navigate(['rules']);
+  }
+
   public navigateToPrevious(): Promise<boolean> {
     const stack = this.stack();
     if (stack.length === 0) {

@@ -129,6 +129,13 @@ describe('RouterService', () => {
     expect(result).toBe(true);
   });
 
+  it('should navigate to rules', async () => {
+    const result = await service.navigateToRules();
+
+    expect(mockRouter.navigate).toHaveBeenCalledWith(['rules']);
+    expect(result).toBe(true);
+  });
+
   // Section -----------------------------------------------------------------------------------
 
   describe('section', () => {

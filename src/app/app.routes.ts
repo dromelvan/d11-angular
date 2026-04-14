@@ -5,6 +5,7 @@ import {
   MorePageComponent,
   PlayerPageComponent,
   PlayersPageComponent,
+  RulesPageComponent,
   SeasonPageComponent,
   TransfersPageComponent,
 } from '@app/feature/page';
@@ -59,5 +60,10 @@ export const routes: Routes = [
     path: 'more',
     component: MorePageComponent,
     data: { section: 'More' },
+  },
+  {
+    path: 'rules',
+    component: RulesPageComponent,
+    data: { section: 'Rules' },
   },
 ];
