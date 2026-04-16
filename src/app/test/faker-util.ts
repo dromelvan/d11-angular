@@ -1,6 +1,7 @@
 import {
   D11MatchBase,
   D11TeamBase,
+  D11TeamSeasonStat,
   GoalBase,
   Lineup,
   Match,
@@ -224,6 +225,25 @@ export const fakeTeamSeasonStat = (): TeamSeasonStat => ({
   ranking: faker.number.int({ min: 1, max: 20 }),
   previousRanking: faker.number.int({ min: 1, max: 20 }),
   team: fakeTeamBase(),
+  season: fakeSeason(),
+});
+
+export const fakeD11TeamSeasonStat = (): D11TeamSeasonStat => ({
+  id: faker.number.int({ min: 1, max: 10000 }),
+  winCount: faker.number.int({ min: 0, max: 38 }),
+  matchesPlayed: faker.number.int({ min: 0, max: 38 }),
+  matchesWon: faker.number.int({ min: 0, max: 38 }),
+  matchesDrawn: faker.number.int({ min: 0, max: 38 }),
+  matchesLost: faker.number.int({ min: 0, max: 38 }),
+  goalsFor: faker.number.int({ min: 0, max: 100 }),
+  goalsAgainst: faker.number.int({ min: 0, max: 100 }),
+  goalDifference: faker.number.int({ min: -100, max: 100 }),
+  points: faker.number.int({ min: 0, max: 114 }),
+  formPoints: faker.number.int({ min: 0, max: 15 }),
+  formMatchPoints: [faker.number.int(), faker.number.int(), faker.number.int()],
+  ranking: faker.number.int({ min: 1, max: 20 }),
+  previousRanking: faker.number.int({ min: 1, max: 20 }),
+  d11Team: fakeD11TeamBase(),
   season: fakeSeason(),
 });
 
