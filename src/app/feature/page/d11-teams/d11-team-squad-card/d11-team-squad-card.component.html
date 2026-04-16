@@ -1,0 +1,56 @@
+<p-card>
+  <ng-template #header>
+    <div class="app-row gap-2 text-2xl px-4 pt-4 pb-2 font-semibold">
+      <app-d11-team-img [d11Team]="d11TeamSeasonStat().d11Team" width="32" />
+      <span>{{ d11TeamSeasonStat().d11Team.name }}</span>
+    </div>
+  </ng-template>
+
+  <div class="grid grid-cols-[2.5rem_1fr_5rem] text-sm">
+    <div class="app-grid-header col-span-2 pl-1">Player</div>
+    <div class="app-grid-header app-grid-number">Fee</div>
+
+    @for (stat of playerSeasonStats(); track stat.id; let last = $last) {
+      <div class="col-span-3 grid grid-cols-subgrid" [class.app-grid-separator]="!last">
+        <div class="app-grid-cell justify-center">
+          @if (!stat.team.dummy) {
+            <app-team-img [team]="stat.team" width="24" />
+          }
+        </div>
+        <div class="app-grid-cell app-row overflow-hidden justify-start">
+          <div class="app-col gap-0">
+            <span class="truncate">{{ stat.player.name }}</span>
+            <span class="app-text-lowest-emphasis truncate">
+              {{ stat.team.shortName }} &ndash; {{ stat.position.name }}
+            </span>
+          </div>
+        </div>
+        <div class="app-grid-cell app-col items-end gap-0">
+          <div class="app-row gap-1">
+            <span>{{ stat.fee | fee }}m</span>
+          </div>
+          <span class="text-xs tabular-nums text-nowrap"
+            >#{{ stat.ranking }} / {{ stat.points }} pts</span
+          >
+        </div>
+      </div>
+    }
+
+    @if (playerSeasonStats().length > 0) {
+      <div class="col-span-3 grid grid-cols-subgrid pt-2">
+        <div class="app-grid-cell col-span-2 gap-0.5 p-0 text-xs">
+          <span class="app-text-lowest-emphasis px-2">Lineup</span>
+          @for (entry of positionSummary(); track entry.position.id; let last = $last) {
+            <span [class.text-error]="entry.hasError">{{ entry.count }}</span>
+            @if (!last) {
+              <span class="app-text-lowest-emphasis">-</span>
+            }
+          }
+        </div>
+        <div class="app-grid-cell app-grid-number p-0 font-semibold text-nowrap">
+          Total {{ totalFee() | fee }}m
+        </div>
+      </div>
+    }
+  </div>
+</p-card>
