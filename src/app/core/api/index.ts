@@ -1,3 +1,4 @@
+export * from './d11-team/d11-team-api.service';
 export * from './match/match-api.service';
 export * from './match-week/match-week-api.service';
 export * from './model/country.model';
