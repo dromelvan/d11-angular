@@ -11,7 +11,11 @@
     <div class="app-grid-header app-grid-number">Fee</div>
 
     @for (stat of playerSeasonStats(); track stat.id; let last = $last) {
-      <div class="col-span-3 grid grid-cols-subgrid" [class.app-grid-separator]="!last">
+      <div
+        class="col-span-3 grid grid-cols-subgrid cursor-pointer"
+        [class.app-grid-separator]="!last"
+        (click)="openDialog(stat)"
+      >
         <div class="app-grid-cell justify-center">
           @if (!stat.team.dummy) {
             <app-team-img [team]="stat.team" width="24" />

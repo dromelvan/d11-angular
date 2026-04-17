@@ -6,6 +6,7 @@ import { PositionApiService } from '@app/core/api/position/position-api.service'
 import { SeasonApiService } from '@app/core/api/season/season-api.service';
 import { LoadingService } from '@app/core/loading/loading.service';
 import { RouterService } from '@app/core/router/router.service';
+import { DynamicDialogService } from '@app/shared/dialog/dynamic-dialog-service/dynamic-dialog.service';
 import { fakeD11TeamBase, fakeD11TeamSeasonStat, fakePosition, fakeSeason } from '@app/test';
 import { render, screen, waitFor } from '@testing-library/angular';
 import userEvent from '@testing-library/user-event';
@@ -21,6 +22,7 @@ let d11TeamApi: D11TeamApiService;
 let positionApi: PositionApiService;
 let loadingService: LoadingService;
 let routerService: RouterService;
+let dynamicDialogService: DynamicDialogService;
 
 @Component({
   template: ` <app-d11-teams-page [seasonId]="seasonId" />`,
@@ -68,7 +70,11 @@ describe('D11TeamsPageComponent', () => {
     } as unknown as D11TeamApiService;
 
     loadingService = { register: vi.fn() } as unknown as LoadingService;
-    routerService = { navigateToD11Teams: vi.fn() } as unknown as RouterService;
+    routerService = {
+      navigateToD11Teams: vi.fn(),
+      navigateToPlayer: vi.fn(),
+    } as unknown as RouterService;
+    dynamicDialogService = { openPlayerSeasonStat: vi.fn() } as unknown as DynamicDialogService;
   });
 
   const providers = () => [
@@ -78,6 +84,7 @@ describe('D11TeamsPageComponent', () => {
     { provide: D11TeamApiService, useValue: d11TeamApi },
     { provide: LoadingService, useValue: loadingService },
     { provide: RouterService, useValue: routerService },
+    { provide: DynamicDialogService, useValue: dynamicDialogService },
   ];
 
   describe('with seasonId', () => {

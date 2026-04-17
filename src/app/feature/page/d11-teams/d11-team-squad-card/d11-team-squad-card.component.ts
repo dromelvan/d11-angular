@@ -4,6 +4,8 @@ import { D11TeamSeasonStat, PlayerSeasonStat } from '@app/core/api';
 import { D11TeamApiService } from '@app/core/api/d11-team/d11-team-api.service';
 import { Position } from '@app/core/api/model/position.model';
 import { LoadingService } from '@app/core/loading/loading.service';
+import { RouterService } from '@app/core/router/router.service';
+import { DynamicDialogService } from '@app/shared/dialog/dynamic-dialog-service/dynamic-dialog.service';
 import { D11TeamImgComponent } from '@app/shared/img/d11-team-img/d11-team-img.component';
 import { TeamImgComponent } from '@app/shared/img/team-img/team-img.component';
 import { FeePipe } from '@app/shared/pipes/fee.pipe';
@@ -46,14 +48,23 @@ export class D11TeamSquadCardComponent {
       }),
   );
 
-  protected totalFee = computed(() =>
-    this.playerSeasonStats().reduce((sum, s) => sum + s.fee, 0),
-  );
+  protected totalFee = computed(() => this.playerSeasonStats().reduce((sum, s) => sum + s.fee, 0));
 
   private d11TeamApiService = inject(D11TeamApiService);
   private loadingService = inject(LoadingService);
+  private dynamicDialogService = inject(DynamicDialogService);
+  private routerService = inject(RouterService);
 
   constructor() {
     this.loadingService.register(inject(DestroyRef), this.rxPlayerSeasonStats.isLoading);
+  }
+
+  protected openDialog(stat: PlayerSeasonStat): void {
+    this.dynamicDialogService.openPlayerSeasonStat(stat, this.playerSeasonStats(), {
+      label: 'Player profile',
+      icon: 'player',
+      onClick: (current) =>
+        this.routerService.navigateToPlayer((current as PlayerSeasonStat).player.id),
+    });
   }
 }

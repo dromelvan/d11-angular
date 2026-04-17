@@ -2,6 +2,8 @@ import { Component } from '@angular/core';
 import { D11TeamSeasonStat, PlayerSeasonStat, Position } from '@app/core/api';
 import { D11TeamApiService } from '@app/core/api/d11-team/d11-team-api.service';
 import { LoadingService } from '@app/core/loading/loading.service';
+import { RouterService } from '@app/core/router/router.service';
+import { DynamicDialogService } from '@app/shared/dialog/dynamic-dialog-service/dynamic-dialog.service';
 import {
   fakeD11TeamBase,
   fakeD11TeamSeasonStat,
@@ -21,6 +23,8 @@ let positions: Position[];
 let playerSeasonStats: PlayerSeasonStat[];
 let d11TeamApi: D11TeamApiService;
 let loadingService: LoadingService;
+let dynamicDialogService: DynamicDialogService;
+let routerService: RouterService;
 
 const season = fakeSeason();
 const d11Team = fakeD11TeamBase();
@@ -105,11 +109,15 @@ describe('D11TeamSquadCardComponent', () => {
       } as unknown as D11TeamApiService;
 
       loadingService = { register: vi.fn() } as unknown as LoadingService;
+      dynamicDialogService = { openPlayerSeasonStat: vi.fn() } as unknown as DynamicDialogService;
+      routerService = { navigateToPlayer: vi.fn() } as unknown as RouterService;
 
       await render(HostComponent, {
         providers: [
           { provide: D11TeamApiService, useValue: d11TeamApi },
           { provide: LoadingService, useValue: loadingService },
+          { provide: DynamicDialogService, useValue: dynamicDialogService },
+          { provide: RouterService, useValue: routerService },
         ],
       });
     });
@@ -177,6 +185,21 @@ describe('D11TeamSquadCardComponent', () => {
         expect(separators.length).toBe(1);
       });
     });
+
+    it('opens dialog with player season stat on row click', async () => {
+      await waitFor(() => {
+        expect(document.querySelectorAll('.cursor-pointer').length).toBe(playerSeasonStats.length);
+      });
+
+      const rows = document.querySelectorAll<HTMLElement>('.cursor-pointer');
+      rows[0].click();
+
+      expect(dynamicDialogService.openPlayerSeasonStat).toHaveBeenCalledWith(
+        playerSeasonStats[0],
+        expect.arrayContaining([playerSeasonStats[0]]),
+        expect.objectContaining({ label: 'Player profile', icon: 'player' }),
+      );
+    });
   });
 
   describe('without data', () => {
@@ -194,6 +217,8 @@ describe('D11TeamSquadCardComponent', () => {
       } as unknown as D11TeamApiService;
 
       loadingService = { register: vi.fn() } as unknown as LoadingService;
+      dynamicDialogService = { openPlayerSeasonStat: vi.fn() } as unknown as DynamicDialogService;
+      routerService = { navigateToPlayer: vi.fn() } as unknown as RouterService;
 
       await render(
         `<app-d11-team-squad-card [d11TeamSeasonStat]="d11TeamSeasonStat" [positions]="positions" />`,
@@ -203,6 +228,8 @@ describe('D11TeamSquadCardComponent', () => {
           providers: [
             { provide: D11TeamApiService, useValue: d11TeamApi },
             { provide: LoadingService, useValue: loadingService },
+            { provide: DynamicDialogService, useValue: dynamicDialogService },
+            { provide: RouterService, useValue: routerService },
           ],
         },
       );
