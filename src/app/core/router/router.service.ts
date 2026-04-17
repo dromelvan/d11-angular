@@ -84,6 +84,12 @@ export class RouterService {
     return this.router.navigate(['rules']);
   }
 
+  public navigateToD11Teams(seasonId?: number): Promise<boolean> {
+    this.stack.set([]);
+    const extras = seasonId ? { queryParams: { seasonId } } : {};
+    return this.router.navigate(['d11-teams'], extras);
+  }
+
   public navigateToPrevious(): Promise<boolean> {
     const stack = this.stack();
     if (stack.length === 0) {

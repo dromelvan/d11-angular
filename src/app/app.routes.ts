@@ -1,5 +1,6 @@
 import { Routes } from '@angular/router';
 import {
+  D11TeamsPageComponent,
   MatchPageComponent,
   MatchWeekPageComponent,
   MorePageComponent,
@@ -65,5 +66,10 @@ export const routes: Routes = [
     path: 'rules',
     component: RulesPageComponent,
     data: { section: 'Rules' },
+  },
+  {
+    path: 'd11-teams',
+    component: D11TeamsPageComponent,
+    data: { section: 'D11 Teams' },
   },
 ];

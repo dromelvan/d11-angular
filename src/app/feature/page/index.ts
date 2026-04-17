@@ -1,5 +1,6 @@
 export * from './footer/footer.component';
 export * from './header/header.component';
+export * from './d11-teams/d11-teams-page.component';
 export * from './match/match-page.component';
 export * from './match-week/match-week-page.component';
 export * from './more/more-page.component';

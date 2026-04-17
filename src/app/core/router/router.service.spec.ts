@@ -122,6 +122,23 @@ describe('RouterService', () => {
     expect(result).toBe(true);
   });
 
+  it('should navigate to current D11 teams', async () => {
+    const result = await service.navigateToD11Teams();
+
+    expect(mockRouter.navigate).toHaveBeenCalledWith(['d11-teams'], {});
+    expect(result).toBe(true);
+  });
+
+  it('should navigate to D11 teams with seasonId', async () => {
+    const seasonId = 1;
+    const result = await service.navigateToD11Teams(seasonId);
+
+    expect(mockRouter.navigate).toHaveBeenCalledWith(['d11-teams'], {
+      queryParams: { seasonId },
+    });
+    expect(result).toBe(true);
+  });
+
   it('should navigate to more', async () => {
     const result = await service.navigateToMore();
 
