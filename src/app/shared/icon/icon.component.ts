@@ -5,6 +5,7 @@ export type IconPreset =
   | 'check'
   | 'chevron_left'
   | 'chevron_right'
+  | 'd11_teams'
   | 'goal'
   | 'league_table'
   | 'match'
@@ -39,6 +40,7 @@ export const ICON_PRESETS: Record<
   check: { name: 'check', weight: 600, class: 'text-success' },
   chevron_left: { name: 'chevron_left', weight: 300, size: 42 },
   chevron_right: { name: 'chevron_right', weight: 300, size: 42 },
+  d11_teams: { name: 'groups', fill: true, weight: 400 },
   goal: { name: 'sports_and_outdoors', weight: 200, size: 22 },
   league_table: { name: 'table_rows_narrow', weight: 300 },
   match: { name: 'date_range', weight: 300, size: 32 },

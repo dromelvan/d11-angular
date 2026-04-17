@@ -7,6 +7,7 @@ import { MorePageComponent } from './more-page.component';
 
 const mockRouterService = {
   navigateToRules: vi.fn(),
+  navigateToD11Teams: vi.fn(),
 };
 
 @Component({
@@ -36,5 +37,15 @@ describe('MorePageComponent', () => {
     await userEvent.click(screen.getByText('Rules'));
 
     expect(mockRouterService.navigateToRules).toHaveBeenCalledOnce();
+  });
+
+  it('renders D11 Teams button', () => {
+    expect(screen.getByText('D11 Teams')).toBeInTheDocument();
+  });
+
+  it('calls navigateToD11Teams on D11 Teams click', async () => {
+    await userEvent.click(screen.getByText('D11 Teams'));
+
+    expect(mockRouterService.navigateToD11Teams).toHaveBeenCalledOnce();
   });
 });

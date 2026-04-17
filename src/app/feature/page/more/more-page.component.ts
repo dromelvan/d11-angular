@@ -16,6 +16,11 @@ interface MoreNavItem {
 export class MorePageComponent {
   protected readonly items: MoreNavItem[] = [
     { label: 'Rules', icon: 'rules', navigate: () => this.routerService.navigateToRules() },
+    {
+      label: 'D11 Teams',
+      icon: 'd11_teams',
+      navigate: () => this.routerService.navigateToD11Teams(),
+    },
   ];
 
   private routerService = inject(RouterService);
