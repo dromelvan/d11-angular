@@ -1,130 +1,74 @@
-import { Component } from '@angular/core';
+import { signal, WritableSignal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { PlayerApiService, PlayerSearchResult } from '@app/core/api';
+import { PlayerSearchResult } from '@app/core/api';
 import { RouterService } from '@app/core/router/router.service';
-import { render, screen, waitFor } from '@testing-library/angular';
-import { of, throwError } from 'rxjs';
+import { fakePlayerSearchResult } from '@app/test';
+import { waitFor } from '@testing-library/angular';
+import { expect, vi } from 'vitest';
+import { PlayerSearchService } from '../player-search.service';
 import { SearchAutocompleteComponent } from './search-autocomplete.component';
 
-@Component({
-  template: ` <app-search-autocomplete data-testid="search-autocomplete" /> `,
-  standalone: true,
-  imports: [SearchAutocompleteComponent],
-})
-class HostComponent {}
+interface TestableSearchAutocomplete {
+  selectedValue: WritableSignal<PlayerSearchResult | null>;
+}
 
 describe('SearchAutocompleteComponent', () => {
-  const playerSearchResult: PlayerSearchResult = {
-    id: 1,
-    name: 'Foo Bar',
-    teamId: 1,
-    teamName: 'Team A',
+  const mockSearchService = {
+    results: signal<PlayerSearchResult[] | undefined>(undefined),
+    search: vi.fn(),
   };
+  const mockRouterService = { navigateToPlayer: vi.fn().mockResolvedValue(true) };
 
-  const service = {
-    search: vi.fn((query: string) => {
-      return query === 'foo' ? of([playerSearchResult]) : of([]);
-    }),
-  };
+  let fixture: ComponentFixture<SearchAutocompleteComponent>;
+  let instance: TestableSearchAutocomplete;
 
-  it('should render', async () => {
-    await render(HostComponent, {
-      providers: [{ provide: PlayerApiService, useValue: service }],
-    });
+  beforeEach(async () => {
+    vi.clearAllMocks();
+    await TestBed.configureTestingModule({
+      imports: [SearchAutocompleteComponent],
+      providers: [{ provide: RouterService, useValue: mockRouterService }],
+    })
+      .overrideComponent(SearchAutocompleteComponent, {
+        set: { providers: [{ provide: PlayerSearchService, useValue: mockSearchService }] },
+      })
+      .compileComponents();
 
-    const component = screen.getByTestId('search-autocomplete');
+    fixture = TestBed.createComponent(SearchAutocompleteComponent);
+    instance = fixture.componentInstance as unknown as TestableSearchAutocomplete;
+    fixture.detectChanges();
+  });
 
-    expect(component).toBeInTheDocument();
-
-    const autocomplete = component.querySelector('p-autocomplete');
-    expect(autocomplete).toBeInTheDocument();
+  it('renders', () => {
+    expect(fixture.nativeElement.querySelector('p-autocomplete')).toBeTruthy();
   });
 
   describe('search', () => {
-    let component: SearchAutocompleteComponent;
-    let fixture: ComponentFixture<SearchAutocompleteComponent>;
+    it('delegates to PlayerSearchService', () => {
+      fixture.componentInstance.search({ query: 'foo' });
 
-    beforeEach(async () => {
-      vi.clearAllMocks();
-
-      await TestBed.configureTestingModule({
-        imports: [SearchAutocompleteComponent],
-        providers: [{ provide: PlayerApiService, useValue: service }],
-      }).compileComponents();
-
-      fixture = TestBed.createComponent(SearchAutocompleteComponent);
-      component = fixture.componentInstance;
-      await fixture.whenStable();
-    });
-
-    it('initializes result', () => {
-      expect(component.result()).toEqual([]);
-    });
-
-    it('finds matching players', () => {
-      component.search({ query: 'foo' });
-
-      expect(component.result()).toEqual([playerSearchResult]);
-      expect(service.search).toHaveBeenCalledExactlyOnceWith('foo');
-    });
-
-    it('is empty when no matches', () => {
-      component.search({ query: 'xyz' });
-
-      expect(component.result()).toEqual([]);
-      expect(service.search).toHaveBeenCalledExactlyOnceWith('xyz');
-    });
-
-    it('requires at least 3 characters', () => {
-      component.search({ query: '' });
-      component.search({ query: 'f' });
-      component.search({ query: 'fo' });
-
-      expect(service.search).not.toHaveBeenCalled();
-
-      component.search({ query: 'foo' });
-
-      expect(service.search).toHaveBeenCalledExactlyOnceWith('foo');
-    });
-
-    it('handles search errors', () => {
-      service.search.mockReturnValueOnce(throwError(() => new Error('500')));
-
-      component.search({ query: 'foo' });
-
-      expect(component.result()).toEqual([]);
+      expect(mockSearchService.search).toHaveBeenCalledWith('foo');
     });
   });
 
   describe('onSelect', () => {
-    it('handles selected player', async () => {
-      const mockRouterService = {
-        navigateToPlayer: vi.fn().mockResolvedValue(true),
-      };
+    it('navigates to the selected player', async () => {
+      const player = fakePlayerSearchResult();
 
-      await TestBed.configureTestingModule({
-        imports: [SearchAutocompleteComponent],
-        providers: [
-          { provide: PlayerApiService, useValue: service },
-          { provide: RouterService, useValue: mockRouterService },
-        ],
-      }).compileComponents();
+      instance.selectedValue.set(player);
+      fixture.componentInstance.onSelect();
 
-      const fixture = TestBed.createComponent(SearchAutocompleteComponent);
-      const component = fixture.componentInstance;
-      await fixture.whenStable();
-
-      component.selectedValue.set(playerSearchResult);
-
-      await waitFor(() => {
-        component.onSelect();
-      });
-
-      expect(mockRouterService.navigateToPlayer).toHaveBeenCalledExactlyOnceWith(
-        playerSearchResult.id,
+      await waitFor(() =>
+        expect(mockRouterService.navigateToPlayer).toHaveBeenCalledWith(player.id),
       );
+    });
 
-      expect(component.selectedValue()).toBeNull();
+    it('clears the selected value after navigation', async () => {
+      const player = fakePlayerSearchResult();
+
+      instance.selectedValue.set(player);
+      fixture.componentInstance.onSelect();
+
+      await waitFor(() => expect(instance.selectedValue()).toBeNull());
     });
   });
 });

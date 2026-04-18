@@ -1,40 +1,35 @@
-import { Component } from '@angular/core';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { PlayerApiService, type PlayerSearchResult } from '@app/core/api';
 import { RouterService } from '@app/core/router/router.service';
 import { fakePlayerSearchResult } from '@app/test';
-import { render, screen, waitFor } from '@testing-library/angular';
+import { screen, waitFor } from '@testing-library/angular';
 import { userEvent } from '@testing-library/user-event';
-import { of } from 'rxjs';
+import { Observable, of } from 'rxjs';
 import { expect, vi } from 'vitest';
 import { SearchDrawerComponent } from './search-drawer.component';
 
-let players: PlayerSearchResult[];
-
-@Component({
-  template: ` <app-search-drawer />`,
-  standalone: true,
-  imports: [SearchDrawerComponent],
-})
-class HostComponent {}
-
-const mockPlayerApi = { search: vi.fn() };
+const mockPlayerApi = { search: vi.fn<(name: string) => Observable<PlayerSearchResult[]>>() };
 const mockRouterService = { navigateToPlayer: vi.fn() };
 
-const providers = [
-  { provide: PlayerApiService, useValue: mockPlayerApi },
-  { provide: RouterService, useValue: mockRouterService },
-];
-
 describe('SearchDrawerComponent', () => {
-  beforeEach(() => {
+  let fixture: ComponentFixture<SearchDrawerComponent>;
+
+  beforeEach(async () => {
     vi.clearAllMocks();
-    mockPlayerApi.search.mockReturnValue(of(players));
+    mockPlayerApi.search.mockReturnValue(of<PlayerSearchResult[]>([]));
+    await TestBed.configureTestingModule({
+      imports: [SearchDrawerComponent],
+      providers: [
+        { provide: PlayerApiService, useValue: mockPlayerApi },
+        { provide: RouterService, useValue: mockRouterService },
+      ],
+    }).compileComponents();
   });
 
   describe('renders', () => {
-    beforeEach(async () => {
-      players = [];
-      await render(HostComponent, { providers });
+    beforeEach(() => {
+      fixture = TestBed.createComponent(SearchDrawerComponent);
+      fixture.detectChanges();
     });
 
     it('renders the search input', () => {
@@ -47,9 +42,9 @@ describe('SearchDrawerComponent', () => {
   });
 
   describe('short query', () => {
-    beforeEach(async () => {
-      players = [];
-      await render(HostComponent, { providers });
+    beforeEach(() => {
+      fixture = TestBed.createComponent(SearchDrawerComponent);
+      fixture.detectChanges();
     });
 
     it('does not search when query is shorter than 3 characters', async () => {
@@ -62,11 +57,11 @@ describe('SearchDrawerComponent', () => {
   describe('search results', () => {
     let player: PlayerSearchResult;
 
-    beforeEach(async () => {
+    beforeEach(() => {
       player = fakePlayerSearchResult();
-      players = [player];
-      mockPlayerApi.search.mockReturnValue(of(players));
-      await render(HostComponent, { providers });
+      mockPlayerApi.search.mockReturnValue(of([player]));
+      fixture = TestBed.createComponent(SearchDrawerComponent);
+      fixture.detectChanges();
     });
 
     it('searches when query is 3+ characters', async () => {
@@ -102,11 +97,11 @@ describe('SearchDrawerComponent', () => {
   describe('player without team', () => {
     let player: PlayerSearchResult;
 
-    beforeEach(async () => {
+    beforeEach(() => {
       player = { ...fakePlayerSearchResult(), teamId: 1 };
-      players = [player];
-      mockPlayerApi.search.mockReturnValue(of(players));
-      await render(HostComponent, { providers });
+      mockPlayerApi.search.mockReturnValue(of([player]));
+      fixture = TestBed.createComponent(SearchDrawerComponent);
+      fixture.detectChanges();
     });
 
     it('does not render team name', async () => {
@@ -124,11 +119,11 @@ describe('SearchDrawerComponent', () => {
   describe('player selection', () => {
     let player: PlayerSearchResult;
 
-    beforeEach(async () => {
+    beforeEach(() => {
       player = fakePlayerSearchResult();
-      players = [player];
-      mockPlayerApi.search.mockReturnValue(of(players));
-      await render(HostComponent, { providers });
+      mockPlayerApi.search.mockReturnValue(of([player]));
+      fixture = TestBed.createComponent(SearchDrawerComponent);
+      fixture.detectChanges();
     });
 
     it('navigates to the selected player on click', async () => {

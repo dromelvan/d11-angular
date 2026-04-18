@@ -21,7 +21,7 @@
         placeholder="Search players..."
         class="w-full rounded-full! pl-10! max-h-12"
         [value]="value()"
-        (input)="onInput($any($event.target).value)"
+        (input)="onInput($event)"
       />
     </div>
     <button class="text-sm primary-contrast" (click)="onClose()">Close</button>

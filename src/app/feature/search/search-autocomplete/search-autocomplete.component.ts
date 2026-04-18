@@ -1,32 +1,27 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, computed, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { AutoComplete } from 'primeng/autocomplete';
-import { PlayerApiService, PlayerSearchResult } from '@app/core/api';
+import { PlayerSearchResult } from '@app/core/api';
 import { AvatarComponent } from '@app/shared/avatar/avatar.component';
 import { RouterService } from '@app/core/router/router.service';
+import { PlayerSearchService } from '@app/feature/search/player-search.service';
 
 @Component({
   selector: 'app-search-autocomplete',
   imports: [AutoComplete, FormsModule, AvatarComponent],
   templateUrl: './search-autocomplete.component.html',
   styleUrl: './search-autocomplete.component.css',
+  providers: [PlayerSearchService],
 })
 export class SearchAutocompleteComponent {
-  result = signal<PlayerSearchResult[]>([]);
-  selectedValue = signal<PlayerSearchResult | null>(null);
+  protected selectedValue = signal<PlayerSearchResult | null>(null);
+  protected results = computed(() => this.playerSearchService.results() ?? []);
 
-  private playerApiService = inject(PlayerApiService);
+  private playerSearchService = inject(PlayerSearchService);
   private routerService = inject(RouterService);
 
   search(event: { query: string }) {
-    if (event.query.length >= 3) {
-      this.playerApiService.search(event.query).subscribe({
-        next: (result) => {
-          this.result.set(result);
-        },
-        error: () => {},
-      });
-    }
+    this.playerSearchService.search(event.query);
   }
 
   onSelect() {
