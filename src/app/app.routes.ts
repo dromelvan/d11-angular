@@ -2,6 +2,14 @@ import { Routes } from '@angular/router';
 
 export const routes: Routes = [
   {
+    path: '',
+    loadComponent: () =>
+      import('@app/feature/page/match-week/match-week-page.component').then(
+        (m) => m.MatchWeekPageComponent,
+      ),
+    data: { section: 'Matches' },
+  },
+  {
     path: 'players',
     loadComponent: () =>
       import('@app/feature/page/players/players-page.component').then(
@@ -12,17 +20,13 @@ export const routes: Routes = [
   {
     path: 'players/:playerId',
     loadComponent: () =>
-      import('@app/feature/page/player/player-page.component').then(
-        (m) => m.PlayerPageComponent,
-      ),
+      import('@app/feature/page/player/player-page.component').then((m) => m.PlayerPageComponent),
     data: { section: 'Players' },
   },
   {
     path: 'matches/:matchId',
     loadComponent: () =>
-      import('@app/feature/page/match/match-page.component').then(
-        (m) => m.MatchPageComponent,
-      ),
+      import('@app/feature/page/match/match-page.component').then((m) => m.MatchPageComponent),
     data: { section: 'Matches' },
   },
   {
@@ -44,17 +48,13 @@ export const routes: Routes = [
   {
     path: 'seasons',
     loadComponent: () =>
-      import('@app/feature/page/season/season-page.component').then(
-        (m) => m.SeasonPageComponent,
-      ),
+      import('@app/feature/page/season/season-page.component').then((m) => m.SeasonPageComponent),
     data: { section: 'Tables' },
   },
   {
     path: 'seasons/:seasonId',
     loadComponent: () =>
-      import('@app/feature/page/season/season-page.component').then(
-        (m) => m.SeasonPageComponent,
-      ),
+      import('@app/feature/page/season/season-page.component').then((m) => m.SeasonPageComponent),
     data: { section: 'Tables' },
   },
   {
@@ -93,4 +93,5 @@ export const routes: Routes = [
       ),
     data: { section: 'D11 Teams' },
   },
+  { path: '**', redirectTo: '' },
 ];
