@@ -4,7 +4,7 @@
       <app-material-icon-button
         icon="chevron_left"
         severity="secondary"
-        [disabled]="!hasPrevious()"
+        [disabled]="!nav.hasPrevious()"
         (click)="navigateToPrevious()"
       />
 
@@ -13,7 +13,7 @@
       <app-material-icon-button
         icon="chevron_right"
         severity="secondary"
-        [disabled]="!hasNext()"
+        [disabled]="!nav.hasNext()"
         (click)="navigateToNext()"
       />
     </div>
