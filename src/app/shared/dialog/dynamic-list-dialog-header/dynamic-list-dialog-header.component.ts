@@ -6,11 +6,11 @@ import { contrastTextClass } from '@app/shared/util/contrast-text.util';
 import { TeamBaseContainer } from '@app/core/api/model/team-base-container';
 
 @Directive()
-export class DynamicListDialogHeaderComponent {
-  protected current = computed<TeamBaseContainer>(() => this.config.data.current());
-  protected list = computed<TeamBaseContainer[]>(() => this.config.data.list);
+export class DynamicListDialogHeaderComponent<T = TeamBaseContainer> {
+  protected current = computed<T>(() => this.config.data.current() as T);
+  protected list = computed<T[]>(() => this.config.data.list as T[]);
 
-  protected team = computed<TeamBase>(() => this.current().team);
+  protected team = computed<TeamBase>(() => (this.current() as unknown as TeamBaseContainer).team);
 
   protected backgroundColor = computed(() =>
     this.team() && !this.team()?.dummy ? this.team()?.colour : PRIMARY,

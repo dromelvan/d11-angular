@@ -149,8 +149,7 @@ export class PlayerSeasonStatsCardComponent {
       {
         label: 'Player profile',
         icon: 'player',
-        onClick: (current) =>
-          this.routerService.navigateToPlayer((current as PlayerSeasonStat).player.id),
+        onClick: (current) => this.routerService.navigateToPlayer(current.player.id),
       },
     );
   }

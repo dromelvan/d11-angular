@@ -56,8 +56,7 @@ export class MatchPlayerMatchStatsCardComponent {
     this.dynamicDialogService.openPlayerMatchStat(playerMatchStat, this.playerMatchStats() ?? [], {
       label: 'Player profile',
       icon: 'player',
-      onClick: (current) =>
-        this.routerService.navigateToPlayer((current as PlayerMatchStat).player.id),
+      onClick: (current) => this.routerService.navigateToPlayer(current.player.id),
     });
   }
 }

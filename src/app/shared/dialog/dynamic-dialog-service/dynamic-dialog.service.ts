@@ -25,7 +25,7 @@ export class DynamicDialogService {
   openPlayerMatchStat(
     playerMatchStat: PlayerMatchStat,
     playerMatchStats: PlayerMatchStat[],
-    action: DialogFooterAction,
+    action: DialogFooterAction<PlayerMatchStat>,
   ): void {
     this.dialogRef?.close();
     const current = signal<PlayerMatchStat>(playerMatchStat);
@@ -50,7 +50,7 @@ export class DynamicDialogService {
   openPlayerSeasonStat(
     playerSeasonStat: PlayerSeasonStat,
     playerSeasonStats: PlayerSeasonStat[],
-    action: DialogFooterAction,
+    action: DialogFooterAction<PlayerSeasonStat>,
   ): void {
     this.dialogRef?.close();
     const current = signal<PlayerSeasonStat>(playerSeasonStat);
@@ -72,7 +72,11 @@ export class DynamicDialogService {
     });
   }
 
-  openTransfer(transfer: Transfer, transfers: Transfer[], action: DialogFooterAction): void {
+  openTransfer(
+    transfer: Transfer,
+    transfers: Transfer[],
+    action: DialogFooterAction<Transfer>,
+  ): void {
     this.dialogRef?.close();
     const current = signal<Transfer>(transfer);
 
@@ -95,7 +99,7 @@ export class DynamicDialogService {
   openTransferListing(
     transferListing: TransferListing,
     transferListings: TransferListing[],
-    action: DialogFooterAction,
+    action: DialogFooterAction<TransferListing>,
   ): void {
     this.dialogRef?.close();
     const current = signal<TransferListing>(transferListing);

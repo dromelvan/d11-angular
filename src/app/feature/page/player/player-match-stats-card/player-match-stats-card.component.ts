@@ -49,8 +49,7 @@ export class PlayerMatchStatsCardComponent {
     this.dynamicDialogService.openPlayerMatchStat(playerMatchStat, this.playerMatchStats() ?? [], {
       label: 'Match details',
       icon: 'match',
-      onClick: (current) =>
-        this.routerService.navigateToMatch((current as PlayerMatchStat).match.id),
+      onClick: (current) => this.routerService.navigateToMatch(current.match.id),
     });
   }
 }

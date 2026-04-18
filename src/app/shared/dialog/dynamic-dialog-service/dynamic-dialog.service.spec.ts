@@ -22,9 +22,7 @@ function fakeAction(): DialogFooterAction {
   return {
     label: 'Test',
     icon: 'test' as const,
-    onClick: vi.fn() as (
-      current: import('@app/core/api/model/team-base-container').TeamBaseContainer,
-    ) => void,
+    onClick: vi.fn(),
   };
 }
 

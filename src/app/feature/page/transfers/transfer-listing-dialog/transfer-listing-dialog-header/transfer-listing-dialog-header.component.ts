@@ -11,6 +11,6 @@ import { DynamicListDialogHeaderComponent } from '@app/shared/dialog/dynamic-lis
   imports: [AvatarComponent, NgClass, ButtonIconOldComponent],
   templateUrl: './transfer-listing-dialog-header.component.html',
 })
-export class TransferListingDialogHeaderComponent extends DynamicListDialogHeaderComponent {
-  protected player = computed<PlayerBase>(() => (this.current() as TransferListing).player);
+export class TransferListingDialogHeaderComponent extends DynamicListDialogHeaderComponent<TransferListing> {
+  protected player = computed<PlayerBase>(() => this.current().player);
 }

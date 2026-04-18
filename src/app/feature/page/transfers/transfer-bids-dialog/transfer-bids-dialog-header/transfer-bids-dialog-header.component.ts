@@ -12,9 +12,7 @@ import { DynamicListDialogHeaderComponent } from '@app/shared/dialog/dynamic-lis
   imports: [AvatarComponent, NgClass, ButtonIconOldComponent],
   templateUrl: './transfer-bids-dialog-header.component.html',
 })
-export class TransferBidsDialogHeaderComponent extends DynamicListDialogHeaderComponent {
-  protected override team = computed<TeamBase>(
-    () => (this.current() as unknown as Transfer).transferListing.team,
-  );
-  protected player = computed<PlayerBase>(() => (this.current() as unknown as Transfer).player);
+export class TransferBidsDialogHeaderComponent extends DynamicListDialogHeaderComponent<Transfer> {
+  protected override team = computed<TeamBase>(() => this.current().transferListing.team);
+  protected player = computed<PlayerBase>(() => this.current().player);
 }

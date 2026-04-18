@@ -1,12 +1,11 @@
 import { Component, computed, inject } from '@angular/core';
 import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
 import { IconComponent, IconPreset } from '@app/shared/icon/icon.component';
-import { TeamBaseContainer } from '@app/core/api/model/team-base-container';
 
-export interface DialogFooterAction {
+export interface DialogFooterAction<T = unknown> {
   label: string;
   icon?: IconPreset;
-  onClick: (current: TeamBaseContainer) => void;
+  onClick: (current: T) => void;
 }
 
 @Component({

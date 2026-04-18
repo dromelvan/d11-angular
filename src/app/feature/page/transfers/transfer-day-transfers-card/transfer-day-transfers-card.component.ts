@@ -49,7 +49,7 @@ export class TransferDayTransfersCardComponent {
     this.dynamicDialogService.openTransfer(transfer, this.transfers(), {
       label: 'Player profile',
       icon: 'player',
-      onClick: (current) => this.routerService.navigateToPlayer((current as unknown as Transfer).player.id),
+      onClick: (current) => this.routerService.navigateToPlayer(current.player.id),
     });
   }
 }
