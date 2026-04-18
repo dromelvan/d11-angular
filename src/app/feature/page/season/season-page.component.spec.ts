@@ -1,80 +1,115 @@
-import { Component } from '@angular/core';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { Season, TeamSeasonStat } from '@app/core/api';
 import { SeasonApiService } from '@app/core/api/season/season-api.service';
 import { TeamSeasonStatApiService } from '@app/core/api/team-season-stat/team-season-stat-api.service';
 import { LoadingService } from '@app/core/loading/loading.service';
 import { RouterService } from '@app/core/router/router.service';
 import { fakeSeason, fakeTeamSeasonStat } from '@app/test';
-import { render, screen, waitFor } from '@testing-library/angular';
-import { of } from 'rxjs';
+import { screen, waitFor } from '@testing-library/angular';
+import userEvent from '@testing-library/user-event';
+import { Observable, of } from 'rxjs';
 import { expect, vi } from 'vitest';
 import { SeasonPageComponent } from './season-page.component';
 
-let season: Season;
-let teamSeasonStats: TeamSeasonStat[];
-let seasonApi: SeasonApiService;
-let teamSeasonStatApi: TeamSeasonStatApiService;
-let loadingService: LoadingService;
-let routerService: RouterService;
-
-@Component({
-  template: ` <app-table [seasonId]="seasonId" />`,
-  standalone: true,
-  imports: [SeasonPageComponent],
-})
-class HostComponent {
-  seasonId: number | undefined = season.id;
-}
-
-@Component({
-  template: ` <app-table />`,
-  standalone: true,
-  imports: [SeasonPageComponent],
-})
-class NoIdHostComponent {}
-
 describe('SeasonPageComponent', () => {
-  beforeEach(() => {
-    season = fakeSeason();
+  const mockSeasonApi = { getAll: vi.fn<() => Observable<Season[]>>() };
+  const mockTeamSeasonStatApi = {
+    getTeamSeasonStatsBySeasonId: vi.fn<(id: number) => Observable<TeamSeasonStat[]>>(),
+  };
+  const mockLoadingService = { register: vi.fn() };
+  const mockRouterService = { navigateToSeason: vi.fn() };
+
+  let seasons: Season[];
+  let teamSeasonStats: TeamSeasonStat[];
+  let fixture: ComponentFixture<SeasonPageComponent>;
+
+  beforeEach(async () => {
+    vi.clearAllMocks();
+    seasons = [
+      { ...fakeSeason(), date: '2023-08-01' },
+      { ...fakeSeason(), date: '2022-08-01' },
+      { ...fakeSeason(), date: '2021-08-01' },
+    ];
     teamSeasonStats = [fakeTeamSeasonStat(), fakeTeamSeasonStat()];
+    mockSeasonApi.getAll.mockReturnValue(of(seasons));
+    mockTeamSeasonStatApi.getTeamSeasonStatsBySeasonId.mockReturnValue(of(teamSeasonStats));
 
-    seasonApi = {
-      getAll: vi.fn().mockReturnValue(of([season])),
-    } as unknown as SeasonApiService;
-
-    teamSeasonStatApi = {
-      getTeamSeasonStatsBySeasonId: vi.fn().mockReturnValue(of(teamSeasonStats)),
-    } as unknown as TeamSeasonStatApiService;
-
-    loadingService = { register: vi.fn() } as unknown as LoadingService;
-    routerService = { navigateToSeason: vi.fn() } as unknown as RouterService;
+    await TestBed.configureTestingModule({
+      imports: [SeasonPageComponent],
+      providers: [
+        { provide: SeasonApiService, useValue: mockSeasonApi },
+        { provide: TeamSeasonStatApiService, useValue: mockTeamSeasonStatApi },
+        { provide: LoadingService, useValue: mockLoadingService },
+        { provide: RouterService, useValue: mockRouterService },
+      ],
+    }).compileComponents();
   });
 
   describe('with seasonId', () => {
-    beforeEach(async () => {
-      await render(HostComponent, {
-        providers: [
-          { provide: SeasonApiService, useValue: seasonApi },
-          { provide: TeamSeasonStatApiService, useValue: teamSeasonStatApi },
-          { provide: LoadingService, useValue: loadingService },
-          { provide: RouterService, useValue: routerService },
-        ],
-      });
+    beforeEach(() => {
+      fixture = TestBed.createComponent(SeasonPageComponent);
+      fixture.componentRef.setInput('seasonId', seasons[1].id);
+      fixture.detectChanges();
     });
 
     it('renders', async () => {
       await waitFor(() => {
-        expect(document.querySelector('.app-season-page')).toBeInTheDocument();
+        expect(fixture.nativeElement.querySelector('.app-season-page')).toBeInTheDocument();
       });
     });
 
     it('gets all seasons', () => {
-      expect(seasonApi.getAll).toHaveBeenCalled();
+      expect(mockSeasonApi.getAll).toHaveBeenCalled();
     });
 
     it('renders season name', async () => {
       await waitFor(() => {
-        expect(screen.getByText(season.name, { exact: false })).toBeInTheDocument();
+        expect(screen.getByText(seasons[1].name, { exact: false })).toBeInTheDocument();
+      });
+    });
+
+    it('renders team season stats card', async () => {
+      await waitFor(() => {
+        expect(screen.getByText('Premier League')).toBeInTheDocument();
+        for (const stat of teamSeasonStats) {
+          const expectedName = stat.team.name.length > 22 ? stat.team.shortName : stat.team.name;
+          expect(screen.getByText(expectedName)).toBeInTheDocument();
+        }
+      });
+    });
+
+    it('navigates to previous season on previous button click', async () => {
+      await waitFor(() => screen.getByText(seasons[1].name, { exact: false }));
+      const [prevButton] = fixture.nativeElement.querySelectorAll('app-material-icon-button');
+
+      await userEvent.click(prevButton);
+
+      expect(mockRouterService.navigateToSeason).toHaveBeenCalledExactlyOnceWith(seasons[2].id);
+    });
+
+    it('navigates to next season on next button click', async () => {
+      await waitFor(() => screen.getByText(seasons[1].name, { exact: false }));
+      const [, nextButton] = fixture.nativeElement.querySelectorAll('app-material-icon-button');
+
+      await userEvent.click(nextButton);
+
+      expect(mockRouterService.navigateToSeason).toHaveBeenCalledExactlyOnceWith(seasons[0].id);
+    });
+  });
+
+  describe('without seasonId', () => {
+    beforeEach(() => {
+      fixture = TestBed.createComponent(SeasonPageComponent);
+      fixture.detectChanges();
+    });
+
+    it('gets all seasons', () => {
+      expect(mockSeasonApi.getAll).toHaveBeenCalled();
+    });
+
+    it('renders most recent season name', async () => {
+      await waitFor(() => {
+        expect(screen.getByText(seasons[0].name, { exact: false })).toBeInTheDocument();
       });
     });
 
@@ -89,36 +124,37 @@ describe('SeasonPageComponent', () => {
     });
   });
 
-  describe('without seasonId', () => {
-    beforeEach(async () => {
-      await render(NoIdHostComponent, {
-        providers: [
-          { provide: SeasonApiService, useValue: seasonApi },
-          { provide: TeamSeasonStatApiService, useValue: teamSeasonStatApi },
-          { provide: LoadingService, useValue: loadingService },
-          { provide: RouterService, useValue: routerService },
-        ],
-      });
+  describe('at last season', () => {
+    beforeEach(() => {
+      fixture = TestBed.createComponent(SeasonPageComponent);
+      fixture.componentRef.setInput('seasonId', seasons[0].id);
+      fixture.detectChanges();
     });
 
-    it('gets all seasons', () => {
-      expect(seasonApi.getAll).toHaveBeenCalled();
+    it('does not navigate to next season on next button click', async () => {
+      await waitFor(() => screen.getByText(seasons[0].name, { exact: false }));
+      const [, nextButton] = fixture.nativeElement.querySelectorAll('app-material-icon-button');
+
+      await userEvent.click(nextButton);
+
+      expect(mockRouterService.navigateToSeason).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('at first season', () => {
+    beforeEach(() => {
+      fixture = TestBed.createComponent(SeasonPageComponent);
+      fixture.componentRef.setInput('seasonId', seasons[2].id);
+      fixture.detectChanges();
     });
 
-    it('renders current season name', async () => {
-      await waitFor(() => {
-        expect(screen.getByText(season.name, { exact: false })).toBeInTheDocument();
-      });
-    });
+    it('does not navigate to previous season on previous button click', async () => {
+      await waitFor(() => screen.getByText(seasons[2].name, { exact: false }));
+      const [prevButton] = fixture.nativeElement.querySelectorAll('app-material-icon-button');
 
-    it('renders current season team season stats card', async () => {
-      await waitFor(() => {
-        for (const stat of teamSeasonStats) {
-          const expectedName = stat.team.name.length > 22 ? stat.team.shortName : stat.team.name;
-          expect(screen.getByText(expectedName)).toBeInTheDocument();
-        }
-        expect(screen.getByText('Premier League')).toBeInTheDocument();
-      });
+      await userEvent.click(prevButton);
+
+      expect(mockRouterService.navigateToSeason).not.toHaveBeenCalled();
     });
   });
 });
