@@ -1,75 +1,83 @@
-import { Component } from '@angular/core';
-import { render, screen } from '@testing-library/angular';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { provideRouter } from '@angular/router';
+import { screen, waitFor } from '@testing-library/angular';
 import userEvent from '@testing-library/user-event';
-import { beforeEach, expect } from 'vitest';
+import { expect } from 'vitest';
 import { NavbarLinkComponent } from './navbar-link.component';
 
-@Component({
-  template: ` <app-navbar-link data-testid="navbar-link" /> `,
-  standalone: true,
-  imports: [NavbarLinkComponent],
-})
-class HostComponent {}
-
 describe('NavbarLinkComponent', () => {
-  let component: HTMLElement;
-  let user: ReturnType<typeof userEvent.setup>;
+  let fixture: ComponentFixture<NavbarLinkComponent>;
 
   beforeEach(async () => {
-    await render(HostComponent, {
-      providers: [],
+    await TestBed.configureTestingModule({
+      imports: [NavbarLinkComponent],
+      providers: [provideRouter([])],
+    }).compileComponents();
+
+    fixture = TestBed.createComponent(NavbarLinkComponent);
+    fixture.detectChanges();
+  });
+
+  it('renders', () => {
+    expect(fixture.nativeElement.querySelector('nav')).toBeInTheDocument();
+    expect(fixture.nativeElement.querySelector('nav')).toHaveClass('hidden lg:flex');
+  });
+
+  it('renders Matches link to /match-weeks', () => {
+    expect(screen.getByRole('link', { name: 'Matches' })).toHaveAttribute('href', '/match-weeks');
+  });
+
+  it('renders Tables link to /seasons', () => {
+    expect(screen.getByRole('link', { name: 'Tables' })).toHaveAttribute('href', '/seasons');
+  });
+
+  it('renders Players link to /players', () => {
+    expect(screen.getByRole('link', { name: 'Players' })).toHaveAttribute('href', '/players');
+  });
+
+  it('renders Transfers link to /transfers', () => {
+    expect(screen.getByRole('link', { name: 'Transfers' })).toHaveAttribute('href', '/transfers');
+  });
+
+  it('renders More dropdown trigger with chevron', () => {
+    const more = screen.getByRole('link', { name: /More/i });
+    expect(more).toBeInTheDocument();
+    expect(more.querySelector('.pi-chevron-down')).toBeInTheDocument();
+  });
+
+  describe('More dropdown', () => {
+    beforeEach(async () => {
+      await userEvent.click(screen.getByRole('link', { name: /More/i }));
     });
 
-    component = screen.getByTestId('navbar-link');
-    user = userEvent.setup();
-  });
+    it('renders D11 Teams as a link to /d11-teams', async () => {
+      await waitFor(() =>
+        expect(screen.getByRole('link', { name: /D11 Teams/i })).toHaveAttribute(
+          'href',
+          '/d11-teams',
+        ),
+      );
+    });
 
-  it('renders', async () => {
-    expect(component).toBeInTheDocument();
+    it('renders Rules as a link to /rules', async () => {
+      await waitFor(() =>
+        expect(screen.getByRole('link', { name: /Rules/i })).toHaveAttribute('href', '/rules'),
+      );
+    });
 
-    const nav = component.querySelector('nav');
-    expect(nav).toBeInTheDocument();
-    expect(nav).toHaveClass('hidden lg:flex');
-  });
+    it('renders History without a link', async () => {
+      await waitFor(() => expect(screen.getByText('History')).toBeInTheDocument());
+      expect(screen.queryByRole('link', { name: /History/i })).not.toBeInTheDocument();
+    });
 
-  it('renders links', () => {
-    const items = [
-      { label: 'Matches', url: '#' },
-      { label: 'Tables', url: '#' },
-      { label: 'Players', url: '#' },
-      { label: 'Transfers', url: '#' },
-    ];
+    it('renders Statistics without a link', async () => {
+      await waitFor(() => expect(screen.getByText('Statistics')).toBeInTheDocument());
+      expect(screen.queryByRole('link', { name: /Statistics/i })).not.toBeInTheDocument();
+    });
 
-    for (const item of items) {
-      const link = screen.getByRole('link', { name: item.label });
-      expect(link).toBeInTheDocument();
-      expect(link).toHaveAttribute('href', item.url);
-    }
-  });
-
-  it('renders dropdown trigger', () => {
-    const link = screen.getByRole('link', { name: /More/i });
-    expect(link).toBeInTheDocument();
-    expect(link.parentElement!.querySelector('.pi-chevron-down')).toBeInTheDocument();
-  });
-
-  it('renders dropdown items', async () => {
-    const link = screen.getByRole('link', { name: /More/i });
-    const items = [
-      { label: 'D11 Teams', icon: '.pi-building' },
-      { label: 'Rules', icon: '.pi-users' },
-      { label: 'History', icon: '.pi-clock' },
-      { label: 'Statistics', icon: '.pi-chart-bar' },
-      { label: 'About', icon: '.pi-info-circle' },
-    ];
-
-    await user.click(link);
-
-    for (const item of items) {
-      const parent = screen.getByText(item.label).parentElement;
-
-      expect(parent).toBeInTheDocument();
-      expect(parent!.querySelector(item.icon)).toBeInTheDocument();
-    }
+    it('renders About without a link', async () => {
+      await waitFor(() => expect(screen.getByText('About')).toBeInTheDocument());
+      expect(screen.queryByRole('link', { name: /About/i })).not.toBeInTheDocument();
+    });
   });
 });

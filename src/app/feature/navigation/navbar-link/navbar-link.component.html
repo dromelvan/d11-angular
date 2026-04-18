@@ -1,6 +1,8 @@
 <nav class="app-navbar-link hidden lg:flex gap-x-12 justify-center text-sm">
-  @for (menuItem of links; track menuItem) {
-    <a class="primary-contrast" [href]="menuItem.url">{{ menuItem.label }}</a>
+  @for (link of links; track link.label) {
+    <a class="primary-contrast" [routerLink]="link.routerLink" routerLinkActive="active">{{
+      link.label
+    }}</a>
   }
   <a (click)="moreMenu.toggle($event)" class="primary-contrast flex items-center gap-1" href="#">
     More
