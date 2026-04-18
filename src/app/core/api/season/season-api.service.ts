@@ -29,6 +29,6 @@ export class SeasonApiService {
   getCurrentSeason(): Observable<Season> {
     return this.seasonsCache
       .get()
-      .pipe(map((seasons) => [...seasons].sort((a, b) => b.date.localeCompare(a.date))[0]));
+      .pipe(map((seasons) => seasons.reduce((latest, s) => (s.date > latest.date ? s : latest))));
   }
 }

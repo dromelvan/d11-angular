@@ -14,5 +14,6 @@ export class IconButtonComponent {
   disabled = input<boolean>(false);
   iconClass = input<string | undefined>();
 
+  // PrimeNG requires the slot to be named `#icon`, which shadows the `icon` input signal inside the template.
   protected iconPreset = computed(() => this.icon());
 }

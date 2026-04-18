@@ -18,7 +18,7 @@ import {
 })
 export class DynamicDialogService {
   private dialogService = inject(DialogService);
-  private dialogRef: DynamicDialogRef | null | undefined;
+  private dialogRef: DynamicDialogRef | null = null;
 
   private styleClass = 'w-full sm:w-[25rem] sm:max-h-[50rem]! mx-4! border-0! overflow-hidden';
 

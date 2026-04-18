@@ -8,6 +8,8 @@ import { RouterService } from '@app/core/router/router.service';
 import { IconButtonComponent } from '@app/shared/button/icon-button/icon-button.component';
 import { MatchWeekMatchesCardComponent } from './match-week-matches-card/match-week-matches-card.component';
 
+const SEASON_MATCH_WEEK_COUNT = 38;
+
 @Component({
   selector: 'app-match-week',
   imports: [IconButtonComponent, MatchWeekMatchesCardComponent],
@@ -39,7 +41,11 @@ export class MatchWeekPageComponent {
   protected isLoading = computed(() => this.rxMatchWeek.isLoading() || this.rxMatches.isLoading());
 
   protected hasPrevious = computed(() => (this.rxMatchWeek.value()?.matchWeekNumber ?? 1) > 1);
-  protected hasNext = computed(() => (this.rxMatchWeek.value()?.matchWeekNumber ?? 38) < 38);
+  protected hasNext = computed(
+    () =>
+      (this.rxMatchWeek.value()?.matchWeekNumber ?? SEASON_MATCH_WEEK_COUNT) <
+      SEASON_MATCH_WEEK_COUNT,
+  );
 
   private matchWeekApiService = inject(MatchWeekApiService);
   private matchApiService = inject(MatchApiService);

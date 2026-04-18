@@ -3,7 +3,7 @@ import { NgClass } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { rxResource } from '@angular/core/rxjs-interop';
 import { of } from 'rxjs';
-import { PlayerSeasonStat, PlayerSeasonStatPage } from '@app/core/api';
+import { PlayerSeasonStat, PlayerSeasonStatPage, POSITION_IDS } from '@app/core/api';
 import { PlayerSeasonStatApiService } from '@app/core/api/player-season-stat/player-season-stat-api.service';
 import { PlayerSeasonStatSort } from '@app/core/api/model/player-season-stat-sort.model';
 import { LoadingService } from '@app/core/loading/loading.service';
@@ -42,10 +42,10 @@ export class PlayerSeasonStatsCardComponent {
   ];
 
   protected readonly positionIdOptions = [
-    { label: 'Keeper', value: 1 },
-    { label: 'Defender', value: 3 },
-    { label: 'Midfielder', value: 4 },
-    { label: 'Forward', value: 5 },
+    { label: 'Keeper', value: POSITION_IDS.KEEPER },
+    { label: 'Defender', value: POSITION_IDS.DEFENDER },
+    { label: 'Midfielder', value: POSITION_IDS.MIDFIELDER },
+    { label: 'Forward', value: POSITION_IDS.FORWARD },
   ];
 
   protected readonly sortOptions = [
@@ -84,10 +84,9 @@ export class PlayerSeasonStatsCardComponent {
       if (params.seasonId === undefined || params.positionIds.length === 0) {
         return of({ page: 0, totalPages: 0, totalElements: 0, elements: [] });
       }
-      // Full back position is deprecated so there won't be an option for it but include it
-      // if defender option is selected
-      const positionIds = params.positionIds.includes(3)
-        ? [...params.positionIds, 2]
+      // Full back (deprecated) shares a bucket with defender
+      const positionIds = params.positionIds.includes(POSITION_IDS.DEFENDER)
+        ? [...params.positionIds, POSITION_IDS.FULL_BACK]
         : params.positionIds;
       return this.playerSeasonStatApiService.getPlayerSeasonStatsBySeasonId(
         params.seasonId,

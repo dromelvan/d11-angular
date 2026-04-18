@@ -27,9 +27,9 @@ describe('PlayersPageComponent', () => {
   beforeEach(async () => {
     vi.clearAllMocks();
     seasons = [
-      { ...fakeSeason(), date: '2023-08-01' },
-      { ...fakeSeason(), date: '2022-08-01' },
-      { ...fakeSeason(), date: '2021-08-01' },
+      { ...fakeSeason(), id: 1, date: '2023-08-01' },
+      { ...fakeSeason(), id: 2, date: '2022-08-01' },
+      { ...fakeSeason(), id: 3, date: '2021-08-01' },
     ];
     playerSeasonStatPage = {
       page: 0,

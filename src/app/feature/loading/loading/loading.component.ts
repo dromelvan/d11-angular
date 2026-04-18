@@ -9,5 +9,5 @@ import { ProgressBarModule } from 'primeng/progressbar';
   styleUrl: './loading.component.css',
 })
 export class LoadingComponent {
-  loadingService = inject(LoadingService);
+  protected readonly loadingService = inject(LoadingService);
 }

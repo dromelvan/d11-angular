@@ -3,7 +3,6 @@ import { Pipe, PipeTransform } from '@angular/core';
 
 @Pipe({
   name: 'safeDate',
-  standalone: true,
 })
 export class SafeDatePipe implements PipeTransform {
   private datePipe = new DatePipe('en-US');

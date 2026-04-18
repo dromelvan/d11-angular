@@ -17,7 +17,7 @@ import { IconButtonComponent } from '@app/shared/button/icon-button/icon-button.
 import { TeamSeasonStatsCardComponent } from '@app/feature/page/season/team-season-stats-card/team-season-stats-card.component';
 
 @Component({
-  selector: 'app-table',
+  selector: 'app-season-page',
   imports: [IconButtonComponent, TeamSeasonStatsCardComponent],
   templateUrl: './season-page.component.html',
   providers: [SeasonNavigatorService],
