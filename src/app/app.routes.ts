@@ -1,75 +1,96 @@
 import { Routes } from '@angular/router';
-import {
-  D11TeamsPageComponent,
-  MatchPageComponent,
-  MatchWeekPageComponent,
-  MorePageComponent,
-  PlayerPageComponent,
-  PlayersPageComponent,
-  RulesPageComponent,
-  SeasonPageComponent,
-  TransfersPageComponent,
-} from '@app/feature/page';
 
 export const routes: Routes = [
   {
     path: 'players',
-    component: PlayersPageComponent,
+    loadComponent: () =>
+      import('@app/feature/page/players/players-page.component').then(
+        (m) => m.PlayersPageComponent,
+      ),
     data: { section: 'Players' },
   },
   {
     path: 'players/:playerId',
-    component: PlayerPageComponent,
+    loadComponent: () =>
+      import('@app/feature/page/player/player-page.component').then(
+        (m) => m.PlayerPageComponent,
+      ),
     data: { section: 'Players' },
   },
   {
     path: 'matches/:matchId',
-    component: MatchPageComponent,
+    loadComponent: () =>
+      import('@app/feature/page/match/match-page.component').then(
+        (m) => m.MatchPageComponent,
+      ),
     data: { section: 'Matches' },
   },
   {
     path: 'match-weeks',
-    component: MatchWeekPageComponent,
+    loadComponent: () =>
+      import('@app/feature/page/match-week/match-week-page.component').then(
+        (m) => m.MatchWeekPageComponent,
+      ),
     data: { section: 'Matches' },
   },
   {
     path: 'match-weeks/:matchWeekId',
-    component: MatchWeekPageComponent,
+    loadComponent: () =>
+      import('@app/feature/page/match-week/match-week-page.component').then(
+        (m) => m.MatchWeekPageComponent,
+      ),
     data: { section: 'Matches' },
   },
   {
     path: 'seasons',
-    component: SeasonPageComponent,
+    loadComponent: () =>
+      import('@app/feature/page/season/season-page.component').then(
+        (m) => m.SeasonPageComponent,
+      ),
     data: { section: 'Tables' },
   },
   {
     path: 'seasons/:seasonId',
-    component: SeasonPageComponent,
+    loadComponent: () =>
+      import('@app/feature/page/season/season-page.component').then(
+        (m) => m.SeasonPageComponent,
+      ),
     data: { section: 'Tables' },
   },
   {
     path: 'transfers',
-    component: TransfersPageComponent,
+    loadComponent: () =>
+      import('@app/feature/page/transfers/transfers-page.component').then(
+        (m) => m.TransfersPageComponent,
+      ),
     data: { section: 'Transfers' },
   },
   {
     path: 'transfers/:transferWindowId',
-    component: TransfersPageComponent,
+    loadComponent: () =>
+      import('@app/feature/page/transfers/transfers-page.component').then(
+        (m) => m.TransfersPageComponent,
+      ),
     data: { section: 'Transfers' },
   },
   {
     path: 'more',
-    component: MorePageComponent,
+    loadComponent: () =>
+      import('@app/feature/page/more/more-page.component').then((m) => m.MorePageComponent),
     data: { section: 'More' },
   },
   {
     path: 'rules',
-    component: RulesPageComponent,
+    loadComponent: () =>
+      import('@app/feature/page/rules/rules-page.component').then((m) => m.RulesPageComponent),
     data: { section: 'Rules' },
   },
   {
     path: 'd11-teams',
-    component: D11TeamsPageComponent,
+    loadComponent: () =>
+      import('@app/feature/page/d11-teams/d11-teams-page.component').then(
+        (m) => m.D11TeamsPageComponent,
+      ),
     data: { section: 'D11 Teams' },
   },
 ];
