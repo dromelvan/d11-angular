@@ -1,26 +1,25 @@
-import { Component, signal } from '@angular/core';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { HttpErrorResponse } from '@angular/common/http';
 import { Observable, of, throwError } from 'rxjs';
-import { render, screen } from '@testing-library/angular';
+import { screen } from '@testing-library/angular';
 import userEvent from '@testing-library/user-event';
 import { UserCredentialsModel } from '@app/core/api';
 import { UserSessionService } from '@app/core/auth/user-session.service';
+import { RouterService } from '@app/core/router/router.service';
+import { MessageService } from 'primeng/api';
 import { userCredentials } from '@app/test';
 import { LoginComponent } from './login.component';
 
-@Component({
-  template: ` <app-login /> `,
-  standalone: true,
-  imports: [LoginComponent],
-})
-class HostComponent {}
-
 describe('LoginComponent', () => {
+  let fixture: ComponentFixture<LoginComponent>;
   let username: HTMLInputElement;
   let password: HTMLInputElement;
   let persistent: HTMLElement;
   let button: HTMLButtonElement;
   let user: ReturnType<typeof userEvent.setup>;
-  let userSession: Partial<UserSessionService>;
+  let mockUserSession: { authenticate: ReturnType<typeof vi.fn> };
+  let mockRouterService: { navigateToCurrentMatchWeek: ReturnType<typeof vi.fn> };
+  let mockMessageService: { add: ReturnType<typeof vi.fn> };
 
   async function submitCredentials() {
     await user.type(username, userCredentials.username);
@@ -30,14 +29,29 @@ describe('LoginComponent', () => {
   }
 
   beforeEach(async () => {
-    userSession = {
-      jwt: signal<string | undefined>(undefined),
+    vi.clearAllMocks();
+    mockUserSession = {
       authenticate: vi.fn<(userCredentials: UserCredentialsModel) => Observable<string>>(),
     };
+    mockRouterService = {
+      navigateToCurrentMatchWeek: vi.fn().mockResolvedValue(true),
+    };
+    mockMessageService = {
+      add: vi.fn(),
+    };
 
-    await render(HostComponent, {
-      componentProviders: [{ provide: UserSessionService, useValue: userSession }],
-    });
+    await TestBed.configureTestingModule({
+      imports: [LoginComponent],
+      providers: [
+        { provide: UserSessionService, useValue: mockUserSession },
+        { provide: RouterService, useValue: mockRouterService },
+        { provide: MessageService, useValue: mockMessageService },
+      ],
+    }).compileComponents();
+
+    fixture = TestBed.createComponent(LoginComponent);
+    fixture.detectChanges();
+    await fixture.whenStable();
 
     username = screen.getByRole('textbox', { name: 'Email Address' });
     password = screen.getByLabelText('Password');
@@ -51,43 +65,43 @@ describe('LoginComponent', () => {
     expect(password).toBeInTheDocument();
     expect(persistent).toBeInTheDocument();
     expect(button).toBeInTheDocument();
-
-    // Temporary until real user notification is added
-    expect(screen.queryByText(/^jwt:/)).not.toBeInTheDocument();
   });
 
-  it('succeeds login with valid credentials', async () => {
-    const TOKEN = 'token';
-
-    userSession.authenticate = vi.fn().mockImplementation(() => {
-      userSession.jwt?.set(TOKEN);
-      return of(TOKEN);
-    });
+  it('navigates to root on successful login', async () => {
+    mockUserSession.authenticate = vi.fn().mockReturnValue(of('token'));
 
     await submitCredentials();
 
-    expect(userSession.authenticate).toHaveBeenCalledExactlyOnceWith(userCredentials);
-    expect(button).toBeDisabled();
-
-    // Temporary until real user notification is added
-    expect(screen.getByText(`jwt: ${TOKEN}`)).toBeInTheDocument();
+    expect(mockUserSession.authenticate).toHaveBeenCalledExactlyOnceWith(userCredentials);
+    expect(mockRouterService.navigateToCurrentMatchWeek).toHaveBeenCalled();
   });
 
-  it('fails login with invalid credentials', async () => {
-    userSession.authenticate = vi.fn().mockReturnValue(throwError(() => new Error('INVALID')));
+  it('shows error toast on 401', async () => {
+    mockUserSession.authenticate = vi
+      .fn()
+      .mockReturnValue(throwError(() => new HttpErrorResponse({ status: 401 })));
 
     await submitCredentials();
 
-    expect(userSession.authenticate).toHaveBeenCalledExactlyOnceWith(userCredentials);
-    expect(button).toBeDisabled();
+    expect(mockRouterService.navigateToCurrentMatchWeek).not.toHaveBeenCalled();
+    expect(mockMessageService.add).toHaveBeenCalledWith(
+      expect.objectContaining({ severity: 'error' }),
+    );
+  });
 
-    // Temporary until real user notification is added
-    expect(screen.queryByText(/^jwt:/)).not.toBeInTheDocument();
+  it('does not show toast on non-401 error', async () => {
+    mockUserSession.authenticate = vi
+      .fn()
+      .mockReturnValue(throwError(() => new HttpErrorResponse({ status: 500 })));
+
+    await submitCredentials();
+
+    expect(mockMessageService.add).not.toHaveBeenCalled();
   });
 
   it('does not submit when form is invalid', async () => {
     await user.click(button);
 
-    expect(userSession.authenticate).not.toHaveBeenCalled();
+    expect(mockUserSession.authenticate).not.toHaveBeenCalled();
   });
 });

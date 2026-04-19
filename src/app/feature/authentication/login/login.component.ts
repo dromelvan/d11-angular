@@ -1,8 +1,11 @@
 import { Component, inject, signal } from '@angular/core';
+import { HttpErrorResponse } from '@angular/common/http';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { finalize } from 'rxjs';
 import { UserCredentialsModel } from '@app/core/api';
 import { UserSessionService } from '@app/core/auth/user-session.service';
+import { RouterService } from '@app/core/router/router.service';
+import { MessageService } from 'primeng/api';
 import {
   ButtonSubmitComponent,
   CheckboxComponent,
@@ -33,7 +36,8 @@ export class LoginComponent {
     persistent: false,
   });
   private userSession = inject(UserSessionService);
-  protected jwt = this.userSession.jwt;
+  private routerService = inject(RouterService);
+  private messageService = inject(MessageService);
 
   protected onSubmit(): void {
     if (this.form.invalid) {
@@ -60,11 +64,18 @@ export class LoginComponent {
         }),
       )
       .subscribe({
-        next: (result) => {
-          // TODO: User feedback
-          console.log(result);
+        next: () => {
+          this.routerService.navigateToCurrentMatchWeek();
         },
-        error: () => {},
+        error: (response: HttpErrorResponse) => {
+          if (response.status === 401) {
+            this.messageService.add({
+              severity: 'error',
+              summary: 'Sign in failed',
+              detail: 'Invalid email or password.',
+            });
+          }
+        },
       });
   }
 }
