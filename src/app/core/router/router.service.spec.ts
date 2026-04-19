@@ -139,6 +139,13 @@ describe('RouterService', () => {
     expect(result).toBe(true);
   });
 
+  it('should navigate to login', async () => {
+    const result = await service.navigateToLogin();
+
+    expect(mockRouter.navigate).toHaveBeenCalledWith(['login']);
+    expect(result).toBe(true);
+  });
+
   it('should navigate to more', async () => {
     const result = await service.navigateToMore();
 

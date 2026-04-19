@@ -74,6 +74,11 @@ export class RouterService {
     return this.router.navigate(['transfers', transferWindowId]);
   }
 
+  public navigateToLogin(): Promise<boolean> {
+    this.stack.set([]);
+    return this.router.navigate(['login']);
+  }
+
   public navigateToMore(): Promise<boolean> {
     this.stack.set([]);
     return this.router.navigate(['more']);

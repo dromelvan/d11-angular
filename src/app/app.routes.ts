@@ -93,5 +93,10 @@ export const routes: Routes = [
       ),
     data: { section: 'D11 Teams' },
   },
+  {
+    path: 'login',
+    loadComponent: () =>
+      import('@app/feature/page/login/login-page.component').then((m) => m.LoginPageComponent),
+  },
   { path: '**', redirectTo: '' },
 ];
