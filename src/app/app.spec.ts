@@ -1,10 +1,13 @@
 import { render } from '@testing-library/angular';
 import { expect } from 'vitest';
+import { MessageService } from 'primeng/api';
 import { App } from './app';
 
 describe('App', () => {
   beforeEach(async () => {
-    await render(App);
+    await render(App, {
+      providers: [MessageService],
+    });
   });
 
   it('renders header', () => {

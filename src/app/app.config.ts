@@ -8,6 +8,7 @@ import { apiErrorInterceptor } from '@app/core/api/api-error.interceptor';
 import { routes } from './app.routes';
 import { D11Light } from './app.theme';
 import { DialogService } from 'primeng/dynamicdialog';
+import { MessageService } from 'primeng/api';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -24,5 +25,6 @@ export const appConfig: ApplicationConfig = {
     }),
     provideUserSessionInitializer(),
     DialogService,
+    MessageService,
   ],
 };
