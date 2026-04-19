@@ -1,73 +1,79 @@
-import { Component, signal } from '@angular/core';
+import { signal } from '@angular/core';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { of } from 'rxjs';
-import { render, screen, waitFor } from '@testing-library/angular';
+import { userEvent } from '@testing-library/user-event';
 import { UserSessionService } from '@app/core/auth/user-session.service';
+import { RouterService } from '@app/core/router/router.service';
 import { UserSessionComponent } from './user-session.component';
 
-@Component({
-  template: ` <app-user-session data-testid="user-session" /> `,
-  standalone: true,
-  imports: [UserSessionComponent],
-})
-class HostComponent {}
-
 describe('UserSessionComponent', () => {
-  let service: {
+  let fixture: ComponentFixture<UserSessionComponent>;
+  let mockUserSession: {
     loggedIn: ReturnType<typeof signal<boolean>>;
     unauthorize: ReturnType<typeof vi.fn>;
   };
+  let mockRouterService: { navigateToLogin: ReturnType<typeof vi.fn> };
 
   beforeEach(async () => {
-    service = {
+    vi.clearAllMocks();
+    mockUserSession = {
       loggedIn: signal(false),
       unauthorize: vi.fn().mockReturnValue(of(true)),
     };
+    mockRouterService = {
+      navigateToLogin: vi.fn().mockResolvedValue(true),
+    };
 
-    await render(HostComponent, {
-      providers: [{ provide: UserSessionService, useValue: service }],
-    });
+    await TestBed.configureTestingModule({
+      imports: [UserSessionComponent],
+      providers: [
+        { provide: UserSessionService, useValue: mockUserSession },
+        { provide: RouterService, useValue: mockRouterService },
+      ],
+    }).compileComponents();
+
+    fixture = TestBed.createComponent(UserSessionComponent);
+    fixture.detectChanges();
+    await fixture.whenStable();
   });
 
-  it('renders user icon when logged out', async () => {
-    service.loggedIn.set(false);
+  it('renders user icon when logged out', () => {
+    mockUserSession.loggedIn.set(false);
+    fixture.detectChanges();
 
-    const component = screen.getByTestId('user-session');
-    expect(component).toBeInTheDocument();
-
-    const icon = component.querySelector('app-icon');
+    const host = fixture.nativeElement as HTMLElement;
+    const icon = host.querySelector('app-icon');
     expect(icon).toBeInTheDocument();
     expect(icon).toHaveAttribute('icon', 'account_circle');
 
-    const avatar = component.querySelector('app-avatar');
-    expect(avatar).not.toBeInTheDocument();
-
-    const menu = component.querySelector('p-menu');
-    expect(menu).not.toBeInTheDocument();
+    expect(host.querySelector('app-avatar')).not.toBeInTheDocument();
+    expect(host.querySelector('p-menu')).not.toBeInTheDocument();
   });
 
-  it('renders avatar when logged in', async () => {
-    service.loggedIn.set(true);
+  it('renders avatar when logged in', () => {
+    mockUserSession.loggedIn.set(true);
+    fixture.detectChanges();
 
-    const component = screen.getByTestId('user-session');
-    expect(component).toBeInTheDocument();
-
-    await waitFor(() => {
-      const avatar = component.querySelector('app-avatar');
-      expect(avatar).toBeInTheDocument();
-    });
-
-    const icon = component.querySelector('app-icon-user-circle');
-    expect(icon).not.toBeInTheDocument();
+    const host = fixture.nativeElement as HTMLElement;
+    expect(host.querySelector('app-avatar')).toBeInTheDocument();
+    expect(host.querySelector('app-icon-user-circle')).not.toBeInTheDocument();
   });
 
-  it('renders menu when logged in', async () => {
-    service.loggedIn.set(true);
+  it('renders menu when logged in', () => {
+    mockUserSession.loggedIn.set(true);
+    fixture.detectChanges();
 
-    const component = screen.getByTestId('user-session');
+    const host = fixture.nativeElement as HTMLElement;
+    expect(host.querySelector('p-menu')).toBeInTheDocument();
+  });
 
-    await waitFor(() => {
-      const menu = component.querySelector('p-menu');
-      expect(menu).toBeInTheDocument();
-    });
+  it('navigates to login when account icon is clicked while logged out', async () => {
+    mockUserSession.loggedIn.set(false);
+    fixture.detectChanges();
+
+    const button = fixture.nativeElement.querySelector('button') as HTMLButtonElement;
+    await userEvent.click(button);
+
+    expect(mockRouterService.navigateToLogin).toHaveBeenCalled();
   });
 });

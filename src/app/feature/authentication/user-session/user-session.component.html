@@ -5,6 +5,8 @@
     </button>
     <p-menu #menu [model]="menuItems" [popup]="true" />
   } @else {
-    <app-icon icon="account_circle" class="text-primary-contrast" />
+    <button type="button" class="cursor-pointer flex items-center" (click)="onLogin()">
+      <app-icon icon="account_circle" class="text-primary-contrast" />
+    </button>
   }
 </div>
