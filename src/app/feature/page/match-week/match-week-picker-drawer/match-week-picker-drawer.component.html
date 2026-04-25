@@ -1,0 +1,44 @@
+@if (visible()) {
+  <div class="fixed inset-0 bg-black/40" style="z-index: 1099" (click)="close()"></div>
+}
+
+<p-drawer
+  appendTo="body"
+  position="bottom"
+  [modal]="false"
+  [closable]="false"
+  [visible]="visible()"
+  (visibleChange)="visible.set($event)"
+  [pt]="{ root: { class: 'rounded-t-[25px] h-auto! max-h-[70%]' } }"
+>
+  <ng-template #header>
+    <div class="grid grid-cols-[1fr_auto_1fr] items-center w-full">
+      <span></span>
+      <span class="font-semibold">Match Week</span>
+      <a class="text-sm justify-self-end cursor-pointer" (click)="close()">Done</a>
+    </div>
+  </ng-template>
+
+  <div class="grid grid-cols-7 gap-2">
+    @for (matchWeek of matchWeeks(); track matchWeek.id) {
+      <button
+        type="button"
+        class="app-col items-center gap-0.5 py-2 rounded-sm cursor-pointer"
+        [class.bg-surface-300]="matchWeek.id === selectedId() && matchWeek.id !== currentId()"
+        [class.bg-primary]="matchWeek.id === currentId()"
+        [class.text-primary-contrast]="matchWeek.id === currentId()"
+        (click)="onMatchWeekChange(matchWeek.id)"
+      >
+        <span class="flex items-center gap-0.5 text-sm font-semibold">
+          {{ matchWeek.matchWeekNumber }}
+          @if (matchWeek.status === Status.ACTIVE || matchWeek.status === Status.FULL_TIME) {
+            <span class="text-error pt-1">*</span>
+          }
+        </span>
+        <span class="text-[0.6rem] font-semibold">{{
+          matchWeek.date | date: 'd MMM' | uppercase
+        }}</span>
+      </button>
+    }
+  </div>
+</p-drawer>
