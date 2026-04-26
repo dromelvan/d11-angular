@@ -1,4 +1,5 @@
 import {
+  Current,
   D11MatchBase,
   D11TeamBase,
   D11TeamSeasonStat,
@@ -27,8 +28,24 @@ import {
   TransferListing,
   TransferListingBase,
   TransferWindow,
+  TransferWindowBase,
 } from '@app/core/api';
 import { faker } from '@faker-js/faker';
+
+export const fakeTransferWindowBase = (): TransferWindowBase => ({
+  id: faker.number.int({ min: 1, max: 10000 }),
+  transferWindowNumber: faker.number.int({ min: 1, max: 10 }),
+  draft: faker.datatype.boolean(),
+  status: faker.helpers.enumValue(Status),
+  datetime: faker.date.recent().toISOString(),
+});
+
+export const fakeCurrent = (): Current => ({
+  season: fakeSeasonBase(),
+  matchWeek: fakeMatchWeekBase(),
+  transferWindow: fakeTransferWindowBase(),
+  transferDay: fakeTransferDay(),
+});
 
 export const fakePlayerSearchResult = (): PlayerSearchResult => ({
   id: faker.number.int({ min: 1, max: 10000 }),
