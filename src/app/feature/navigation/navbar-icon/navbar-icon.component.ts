@@ -1,5 +1,7 @@
 import { Component, inject } from '@angular/core';
 import { RouterService } from '@app/core/router/router.service';
+import { Current, CurrentApiService } from '@app/core/api';
+import { rxResource } from '@angular/core/rxjs-interop';
 
 interface NavItem {
   label: string;
@@ -21,17 +23,24 @@ export class NavbarIconComponent {
     { label: 'More', icon: 'pi pi-ellipsis-h', navigateTo: 'more' },
   ];
 
+  private rxCurrent = rxResource<Current, void>({
+    stream: () => this.currentApiService.getCurrent(),
+  });
+
   private readonly routerService = inject(RouterService);
+  private readonly currentApiService = inject(CurrentApiService);
 
   protected navigate(item: NavItem): void {
     if (item.navigateTo === 'currentMatchWeek') {
-      this.routerService.navigateToCurrentMatchWeek();
+      this.routerService.navigateToMatchWeek(this.rxCurrent.value()?.matchWeek?.id as number);
     } else if (item.navigateTo === 'players') {
       this.routerService.navigateToPlayers();
     } else if (item.navigateTo === 'table') {
-      this.routerService.navigateToCurrentSeason();
+      this.routerService.navigateToSeason(this.rxCurrent.value()?.season?.id as number);
     } else if (item.navigateTo === 'transfers') {
-      this.routerService.navigateToCurrentTransferWindow();
+      this.routerService.navigateToTransferWindow(
+        this.rxCurrent.value()?.transferWindow?.id as number,
+      );
     } else if (item.navigateTo === 'more') {
       this.routerService.navigateToMore();
     }

@@ -43,30 +43,15 @@ export class RouterService {
     return this.router.navigate(['matches', matchId]);
   }
 
-  public navigateToCurrentMatchWeek(): Promise<boolean> {
-    this.stack.set([]);
-    return this.router.navigate(['match-weeks']);
-  }
-
   public navigateToPlayers(seasonId?: number): Promise<boolean> {
     this.stack.set([]);
     const extras = seasonId ? { queryParams: { seasonId } } : {};
     return this.router.navigate(['players'], extras);
   }
 
-  public navigateToCurrentSeason(): Promise<boolean> {
-    this.stack.set([]);
-    return this.router.navigate(['seasons']);
-  }
-
   public navigateToSeason(seasonId: number): Promise<boolean> {
     this.stack.set([]);
     return this.router.navigate(['seasons', seasonId]);
-  }
-
-  public navigateToCurrentTransferWindow(): Promise<boolean> {
-    this.stack.set([]);
-    return this.router.navigate(['transfers']);
   }
 
   public navigateToTransferWindow(transferWindowId: number): Promise<boolean> {

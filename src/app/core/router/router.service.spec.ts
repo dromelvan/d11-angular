@@ -50,25 +50,11 @@ describe('RouterService', () => {
     expect(result).toBe(true);
   });
 
-  it('should navigate to current match week', async () => {
-    const result = await service.navigateToCurrentMatchWeek();
-
-    expect(mockRouter.navigate).toHaveBeenCalledWith(['match-weeks']);
-    expect(result).toBe(true);
-  });
-
   it('should navigate to season', async () => {
     const seasonId = 5;
     const result = await service.navigateToSeason(seasonId);
 
     expect(mockRouter.navigate).toHaveBeenCalledWith(['seasons', seasonId]);
-    expect(result).toBe(true);
-  });
-
-  it('should navigate to current season', async () => {
-    const result = await service.navigateToCurrentSeason();
-
-    expect(mockRouter.navigate).toHaveBeenCalledWith(['seasons']);
     expect(result).toBe(true);
   });
 
@@ -104,13 +90,6 @@ describe('RouterService', () => {
     expect(mockRouter.navigate).toHaveBeenCalledWith(['players', playerId], {
       queryParams: { seasonId },
     });
-    expect(result).toBe(true);
-  });
-
-  it('should navigate to current transfer window', async () => {
-    const result = await service.navigateToCurrentTransferWindow();
-
-    expect(mockRouter.navigate).toHaveBeenCalledWith(['transfers']);
     expect(result).toBe(true);
   });
 
@@ -275,28 +254,6 @@ describe('RouterService', () => {
 
       service.clearStack();
 
-      expect(service.hasStack()).toBe(false);
-    });
-
-    it('navigateToCurrentMatchWeek navigates to match-weeks and clears the stack', async () => {
-      const router = TestBed.inject(Router);
-      await router.navigate(['/match-weeks/1']);
-      await service.navigateToMatch(1);
-
-      await service.navigateToCurrentMatchWeek();
-
-      await waitFor(() => expect(router.url).toBe('/match-weeks'));
-      expect(service.hasStack()).toBe(false);
-    });
-
-    it('navigateToCurrentSeason navigates to seasons and clears the stack', async () => {
-      const router = TestBed.inject(Router);
-      await router.navigate(['/match-weeks/1']);
-      await service.navigateToMatch(1);
-
-      await service.navigateToCurrentSeason();
-
-      await waitFor(() => expect(router.url).toBe('/seasons'));
       expect(service.hasStack()).toBe(false);
     });
   });

@@ -1,8 +1,8 @@
 import { Component, inject, signal } from '@angular/core';
 import { HttpErrorResponse } from '@angular/common/http';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { finalize } from 'rxjs';
-import { UserCredentialsModel } from '@app/core/api';
+import { finalize, switchMap } from 'rxjs';
+import { CurrentApiService, UserCredentialsModel } from '@app/core/api';
 import { UserSessionService } from '@app/core/auth/user-session.service';
 import { RouterService } from '@app/core/router/router.service';
 import { MessageService } from 'primeng/api';
@@ -38,6 +38,7 @@ export class LoginComponent {
   private userSession = inject(UserSessionService);
   private routerService = inject(RouterService);
   private messageService = inject(MessageService);
+  private currentApiService = inject(CurrentApiService);
 
   protected onSubmit(): void {
     if (this.form.invalid) {
@@ -59,13 +60,16 @@ export class LoginComponent {
     this.userSession
       .authenticate(userCredentials)
       .pipe(
+        switchMap(() => this.currentApiService.getCurrent()),
         finalize(() => {
           this.working.set(false);
         }),
       )
       .subscribe({
-        next: () => {
-          this.routerService.navigateToCurrentMatchWeek();
+        next: (current) => {
+          if (current.matchWeek?.id != null) {
+            this.routerService.navigateToMatchWeek(current.matchWeek.id);
+          }
         },
         error: (response: HttpErrorResponse) => {
           if (response.status === 401) {

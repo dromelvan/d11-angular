@@ -3,11 +3,11 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { Observable, of, throwError } from 'rxjs';
 import { screen } from '@testing-library/angular';
 import userEvent from '@testing-library/user-event';
-import { UserCredentialsModel } from '@app/core/api';
+import { CurrentApiService, UserCredentialsModel } from '@app/core/api';
 import { UserSessionService } from '@app/core/auth/user-session.service';
 import { RouterService } from '@app/core/router/router.service';
 import { MessageService } from 'primeng/api';
-import { userCredentials } from '@app/test';
+import { fakeCurrent, userCredentials } from '@app/test';
 import { LoginComponent } from './login.component';
 
 describe('LoginComponent', () => {
@@ -18,7 +18,8 @@ describe('LoginComponent', () => {
   let button: HTMLButtonElement;
   let user: ReturnType<typeof userEvent.setup>;
   let mockUserSession: { authenticate: ReturnType<typeof vi.fn> };
-  let mockRouterService: { navigateToCurrentMatchWeek: ReturnType<typeof vi.fn> };
+  let mockCurrentApiService: { getCurrent: ReturnType<typeof vi.fn> };
+  let mockRouterService: { navigateToMatchWeek: ReturnType<typeof vi.fn> };
   let mockMessageService: { add: ReturnType<typeof vi.fn> };
 
   async function submitCredentials() {
@@ -33,8 +34,11 @@ describe('LoginComponent', () => {
     mockUserSession = {
       authenticate: vi.fn<(userCredentials: UserCredentialsModel) => Observable<string>>(),
     };
+    mockCurrentApiService = {
+      getCurrent: vi.fn(),
+    };
     mockRouterService = {
-      navigateToCurrentMatchWeek: vi.fn().mockResolvedValue(true),
+      navigateToMatchWeek: vi.fn().mockResolvedValue(true),
     };
     mockMessageService = {
       add: vi.fn(),
@@ -44,6 +48,7 @@ describe('LoginComponent', () => {
       imports: [LoginComponent],
       providers: [
         { provide: UserSessionService, useValue: mockUserSession },
+        { provide: CurrentApiService, useValue: mockCurrentApiService },
         { provide: RouterService, useValue: mockRouterService },
         { provide: MessageService, useValue: mockMessageService },
       ],
@@ -67,13 +72,18 @@ describe('LoginComponent', () => {
     expect(button).toBeInTheDocument();
   });
 
-  it('navigates to root on successful login', async () => {
+  it('navigates to current match week on successful login', async () => {
+    const current = fakeCurrent();
     mockUserSession.authenticate = vi.fn().mockReturnValue(of('token'));
+    mockCurrentApiService.getCurrent = vi.fn().mockReturnValue(of(current));
 
     await submitCredentials();
 
     expect(mockUserSession.authenticate).toHaveBeenCalledExactlyOnceWith(userCredentials);
-    expect(mockRouterService.navigateToCurrentMatchWeek).toHaveBeenCalled();
+    expect(mockCurrentApiService.getCurrent).toHaveBeenCalled();
+    expect(mockRouterService.navigateToMatchWeek).toHaveBeenCalledExactlyOnceWith(
+      current.matchWeek!.id,
+    );
   });
 
   it('shows error toast on 401', async () => {
@@ -83,7 +93,7 @@ describe('LoginComponent', () => {
 
     await submitCredentials();
 
-    expect(mockRouterService.navigateToCurrentMatchWeek).not.toHaveBeenCalled();
+    expect(mockRouterService.navigateToMatchWeek).not.toHaveBeenCalled();
     expect(mockMessageService.add).toHaveBeenCalledWith(
       expect.objectContaining({ severity: 'error' }),
     );

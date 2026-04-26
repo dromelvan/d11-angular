@@ -30,14 +30,6 @@ export const routes: Routes = [
     data: { section: 'Matches' },
   },
   {
-    path: 'match-weeks',
-    loadComponent: () =>
-      import('@app/feature/page/match-week/match-week-page.component').then(
-        (m) => m.MatchWeekPageComponent,
-      ),
-    data: { section: 'Matches' },
-  },
-  {
     path: 'match-weeks/:matchWeekId',
     loadComponent: () =>
       import('@app/feature/page/match-week/match-week-page.component').then(
@@ -46,24 +38,10 @@ export const routes: Routes = [
     data: { section: 'Matches' },
   },
   {
-    path: 'seasons',
-    loadComponent: () =>
-      import('@app/feature/page/season/season-page.component').then((m) => m.SeasonPageComponent),
-    data: { section: 'Tables' },
-  },
-  {
     path: 'seasons/:seasonId',
     loadComponent: () =>
       import('@app/feature/page/season/season-page.component').then((m) => m.SeasonPageComponent),
     data: { section: 'Tables' },
-  },
-  {
-    path: 'transfers',
-    loadComponent: () =>
-      import('@app/feature/page/transfers/transfers-page.component').then(
-        (m) => m.TransfersPageComponent,
-      ),
-    data: { section: 'Transfers' },
   },
   {
     path: 'transfers/:transferWindowId',
