@@ -1,132 +1,135 @@
-import { Component } from '@angular/core';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { of } from 'rxjs';
+import { beforeEach, describe, expect, vi } from 'vitest';
 import { Match, MatchWeek } from '@app/core/api';
 import { MatchApiService } from '@app/core/api/match/match-api.service';
 import { MatchWeekApiService } from '@app/core/api/match-week/match-week-api.service';
-import { fakeMatch, fakeMatchWeek } from '@app/test';
+import { SeasonApiService } from '@app/core/api/season/season-api.service';
 import { LoadingService } from '@app/core/loading/loading.service';
 import { RouterService } from '@app/core/router/router.service';
-import { render, screen, waitFor } from '@testing-library/angular';
-import { of } from 'rxjs';
-import { expect, vi } from 'vitest';
+import { fakeMatch, fakeMatchWeek } from '@app/test';
 import { MatchWeekPageComponent } from './match-week-page.component';
 
-let matchWeek: MatchWeek;
-let matches: Match[];
-let matchWeekApi: MatchWeekApiService;
-let matchApi: MatchApiService;
-let loadingService: LoadingService;
-let routerService: RouterService;
-
-@Component({
-  template: ` <app-match-week [matchWeekId]="matchWeekId" />`,
-  standalone: true,
-  imports: [MatchWeekPageComponent],
-})
-class HostComponent {
-  matchWeekId: number | undefined = matchWeek.id;
-}
-
-@Component({
-  template: ` <app-match-week />`,
-  standalone: true,
-  imports: [MatchWeekPageComponent],
-})
-class NoIdHostComponent {}
-
-function makeProviders() {
-  return [
-    { provide: MatchWeekApiService, useValue: matchWeekApi },
-    { provide: MatchApiService, useValue: matchApi },
-    { provide: LoadingService, useValue: loadingService },
-    { provide: RouterService, useValue: routerService },
-  ];
-}
-
 describe('MatchWeekPageComponent', () => {
-  beforeEach(() => {
+  let fixture: ComponentFixture<MatchWeekPageComponent>;
+  let matchWeek: MatchWeek;
+  let matches: Match[];
+  let matchWeekApi: Partial<MatchWeekApiService>;
+  let matchApi: Partial<MatchApiService>;
+  let routerService: { navigateToMatchWeek: ReturnType<typeof vi.fn> };
+
+  async function setup() {
+    fixture = TestBed.createComponent(MatchWeekPageComponent);
+    fixture.componentRef.setInput('matchWeekId', matchWeek.id);
+    fixture.detectChanges();
+    await fixture.whenStable();
+  }
+
+  beforeEach(async () => {
+    vi.clearAllMocks();
+    HTMLElement.prototype.scrollIntoView = vi.fn();
+
     matchWeek = fakeMatchWeek();
-    matches = [fakeMatch(), fakeMatch()];
+    matches = [
+      {
+        ...fakeMatch(),
+        id: 1,
+        homeTeam: { ...fakeMatch().homeTeam, code: 'AAA' },
+        awayTeam: { ...fakeMatch().awayTeam, code: 'BBB' },
+      },
+      {
+        ...fakeMatch(),
+        id: 2,
+        homeTeam: { ...fakeMatch().homeTeam, code: 'CCC' },
+        awayTeam: { ...fakeMatch().awayTeam, code: 'DDD' },
+      },
+    ] as unknown as Match[];
 
     matchWeekApi = {
       getById: vi.fn().mockReturnValue(of(matchWeek)),
       getCurrentMatchWeek: vi.fn().mockReturnValue(of(matchWeek)),
-    } as unknown as MatchWeekApiService;
+      getMatchWeeksBySeasonId: vi.fn().mockReturnValue(of([matchWeek])),
+    };
 
     matchApi = {
       getMatchesByMatchWeekId: vi.fn().mockReturnValue(of(matches)),
-    } as unknown as MatchApiService;
+    };
 
-    loadingService = { register: vi.fn() } as unknown as LoadingService;
-    routerService = {
-      navigateToMatchWeek: vi.fn(),
-      navigateToMatch: vi.fn(),
-    } as unknown as RouterService;
+    routerService = { navigateToMatchWeek: vi.fn() };
+
+    await TestBed.configureTestingModule({
+      imports: [MatchWeekPageComponent],
+      providers: [
+        { provide: MatchWeekApiService, useValue: matchWeekApi },
+        { provide: MatchApiService, useValue: matchApi },
+        { provide: SeasonApiService, useValue: { getAll: vi.fn().mockReturnValue(of([])) } },
+        { provide: LoadingService, useValue: { register: vi.fn() } },
+        { provide: RouterService, useValue: routerService },
+      ],
+    }).compileComponents();
+
+    await setup();
   });
 
-  describe('with matchWeekId', () => {
-    beforeEach(async () => {
-      await render(HostComponent, { providers: makeProviders() });
-    });
-
-    it('renders', async () => {
-      await waitFor(() => {
-        expect(document.querySelector('.app-match-week-page')).toBeInTheDocument();
-      });
-    });
-
-    it('renders match week number', async () => {
-      await waitFor(() => {
-        expect(
-          screen.getByText(`Week ${matchWeek.matchWeekNumber}`, { exact: false }),
-        ).toBeInTheDocument();
-      });
-    });
-
-    it('renders season name', async () => {
-      await waitFor(() => {
-        expect(screen.getByText(matchWeek.season.name, { exact: false })).toBeInTheDocument();
-      });
-    });
-
-    it('renders matches card', async () => {
-      await waitFor(() => {
-        expect(screen.getByText('Premier League')).toBeInTheDocument();
-
-        for (const match of matches) {
-          expect(screen.getByText(match.homeTeam.code)).toBeInTheDocument();
-          expect(screen.getByText(match.awayTeam.code)).toBeInTheDocument();
-        }
-      });
-    });
-
-    it('calls getById with matchWeekId', () => {
-      expect(matchWeekApi.getById).toHaveBeenCalledWith(matchWeek.id);
-      expect(matchWeekApi.getCurrentMatchWeek).not.toHaveBeenCalled();
-    });
+  it('renders season name', () => {
+    expect(fixture.nativeElement.textContent).toContain(matchWeek.season.name);
   });
 
-  describe('without matchWeekId', () => {
-    beforeEach(async () => {
-      await render(NoIdHostComponent, { providers: makeProviders() });
-    });
+  it('renders matches card', () => {
+    expect(fixture.nativeElement.textContent).toContain('AAA');
+    expect(fixture.nativeElement.textContent).toContain('BBB');
+  });
 
-    it('calls getCurrentMatchWeek', () => {
-      expect(matchWeekApi.getCurrentMatchWeek).toHaveBeenCalled();
-      expect(matchWeekApi.getById).not.toHaveBeenCalled();
-    });
+  it('does not render matches card when there are no matches', async () => {
+    (matchApi.getMatchesByMatchWeekId as ReturnType<typeof vi.fn>).mockReturnValue(of([]));
 
-    it('renders match week number', async () => {
-      await waitFor(() => {
-        expect(
-          screen.getByText(`Week ${matchWeek.matchWeekNumber}`, { exact: false }),
-        ).toBeInTheDocument();
-      });
-    });
+    fixture.componentRef.setInput('matchWeekId', matchWeek.id + 1);
+    fixture.detectChanges();
+    await fixture.whenStable();
 
-    it('renders matches card', async () => {
-      await waitFor(() => {
-        expect(screen.getByText('Premier League')).toBeInTheDocument();
-      });
-    });
+    expect(fixture.nativeElement.querySelector('app-match-week-matches-card')).toBeNull();
+  });
+
+  it('calls getById with matchWeekId', () => {
+    expect(matchWeekApi.getById).toHaveBeenCalledWith(matchWeek.id);
+  });
+
+  it('calls getById again when matchWeekId input changes', async () => {
+    const newId = matchWeek.id + 1;
+
+    fixture.componentRef.setInput('matchWeekId', newId);
+    fixture.detectChanges();
+    await fixture.whenStable();
+
+    expect(matchWeekApi.getById).toHaveBeenCalledWith(newId);
+  });
+
+  it('calls getMatchWeeksBySeasonId with the match week season id', () => {
+    expect(matchWeekApi.getMatchWeeksBySeasonId).toHaveBeenCalledWith(matchWeek.season.id);
+  });
+
+  it('always calls getCurrentMatchWeek for current week indicator', () => {
+    expect(matchWeekApi.getCurrentMatchWeek).toHaveBeenCalled();
+  });
+
+  it('navigates to match week when a week is selected from scroll picker', () => {
+    const button = fixture.nativeElement.querySelector(`[data-id="${matchWeek.id}"]`);
+    button.click();
+
+    expect(routerService.navigateToMatchWeek).toHaveBeenCalledExactlyOnceWith(matchWeek.id);
+  });
+
+  it('toggles active class on Live button click', () => {
+    const liveButton = Array.from(
+      fixture.nativeElement.querySelectorAll('button') as NodeListOf<HTMLButtonElement>,
+    ).find((b) => b.textContent?.trim() === 'Live')!;
+
+    liveButton.click();
+    fixture.detectChanges();
+    expect(liveButton.classList).toContain('bg-primary');
+
+    liveButton.click();
+    fixture.detectChanges();
+    expect(liveButton.classList).not.toContain('bg-primary');
   });
 });
