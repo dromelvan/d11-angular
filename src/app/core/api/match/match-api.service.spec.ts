@@ -121,6 +121,92 @@ describe('MatchApiService', () => {
     });
   });
 
+  // getCurrentMatches -----------------------------------------------------------------------------
+
+  describe('getCurrentMatches', () => {
+    const matches = [fakeMatch(), fakeMatch()];
+    const response: { matches: typeof matches } = { matches };
+
+    it('calls get with current endpoint', async () => {
+      apiServiceMock.get = vi.fn().mockReturnValue(of(response)) as GetFn;
+
+      await firstValueFrom(matchApi.getCurrentMatches());
+
+      expect(apiServiceMock.get).toHaveBeenCalledExactlyOnceWith(
+        expect.objectContaining({
+          namespace: matchApi.namespace,
+          endpoint: 'current',
+        }),
+      );
+    });
+
+    it('maps the result', async () => {
+      apiServiceMock.get = vi.fn().mockReturnValue(of(response)) as GetFn;
+
+      const result = await firstValueFrom(matchApi.getCurrentMatches());
+
+      expect(result).toEqual(matches);
+    });
+
+    it('propagates errors', async () => {
+      const httpError = new Error('INTERNAL_SERVER_ERROR');
+      apiServiceMock.get = vi.fn().mockReturnValue(throwError(() => httpError)) as GetFn;
+
+      expect(firstValueFrom(matchApi.getCurrentMatches())).rejects.toThrow(httpError.message);
+    });
+
+    it('does not map the result on error', async () => {
+      apiServiceMock.get = vi
+        .fn()
+        .mockReturnValue(throwError(() => new Error('INTERNAL_SERVER_ERROR'))) as GetFn;
+
+      expect(firstValueFrom(matchApi.getCurrentMatches())).rejects.toBeInstanceOf(Error);
+    });
+  });
+
+  // getActiveMatches ------------------------------------------------------------------------------
+
+  describe('getActiveMatches', () => {
+    const matches = [fakeMatch(), fakeMatch()];
+    const response: { matches: typeof matches } = { matches };
+
+    it('calls get with active endpoint', async () => {
+      apiServiceMock.get = vi.fn().mockReturnValue(of(response)) as GetFn;
+
+      await firstValueFrom(matchApi.getActiveMatches());
+
+      expect(apiServiceMock.get).toHaveBeenCalledExactlyOnceWith(
+        expect.objectContaining({
+          namespace: matchApi.namespace,
+          endpoint: 'active',
+        }),
+      );
+    });
+
+    it('maps the result', async () => {
+      apiServiceMock.get = vi.fn().mockReturnValue(of(response)) as GetFn;
+
+      const result = await firstValueFrom(matchApi.getActiveMatches());
+
+      expect(result).toEqual(matches);
+    });
+
+    it('propagates errors', async () => {
+      const httpError = new Error('INTERNAL_SERVER_ERROR');
+      apiServiceMock.get = vi.fn().mockReturnValue(throwError(() => httpError)) as GetFn;
+
+      expect(firstValueFrom(matchApi.getActiveMatches())).rejects.toThrow(httpError.message);
+    });
+
+    it('does not map the result on error', async () => {
+      apiServiceMock.get = vi
+        .fn()
+        .mockReturnValue(throwError(() => new Error('INTERNAL_SERVER_ERROR'))) as GetFn;
+
+      expect(firstValueFrom(matchApi.getActiveMatches())).rejects.toBeInstanceOf(Error);
+    });
+  });
+
   // getPlayerMatchStatsByMatchId ------------------------------------------------------------------
 
   describe('getPlayerMatchStatsByMatchId', () => {

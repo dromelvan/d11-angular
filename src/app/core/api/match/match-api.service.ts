@@ -33,6 +33,18 @@ export class MatchApiService {
       .pipe(map((result) => result.matches));
   }
 
+  getCurrentMatches(): Observable<MatchBase[]> {
+    return this.apiService
+      .get<MatchesResponseBody>({ namespace: this.namespace, endpoint: 'current' })
+      .pipe(map((result) => result.matches));
+  }
+
+  getActiveMatches(): Observable<MatchBase[]> {
+    return this.apiService
+      .get<MatchesResponseBody>({ namespace: this.namespace, endpoint: 'active' })
+      .pipe(map((result) => result.matches));
+  }
+
   getPlayerMatchStatsByMatchId(matchId: number): Observable<PlayerMatchStat[]> {
     return this.apiService
       .get<PlayerMatchStatsResponseBody>({
