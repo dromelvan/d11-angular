@@ -1,4 +1,5 @@
 export * from './current/current-api.service';
+export * from './d11-match/d11-match-api.service';
 export * from './d11-team/d11-team-api.service';
 export * from './d11-team-season-stat/d11-team-season-stat-api.service';
 export * from './match/match-api.service';
@@ -6,6 +7,7 @@ export * from './match-week/match-week-api.service';
 export * from './model/country.model';
 export * from './model/current.model';
 export * from './model/d11-match-base.model';
+export * from './model/d11-match.model';
 export * from './model/d11-team-base.model';
 export * from './model/d11-team-season-stat.model';
 export * from './model/goal-base.model';
