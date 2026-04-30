@@ -1,0 +1,7 @@
+@if (scrollItems().length > 0) {
+  <app-scroll-picker
+    [items]="scrollItems()"
+    [selectedId]="selectedId()"
+    (selected)="onMatchWeekSelected($event)"
+  />
+}
