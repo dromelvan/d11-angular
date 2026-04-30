@@ -8,7 +8,7 @@ export class LocalStorageCachedObservable<T> {
   constructor(
     private readonly storageKey: string,
     private readonly sourceFactory: () => Observable<T>,
-    private readonly timeToLive?: number,
+    private readonly timeToLive?: number | (() => number),
   ) {
     this.prefixedStorageKey = `d11:${this.storageKey}`;
   }
@@ -36,13 +36,9 @@ export class LocalStorageCachedObservable<T> {
 
         return this.sourceFactory().pipe(
           tap((value) => {
+            const timeToLive = this.resolveTimeToLive();
             const payload =
-              this.timeToLive != null
-                ? {
-                    value,
-                    expiry: Date.now() + this.timeToLive,
-                  }
-                : { value };
+              timeToLive != null ? { value, expiry: Date.now() + timeToLive } : { value };
 
             try {
               localStorage.setItem(this.prefixedStorageKey, JSON.stringify(payload));
@@ -67,5 +63,10 @@ export class LocalStorageCachedObservable<T> {
   clear(): void {
     this.stream$ = undefined;
     localStorage.removeItem(this.prefixedStorageKey);
+  }
+
+  private resolveTimeToLive(): number | undefined {
+    if (this.timeToLive == null) return undefined;
+    return typeof this.timeToLive === 'function' ? this.timeToLive() : this.timeToLive;
   }
 }

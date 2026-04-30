@@ -81,6 +81,46 @@ describe('LocalStorageCachedObservable', () => {
     expect(parsed.expiry).toBeLessThanOrEqual(Date.now() + ttl);
   });
 
+  it('stores expiry time when TTL factory is provided', async () => {
+    const ttl = 5000;
+    const ttlFactory = vi.fn(() => ttl);
+    const cache = new LocalStorageCachedObservable(storageKey, () => of(testValue), ttlFactory);
+    const beforeTime = Date.now();
+
+    await firstValueFrom(cache.get());
+
+    const stored = localStorage.getItem(prefixedKey);
+    const parsed = JSON.parse(stored!);
+    expect(parsed.expiry).toBeDefined();
+    expect(parsed.expiry).toBeGreaterThanOrEqual(beforeTime + ttl);
+    expect(parsed.expiry).toBeLessThanOrEqual(Date.now() + ttl);
+    expect(ttlFactory).toHaveBeenCalledOnce();
+  });
+
+  it('calls TTL factory each time a value is stored', async () => {
+    let ttl = 5000;
+    const ttlFactory = vi.fn(() => ttl);
+    const newValue = { id: 2, name: 'fresh' };
+    const sourceFactory = vi
+      .fn()
+      .mockReturnValueOnce(of(testValue))
+      .mockReturnValueOnce(of(newValue));
+    const cache = new LocalStorageCachedObservable(storageKey, sourceFactory, ttlFactory);
+
+    await firstValueFrom(cache.get());
+    expect(ttlFactory).toHaveBeenCalledOnce();
+
+    ttl = 9000;
+    cache.clear();
+    const beforeSecondFetch = Date.now();
+    await firstValueFrom(cache.get());
+
+    const stored = localStorage.getItem(prefixedKey);
+    const parsed = JSON.parse(stored!);
+    expect(ttlFactory).toHaveBeenCalledTimes(2);
+    expect(parsed.expiry).toBeGreaterThanOrEqual(beforeSecondFetch + ttl);
+  });
+
   it('does not store expiry time when TTL is not provided', async () => {
     const cache = new LocalStorageCachedObservable(storageKey, () => of(testValue));
 
