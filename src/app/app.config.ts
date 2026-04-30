@@ -3,6 +3,7 @@ import { provideHttpClient, withFetch, withInterceptors } from '@angular/common/
 import { provideRouter, withComponentInputBinding } from '@angular/router';
 import { providePrimeNG } from 'primeng/config';
 import { authenticationInterceptor } from '@app/core/auth/authentication.interceptor';
+import { provideCurrentInitializer } from '@app/core/current/current.initializer';
 import { provideUserSessionInitializer } from '@app/core/auth/user-session.initializer';
 import { apiErrorInterceptor } from '@app/core/api/api-error.interceptor';
 import { routes } from './app.routes';
@@ -23,6 +24,7 @@ export const appConfig: ApplicationConfig = {
         preset: D11Light,
       },
     }),
+    provideCurrentInitializer(),
     provideUserSessionInitializer(),
     DialogService,
     MessageService,
