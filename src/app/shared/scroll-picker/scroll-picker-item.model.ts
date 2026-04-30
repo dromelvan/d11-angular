@@ -1,5 +1,7 @@
 export interface ScrollPickerItem {
   id: number;
   label: string;
-  sublabel: string;
+  date?: string;
+  sublabel?: string;
+  current?: boolean;
 }

@@ -8,6 +8,7 @@ import {
   output,
 } from '@angular/core';
 import { ScrollPickerItem } from './scroll-picker-item.model';
+import { SafeDatePipe } from '@app/shared/pipes';
 
 @Component({
   selector: 'app-scroll-picker',
@@ -18,6 +19,7 @@ import { ScrollPickerItem } from './scroll-picker-item.model';
       '[mask-image:linear-gradient(to_right,transparent,black_15%,black_85%,transparent)]',
   },
   templateUrl: './scroll-picker.component.html',
+  imports: [SafeDatePipe],
 })
 export class ScrollPickerComponent {
   items = input.required<ScrollPickerItem[]>();
