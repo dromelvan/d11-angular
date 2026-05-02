@@ -1,0 +1,33 @@
+<app-season-picker (season)="onSeasonSelected($event)" />
+
+<div class="flex items-center">
+  <button
+    (click)="active.set(!active())"
+    [ngClass]="active() ? 'bg-primary text-primary-contrast' : ''"
+    class="px-2 py-1 rounded-sm text-xs font-semibold border-none cursor-pointer outline-none min-w-12 h-9.5"
+    type="button"
+  >
+    Live
+  </button>
+
+  @if (season(); as selectedSeason) {
+    <app-match-week-scroll-picker
+      class="flex-1 min-w-0"
+      [seasonId]="selectedSeason.id"
+      [matchWeekId]="matchWeekId()"
+      (matchWeekSelected)="onMatchWeekSelected($event)"
+    />
+
+    <app-match-week-picker-button
+      [seasonId]="selectedSeason.id"
+      [matchWeekId]="matchWeekId()"
+      (matchWeekSelected)="onMatchWeekSelected($event)"
+    />
+  }
+</div>
+
+@if (active()) {
+  <app-match-week-matches />
+} @else if (matchWeekId()) {
+  <app-match-week-matches [matchWeekId]="matchWeekId()!" />
+}
