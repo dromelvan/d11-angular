@@ -34,14 +34,14 @@ describe('MatchWeekPageComponent', () => {
       {
         ...fakeMatch(),
         id: 1,
-        homeTeam: { ...fakeMatch().homeTeam, code: 'AAA' },
-        awayTeam: { ...fakeMatch().awayTeam, code: 'BBB' },
+        homeTeam: { ...fakeMatch().homeTeam, name: 'Team1' },
+        awayTeam: { ...fakeMatch().awayTeam, name: 'Team2' },
       },
       {
         ...fakeMatch(),
         id: 2,
-        homeTeam: { ...fakeMatch().homeTeam, code: 'CCC' },
-        awayTeam: { ...fakeMatch().awayTeam, code: 'DDD' },
+        homeTeam: { ...fakeMatch().homeTeam, name: 'Team3' },
+        awayTeam: { ...fakeMatch().awayTeam, name: 'Team4' },
       },
     ] as unknown as Match[];
 
@@ -76,8 +76,8 @@ describe('MatchWeekPageComponent', () => {
   });
 
   it('renders matches card', () => {
-    expect(fixture.nativeElement.textContent).toContain('AAA');
-    expect(fixture.nativeElement.textContent).toContain('BBB');
+    expect(fixture.nativeElement.textContent).toContain('Team1');
+    expect(fixture.nativeElement.textContent).toContain('Team2');
   });
 
   it('calls getById with matchWeekId', () => {

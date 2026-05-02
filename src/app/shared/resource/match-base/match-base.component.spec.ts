@@ -79,7 +79,11 @@ describe('MatchBaseComponent when team is the home team', () => {
 
   beforeEach(async () => {
     team = fakeTeamBase();
-    match = { ...fakeMatchBase(), homeTeam: { ...fakeTeamBase(), id: team.id } };
+    match = {
+      ...fakeMatchBase(),
+      homeTeam: { ...fakeTeamBase(), id: team.id },
+      awayTeam: { ...fakeTeamBase(), id: team.id + 1 },
+    };
     await renderMatchBase(match, team);
   });
 
@@ -100,7 +104,11 @@ describe('MatchBaseComponent when team is the away team', () => {
 
   beforeEach(async () => {
     team = fakeTeamBase();
-    match = { ...fakeMatchBase(), awayTeam: { ...fakeTeamBase(), id: team.id } };
+    match = {
+      ...fakeMatchBase(),
+      homeTeam: { ...fakeTeamBase(), id: team.id + 1 },
+      awayTeam: { ...fakeTeamBase(), id: team.id },
+    };
     await renderMatchBase(match, team);
   });
 

@@ -27,9 +27,10 @@ describe('PlayerCareerCardComponent', () => {
 
   beforeEach(async () => {
     playerSeasonStats = [fakePlayerSeasonStat(), fakePlayerSeasonStat()];
-    playerSeasonStats.forEach((s) => {
+    playerSeasonStats.forEach((s, index) => {
       s.rating = 750;
       s.team.dummy = false;
+      s.season.shortName = `2${index}-2${index + 1}`;
     });
     await renderComponent(playerSeasonStats);
   });
