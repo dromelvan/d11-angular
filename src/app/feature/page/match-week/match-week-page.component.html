@@ -53,8 +53,6 @@
   />
 
   <div class="app-col max-w-sm mx-auto w-full pb-4">
-    @if (model().matches.length > 0) {
-      <app-match-week-matches-card [matches]="model().matches" />
-    }
+    <app-match-week-matches-card [matchWeekId]="matchWeekId()" />
   </div>
 }

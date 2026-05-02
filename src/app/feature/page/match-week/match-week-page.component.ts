@@ -12,8 +12,7 @@ import {
   viewChild,
 } from '@angular/core';
 import { rxResource } from '@angular/core/rxjs-interop';
-import { MatchBase, MatchWeek } from '@app/core/api';
-import { MatchApiService } from '@app/core/api/match/match-api.service';
+import { MatchWeek } from '@app/core/api';
 import { MatchWeekApiService } from '@app/core/api/match-week/match-week-api.service';
 import { LoadingService } from '@app/core/loading/loading.service';
 import { RouterService } from '@app/core/router/router.service';
@@ -47,7 +46,6 @@ export class MatchWeekPageComponent {
     hasPreviousSeason: this.seasonNavigatorService.hasPrevious,
     hasNextSeason: this.seasonNavigatorService.hasNext,
     matchWeek: this.matchWeek(),
-    matches: this.rxMatches.value() ?? [],
     scrollItems: this.scrollItems(),
     matchWeeks: this.rxMatchWeeks.value() ?? [],
     currentMatchWeekId: this.rxCurrentMatchWeek.value()?.id,
@@ -68,16 +66,10 @@ export class MatchWeekPageComponent {
     stream: ({ params }) => this.matchWeekApiService.getMatchWeeksBySeasonId(params!),
   });
 
-  private rxMatches = rxResource<MatchBase[], number | undefined>({
-    params: () => this.rxMatchWeek.value()?.id,
-    stream: ({ params }) => this.matchApiService.getMatchesByMatchWeekId(params!),
-  });
-
   private isLoading = computed(
     () =>
       this.rxMatchWeek.isLoading() ||
       this.rxCurrentMatchWeek.isLoading() ||
-      this.rxMatches.isLoading() ||
       this.rxMatchWeeks.isLoading(),
   );
 
@@ -96,7 +88,6 @@ export class MatchWeekPageComponent {
   private matchWeekPickerDrawer = viewChild.required(MatchWeekPickerDrawerComponent);
 
   private matchWeekApiService = inject(MatchWeekApiService);
-  private matchApiService = inject(MatchApiService);
   private seasonNavigatorService = inject(SeasonNavigatorService);
   private loadingService = inject(LoadingService);
   private routerService = inject(RouterService);

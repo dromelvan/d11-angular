@@ -80,16 +80,6 @@ describe('MatchWeekPageComponent', () => {
     expect(fixture.nativeElement.textContent).toContain('BBB');
   });
 
-  it('does not render matches card when there are no matches', async () => {
-    (matchApi.getMatchesByMatchWeekId as ReturnType<typeof vi.fn>).mockReturnValue(of([]));
-
-    fixture.componentRef.setInput('matchWeekId', matchWeek.id + 1);
-    fixture.detectChanges();
-    await fixture.whenStable();
-
-    expect(fixture.nativeElement.querySelector('app-match-week-matches-card')).toBeNull();
-  });
-
   it('calls getById with matchWeekId', () => {
     expect(matchWeekApi.getById).toHaveBeenCalledWith(matchWeek.id);
   });
