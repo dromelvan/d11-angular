@@ -12,7 +12,7 @@ describe('NavbarIconComponent', () => {
   const current = fakeCurrent();
 
   const mockRouterService = {
-    navigateToMatchWeek: vi.fn(),
+    navigateToMatches: vi.fn(),
     navigateToSeason: vi.fn(),
     navigateToPlayers: vi.fn(),
     navigateToTransferWindow: vi.fn(),
@@ -50,12 +50,10 @@ describe('NavbarIconComponent', () => {
     expect(screen.getByText('Matches')).toBeInTheDocument();
   });
 
-  it('calls navigateToMatchWeek with current match week id on Matches click', () => {
+  it('calls navigateToMatches on Matches click', () => {
     screen.getByText('Matches').click();
 
-    expect(mockRouterService.navigateToMatchWeek).toHaveBeenCalledExactlyOnceWith(
-      current.matchWeek!.id,
-    );
+    expect(mockRouterService.navigateToMatches).toHaveBeenCalledOnce();
   });
 
   it('renders Tables link', () => {

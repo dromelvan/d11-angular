@@ -32,7 +32,7 @@ export class NavbarIconComponent {
 
   protected navigate(item: NavItem): void {
     if (item.navigateTo === 'currentMatchWeek') {
-      this.routerService.navigateToMatchWeek(this.rxCurrent.value()?.matchWeek?.id as number);
+      this.routerService.navigateToMatches();
     } else if (item.navigateTo === 'players') {
       this.routerService.navigateToPlayers();
     } else if (item.navigateTo === 'table') {
