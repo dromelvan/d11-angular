@@ -39,7 +39,11 @@ export class RouterService {
   }
 
   public navigateToMatch(matchId: number, push = true): Promise<boolean> {
-    this.updateStack('match-page', push);
+    if (!push) {
+      this.stack.set([]);
+    } else if (!this.router.url.match(/^\/matches\/\d/)) {
+      this.stack.update((s) => [...s, this.router.url]);
+    }
     return this.router.navigate(['matches', matchId]);
   }
 

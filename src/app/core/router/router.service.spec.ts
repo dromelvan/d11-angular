@@ -205,6 +205,7 @@ describe('RouterService', () => {
             { path: 'match-weeks', component: BlankComponent },
             { path: 'match-weeks/:id', component: BlankComponent },
             { path: 'matches', component: BlankComponent },
+            { path: 'matches/week/:id', component: BlankComponent },
             { path: 'matches/:id', component: BlankComponent },
             { path: 'players/:id', component: BlankComponent },
             { path: 'seasons', component: BlankComponent },
@@ -225,6 +226,24 @@ describe('RouterService', () => {
       await service.navigateToMatch(1);
 
       expect(service.hasStack()).toBe(true);
+    });
+
+    it('pushes to stack when navigating from match week matches to a match', async () => {
+      const router = TestBed.inject(Router);
+      await router.navigate(['/matches/week/1']);
+
+      await service.navigateToMatch(1);
+
+      expect(service.hasStack()).toBe(true);
+    });
+
+    it('does not push to stack when navigating from one match to another', async () => {
+      const router = TestBed.inject(Router);
+      await router.navigate(['/matches/1']);
+
+      await service.navigateToMatch(2);
+
+      expect(service.hasStack()).toBe(false);
     });
 
     it('does not push to stack on navigation to same component', async () => {
