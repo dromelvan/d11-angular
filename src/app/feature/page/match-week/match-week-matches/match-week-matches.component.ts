@@ -1,15 +1,16 @@
+import { TitleCasePipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, inject, input } from '@angular/core';
 import { rxResource } from '@angular/core/rxjs-interop';
 import { MatchBase, Status } from '@app/core/api';
 import { MatchApiService } from '@app/core/api/match/match-api.service';
 import { RouterService } from '@app/core/router/router.service';
+import { TeamImgComponent } from '@app/shared/img/team-img/team-img.component';
 import { SafeDatePipe } from '@app/shared/pipes';
-import { MatchBaseComponent } from '@app/shared/resource/match-base/match-base.component';
 
 @Component({
   selector: 'app-match-week-matches',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [MatchBaseComponent, SafeDatePipe],
+  imports: [TeamImgComponent, SafeDatePipe, TitleCasePipe],
   templateUrl: './match-week-matches.component.html',
 })
 export class MatchWeekMatchesComponent {
@@ -40,7 +41,7 @@ export class MatchWeekMatchesComponent {
     }
 
     if (postponed.length > 0) {
-      groups.push({ date: 'Postponed', matches: postponed });
+      groups.push({ date: Status.POSTPONED, matches: postponed });
     }
 
     return groups;

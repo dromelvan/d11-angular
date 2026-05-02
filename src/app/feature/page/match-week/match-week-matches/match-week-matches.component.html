@@ -1,28 +1,56 @@
-<div class="grid grid-cols-[3rem_1fr_3rem] gap-0">
-  @for (group of groupedMatches(); track group.date; let first = $first) {
-    <div [class.app-grid-header]="first" [class.app-grid-sub-header]="!first" class="col-span-3">
-      {{ group.date === 'Postponed' ? 'Postponed' : (group.date | safeDate: 'EEEE, MMMM d') }}
+@if (groupedMatches().length > 0) {
+  <div class="app-col px-2 py-4">
+    <div class="text-xl font-semibold">Premier League</div>
+    <div class="grid grid-cols-[auto_1fr_auto] gap-x-2">
+      @for (group of groupedMatches(); track group.date; let first = $first) {
+        <div
+          [class.app-grid-header]="first"
+          [class.app-grid-sub-header]="!first"
+          class="col-span-3"
+        >
+          {{
+            group.date === Status.POSTPONED
+              ? (Status.POSTPONED | titlecase)
+              : (group.date | safeDate: 'EEEE, MMMM d')
+          }}
+        </div>
+        @for (match of group.matches; track match.id; let last = $last) {
+          <div
+            class="col-span-3 grid grid-cols-subgrid grid-rows-2 cursor-pointer"
+            [class.app-grid-separator]="!last"
+            (click)="onClick(match.id)"
+          >
+            <div class="app-col row-span-2 items-center justify-center gap-0.5 text-xs py-2.5">
+              <span>{{ match.datetime | safeDate: 'HH:mm' }}</span>
+              @if (
+                match.status === Status.ACTIVE ||
+                match.status === Status.FULL_TIME ||
+                match.status === Status.FINISHED
+              ) {
+                <span>{{ match.elapsed }}</span>
+              }
+            </div>
+            <div class="app-flex items-center gap-1.5 text-sm pt-2.5 pb-0.5">
+              <app-team-img [team]="match.homeTeam" width="20" />
+              <span>{{ match.homeTeam.name }}</span>
+            </div>
+            <div class="app-flex items-center justify-end text-sm pt-2.5 pb-0.5">
+              @if (match.status !== Status.PENDING && match.status !== Status.POSTPONED) {
+                {{ match.homeTeamGoalsScored }}
+              }
+            </div>
+            <div class="app-flex items-center gap-1.5 text-sm pb-2.5 pt-0.5">
+              <app-team-img [team]="match.awayTeam" width="20" />
+              <span>{{ match.awayTeam.name }}</span>
+            </div>
+            <div class="app-flex items-center justify-end text-sm pb-2.5 pt-0.5">
+              @if (match.status !== Status.PENDING && match.status !== Status.POSTPONED) {
+                {{ match.awayTeamGoalsScored }}
+              }
+            </div>
+          </div>
+        }
+      }
     </div>
-    @for (match of group.matches; track match.id; let last = $last) {
-      <div
-        class="col-span-3 grid grid-cols-subgrid cursor-pointer"
-        [class.app-grid-separator]="!last"
-        (click)="onClick(match.id)"
-      >
-        <div class="app-grid-cell text-xs tabular-nums">
-          {{ match.datetime | safeDate: 'HH:mm' }}
-        </div>
-        <app-match-base class="app-grid-cell" [match]="match" />
-        <div class="app-grid-cell text-xs justify-end">
-          @if (
-            match.status === Status.ACTIVE ||
-            match.status === Status.FULL_TIME ||
-            match.status === Status.FINISHED
-          ) {
-            <span>{{ match.elapsed }}</span>
-          }
-        </div>
-      </div>
-    }
-  }
-</div>
+  </div>
+}

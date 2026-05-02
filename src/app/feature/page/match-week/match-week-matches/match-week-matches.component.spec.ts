@@ -1,4 +1,3 @@
-import { DatePipe } from '@angular/common';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { MatchBase, Status } from '@app/core/api';
 import { MatchApiService } from '@app/core/api/match/match-api.service';
@@ -10,6 +9,14 @@ import { MatchWeekMatchesComponent } from './match-week-matches.component';
 
 const mockRouterService = { navigateToMatch: vi.fn() };
 const mockMatchApiService = { getMatchesByMatchWeekId: vi.fn(), getActiveMatches: vi.fn() };
+
+function formatDateHeader(dateStr: string): string {
+  return new Intl.DateTimeFormat('en-US', {
+    weekday: 'long',
+    month: 'long',
+    day: 'numeric',
+  }).format(new Date(dateStr));
+}
 
 describe('MatchWeekMatchesComponent', () => {
   let fixture: ComponentFixture<MatchWeekMatchesComponent>;
@@ -31,13 +38,13 @@ describe('MatchWeekMatchesComponent', () => {
     matches = [
       {
         ...m1,
-        homeTeam: { ...m1.homeTeam, code: 'AAA' },
-        awayTeam: { ...m1.awayTeam, code: 'BBB' },
+        homeTeam: { ...m1.homeTeam, name: 'Team1' },
+        awayTeam: { ...m1.awayTeam, name: 'Team2' },
       },
       {
         ...m2,
-        homeTeam: { ...m2.homeTeam, code: 'CCC' },
-        awayTeam: { ...m2.awayTeam, code: 'DDD' },
+        homeTeam: { ...m2.homeTeam, name: 'Team3' },
+        awayTeam: { ...m2.awayTeam, name: 'Team4' },
       },
     ];
     mockMatchApiService.getMatchesByMatchWeekId.mockReturnValue(of(matches));
@@ -63,15 +70,15 @@ describe('MatchWeekMatchesComponent', () => {
     expect(mockMatchApiService.getActiveMatches).not.toHaveBeenCalled();
   });
 
-  it('renders home team code for each match', () => {
+  it('renders home team name for each match', () => {
     for (const match of matches) {
-      expect(fixture.nativeElement.textContent).toContain(match.homeTeam.code);
+      expect(fixture.nativeElement.textContent).toContain(match.homeTeam.name);
     }
   });
 
-  it('renders away team code for each match', () => {
+  it('renders away team name for each match', () => {
     for (const match of matches) {
-      expect(fixture.nativeElement.textContent).toContain(match.awayTeam.code);
+      expect(fixture.nativeElement.textContent).toContain(match.awayTeam.name);
     }
   });
 
@@ -79,7 +86,7 @@ describe('MatchWeekMatchesComponent', () => {
     const rows = Array.from<HTMLElement>(
       fixture.nativeElement.querySelectorAll('.col-span-3.grid'),
     );
-    const row = rows.find((element) => element.textContent?.includes(matches[0].homeTeam.code))!;
+    const row = rows.find((element) => element.textContent?.includes(matches[0].homeTeam.name))!;
     row.click();
     expect(mockRouterService.navigateToMatch).toHaveBeenCalledExactlyOnceWith(matches[0].id);
   });
@@ -87,15 +94,15 @@ describe('MatchWeekMatchesComponent', () => {
   // Kickoff time ---------------------------------------------------------------------------------
 
   describe('kickoff time', () => {
-    beforeEach(async () => {
-      matches = [{ ...fakeMatchBase(), status: Status.PENDING }];
+    it('renders in HH:mm format', async () => {
+      const datetime = '2025-06-15T14:30:00.000Z';
+      matches = [{ ...fakeMatchBase(), status: Status.PENDING, datetime }];
       mockMatchApiService.getMatchesByMatchWeekId.mockReturnValue(of(matches));
       await setup(1);
-    });
 
-    it('renders in HH:mm format', () => {
-      const formatted = new DatePipe('en-US').transform(matches[0].datetime, 'HH:mm');
-      expect(fixture.nativeElement.textContent).toContain(formatted!);
+      const date = new Date(datetime);
+      const expected = `${date.getHours().toString().padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')}`;
+      expect(fixture.nativeElement.textContent).toContain(expected);
     });
   });
 
@@ -135,12 +142,95 @@ describe('MatchWeekMatchesComponent', () => {
     });
   });
 
+  // Goals ----------------------------------------------------------------------------------------
+
+  describe('goals', () => {
+    it('renders for active match', async () => {
+      matches = [
+        {
+          ...fakeMatchBase(),
+          status: Status.ACTIVE,
+          homeTeamGoalsScored: 101,
+          awayTeamGoalsScored: 103,
+        },
+      ];
+      mockMatchApiService.getMatchesByMatchWeekId.mockReturnValue(of(matches));
+      await setup(1);
+
+      expect(fixture.nativeElement.textContent).toContain('101');
+      expect(fixture.nativeElement.textContent).toContain('103');
+    });
+
+    it('renders for full time match', async () => {
+      matches = [
+        {
+          ...fakeMatchBase(),
+          status: Status.FULL_TIME,
+          homeTeamGoalsScored: 101,
+          awayTeamGoalsScored: 103,
+        },
+      ];
+      mockMatchApiService.getMatchesByMatchWeekId.mockReturnValue(of(matches));
+      await setup(1);
+
+      expect(fixture.nativeElement.textContent).toContain('101');
+      expect(fixture.nativeElement.textContent).toContain('103');
+    });
+
+    it('renders for finished match', async () => {
+      matches = [
+        {
+          ...fakeMatchBase(),
+          status: Status.FINISHED,
+          homeTeamGoalsScored: 101,
+          awayTeamGoalsScored: 103,
+        },
+      ];
+      mockMatchApiService.getMatchesByMatchWeekId.mockReturnValue(of(matches));
+      await setup(1);
+
+      expect(fixture.nativeElement.textContent).toContain('101');
+      expect(fixture.nativeElement.textContent).toContain('103');
+    });
+
+    it('does not render for pending match', async () => {
+      matches = [
+        {
+          ...fakeMatchBase(),
+          status: Status.PENDING,
+          homeTeamGoalsScored: 101,
+          awayTeamGoalsScored: 103,
+        },
+      ];
+      mockMatchApiService.getMatchesByMatchWeekId.mockReturnValue(of(matches));
+      await setup(1);
+
+      expect(fixture.nativeElement.textContent).not.toContain('101');
+      expect(fixture.nativeElement.textContent).not.toContain('103');
+    });
+
+    it('does not render for postponed match', async () => {
+      matches = [
+        {
+          ...fakeMatchBase(),
+          status: Status.POSTPONED,
+          homeTeamGoalsScored: 101,
+          awayTeamGoalsScored: 103,
+        },
+      ];
+      mockMatchApiService.getMatchesByMatchWeekId.mockReturnValue(of(matches));
+      await setup(1);
+
+      expect(fixture.nativeElement.textContent).not.toContain('101');
+      expect(fixture.nativeElement.textContent).not.toContain('103');
+    });
+  });
+
   // Date grouping --------------------------------------------------------------------------------
 
   describe('date grouping', () => {
     const date1 = '2025-03-15';
     const date2 = '2025-03-16';
-    const datePipe = new DatePipe('en-US');
 
     it('renders date headers in order', async () => {
       matches = [
@@ -150,8 +240,8 @@ describe('MatchWeekMatchesComponent', () => {
       mockMatchApiService.getMatchesByMatchWeekId.mockReturnValue(of(matches));
       await setup(1);
 
-      const formatted1 = datePipe.transform(date1, 'EEEE, MMMM d')!;
-      const formatted2 = datePipe.transform(date2, 'EEEE, MMMM d')!;
+      const formatted1 = formatDateHeader(date1);
+      const formatted2 = formatDateHeader(date2);
       const headers = Array.from(
         fixture.nativeElement.querySelectorAll('.app-grid-header, .app-grid-sub-header'),
       ).map((element) => (element as HTMLElement).textContent?.trim());
@@ -162,22 +252,26 @@ describe('MatchWeekMatchesComponent', () => {
     });
 
     it('sorts matches by datetime within a group', async () => {
+      const earlyBase = fakeMatchBase();
+      const lateBase = fakeMatchBase();
       const early = {
-        ...fakeMatchBase(),
+        ...earlyBase,
         status: Status.FINISHED,
         datetime: `${date1}T12:00:00.000Z`,
+        homeTeam: { ...earlyBase.homeTeam, name: 'Team1' },
       };
       const late = {
-        ...fakeMatchBase(),
+        ...lateBase,
         status: Status.FINISHED,
         datetime: `${date1}T17:00:00.000Z`,
+        homeTeam: { ...lateBase.homeTeam, name: 'Team2' },
       };
       mockMatchApiService.getMatchesByMatchWeekId.mockReturnValue(of([late, early]));
       await setup(1);
 
       const rows = fixture.nativeElement.querySelectorAll('.col-span-3.grid');
-      expect(rows[0].textContent).toContain(early.homeTeam.code);
-      expect(rows[1].textContent).toContain(late.homeTeam.code);
+      expect(rows[0].textContent).toContain(early.homeTeam.name);
+      expect(rows[1].textContent).toContain(late.homeTeam.name);
     });
   });
 
@@ -227,7 +321,7 @@ describe('MatchWeekMatchesComponent', () => {
     });
 
     it('renders matches from getActiveMatches', () => {
-      expect(fixture.nativeElement.textContent).toContain(matches[0].homeTeam.code);
+      expect(fixture.nativeElement.textContent).toContain(matches[0].homeTeam.name);
     });
   });
 });
