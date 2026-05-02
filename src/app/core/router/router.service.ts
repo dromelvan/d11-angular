@@ -39,7 +39,7 @@ export class RouterService {
   }
 
   public navigateToMatch(matchId: number, push = true): Promise<boolean> {
-    this.updateStack('matches', push);
+    this.updateStack('match-page', push);
     return this.router.navigate(['matches', matchId]);
   }
 
@@ -62,6 +62,16 @@ export class RouterService {
   public navigateToLogin(): Promise<boolean> {
     this.stack.set([]);
     return this.router.navigate(['login']);
+  }
+
+  public navigateToMatches(): Promise<boolean> {
+    this.stack.set([]);
+    return this.router.navigate(['matches']);
+  }
+
+  public navigateToMatchWeekMatches(matchWeekId: number): Promise<boolean> {
+    this.stack.set([]);
+    return this.router.navigate(['matches', 'week', matchWeekId]);
   }
 
   public navigateToMore(): Promise<boolean> {

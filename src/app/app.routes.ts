@@ -1,4 +1,6 @@
-import { Routes } from '@angular/router';
+import { inject } from '@angular/core';
+import { Router, Routes } from '@angular/router';
+import { CurrentService } from '@app/core/current/current.service';
 
 export const routes: Routes = [
   {
@@ -22,6 +24,30 @@ export const routes: Routes = [
     loadComponent: () =>
       import('@app/feature/page/player/player-page.component').then((m) => m.PlayerPageComponent),
     data: { section: 'Players' },
+  },
+  {
+    path: 'matches',
+    canActivate: [
+      () => {
+        const currentService = inject(CurrentService);
+        const router = inject(Router);
+        const matchWeekId = currentService.matchWeek()?.id;
+        if (matchWeekId == null) return true;
+        return router.createUrlTree(['matches', 'week', matchWeekId]);
+      },
+    ],
+    loadComponent: () =>
+      import('@app/feature/page/matches/matches-page.component').then(
+        (m) => m.MatchesPageComponent,
+      ),
+  },
+  {
+    path: 'matches/week/:matchWeekId',
+    loadComponent: () =>
+      import('@app/feature/page/matches/matches-page.component').then(
+        (m) => m.MatchesPageComponent,
+      ),
+    data: { section: 'Matches' },
   },
   {
     path: 'matches/:matchId',

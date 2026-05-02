@@ -118,6 +118,21 @@ describe('RouterService', () => {
     expect(result).toBe(true);
   });
 
+  it('should navigate to matches', async () => {
+    const result = await service.navigateToMatches();
+
+    expect(mockRouter.navigate).toHaveBeenCalledWith(['matches']);
+    expect(result).toBe(true);
+  });
+
+  it('should navigate to match week matches', async () => {
+    const matchWeekId = 1;
+    const result = await service.navigateToMatchWeekMatches(matchWeekId);
+
+    expect(mockRouter.navigate).toHaveBeenCalledWith(['matches', 'week', matchWeekId]);
+    expect(result).toBe(true);
+  });
+
   it('should navigate to login', async () => {
     const result = await service.navigateToLogin();
 
@@ -189,6 +204,7 @@ describe('RouterService', () => {
             { path: '', component: BlankComponent },
             { path: 'match-weeks', component: BlankComponent },
             { path: 'match-weeks/:id', component: BlankComponent },
+            { path: 'matches', component: BlankComponent },
             { path: 'matches/:id', component: BlankComponent },
             { path: 'players/:id', component: BlankComponent },
             { path: 'seasons', component: BlankComponent },
@@ -245,6 +261,16 @@ describe('RouterService', () => {
       const result = await service.navigateToPrevious();
 
       expect(result).toBe(false);
+    });
+
+    it('clears the stack when navigating to a flat route', async () => {
+      const router = TestBed.inject(Router);
+      await router.navigate(['/match-weeks/1']);
+      await service.navigateToMatch(1);
+
+      await service.navigateToMatches();
+
+      expect(service.hasStack()).toBe(false);
     });
 
     it('clearStack empties the stack', async () => {
