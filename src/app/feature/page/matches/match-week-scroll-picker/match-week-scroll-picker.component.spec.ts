@@ -122,7 +122,7 @@ describe('MatchWeekScrollPickerComponent', () => {
   });
 
   it('defaults to the first match week when the current match week is not in the season', async () => {
-    const outsideMatchWeek = fakeMatchWeek();
+    const outsideMatchWeek = { ...fakeMatchWeek(), id: 99999 };
     mockCurrentService.matchWeek.set(outsideMatchWeek);
 
     fixture = TestBed.createComponent(MatchWeekScrollPickerComponent);
