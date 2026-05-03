@@ -14,8 +14,8 @@
               : (group.date | safeDate: 'EEEE, MMMM d')
           }}
         </div>
-        @for (match of group.matches; track match.id; let last = $last) {
-          <app-d11-match-result-col [match]="match" [isLast]="last" />
+        @for (d11Match of group.matches; track d11Match.id; let last = $last) {
+          <app-d11-match-result-col [d11Match]="d11Match" [isLast]="last" />
         }
       }
     </div>

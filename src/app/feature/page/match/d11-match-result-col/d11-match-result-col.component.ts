@@ -17,27 +17,27 @@ import { SafeDatePipe } from '@app/shared/pipes';
   },
 })
 export class D11MatchResultColComponent {
-  match = input.required<D11MatchBase>();
+  d11Match = input.required<D11MatchBase>();
   isLast = input<boolean>(false);
 
   protected readonly Status = Status;
 
   protected model = computed(() => {
-    const match = this.match();
-    const homeDiff = match.homeTeamGoalsScored - match.previousHomeTeamGoalsScored;
-    const awayDiff = match.awayTeamGoalsScored - match.previousAwayTeamGoalsScored;
+    const d11Match = this.d11Match();
+    const homeDiff = d11Match.homeTeamGoalsScored - d11Match.previousHomeTeamGoalsScored;
+    const awayDiff = d11Match.awayTeamGoalsScored - d11Match.previousAwayTeamGoalsScored;
     return {
-      match,
+      d11Match: d11Match,
       homeDiff,
       awayDiff,
-      showElapsed: [Status.ACTIVE, Status.FULL_TIME, Status.FINISHED].includes(match.status),
-      showGoals: match.status !== Status.PENDING && match.status !== Status.POSTPONED,
+      showElapsed: [Status.ACTIVE, Status.FULL_TIME, Status.FINISHED].includes(d11Match.status),
+      showGoals: d11Match.status !== Status.PENDING && d11Match.status !== Status.POSTPONED,
     };
   });
 
   private routerService = inject(RouterService);
 
   protected onClick(): void {
-    this.routerService.navigateToD11Match(this.match().id);
+    this.routerService.navigateToD11Match(this.d11Match().id);
   }
 }

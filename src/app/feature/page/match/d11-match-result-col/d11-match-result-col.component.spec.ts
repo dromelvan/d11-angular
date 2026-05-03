@@ -10,9 +10,9 @@ const mockRouterService = { navigateToD11Match: vi.fn() };
 describe('D11MatchResultColComponent', () => {
   let fixture: ComponentFixture<D11MatchResultColComponent>;
 
-  async function setup(matchInput: D11MatchBase = fakeD11MatchBase(), isLast = true) {
+  async function setup(d11MatchInput: D11MatchBase = fakeD11MatchBase(), isLast = true) {
     fixture = TestBed.createComponent(D11MatchResultColComponent);
-    fixture.componentRef.setInput('match', matchInput);
+    fixture.componentRef.setInput('d11Match', d11MatchInput);
     fixture.componentRef.setInput('isLast', isLast);
     fixture.detectChanges();
     await fixture.whenStable();
