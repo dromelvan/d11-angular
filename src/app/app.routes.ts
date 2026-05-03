@@ -56,6 +56,14 @@ export const routes: Routes = [
     data: { section: 'Matches' },
   },
   {
+    path: 'd11-matches/:d11MatchId',
+    loadComponent: () =>
+      import('@app/feature/page/d11-match/d11-match-page.component').then(
+        (m) => m.D11MatchPageComponent,
+      ),
+    data: { section: 'D11 Matches' },
+  },
+  {
     path: 'match-weeks/:matchWeekId',
     loadComponent: () =>
       import('@app/feature/page/match-week/match-week-page.component').then(

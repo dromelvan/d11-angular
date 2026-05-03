@@ -42,6 +42,14 @@ describe('RouterService', () => {
     expect(result).toBe(true);
   });
 
+  it('should navigate to D11 match', async () => {
+    const d11MatchId = 1;
+    const result = await service.navigateToD11Match(d11MatchId);
+
+    expect(mockRouter.navigate).toHaveBeenCalledWith(['d11-matches', d11MatchId]);
+    expect(result).toBe(true);
+  });
+
   it('should navigate to match week', async () => {
     const matchWeekId = 1;
     const result = await service.navigateToMatchWeek(matchWeekId);
@@ -207,6 +215,7 @@ describe('RouterService', () => {
             { path: 'matches', component: BlankComponent },
             { path: 'matches/week/:id', component: BlankComponent },
             { path: 'matches/:id', component: BlankComponent },
+            { path: 'd11-matches/:id', component: BlankComponent },
             { path: 'players/:id', component: BlankComponent },
             { path: 'seasons', component: BlankComponent },
           ]),
@@ -242,6 +251,24 @@ describe('RouterService', () => {
       await router.navigate(['/matches/1']);
 
       await service.navigateToMatch(2);
+
+      expect(service.hasStack()).toBe(false);
+    });
+
+    it('pushes to stack when navigating from match week matches to a D11 match', async () => {
+      const router = TestBed.inject(Router);
+      await router.navigate(['/matches/week/1']);
+
+      await service.navigateToD11Match(1);
+
+      expect(service.hasStack()).toBe(true);
+    });
+
+    it('does not push to stack when navigating from one D11 match to another', async () => {
+      const router = TestBed.inject(Router);
+      await router.navigate(['/d11-matches/1']);
+
+      await service.navigateToD11Match(2);
 
       expect(service.hasStack()).toBe(false);
     });

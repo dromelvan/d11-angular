@@ -47,6 +47,15 @@ export class RouterService {
     return this.router.navigate(['matches', matchId]);
   }
 
+  public navigateToD11Match(d11MatchId: number, push = true): Promise<boolean> {
+    if (!push) {
+      this.stack.set([]);
+    } else if (!this.router.url.match(/^\/d11-matches\/\d/)) {
+      this.stack.update((s) => [...s, this.router.url]);
+    }
+    return this.router.navigate(['d11-matches', d11MatchId]);
+  }
+
   public navigateToPlayers(seasonId?: number): Promise<boolean> {
     this.stack.set([]);
     const extras = seasonId ? { queryParams: { seasonId } } : {};
