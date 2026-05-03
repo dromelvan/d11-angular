@@ -1,0 +1,61 @@
+@if (match(); as m) {
+  @let emph = emphasised();
+  <div>
+    <div class="app-row justify-between gap-4">
+      <div class="app-col flex-1 items-center gap-1">
+        <app-d11-team-img
+          [d11Team]="m.homeD11Team"
+          [width]="emph ? ImgWidth.LARGE : ImgWidth.SMALL"
+        />
+        <span class="app-text-medium-emphasis">
+          <span class="sm:hidden">{{ m.homeD11Team.shortName }}</span>
+          <span class="hidden sm:block">{{ m.homeD11Team.name }}</span>
+        </span>
+      </div>
+
+      @if (m.status !== Status.PENDING && m.status !== Status.POSTPONED) {
+        <div class="app-col items-center gap-1">
+          <span class="font-bold tracking-wide" [ngClass]="emph ? 'text-4xl' : 'text-2xl'">
+            {{ m.homeTeamGoalsScored }}&ndash;{{ m.awayTeamGoalsScored }}
+          </span>
+          <span class="text-sm app-text-medium-emphasis">
+            ({{ m.homeTeamPoints }}&ndash;{{ m.awayTeamPoints }})
+          </span>
+          <span class="text-xs uppercase">{{ m.elapsed }}</span>
+        </div>
+      } @else {
+        <div class="text-2xl">vs</div>
+      }
+
+      <div class="app-col items-center gap-1 flex-1">
+        <app-d11-team-img
+          [d11Team]="m.awayD11Team"
+          [width]="emph ? ImgWidth.LARGE : ImgWidth.SMALL"
+        />
+        <span class="app-text-medium-emphasis">
+          <span class="sm:hidden">{{ m.awayD11Team.shortName }}</span>
+          <span class="hidden sm:block">{{ m.awayD11Team.name }}</span>
+        </span>
+      </div>
+    </div>
+
+    <div class="app-col items-center gap-0.5 mt-3">
+      <span class="text-xs" data-testid="datetime">
+        @if (m.status === Status.POSTPONED) {
+          Postponed
+        } @else {
+          {{ m.datetime | date: 'MMM dd, yyyy, H:mm' }}
+        }
+      </span>
+    </div>
+
+    @if (links()) {
+      <div class="app-row gap-0">
+        <div class="app-row gap-1 text-sm font-semibold mt-3 px-4">
+          <app-icon icon="match_week" />
+          Match week {{ m.matchWeek.matchWeekNumber }}
+        </div>
+      </div>
+    }
+  </div>
+}
