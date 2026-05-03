@@ -1,0 +1,23 @@
+@if (groupedMatches().length > 0) {
+  <div class="app-col px-2 py-4">
+    <div class="text-xl font-semibold">D11</div>
+    <div class="grid grid-cols-[auto_1fr_auto_auto_auto] gap-x-2">
+      @for (group of groupedMatches(); track group.date; let first = $first) {
+        <div
+          [class.app-grid-header]="first"
+          [class.app-grid-sub-header]="!first"
+          class="col-span-5"
+        >
+          {{
+            group.date === Status.POSTPONED
+              ? (Status.POSTPONED | titlecase)
+              : (group.date | safeDate: 'EEEE, MMMM d')
+          }}
+        </div>
+        @for (match of group.matches; track match.id; let last = $last) {
+          <app-d11-match-result-col [match]="match" [isLast]="last" />
+        }
+      }
+    </div>
+  </div>
+}
