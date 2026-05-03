@@ -1,0 +1,12 @@
+@if (!isLoading()) {
+  @let model = this.model();
+  <div class="app-d11-match-page app-col max-w-sm mx-auto">
+    <app-d11-match-header-card [match]="model.d11Match" />
+    @if (model.d11Match?.status !== Status.PENDING) {
+      <app-d11-match-player-match-stats-card
+        [d11Match]="model.d11Match"
+        [playerMatchStats]="model.playerMatchStats"
+      />
+    }
+  </div>
+}
