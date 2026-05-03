@@ -28,6 +28,8 @@
 
 @if (active()) {
   <app-match-week-matches />
+  <app-match-week-d11-matches />
 } @else if (matchWeekId()) {
   <app-match-week-matches [matchWeekId]="matchWeekId()!" />
+  <app-match-week-d11-matches [matchWeekId]="matchWeekId()!" />
 }
