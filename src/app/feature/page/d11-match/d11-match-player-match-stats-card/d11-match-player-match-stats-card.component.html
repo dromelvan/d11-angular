@@ -1,0 +1,60 @@
+<p-card class="app-d11-match-player-match-stats-card mb-4 sm:mb-0" header="Player stats">
+  <div class="app-col">
+    @for (squad of teamSquads(); track squad.d11Team.id) {
+      <h3 class="text-sm font-semibold">
+        <app-d11-team-base [d11Team]="squad.d11Team" />
+      </h3>
+
+      <div class="grid grid-cols-[2rem_1fr_2.5rem_2rem] gap-0">
+        <div class="app-grid-header">Pos</div>
+        <div class="app-grid-header">Player</div>
+        <div class="app-grid-header app-grid-number">Rtg</div>
+        <div class="app-grid-header app-grid-number">Pts</div>
+
+        @for (pms of squad.stats; track pms.player.id; let index = $index) {
+          <div
+            class="col-span-4 grid grid-cols-subgrid cursor-pointer app-grid-separator"
+            (click)="openDialog(pms)"
+          >
+            <div class="app-grid-cell app-text-grid">
+              {{ pms.position.code }}
+            </div>
+            <div class="app-grid-cell app-text-grid app-flex justify-between">
+              <span class="app-flex gap-1">
+                <span>{{ pms.player.name }}</span>
+                @if (pms.manOfTheMatch) {
+                  <app-icon icon="mom" [size]="16" />
+                }
+                @if (pms.sharedManOfTheMatch) {
+                  <app-icon icon="shared_mom" [size]="16" />
+                }
+              </span>
+              <span class="app-flex app-text-lowest-emphasis gap-0.5">
+                @if (pms.yellowCardTime > 0) {
+                  <app-icon icon="yellow_card" [size]="16" />
+                  {{ pms.yellowCardTime }}'
+                }
+                @if (pms.redCardTime > 0) {
+                  <app-icon icon="red_card" [size]="16" />
+                  {{ pms.redCardTime }}'
+                }
+              </span>
+            </div>
+            @if (pms.lineup === Lineup.DID_NOT_PARTICIPATE) {
+              <span class="app-grid-cell app-text-grid app-text-low-emphasis justify-end">DNP</span>
+            } @else if (pms.lineup === Lineup.SUBSTITUTE && pms.substitutionOnTime <= 0) {
+              <span class="app-grid-cell app-text-grid app-text-low-emphasis justify-end">SUB</span>
+            } @else {
+              <span class="app-grid-cell app-grid-number">
+                {{ pms.rating | rating }}
+              </span>
+            }
+            <span class="app-grid-cell app-grid-number app-text-medium-emphasis">{{
+              pms.points
+            }}</span>
+          </div>
+        }
+      </div>
+    }
+  </div>
+</p-card>
