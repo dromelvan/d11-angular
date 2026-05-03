@@ -4,13 +4,14 @@ import { rxResource } from '@angular/core/rxjs-interop';
 import { MatchBase, Status } from '@app/core/api';
 import { MatchApiService } from '@app/core/api/match/match-api.service';
 import { RouterService } from '@app/core/router/router.service';
+import { IconComponent } from '@app/shared/icon/icon.component';
 import { TeamImgComponent } from '@app/shared/img/team-img/team-img.component';
 import { SafeDatePipe } from '@app/shared/pipes';
 
 @Component({
   selector: 'app-match-week-matches',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [TeamImgComponent, SafeDatePipe, TitleCasePipe],
+  imports: [IconComponent, TeamImgComponent, SafeDatePipe, TitleCasePipe],
   templateUrl: './match-week-matches.component.html',
 })
 export class MatchWeekMatchesComponent {

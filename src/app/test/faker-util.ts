@@ -129,6 +129,8 @@ export const fakeMatchBase = (): MatchBase => ({
   datetime: faker.date.recent().toISOString(),
   homeTeamGoalsScored: faker.number.int({ min: 0, max: 10 }),
   awayTeamGoalsScored: faker.number.int({ min: 0, max: 10 }),
+  previousHomeTeamGoalsScored: faker.number.int({ min: 0, max: 10 }),
+  previousAwayTeamGoalsScored: faker.number.int({ min: 0, max: 10 }),
   elapsed: faker.helpers.arrayElement(['N/A', '3', 'HT', '78', 'FT']),
   status: faker.helpers.arrayElement([Status.ACTIVE, Status.FINISHED, Status.PENDING]),
   homeTeam: fakeTeamBase(),
@@ -140,8 +142,6 @@ export const fakeMatchBase = (): MatchBase => ({
 export const fakeMatch = (): Match => ({
   ...fakeMatchBase(),
   statSourceId: faker.number.int({ min: 1, max: 999999 }),
-  previousHomeTeamGoalsScored: faker.number.int({ min: 0, max: 10 }),
-  previousAwayTeamGoalsScored: faker.number.int({ min: 0, max: 10 }),
 });
 
 export const fakePlayerBase = (): PlayerBase => ({

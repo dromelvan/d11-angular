@@ -1,12 +1,12 @@
 @if (groupedMatches().length > 0) {
   <div class="app-col px-2 py-4">
     <div class="text-xl font-semibold">Premier League</div>
-    <div class="grid grid-cols-[auto_1fr_auto] gap-x-2">
+    <div class="grid grid-cols-[auto_1fr_auto_auto] gap-x-2">
       @for (group of groupedMatches(); track group.date; let first = $first) {
         <div
           [class.app-grid-header]="first"
           [class.app-grid-sub-header]="!first"
-          class="col-span-3"
+          class="col-span-4"
         >
           {{
             group.date === Status.POSTPONED
@@ -16,7 +16,7 @@
         </div>
         @for (match of group.matches; track match.id; let last = $last) {
           <div
-            class="col-span-3 grid grid-cols-subgrid grid-rows-2 cursor-pointer"
+            class="col-span-4 grid grid-cols-subgrid grid-rows-2 cursor-pointer"
             [class.app-grid-separator]="!last"
             (click)="onClick(match.id)"
           >
@@ -45,6 +45,21 @@
               <app-team-img [team]="match.homeTeam" width="20" />
               <span>{{ match.homeTeam.name }}</span>
             </div>
+            <div class="app-flex items-center justify-end text-xs font-semibold pt-2.5 pb-0.5">
+              @if (match.status !== Status.PENDING && match.status !== Status.POSTPONED) {
+                @let homeDiff = match.homeTeamGoalsScored - match.previousHomeTeamGoalsScored;
+                @if (homeDiff !== 0) {
+                  {{ homeDiff > 0 ? '+' + homeDiff : homeDiff }}
+                  <app-icon
+                    [icon]="homeDiff > 0 ? 'ranking_up' : 'ranking_down'"
+                    [size]="18"
+                    [weight]="700"
+                    [class.text-success]="homeDiff > 0"
+                    [class.text-error]="homeDiff < 0"
+                  />
+                }
+              }
+            </div>
             <div class="app-flex items-center justify-end text-sm pt-2.5 pb-0.5">
               @if (match.status !== Status.PENDING && match.status !== Status.POSTPONED) {
                 {{ match.homeTeamGoalsScored }}
@@ -53,6 +68,21 @@
             <div class="app-flex items-center gap-1.5 text-sm pb-2.5 pt-0.5">
               <app-team-img [team]="match.awayTeam" width="20" />
               <span>{{ match.awayTeam.name }}</span>
+            </div>
+            <div class="app-flex items-center justify-end text-xs pb-2.5 pt-0.5">
+              @if (match.status !== Status.PENDING && match.status !== Status.POSTPONED) {
+                @let awayDiff = match.awayTeamGoalsScored - match.previousAwayTeamGoalsScored;
+                @if (awayDiff !== 0) {
+                  {{ awayDiff > 0 ? '+' + awayDiff : awayDiff }}
+                  <app-icon
+                    [icon]="awayDiff > 0 ? 'ranking_up' : 'ranking_down'"
+                    [size]="18"
+                    [weight]="700"
+                    [class.text-success]="awayDiff > 0"
+                    [class.text-error]="awayDiff < 0"
+                  />
+                }
+              }
             </div>
             <div class="app-flex items-center justify-end text-sm pb-2.5 pt-0.5">
               @if (match.status !== Status.PENDING && match.status !== Status.POSTPONED) {

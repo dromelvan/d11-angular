@@ -8,6 +8,8 @@ export interface MatchBase {
   datetime: string;
   homeTeamGoalsScored: number;
   awayTeamGoalsScored: number;
+  previousHomeTeamGoalsScored: number;
+  previousAwayTeamGoalsScored: number;
   elapsed: string;
   status: Status;
   homeTeam: TeamBase;

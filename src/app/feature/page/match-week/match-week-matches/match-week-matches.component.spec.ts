@@ -84,7 +84,7 @@ describe('MatchWeekMatchesComponent', () => {
 
   it('navigates to match on row click', () => {
     const rows = Array.from<HTMLElement>(
-      fixture.nativeElement.querySelectorAll('.col-span-3.grid'),
+      fixture.nativeElement.querySelectorAll('.col-span-4.grid'),
     );
     const row = rows.find((element) => element.textContent?.includes(matches[0].homeTeam.name))!;
     row.click();
@@ -287,6 +287,95 @@ describe('MatchWeekMatchesComponent', () => {
       expect(fixture.nativeElement.textContent).not.toContain('101');
       expect(fixture.nativeElement.textContent).not.toContain('103');
     });
+
+    describe('goal change indicator', () => {
+      it('shows +N and up arrow when home goals increased', async () => {
+        matches = [
+          {
+            ...fakeMatchBase(),
+            status: Status.ACTIVE,
+            homeTeamGoalsScored: 3,
+            previousHomeTeamGoalsScored: 1,
+          },
+        ];
+        mockMatchApiService.getMatchesByMatchWeekId.mockReturnValue(of(matches));
+        await setup(1);
+
+        const indicator = fixture.nativeElement.querySelector('app-icon.text-success');
+        expect(indicator).toBeTruthy();
+        expect(fixture.nativeElement.textContent).toContain('+2');
+      });
+
+      it('shows -N and down arrow when home goals decreased', async () => {
+        matches = [
+          {
+            ...fakeMatchBase(),
+            status: Status.ACTIVE,
+            homeTeamGoalsScored: 1,
+            previousHomeTeamGoalsScored: 2,
+          },
+        ];
+        mockMatchApiService.getMatchesByMatchWeekId.mockReturnValue(of(matches));
+        await setup(1);
+
+        const indicator = fixture.nativeElement.querySelector('app-icon.text-error');
+        expect(indicator).toBeTruthy();
+        expect(fixture.nativeElement.textContent).toContain('-1');
+      });
+
+      it('does not show indicator when goals are unchanged', async () => {
+        matches = [
+          {
+            ...fakeMatchBase(),
+            status: Status.ACTIVE,
+            homeTeamGoalsScored: 2,
+            previousHomeTeamGoalsScored: 2,
+            awayTeamGoalsScored: 2,
+            previousAwayTeamGoalsScored: 2,
+          },
+        ];
+        mockMatchApiService.getMatchesByMatchWeekId.mockReturnValue(of(matches));
+        await setup(1);
+
+        expect(fixture.nativeElement.querySelector('app-icon')).toBeNull();
+      });
+
+      it('shows +N and up arrow when away goals increased', async () => {
+        matches = [
+          {
+            ...fakeMatchBase(),
+            status: Status.ACTIVE,
+            homeTeamGoalsScored: 0,
+            previousHomeTeamGoalsScored: 0,
+            awayTeamGoalsScored: 2,
+            previousAwayTeamGoalsScored: 1,
+          },
+        ];
+        mockMatchApiService.getMatchesByMatchWeekId.mockReturnValue(of(matches));
+        await setup(1);
+
+        const indicator = fixture.nativeElement.querySelector('app-icon.text-success');
+        expect(indicator).toBeTruthy();
+        expect(fixture.nativeElement.textContent).toContain('+1');
+      });
+
+      it('does not show indicator when status is PENDING even if goals differ', async () => {
+        matches = [
+          {
+            ...fakeMatchBase(),
+            status: Status.PENDING,
+            homeTeamGoalsScored: 3,
+            previousHomeTeamGoalsScored: 1,
+            awayTeamGoalsScored: 3,
+            previousAwayTeamGoalsScored: 1,
+          },
+        ];
+        mockMatchApiService.getMatchesByMatchWeekId.mockReturnValue(of(matches));
+        await setup(1);
+
+        expect(fixture.nativeElement.querySelector('app-icon')).toBeNull();
+      });
+    });
   });
 
   // Date grouping --------------------------------------------------------------------------------
@@ -332,7 +421,7 @@ describe('MatchWeekMatchesComponent', () => {
       mockMatchApiService.getMatchesByMatchWeekId.mockReturnValue(of([late, early]));
       await setup(1);
 
-      const rows = fixture.nativeElement.querySelectorAll('.col-span-3.grid');
+      const rows = fixture.nativeElement.querySelectorAll('.col-span-4.grid');
       expect(rows[0].textContent).toContain(early.homeTeam.name);
       expect(rows[1].textContent).toContain(late.homeTeam.name);
     });
