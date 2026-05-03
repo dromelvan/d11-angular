@@ -1,8 +1,11 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { D11MatchBase, Status } from '@app/core/api';
+import { RouterService } from '@app/core/router/router.service';
 import { fakeD11MatchBase, fakeD11TeamBase } from '@app/test';
 import { beforeEach, describe, expect, vi } from 'vitest';
 import { D11MatchResultColComponent } from './d11-match-result-col.component';
+
+const mockRouterService = { navigateToD11Match: vi.fn() };
 
 describe('D11MatchResultColComponent', () => {
   let fixture: ComponentFixture<D11MatchResultColComponent>;
@@ -20,12 +23,23 @@ describe('D11MatchResultColComponent', () => {
 
     await TestBed.configureTestingModule({
       imports: [D11MatchResultColComponent],
+      providers: [{ provide: RouterService, useValue: mockRouterService }],
     }).compileComponents();
   });
 
   it('creates the component', async () => {
     await setup();
     expect(fixture.componentInstance).toBeTruthy();
+  });
+
+  // Navigation -----------------------------------------------------------------------------------
+
+  it('navigates to d11 match on click', async () => {
+    const match = fakeD11MatchBase();
+    await setup(match);
+
+    fixture.nativeElement.click();
+    expect(mockRouterService.navigateToD11Match).toHaveBeenCalledExactlyOnceWith(match.id);
   });
 
   // Separator ------------------------------------------------------------------------------------
