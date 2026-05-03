@@ -160,6 +160,12 @@ export const fakeD11MatchBase = (): D11MatchBase => ({
   awayTeamGoalsScored: faker.number.int({ min: 0, max: 10 }),
   homeTeamPoints: faker.number.int({ min: 0, max: 100 }),
   awayTeamPoints: faker.number.int({ min: 0, max: 100 }),
+  previousHomeTeamGoalsScored: faker.number.int({ min: 0, max: 10 }),
+  previousAwayTeamGoalsScored: faker.number.int({ min: 0, max: 10 }),
+  previousHomeTeamPoints: faker.number.int({ min: 0, max: 100 }),
+  previousAwayTeamPoints: faker.number.int({ min: 0, max: 100 }),
+  elapsed: faker.helpers.arrayElement(['N/A', '45', '90', 'HT', 'FT']),
+  status: faker.helpers.enumValue(Status),
   homeD11Team: fakeD11TeamBase(),
   awayD11Team: fakeD11TeamBase(),
   matchWeek: fakeMatchWeekBase(),
@@ -167,12 +173,6 @@ export const fakeD11MatchBase = (): D11MatchBase => ({
 
 export const fakeD11Match = (): D11Match => ({
   ...fakeD11MatchBase(),
-  previousHomeTeamGoalsScored: faker.number.int({ min: 0, max: 10 }),
-  previousAwayTeamGoalsScored: faker.number.int({ min: 0, max: 10 }),
-  previousHomeTeamPoints: faker.number.int({ min: 0, max: 100 }),
-  previousAwayTeamPoints: faker.number.int({ min: 0, max: 100 }),
-  elapsed: faker.helpers.arrayElement(['', '45', '90', 'HT', 'FT']),
-  status: faker.helpers.enumValue(Status),
 });
 
 export const fakeGoal = (): GoalBase => ({

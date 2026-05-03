@@ -1,5 +1,6 @@
 import { D11TeamBase } from './d11-team-base.model';
 import { MatchWeekBase } from './match-week-base.model';
+import { Status } from '@app/core/api';
 
 export interface D11MatchBase {
   id: number;
@@ -8,6 +9,12 @@ export interface D11MatchBase {
   awayTeamGoalsScored: number;
   homeTeamPoints: number;
   awayTeamPoints: number;
+  previousHomeTeamGoalsScored: number;
+  previousAwayTeamGoalsScored: number;
+  previousHomeTeamPoints: number;
+  previousAwayTeamPoints: number;
+  elapsed: string;
+  status: Status;
   homeD11Team: D11TeamBase;
   awayD11Team: D11TeamBase;
   matchWeek: MatchWeekBase;
