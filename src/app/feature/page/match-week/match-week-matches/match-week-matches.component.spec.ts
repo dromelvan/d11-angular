@@ -140,6 +140,69 @@ describe('MatchWeekMatchesComponent', () => {
 
       expect(fixture.nativeElement.textContent).not.toContain(matches[0].elapsed);
     });
+
+    describe('full time indicator', () => {
+      it('renders * when status is FULL_TIME', async () => {
+        matches = [{ ...fakeMatchBase(), status: Status.FULL_TIME }];
+        mockMatchApiService.getMatchesByMatchWeekId.mockReturnValue(of(matches));
+        await setup(1);
+
+        const errorSpan = fixture.nativeElement.querySelector('span.text-error');
+        expect(errorSpan).toBeTruthy();
+        expect(errorSpan.textContent.trim()).toBe('*');
+      });
+
+      it('does not render * when status is ACTIVE', async () => {
+        matches = [{ ...fakeMatchBase(), status: Status.ACTIVE }];
+        mockMatchApiService.getMatchesByMatchWeekId.mockReturnValue(of(matches));
+        await setup(1);
+
+        expect(fixture.nativeElement.querySelector('span.text-error')).toBeNull();
+      });
+
+      it('does not render * when status is FINISHED', async () => {
+        matches = [{ ...fakeMatchBase(), status: Status.FINISHED }];
+        mockMatchApiService.getMatchesByMatchWeekId.mockReturnValue(of(matches));
+        await setup(1);
+
+        expect(fixture.nativeElement.querySelector('span.text-error')).toBeNull();
+      });
+    });
+
+    describe('active match elapsed styling', () => {
+      it('elapsed span has bg-primary class when status is ACTIVE', async () => {
+        matches = [{ ...fakeMatchBase(), status: Status.ACTIVE, elapsed: '45' }];
+        mockMatchApiService.getMatchesByMatchWeekId.mockReturnValue(of(matches));
+        await setup(1);
+
+        const elapsedSpan = Array.from<HTMLElement>(
+          fixture.nativeElement.querySelectorAll('span'),
+        ).find((span) => span.textContent?.trim().startsWith('45'));
+        expect(elapsedSpan?.classList).toContain('bg-primary');
+      });
+
+      it('elapsed span does not have bg-primary class when status is FULL_TIME', async () => {
+        matches = [{ ...fakeMatchBase(), status: Status.FULL_TIME, elapsed: 'FT' }];
+        mockMatchApiService.getMatchesByMatchWeekId.mockReturnValue(of(matches));
+        await setup(1);
+
+        const elapsedSpan = Array.from<HTMLElement>(
+          fixture.nativeElement.querySelectorAll('span'),
+        ).find((span) => span.textContent?.trim().startsWith('FT'));
+        expect(elapsedSpan?.classList).not.toContain('bg-primary');
+      });
+
+      it('elapsed span does not have bg-primary class when status is FINISHED', async () => {
+        matches = [{ ...fakeMatchBase(), status: Status.FINISHED, elapsed: 'FT' }];
+        mockMatchApiService.getMatchesByMatchWeekId.mockReturnValue(of(matches));
+        await setup(1);
+
+        const elapsedSpan = Array.from<HTMLElement>(
+          fixture.nativeElement.querySelectorAll('span'),
+        ).find((span) => span.textContent?.trim().startsWith('FT'));
+        expect(elapsedSpan?.classList).not.toContain('bg-primary');
+      });
+    });
   });
 
   // Goals ----------------------------------------------------------------------------------------

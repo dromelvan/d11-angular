@@ -27,7 +27,18 @@
                 match.status === Status.FULL_TIME ||
                 match.status === Status.FINISHED
               ) {
-                <span>{{ match.elapsed }}</span>
+                <span
+                  [class.bg-primary]="match.status === Status.ACTIVE"
+                  [class.text-primary-contrast]="match.status === Status.ACTIVE"
+                  [class.px-2]="match.status === Status.ACTIVE"
+                  [class.py-1]="match.status === Status.ACTIVE"
+                  [class.rounded-sm]="match.status === Status.ACTIVE"
+                >
+                  {{ match.elapsed }}
+                  @if (match.status === Status.FULL_TIME) {
+                    <span class="text-error pt-1">*</span>
+                  }
+                </span>
               }
             </div>
             <div class="app-flex items-center gap-1.5 text-sm pt-2.5 pb-0.5">
