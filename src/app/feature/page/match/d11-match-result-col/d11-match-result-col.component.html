@@ -1,0 +1,71 @@
+@let m = model();
+
+<div class="app-col row-span-2 items-center justify-center gap-0.5 text-xs py-2.5">
+  <span>{{ m.match.datetime | safeDate: 'HH:mm' }}</span>
+  @if (m.showElapsed) {
+    <span
+      [class.bg-primary]="m.match.status === Status.ACTIVE"
+      [class.text-primary-contrast]="m.match.status === Status.ACTIVE"
+      [class.px-2]="m.match.status === Status.ACTIVE"
+      [class.py-1]="m.match.status === Status.ACTIVE"
+      [class.rounded-sm]="m.match.status === Status.ACTIVE"
+    >
+      {{ m.match.elapsed }}
+      @if (m.match.status === Status.FULL_TIME) {
+        <span class="text-error pt-1">*</span>
+      }
+    </span>
+  }
+</div>
+<div class="app-flex items-center gap-1.5 text-sm pt-2.5 pb-0.5">
+  <app-d11-team-img [d11Team]="m.match.homeD11Team" width="20" />
+  <span>{{ m.match.homeD11Team.name }}</span>
+</div>
+<div class="app-flex items-center justify-end text-xs font-semibold pt-2.5 pb-0.5">
+  @if (m.showGoals && m.homeDiff !== 0) {
+    {{ m.homeDiff > 0 ? '+' + m.homeDiff : m.homeDiff }} G
+    <app-icon
+      [icon]="m.homeDiff > 0 ? 'ranking_up' : 'ranking_down'"
+      [size]="18"
+      [weight]="700"
+      [class.text-success]="m.homeDiff > 0"
+      [class.text-error]="m.homeDiff < 0"
+    />
+  }
+</div>
+<div class="app-flex items-center justify-end text-sm pt-2.5 pb-0.5">
+  @if (m.showGoals) {
+    {{ m.match.homeTeamGoalsScored }}
+  }
+</div>
+<div class="app-flex items-center justify-end text-xs text-surface-400 pt-2.5 pb-0.5">
+  @if (m.showGoals) {
+    ({{ m.match.homeTeamPoints }})
+  }
+</div>
+<div class="app-flex items-center gap-1.5 text-sm pb-2.5 pt-0.5">
+  <app-d11-team-img [d11Team]="m.match.awayD11Team" width="20" />
+  <span>{{ m.match.awayD11Team.name }}</span>
+</div>
+<div class="app-flex items-center justify-end text-xs font-semibold pb-2.5 pt-0.5">
+  @if (m.showGoals && m.awayDiff !== 0) {
+    {{ m.awayDiff > 0 ? '+' + m.awayDiff : m.awayDiff }} G
+    <app-icon
+      [icon]="m.awayDiff > 0 ? 'ranking_up' : 'ranking_down'"
+      [size]="18"
+      [weight]="700"
+      [class.text-success]="m.awayDiff > 0"
+      [class.text-error]="m.awayDiff < 0"
+    />
+  }
+</div>
+<div class="app-flex items-center justify-end text-sm pb-2.5 pt-0.5">
+  @if (m.showGoals) {
+    {{ m.match.awayTeamGoalsScored }}
+  }
+</div>
+<div class="app-flex items-center justify-end text-xs text-surface-400 pb-2.5 pt-0.5">
+  @if (m.showGoals) {
+    ({{ m.match.awayTeamPoints }})
+  }
+</div>
