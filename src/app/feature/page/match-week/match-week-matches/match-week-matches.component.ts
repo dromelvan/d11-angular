@@ -3,15 +3,13 @@ import { ChangeDetectionStrategy, Component, computed, inject, input } from '@an
 import { rxResource } from '@angular/core/rxjs-interop';
 import { MatchBase, Status } from '@app/core/api';
 import { MatchApiService } from '@app/core/api/match/match-api.service';
-import { RouterService } from '@app/core/router/router.service';
-import { IconComponent } from '@app/shared/icon/icon.component';
-import { TeamImgComponent } from '@app/shared/img/team-img/team-img.component';
 import { SafeDatePipe } from '@app/shared/pipes';
+import { MatchResultColComponent } from '@app/feature/page/match/match-result-col/match-result-col.component';
 
 @Component({
   selector: 'app-match-week-matches',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [IconComponent, TeamImgComponent, SafeDatePipe, TitleCasePipe],
+  imports: [MatchResultColComponent, SafeDatePipe, TitleCasePipe],
   templateUrl: './match-week-matches.component.html',
 })
 export class MatchWeekMatchesComponent {
@@ -57,9 +55,4 @@ export class MatchWeekMatchesComponent {
   });
 
   private matchApiService = inject(MatchApiService);
-  private routerService = inject(RouterService);
-
-  protected onClick(matchId: number): void {
-    this.routerService.navigateToMatch(matchId);
-  }
 }
