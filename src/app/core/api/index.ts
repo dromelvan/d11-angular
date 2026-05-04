@@ -53,4 +53,5 @@ export * from './transfer-window/transfer-window-api.service';
 export * from './player-season-stat/player-season-stats-response-body.model';
 export * from './season/season-api.service';
 export * from './security/security-api.service';
+export * from './team/team-api.service';
 export * from './team-season-stat/team-season-stat-api.service';
