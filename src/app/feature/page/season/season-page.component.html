@@ -21,5 +21,9 @@
     @if (model().teamSeasonStats.length > 0) {
       <app-team-season-stats-card [teamSeasonStats]="model().teamSeasonStats" />
     }
+
+    @if (model().d11TeamSeasonStats.length > 0) {
+      <app-d11-team-season-stats-card [d11TeamSeasonStats]="model().d11TeamSeasonStats" />
+    }
   }
 </div>

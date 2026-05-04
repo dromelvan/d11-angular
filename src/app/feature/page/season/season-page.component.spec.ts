@@ -1,10 +1,11 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { Season, TeamSeasonStat } from '@app/core/api';
+import { D11TeamSeasonStat, Season, TeamSeasonStat } from '@app/core/api';
+import { D11TeamSeasonStatApiService } from '@app/core/api/d11-team-season-stat/d11-team-season-stat-api.service';
 import { SeasonApiService } from '@app/core/api/season/season-api.service';
 import { TeamSeasonStatApiService } from '@app/core/api/team-season-stat/team-season-stat-api.service';
 import { LoadingService } from '@app/core/loading/loading.service';
 import { RouterService } from '@app/core/router/router.service';
-import { fakeSeason, fakeTeamSeasonStat } from '@app/test';
+import { fakeD11TeamSeasonStat, fakeSeason, fakeTeamSeasonStat } from '@app/test';
 import { screen, waitFor } from '@testing-library/angular';
 import userEvent from '@testing-library/user-event';
 import { Observable, of } from 'rxjs';
@@ -16,11 +17,15 @@ describe('SeasonPageComponent', () => {
   const mockTeamSeasonStatApi = {
     getTeamSeasonStatsBySeasonId: vi.fn<(id: number) => Observable<TeamSeasonStat[]>>(),
   };
+  const mockD11TeamSeasonStatApi = {
+    getD11TeamSeasonStatsBySeasonId: vi.fn<(id: number) => Observable<D11TeamSeasonStat[]>>(),
+  };
   const mockLoadingService = { register: vi.fn() };
   const mockRouterService = { navigateToSeason: vi.fn() };
 
   let seasons: Season[];
   let teamSeasonStats: TeamSeasonStat[];
+  let d11TeamSeasonStats: D11TeamSeasonStat[];
   let fixture: ComponentFixture<SeasonPageComponent>;
 
   beforeEach(async () => {
@@ -31,14 +36,19 @@ describe('SeasonPageComponent', () => {
       { ...fakeSeason(), id: 3, date: '2021-08-01' },
     ];
     teamSeasonStats = [fakeTeamSeasonStat(), fakeTeamSeasonStat()];
+    d11TeamSeasonStats = [fakeD11TeamSeasonStat(), fakeD11TeamSeasonStat()];
     mockSeasonApi.getAll.mockReturnValue(of(seasons));
     mockTeamSeasonStatApi.getTeamSeasonStatsBySeasonId.mockReturnValue(of(teamSeasonStats));
+    mockD11TeamSeasonStatApi.getD11TeamSeasonStatsBySeasonId.mockReturnValue(
+      of(d11TeamSeasonStats),
+    );
 
     await TestBed.configureTestingModule({
       imports: [SeasonPageComponent],
       providers: [
         { provide: SeasonApiService, useValue: mockSeasonApi },
         { provide: TeamSeasonStatApiService, useValue: mockTeamSeasonStatApi },
+        { provide: D11TeamSeasonStatApiService, useValue: mockD11TeamSeasonStatApi },
         { provide: LoadingService, useValue: mockLoadingService },
         { provide: RouterService, useValue: mockRouterService },
       ],
@@ -74,6 +84,15 @@ describe('SeasonPageComponent', () => {
         for (const stat of teamSeasonStats) {
           const expectedName = stat.team.name.length > 22 ? stat.team.shortName : stat.team.name;
           expect(screen.getByText(expectedName)).toBeInTheDocument();
+        }
+      });
+    });
+
+    it('renders d11 team season stats card', async () => {
+      await waitFor(() => {
+        expect(screen.getByText('D11')).toBeInTheDocument();
+        for (const stat of d11TeamSeasonStats) {
+          expect(screen.getByText(stat.d11Team.name)).toBeInTheDocument();
         }
       });
     });
@@ -119,6 +138,15 @@ describe('SeasonPageComponent', () => {
         for (const stat of teamSeasonStats) {
           const expectedName = stat.team.name.length > 22 ? stat.team.shortName : stat.team.name;
           expect(screen.getByText(expectedName)).toBeInTheDocument();
+        }
+      });
+    });
+
+    it('renders d11 team season stats card', async () => {
+      await waitFor(() => {
+        expect(screen.getByText('D11')).toBeInTheDocument();
+        for (const stat of d11TeamSeasonStats) {
+          expect(screen.getByText(stat.d11Team.name)).toBeInTheDocument();
         }
       });
     });
