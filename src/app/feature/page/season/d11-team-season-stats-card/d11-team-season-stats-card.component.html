@@ -1,0 +1,76 @@
+<p-card header="D11" [pt]="{ body: { class: 'px-2!' } }">
+  <div
+    class="grid grid-cols-[2.2rem_1fr_2.5rem_2.5rem] sm:grid-cols-[3rem_1fr_repeat(8,2.5rem)] gap-0 text-sm"
+  >
+    <div class="app-grid-header col-span-2 pl-2">Team</div>
+    <div class="hidden sm:block app-grid-header app-grid-number text-center">P</div>
+    <div class="hidden sm:block app-grid-header app-grid-number text-center">W</div>
+    <div class="hidden sm:block app-grid-header app-grid-number text-center">D</div>
+    <div class="hidden sm:block app-grid-header app-grid-number text-center">L</div>
+    <div class="hidden sm:block app-grid-header app-grid-number text-center">GF</div>
+    <div class="hidden sm:block app-grid-header app-grid-number text-center">GA</div>
+    <div class="app-grid-header app-grid-number text-center">GD</div>
+    <div class="app-grid-header app-grid-number font-bold pr-2">Pts</div>
+
+    @for (
+      stat of d11TeamSeasonStats();
+      track stat.id;
+      let i = $index;
+      let count = $count;
+      let last = $last
+    ) {
+      <div
+        class="col-span-4 sm:col-span-10 grid grid-cols-subgrid px-2"
+        [class.app-grid-separator]="!last"
+        [class.bg-primary]="i === 0"
+        [class.text-primary-contrast]="i <= 3"
+        [class.bg-surface-500]="i >= 1 && i <= 3"
+      >
+        <div class="app-grid-cell tabular-nums justify-center" data-testid="ranking">
+          {{ stat.ranking }}
+        </div>
+        <div class="app-grid-cell overflow-hidden gap-2">
+          <app-d11-team-base [d11Team]="stat.d11Team" imgWidth="20" />
+          @if (stat.ranking !== stat.previousRanking) {
+            <span class="flex items-center text-xs">
+              <app-icon
+                [icon]="stat.ranking < stat.previousRanking ? 'ranking_up' : 'ranking_down'"
+                [size]="20"
+              />
+              {{ stat.ranking < stat.previousRanking ? '+' : '-'
+              }}{{
+                stat.ranking < stat.previousRanking
+                  ? stat.previousRanking - stat.ranking
+                  : stat.ranking - stat.previousRanking
+              }}
+            </span>
+          }
+        </div>
+        <div class="hidden sm:flex app-grid-cell app-grid-number justify-center">
+          {{ stat.matchesPlayed }}
+        </div>
+        <div class="hidden sm:flex app-grid-cell app-grid-number justify-center">
+          {{ stat.matchesWon }}
+        </div>
+        <div class="hidden sm:flex app-grid-cell app-grid-number justify-center">
+          {{ stat.matchesDrawn }}
+        </div>
+        <div class="hidden sm:flex app-grid-cell app-grid-number justify-center">
+          {{ stat.matchesLost }}
+        </div>
+        <div class="hidden sm:flex app-grid-cell app-grid-number justify-center">
+          {{ stat.goalsFor }}
+        </div>
+        <div class="hidden sm:flex app-grid-cell app-grid-number justify-center">
+          {{ stat.goalsAgainst }}
+        </div>
+        <div class="app-grid-cell app-grid-number justify-center" data-testid="goal-difference">
+          {{ stat.goalDifference > 0 ? '+' : '' }}{{ stat.goalDifference }}
+        </div>
+        <div class="app-grid-cell app-grid-number font-bold" data-testid="points">
+          {{ stat.points }}
+        </div>
+      </div>
+    }
+  </div>
+</p-card>
