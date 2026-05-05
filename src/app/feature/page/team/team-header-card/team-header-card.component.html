@@ -1,0 +1,38 @@
+@if (team(); as team) {
+  <p-card
+    class="app-team-header-card app-bg-header min-h-40 relative"
+    [ngClass]="textClass()"
+    [style.background-color]="backgroundColor()"
+  >
+    <div class="app-row-md items-start">
+      <app-team-img [team]="team" width="80" />
+      <div class="app-col-sm gap-0">
+        <h1 class="text-3xl font-bold">{{ team.name }}</h1>
+        <div class="text-sm">{{ team.stadium.name }}, {{ team.stadium.city }}</div>
+        @if (teamSeasonStat(); as stat) {
+          <div class="grid grid-cols-[auto_auto_1fr] gap-x-4 mt-2">
+            <div class="text-xs font-semibold">#</div>
+            <div class="text-xs font-semibold">Pts</div>
+            <div class="text-xs font-semibold">Form</div>
+            <div class="text-lg font-bold" data-testid="ranking">{{ stat.ranking }}</div>
+            <div class="text-lg font-bold" data-testid="points">{{ stat.points }}</div>
+            <div class="flex gap-1 items-center pt-0.5">
+              @for (points of stat.formMatchPoints.slice(0, 5); track $index) {
+                <span
+                  class="w-5 h-5 rounded-full flex items-center justify-center text-[0.6rem] text-white font-bold"
+                  [ngClass]="{
+                    'bg-success': points > 0,
+                    'bg-error': points < 0,
+                    'bg-neutral': points === 0,
+                  }"
+                >
+                  {{ points }}
+                </span>
+              }
+            </div>
+          </div>
+        }
+      </div>
+    </div>
+  </p-card>
+}
