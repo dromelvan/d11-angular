@@ -1,5 +1,5 @@
 import { Component, computed, input, signal } from '@angular/core';
-import { Player } from '@app/core/api';
+import { PlayerBase } from '@app/core/api';
 import { Image } from 'primeng/image';
 import { environment } from '../../../../environments/environment';
 
@@ -9,7 +9,7 @@ import { environment } from '../../../../environments/environment';
   templateUrl: './player-img.component.html',
 })
 export class PlayerImgComponent {
-  player = input.required<Player>();
+  player = input.required<PlayerBase>();
   width = input<string | undefined>('32');
 
   protected imageUrl = computed(
