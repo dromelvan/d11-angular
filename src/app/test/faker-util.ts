@@ -21,6 +21,7 @@ import {
   Stadium,
   StadiumBase,
   Status,
+  Team,
   TeamBase,
   TeamSeasonStat,
   Transfer,
@@ -62,6 +63,11 @@ export const fakeTeamBase = (): TeamBase => ({
   code: faker.string.alpha(2).toUpperCase(),
   colour: faker.color.rgb(),
   dummy: faker.datatype.boolean(),
+});
+
+export const fakeTeam = (): Team => ({
+  ...fakeTeamBase(),
+  stadium: fakeStadium(),
 });
 
 export const fakeD11TeamBase = (): D11TeamBase => ({

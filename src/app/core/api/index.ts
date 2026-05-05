@@ -31,6 +31,7 @@ export * from './model/stadium.model';
 export * from './model/stadium-base.model';
 export * from './model/status.model';
 export * from './model/team-base.model';
+export * from './model/team.model';
 export * from './model/team-season-stat.model';
 export * from './model/transfer.model';
 export * from './model/transfer-bid.model';

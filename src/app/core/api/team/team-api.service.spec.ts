@@ -1,12 +1,13 @@
 import { HttpParams } from '@angular/common/http';
 import { TestBed } from '@angular/core/testing';
 import { ApiService } from '@app/core/api/api.service';
-import { fakeMatchBase, fakePlayerSeasonStat, GetFn } from '@app/test';
+import { fakeMatchBase, fakePlayerSeasonStat, fakeStadium, fakeTeamBase, GetFn } from '@app/test';
 import { firstValueFrom, of, throwError } from 'rxjs';
 import { beforeEach, describe } from 'vitest';
 import { MatchesResponseBody } from '@app/core/api/match/matches-response-body.model';
 import { TeamApiService } from './team-api.service';
 import { PlayerSeasonStatsResponseBody } from './player-season-stats-response-body.model';
+import { TeamResponseBody } from './team-response-body.model';
 
 describe('TeamApiService', () => {
   let teamApi: TeamApiService;
@@ -23,6 +24,48 @@ describe('TeamApiService', () => {
 
   it('is created', () => {
     expect(teamApi).toBeTruthy();
+  });
+
+  // getById ---------------------------------------------------------------------------------------
+
+  describe('getById', () => {
+    const teamId = 7;
+    const stadium = fakeStadium();
+    const team = fakeTeamBase();
+    const response: TeamResponseBody = { team, stadium };
+
+    it('calls get with namespace and id', async () => {
+      apiServiceMock.get = vi.fn().mockReturnValue(of(response)) as GetFn;
+
+      await firstValueFrom(teamApi.getById(teamId));
+
+      expect(apiServiceMock.get).toHaveBeenCalledExactlyOnceWith(
+        expect.objectContaining({ namespace: teamApi.namespace, id: teamId }),
+      );
+    });
+
+    it('maps the result', async () => {
+      apiServiceMock.get = vi.fn().mockReturnValue(of(response)) as GetFn;
+
+      const result = await firstValueFrom(teamApi.getById(teamId));
+
+      expect(result).toEqual({ ...team, stadium });
+    });
+
+    it('propagates errors', async () => {
+      const httpError = new Error('NOT_FOUND');
+      apiServiceMock.get = vi.fn().mockReturnValue(throwError(() => httpError)) as GetFn;
+
+      expect(firstValueFrom(teamApi.getById(teamId))).rejects.toThrow(httpError.message);
+    });
+
+    it('does not map the result on error', async () => {
+      apiServiceMock.get = vi
+        .fn()
+        .mockReturnValue(throwError(() => new Error('NOT_FOUND'))) as GetFn;
+
+      expect(firstValueFrom(teamApi.getById(teamId))).rejects.toBeInstanceOf(Error);
+    });
   });
 
   // getMatchesByTeamIdAndSeasonId -----------------------------------------------------------------
