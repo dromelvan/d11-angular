@@ -22,4 +22,14 @@ export class TeamSeasonStatApiService {
       })
       .pipe(map((result) => result.teamSeasonStats));
   }
+
+  getTeamSeasonStatsByTeamId(teamId: number): Observable<TeamSeasonStat[]> {
+    const params = new HttpParams().set('teamId', teamId);
+    return this.apiService
+      .get<TeamSeasonStatsResponseBody>({
+        namespace: this.namespace,
+        options: { params },
+      })
+      .pipe(map((result) => result.teamSeasonStats));
+  }
 }
