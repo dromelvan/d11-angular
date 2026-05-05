@@ -26,6 +26,12 @@ export const routes: Routes = [
     data: { section: 'Players' },
   },
   {
+    path: 'teams/:teamId',
+    loadComponent: () =>
+      import('@app/feature/page/team/team-page.component').then((m) => m.TeamPageComponent),
+    data: { section: 'Teams' },
+  },
+  {
     path: 'matches',
     canActivate: [
       () => {

@@ -1,0 +1,39 @@
+@if (!isLoading()) {
+  @let model = this.model();
+  <div class="app-team-page app-col max-w-sm mx-auto">
+    <app-team-header-card [team]="model.team" [teamSeasonStat]="model.teamSeasonStat" />
+    <p-tabs [(value)]="activeTab">
+      <p-tablist class="justify-evenly">
+        <p-tab value="0">Matches</p-tab>
+        <p-tab value="1">Players</p-tab>
+        <p-tab value="2">History</p-tab>
+      </p-tablist>
+      <p-tabpanels>
+        <p-tabpanel value="0">
+          @defer (when activeTab === '0') {
+            <app-team-matches-card [matches]="model.matches" [season]="model.season" />
+          }
+        </p-tabpanel>
+
+        <p-tabpanel value="1">
+          @defer (when activeTab === '1') {
+            <app-team-player-season-stats-card
+              [playerSeasonStats]="model.playerSeasonStats"
+              [season]="model.season"
+            />
+          }
+        </p-tabpanel>
+
+        <p-tabpanel value="2">
+          @defer (when activeTab === '2') {
+            <app-team-season-history-card
+              [teamSeasonStats]="model.teamSeasonStats"
+              [currentSeasonId]="model.season?.id"
+              (seasonSelected)="navigateToSeason($event)"
+            />
+          }
+        </p-tabpanel>
+      </p-tabpanels>
+    </p-tabs>
+  </div>
+}

@@ -33,6 +33,12 @@ export class RouterService {
     return this.router.navigate(['players', playerId], extras);
   }
 
+  public navigateToTeam(teamId: number, seasonId?: number, push = true): Promise<boolean> {
+    const extras = seasonId ? { queryParams: { seasonId } } : {};
+    this.updateStack('teams', push);
+    return this.router.navigate(['teams', teamId], extras);
+  }
+
   public navigateToMatchWeek(matchWeekId: number, push = true): Promise<boolean> {
     this.updateStack('match-weeks', push);
     return this.router.navigate(['match-weeks', matchWeekId]);

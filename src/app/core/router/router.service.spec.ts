@@ -20,6 +20,8 @@ describe('RouterService', () => {
   let mockRouter: Partial<Router>;
 
   beforeEach(() => {
+    vi.clearAllMocks();
+
     mockRouter = {
       navigate: vi.fn().mockResolvedValue(true),
       events: EMPTY,
@@ -101,6 +103,25 @@ describe('RouterService', () => {
     expect(result).toBe(true);
   });
 
+  it('should navigate to team without seasonId', async () => {
+    const teamId = 1;
+    const result = await service.navigateToTeam(teamId);
+
+    expect(mockRouter.navigate).toHaveBeenCalledWith(['teams', teamId], {});
+    expect(result).toBe(true);
+  });
+
+  it('should navigate to team with seasonId', async () => {
+    const teamId = 1;
+    const seasonId = 5;
+    const result = await service.navigateToTeam(teamId, seasonId);
+
+    expect(mockRouter.navigate).toHaveBeenCalledWith(['teams', teamId], {
+      queryParams: { seasonId },
+    });
+    expect(result).toBe(true);
+  });
+
   it('should navigate to transfer window with transferWindowId', async () => {
     const transferWindowId = 1;
     const result = await service.navigateToTransferWindow(transferWindowId);
@@ -166,6 +187,7 @@ describe('RouterService', () => {
 
   describe('section', () => {
     beforeEach(() => {
+      vi.clearAllMocks();
       TestBed.resetTestingModule();
       TestBed.configureTestingModule({
         providers: [RouterService, provideRouter(routes)],
@@ -204,6 +226,7 @@ describe('RouterService', () => {
 
   describe('route stack', () => {
     beforeEach(() => {
+      vi.clearAllMocks();
       TestBed.resetTestingModule();
       TestBed.configureTestingModule({
         providers: [
@@ -218,6 +241,7 @@ describe('RouterService', () => {
             { path: 'd11-matches/:id', component: BlankComponent },
             { path: 'players/:id', component: BlankComponent },
             { path: 'seasons', component: BlankComponent },
+            { path: 'teams/:id', component: BlankComponent },
           ]),
         ],
       });
@@ -278,6 +302,24 @@ describe('RouterService', () => {
       await router.navigate(['/match-weeks/1']);
 
       await service.navigateToMatchWeek(2);
+
+      expect(service.hasStack()).toBe(false);
+    });
+
+    it('pushes to stack when navigating from non-team route to a team', async () => {
+      const router = TestBed.inject(Router);
+      await router.navigate(['/match-weeks/1']);
+
+      await service.navigateToTeam(1);
+
+      expect(service.hasStack()).toBe(true);
+    });
+
+    it('does not push to stack when navigating from one team to another', async () => {
+      const router = TestBed.inject(Router);
+      await router.navigate(['/teams/1']);
+
+      await service.navigateToTeam(2);
 
       expect(service.hasStack()).toBe(false);
     });
