@@ -20,11 +20,12 @@
       let last = $last
     ) {
       <div
-        class="col-span-4 sm:col-span-10 grid grid-cols-subgrid px-2"
+        class="col-span-4 sm:col-span-10 grid grid-cols-subgrid px-2 cursor-pointer"
         [class.app-grid-separator]="!last"
         [class.bg-primary]="i < 4"
         [class.text-primary-contrast]="i < 5 || i >= count - 3"
         [class.bg-surface-500]="i === 4 || i >= count - 3"
+        (click)="navigateToTeam(stat)"
       >
         <div class="app-grid-cell tabular-nums justify-center" data-testid="ranking">
           {{ stat.ranking }}
