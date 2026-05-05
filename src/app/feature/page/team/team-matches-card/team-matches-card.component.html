@@ -1,0 +1,11 @@
+<p-card [header]="season() ? 'Matches ' + season()!.name : 'Matches'">
+  @if (matches().length > 0) {
+    <div class="grid grid-cols-[auto_1fr_auto_auto] gap-x-2">
+      @for (match of matches(); track match.id; let last = $last) {
+        <app-match-result-col [match]="match" [isLast]="last" [showDate]="true" />
+      }
+    </div>
+  } @else {
+    <div class="app-text-low-emphasis">No matches found</div>
+  }
+</p-card>
