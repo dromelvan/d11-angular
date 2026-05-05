@@ -1,0 +1,41 @@
+<p-card header="Season history" [pt]="{ body: { class: 'px-2!' } }">
+  @if (teamSeasonStats().length > 0) {
+    <div class="grid grid-cols-[3.5rem_2rem_2.5rem_2.5rem_2.5rem_2.5rem_2.5rem_3rem] gap-0 text-sm">
+      <div class="app-grid-header">Season</div>
+      <div class="app-grid-header app-grid-number text-center">#</div>
+      <div class="app-grid-header app-grid-number text-center">P</div>
+      <div class="app-grid-header app-grid-number text-center">W</div>
+      <div class="app-grid-header app-grid-number text-center">D</div>
+      <div class="app-grid-header app-grid-number text-center">L</div>
+      <div class="app-grid-header app-grid-number text-center">GD</div>
+      <div class="app-grid-header app-grid-number font-bold pr-2">Pts</div>
+
+      @for (stat of teamSeasonStats(); track stat.id; let last = $last) {
+        <div
+          class="col-span-8 grid grid-cols-subgrid cursor-pointer px-1 rounded"
+          [class.app-grid-separator]="!last"
+          [class.bg-primary]="stat.season.id === currentSeasonId()"
+          [class.text-primary-contrast]="stat.season.id === currentSeasonId()"
+          (click)="seasonSelected.emit(stat)"
+        >
+          <div class="app-grid-cell" data-testid="season">{{ stat.season.shortName }}</div>
+          <div class="app-grid-cell app-grid-number justify-center" data-testid="ranking">
+            {{ stat.ranking }}
+          </div>
+          <div class="app-grid-cell app-grid-number justify-center">{{ stat.matchesPlayed }}</div>
+          <div class="app-grid-cell app-grid-number justify-center">{{ stat.matchesWon }}</div>
+          <div class="app-grid-cell app-grid-number justify-center">{{ stat.matchesDrawn }}</div>
+          <div class="app-grid-cell app-grid-number justify-center">{{ stat.matchesLost }}</div>
+          <div class="app-grid-cell app-grid-number justify-center" data-testid="goal-difference">
+            {{ stat.goalDifference > 0 ? '+' : '' }}{{ stat.goalDifference }}
+          </div>
+          <div class="app-grid-cell app-grid-number font-bold pr-2" data-testid="points">
+            {{ stat.points }}
+          </div>
+        </div>
+      }
+    </div>
+  } @else {
+    <div class="app-text-low-emphasis">No season history found</div>
+  }
+</p-card>
