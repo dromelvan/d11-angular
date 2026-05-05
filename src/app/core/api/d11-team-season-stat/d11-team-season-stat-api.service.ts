@@ -16,4 +16,11 @@ export class D11TeamSeasonStatApiService {
       .get<D11TeamSeasonStatsResponseBody>({ namespace: this.namespace, options: { params } })
       .pipe(map((result) => result.d11TeamSeasonStats));
   }
+
+  getD11TeamSeasonStatsByD11TeamId(d11TeamId: number): Observable<D11TeamSeasonStat[]> {
+    const params = new HttpParams().set('d11TeamId', d11TeamId);
+    return this.apiService
+      .get<D11TeamSeasonStatsResponseBody>({ namespace: this.namespace, options: { params } })
+      .pipe(map((result) => result.d11TeamSeasonStats));
+  }
 }

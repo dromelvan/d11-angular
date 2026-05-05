@@ -83,4 +83,61 @@ describe('D11TeamSeasonStatApiService', () => {
       ).rejects.toBeInstanceOf(Error);
     });
   });
+
+  // getD11TeamSeasonStatsByD11TeamId ---------------------------------------------------------------
+
+  describe('getD11TeamSeasonStatsByD11TeamId', () => {
+    const d11TeamId = 7;
+    const d11TeamSeasonStats = [fakeD11TeamSeasonStat(), fakeD11TeamSeasonStat()];
+    const response: D11TeamSeasonStatsResponseBody = { d11TeamSeasonStats };
+
+    it('calls get with namespace and d11TeamId param', async () => {
+      apiServiceMock.get = vi.fn().mockReturnValue(of(response)) as GetFn;
+
+      await firstValueFrom(d11TeamSeasonStatApi.getD11TeamSeasonStatsByD11TeamId(d11TeamId));
+
+      expect(apiServiceMock.get).toHaveBeenCalledExactlyOnceWith(
+        expect.objectContaining({
+          namespace: d11TeamSeasonStatApi.namespace,
+          options: expect.objectContaining({
+            params: expect.any(HttpParams),
+          }),
+        }),
+      );
+
+      const calledParams: HttpParams = (apiServiceMock.get as ReturnType<typeof vi.fn>).mock
+        .calls[0][0].options.params;
+      expect(calledParams.get('d11TeamId')).toBe(String(d11TeamId));
+    });
+
+    it('maps the result', async () => {
+      apiServiceMock.get = vi.fn().mockReturnValue(of(response)) as GetFn;
+
+      const result = await firstValueFrom(
+        d11TeamSeasonStatApi.getD11TeamSeasonStatsByD11TeamId(d11TeamId),
+      );
+
+      expect(result).toEqual(d11TeamSeasonStats);
+    });
+
+    it('propagates errors', async () => {
+      const httpError = new Error('NOT_FOUND');
+
+      apiServiceMock.get = vi.fn().mockReturnValue(throwError(() => httpError)) as GetFn;
+
+      expect(
+        firstValueFrom(d11TeamSeasonStatApi.getD11TeamSeasonStatsByD11TeamId(d11TeamId)),
+      ).rejects.toThrow(httpError.message);
+    });
+
+    it('does not map the result on error', async () => {
+      apiServiceMock.get = vi
+        .fn()
+        .mockReturnValue(throwError(() => new Error('NOT_FOUND'))) as GetFn;
+
+      expect(
+        firstValueFrom(d11TeamSeasonStatApi.getD11TeamSeasonStatsByD11TeamId(d11TeamId)),
+      ).rejects.toBeInstanceOf(Error);
+    });
+  });
 });
