@@ -1,6 +1,9 @@
 @let m = model();
 
 <div class="app-col row-span-2 items-center justify-center gap-0.5 text-xs py-2.5">
+  @if (m.showDate) {
+    <span>{{ m.match.datetime | safeDate: 'MMM d' }}</span>
+  }
   <span>{{ m.match.datetime | safeDate: 'HH:mm' }}</span>
   @if (m.showElapsed) {
     <span

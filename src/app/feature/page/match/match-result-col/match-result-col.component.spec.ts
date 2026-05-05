@@ -10,10 +10,11 @@ const mockRouterService = { navigateToMatch: vi.fn() };
 describe('MatchResultColComponent', () => {
   let fixture: ComponentFixture<MatchResultColComponent>;
 
-  async function setup(matchInput = fakeMatchBase(), isLast = true) {
+  async function setup(matchInput = fakeMatchBase(), isLast = true, showDate = false) {
     fixture = TestBed.createComponent(MatchResultColComponent);
     fixture.componentRef.setInput('match', matchInput);
     fixture.componentRef.setInput('isLast', isLast);
+    fixture.componentRef.setInput('showDate', showDate);
     fixture.detectChanges();
     await fixture.whenStable();
   }
@@ -84,6 +85,20 @@ describe('MatchResultColComponent', () => {
       const date = new Date(datetime);
       const expected = `${date.getHours().toString().padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')}`;
       expect(fixture.nativeElement.textContent).toContain(expected);
+    });
+
+    it('renders date above time when showDate is true', async () => {
+      const datetime = '2025-06-15T14:30:00.000Z';
+      await setup({ ...fakeMatchBase(), status: Status.PENDING, datetime }, true, true);
+
+      expect(fixture.nativeElement.textContent).toContain('Jun 15');
+    });
+
+    it('does not render date when showDate is false', async () => {
+      const datetime = '2025-06-15T14:30:00.000Z';
+      await setup({ ...fakeMatchBase(), status: Status.PENDING, datetime });
+
+      expect(fixture.nativeElement.textContent).not.toContain('Jun 15');
     });
   });
 

@@ -19,15 +19,18 @@ import { SafeDatePipe } from '@app/shared/pipes';
 export class MatchResultColComponent {
   match = input.required<MatchBase>();
   isLast = input<boolean>(false);
+  showDate = input<boolean>(false);
 
   protected readonly Status = Status;
 
   protected model = computed(() => {
     const match = this.match();
+    const showDate = this.showDate();
     const homeDiff = match.homeTeamGoalsScored - match.previousHomeTeamGoalsScored;
     const awayDiff = match.awayTeamGoalsScored - match.previousAwayTeamGoalsScored;
     return {
       match,
+      showDate,
       homeDiff,
       awayDiff,
       showElapsed: [Status.ACTIVE, Status.FULL_TIME, Status.FINISHED].includes(match.status),
