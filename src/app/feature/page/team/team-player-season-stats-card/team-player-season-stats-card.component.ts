@@ -2,18 +2,20 @@ import { Component, computed, inject, input } from '@angular/core';
 import { PlayerSeasonStat, POSITION_IDS, Season } from '@app/core/api';
 import { RouterService } from '@app/core/router/router.service';
 import { DynamicDialogService } from '@app/shared/dialog/dynamic-dialog-service/dynamic-dialog.service';
-import { D11TeamImgComponent, PlayerImgComponent } from '@app/shared/img';
+import { D11TeamImgComponent, PlayerImgComponent, TeamImgComponent } from '@app/shared/img';
 import { RatingPipe } from '@app/shared/pipes/rating.pipe';
 import { Card } from 'primeng/card';
+import { FeePipe } from '@app/shared/pipes';
 
 @Component({
   selector: 'app-team-player-season-stats-card',
-  imports: [Card, D11TeamImgComponent, PlayerImgComponent, RatingPipe],
+  imports: [Card, D11TeamImgComponent, TeamImgComponent, PlayerImgComponent, RatingPipe, FeePipe],
   templateUrl: './team-player-season-stats-card.component.html',
 })
 export class TeamPlayerSeasonStatsCardComponent {
   playerSeasonStats = input.required<PlayerSeasonStat[]>();
   season = input<Season | undefined>();
+  showTeam = input<boolean>(false);
 
   protected grouped = computed(() => {
     const stats = this.playerSeasonStats();

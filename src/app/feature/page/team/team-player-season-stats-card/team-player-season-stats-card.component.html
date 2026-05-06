@@ -19,13 +19,24 @@
                 </div>
                 <div
                   class="app-grid-cell app-col gap-0 w-full overflow-hidden"
-                  [class.justify-center]="stat.d11Team.dummy"
+                  [class.justify-center]="showTeam() ? stat.team.dummy : stat.d11Team.dummy"
                 >
                   <span class="w-full truncate">{{ stat.player.name }}</span>
                   <span class="app-text-lowest-emphasis w-full truncate flex items-center gap-1">
-                    @if (!stat.d11Team.dummy) {
-                      <app-d11-team-img [d11Team]="stat.d11Team" width="12" />
-                      {{ stat.d11Team.name }}
+                    @if (showTeam()) {
+                      @if (!stat.team.dummy) {
+                        <app-team-img [team]="stat.team" width="12" />
+                        {{ stat.team.name }}
+                        @if (!stat.d11Team.dummy) {
+                          <span data-testid="fee">{{ stat.fee | fee }}m</span>
+                        }
+                      }
+                    } @else {
+                      @if (!stat.d11Team.dummy) {
+                        <app-d11-team-img [d11Team]="stat.d11Team" width="12" />
+                        {{ stat.d11Team.name }}
+                        <span data-testid="fee">{{ stat.fee | fee }}m</span>
+                      }
                     }
                   </span>
                 </div>
