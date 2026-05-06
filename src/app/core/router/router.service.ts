@@ -103,6 +103,12 @@ export class RouterService {
     return this.router.navigate(['rules']);
   }
 
+  public navigateToD11Team(d11TeamId: number, seasonId?: number, push = true): Promise<boolean> {
+    const extras = seasonId ? { queryParams: { seasonId } } : {};
+    this.updateStack('d11-teams', push);
+    return this.router.navigate(['d11-teams', d11TeamId], extras);
+  }
+
   public navigateToD11Teams(seasonId?: number): Promise<boolean> {
     this.stack.set([]);
     const extras = seasonId ? { queryParams: { seasonId } } : {};

@@ -130,6 +130,25 @@ describe('RouterService', () => {
     expect(result).toBe(true);
   });
 
+  it('should navigate to d11 team without seasonId', async () => {
+    const d11TeamId = 1;
+    const result = await service.navigateToD11Team(d11TeamId);
+
+    expect(mockRouter.navigate).toHaveBeenCalledWith(['d11-teams', d11TeamId], {});
+    expect(result).toBe(true);
+  });
+
+  it('should navigate to d11 team with seasonId', async () => {
+    const d11TeamId = 1;
+    const seasonId = 5;
+    const result = await service.navigateToD11Team(d11TeamId, seasonId);
+
+    expect(mockRouter.navigate).toHaveBeenCalledWith(['d11-teams', d11TeamId], {
+      queryParams: { seasonId },
+    });
+    expect(result).toBe(true);
+  });
+
   it('should navigate to current D11 teams', async () => {
     const result = await service.navigateToD11Teams();
 
@@ -242,6 +261,7 @@ describe('RouterService', () => {
             { path: 'players/:id', component: BlankComponent },
             { path: 'seasons', component: BlankComponent },
             { path: 'teams/:id', component: BlankComponent },
+            { path: 'd11-teams/:id', component: BlankComponent },
           ]),
         ],
       });
@@ -302,6 +322,24 @@ describe('RouterService', () => {
       await router.navigate(['/match-weeks/1']);
 
       await service.navigateToMatchWeek(2);
+
+      expect(service.hasStack()).toBe(false);
+    });
+
+    it('pushes to stack when navigating from non-d11-team route to a d11 team', async () => {
+      const router = TestBed.inject(Router);
+      await router.navigate(['/match-weeks/1']);
+
+      await service.navigateToD11Team(1);
+
+      expect(service.hasStack()).toBe(true);
+    });
+
+    it('does not push to stack when navigating from one d11 team to another', async () => {
+      const router = TestBed.inject(Router);
+      await router.navigate(['/d11-teams/1']);
+
+      await service.navigateToD11Team(2);
 
       expect(service.hasStack()).toBe(false);
     });

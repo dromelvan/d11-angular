@@ -104,6 +104,14 @@ export const routes: Routes = [
     data: { section: 'Rules' },
   },
   {
+    path: 'd11-teams/:d11TeamId',
+    loadComponent: () =>
+      import('@app/feature/page/d11-team/d11-team-page.component').then(
+        (m) => m.D11TeamPageComponent,
+      ),
+    data: { section: 'D11 Teams' },
+  },
+  {
     path: 'd11-teams',
     loadComponent: () =>
       import('@app/feature/page/d11-teams/d11-teams-page.component').then(

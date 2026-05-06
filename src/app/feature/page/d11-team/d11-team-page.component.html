@@ -1,0 +1,45 @@
+@if (!isLoading()) {
+  @let model = this.model();
+  <div class="app-d11-team-page app-col max-w-sm mx-auto">
+    <app-d11-team-header-card
+      [d11Team]="model.d11Team"
+      [d11TeamSeasonStat]="model.d11TeamSeasonStat"
+      [playerSeasonStats]="model.playerSeasonStats"
+      [positions]="model.positions"
+    />
+    <p-tabs [(value)]="activeTab">
+      <p-tablist class="justify-evenly">
+        <p-tab value="0">Matches</p-tab>
+        <p-tab value="1">Players</p-tab>
+        <p-tab value="2">History</p-tab>
+      </p-tablist>
+      <p-tabpanels>
+        <p-tabpanel value="0">
+          @defer (when activeTab === '0') {
+            <app-d11-team-matches-card [d11Matches]="model.d11Matches" [season]="model.season" />
+          }
+        </p-tabpanel>
+
+        <p-tabpanel value="1">
+          @defer (when activeTab === '1') {
+            <app-team-player-season-stats-card
+              [playerSeasonStats]="model.playerSeasonStats"
+              [season]="model.season"
+              [showTeam]="true"
+            />
+          }
+        </p-tabpanel>
+
+        <p-tabpanel value="2">
+          @defer (when activeTab === '2') {
+            <app-d11-team-season-history-card
+              [d11TeamSeasonStats]="model.d11TeamSeasonStats"
+              [currentSeasonId]="model.season?.id"
+              (seasonSelected)="navigateToSeason($event)"
+            />
+          }
+        </p-tabpanel>
+      </p-tabpanels>
+    </p-tabs>
+  </div>
+}
