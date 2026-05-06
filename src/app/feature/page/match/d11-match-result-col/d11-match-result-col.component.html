@@ -1,7 +1,12 @@
 @let m = model();
 
 <div class="app-col row-span-2 items-center justify-center gap-0.5 text-xs py-2.5">
-  <span>{{ m.d11Match.datetime | safeDate: 'HH:mm' }}</span>
+  @if (m.showDate) {
+    <span>{{ m.d11Match.datetime | safeDate: 'MMM d' }}</span>
+  }
+  @if (m.showKickoff) {
+    <span>{{ m.d11Match.datetime | safeDate: 'HH:mm' }}</span>
+  }
   @if (m.showElapsed) {
     <span
       [class.bg-primary]="m.d11Match.status === Status.ACTIVE"

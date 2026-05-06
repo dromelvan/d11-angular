@@ -19,15 +19,20 @@ import { SafeDatePipe } from '@app/shared/pipes';
 export class D11MatchResultColComponent {
   d11Match = input.required<D11MatchBase>();
   isLast = input<boolean>(false);
+  showDate = input<boolean>(false);
 
   protected readonly Status = Status;
 
   protected model = computed(() => {
     const d11Match = this.d11Match();
+    const showDate = this.showDate();
     const homeDiff = d11Match.homeTeamGoalsScored - d11Match.previousHomeTeamGoalsScored;
     const awayDiff = d11Match.awayTeamGoalsScored - d11Match.previousAwayTeamGoalsScored;
+    const kickoff = new Date(d11Match.datetime);
     return {
-      d11Match: d11Match,
+      d11Match,
+      showDate,
+      showKickoff: kickoff.getHours() !== 0 || kickoff.getMinutes() !== 0,
       homeDiff,
       awayDiff,
       showElapsed: [Status.ACTIVE, Status.FULL_TIME, Status.FINISHED].includes(d11Match.status),

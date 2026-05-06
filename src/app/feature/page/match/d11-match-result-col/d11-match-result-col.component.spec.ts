@@ -10,10 +10,15 @@ const mockRouterService = { navigateToD11Match: vi.fn() };
 describe('D11MatchResultColComponent', () => {
   let fixture: ComponentFixture<D11MatchResultColComponent>;
 
-  async function setup(d11MatchInput: D11MatchBase = fakeD11MatchBase(), isLast = true) {
+  async function setup(
+    d11MatchInput: D11MatchBase = fakeD11MatchBase(),
+    isLast = true,
+    showDate = false,
+  ) {
     fixture = TestBed.createComponent(D11MatchResultColComponent);
     fixture.componentRef.setInput('d11Match', d11MatchInput);
     fixture.componentRef.setInput('isLast', isLast);
+    fixture.componentRef.setInput('showDate', showDate);
     fixture.detectChanges();
     await fixture.whenStable();
   }
@@ -85,6 +90,59 @@ describe('D11MatchResultColComponent', () => {
       const expected = `${date.getHours().toString().padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')}`;
       expect(fixture.nativeElement.textContent).toContain(expected);
     });
+
+    it('does not render kickoff time when time is 00:00', async () => {
+      await setup({
+        ...fakeD11MatchBase(),
+        status: Status.PENDING,
+        datetime: '2025-06-15T00:00:00.000Z',
+      });
+
+      expect(fixture.nativeElement.textContent).not.toContain('00:00');
+    });
+  });
+
+  // Date -----------------------------------------------------------------------------------------
+
+  describe('date', () => {
+    it('renders date in MMM d format when showDate is true', async () => {
+      const datetime = '2025-06-15T14:30:00.000Z';
+      await setup({ ...fakeD11MatchBase(), status: Status.PENDING, datetime }, true, true);
+
+      expect(fixture.nativeElement.textContent).toContain('Jun 15');
+    });
+
+    it('does not render date when showDate is false', async () => {
+      const datetime = '2025-06-15T14:30:00.000Z';
+      await setup({ ...fakeD11MatchBase(), status: Status.PENDING, datetime }, true, false);
+
+      expect(fixture.nativeElement.textContent).not.toContain('Jun 15');
+    });
+
+    it('renders date when showDate is true even when kickoff time is 00:00', async () => {
+      const datetime = '2025-06-15T00:00:00.000Z';
+      await setup({ ...fakeD11MatchBase(), status: Status.PENDING, datetime }, true, true);
+
+      expect(fixture.nativeElement.textContent).toContain('Jun 15');
+    });
+  });
+
+  // Team images ----------------------------------------------------------------------------------
+
+  describe('team images', () => {
+    it('renders home team image', async () => {
+      await setup(fakeD11MatchBase());
+
+      const images = fixture.nativeElement.querySelectorAll('app-d11-team-img');
+      expect(images.length).toBeGreaterThanOrEqual(1);
+    });
+
+    it('renders away team image', async () => {
+      await setup(fakeD11MatchBase());
+
+      const images = fixture.nativeElement.querySelectorAll('app-d11-team-img');
+      expect(images.length).toBe(2);
+    });
   });
 
   // Elapsed time ---------------------------------------------------------------------------------
@@ -110,6 +168,12 @@ describe('D11MatchResultColComponent', () => {
 
     it('does not render for pending match', async () => {
       await setup({ ...fakeD11MatchBase(), status: Status.PENDING, elapsed: 'N/A' });
+
+      expect(fixture.nativeElement.textContent).not.toContain('N/A');
+    });
+
+    it('does not render for postponed match', async () => {
+      await setup({ ...fakeD11MatchBase(), status: Status.POSTPONED, elapsed: 'N/A' });
 
       expect(fixture.nativeElement.textContent).not.toContain('N/A');
     });
@@ -269,6 +333,20 @@ describe('D11MatchResultColComponent', () => {
         });
 
         expect(fixture.nativeElement.querySelector('app-icon')).toBeNull();
+      });
+
+      it('shows -N G and down arrow when away goals decreased', async () => {
+        await setup({
+          ...fakeD11MatchBase(),
+          status: Status.ACTIVE,
+          homeTeamGoalsScored: 0,
+          previousHomeTeamGoalsScored: 0,
+          awayTeamGoalsScored: 1,
+          previousAwayTeamGoalsScored: 2,
+        });
+
+        expect(fixture.nativeElement.querySelector('app-icon.text-error')).toBeTruthy();
+        expect(fixture.nativeElement.textContent).toContain('-1 G');
       });
 
       it('shows +N G and up arrow when away goals increased', async () => {
