@@ -12,19 +12,14 @@
     <div class="app-grid-header app-grid-number text-center">GD</div>
     <div class="app-grid-header app-grid-number font-bold pr-2">Pts</div>
 
-    @for (
-      stat of d11TeamSeasonStats();
-      track stat.id;
-      let i = $index;
-      let count = $count;
-      let last = $last
-    ) {
+    @for (stat of d11TeamSeasonStats(); track stat.id; let i = $index; let last = $last) {
       <div
-        class="col-span-4 sm:col-span-10 grid grid-cols-subgrid px-2"
+        class="col-span-4 sm:col-span-10 grid grid-cols-subgrid px-2 cursor-pointer"
         [class.app-grid-separator]="!last"
         [class.bg-primary]="i === 0"
         [class.text-primary-contrast]="i <= 3"
         [class.bg-surface-500]="i >= 1 && i <= 3"
+        (click)="navigateToD11Team(stat)"
       >
         <div class="app-grid-cell tabular-nums justify-center" data-testid="ranking">
           {{ stat.ranking }}

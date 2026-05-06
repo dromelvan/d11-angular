@@ -1,8 +1,11 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { D11TeamSeasonStat } from '@app/core/api';
+import { RouterService } from '@app/core/router/router.service';
 import { fakeD11TeamBase, fakeD11TeamSeasonStat } from '@app/test';
 import { beforeEach, describe, expect, vi } from 'vitest';
 import { D11TeamSeasonStatsCardComponent } from './d11-team-season-stats-card.component';
+
+const mockRouterService = { navigateToD11Team: vi.fn() };
 
 describe('D11TeamSeasonStatsCardComponent', () => {
   let fixture: ComponentFixture<D11TeamSeasonStatsCardComponent>;
@@ -19,12 +22,34 @@ describe('D11TeamSeasonStatsCardComponent', () => {
 
     await TestBed.configureTestingModule({
       imports: [D11TeamSeasonStatsCardComponent],
+      providers: [{ provide: RouterService, useValue: mockRouterService }],
     }).compileComponents();
   });
 
   it('creates the component', async () => {
     await setup([]);
     expect(fixture.componentInstance).toBeTruthy();
+  });
+
+  // Header and column labels ----------------------------------------------------------------------
+
+  it('renders "D11" card header', async () => {
+    await setup([]);
+    expect(fixture.nativeElement.textContent).toContain('D11');
+  });
+
+  it('renders column headers', async () => {
+    await setup([fakeD11TeamSeasonStat()]);
+
+    const text = fixture.nativeElement.textContent;
+    expect(text).toContain('Team');
+    expect(text).toContain('GD');
+    expect(text).toContain('Pts');
+    expect(text).toContain('P');
+    expect(text).toContain('W');
+    expect(text).toContain('L');
+    expect(text).toContain('GF');
+    expect(text).toContain('GA');
   });
 
   // Renders ---------------------------------------------------------------------------------------
@@ -131,6 +156,34 @@ describe('D11TeamSeasonStatsCardComponent', () => {
     });
   });
 
+  // Navigation ------------------------------------------------------------------------------------
+
+  describe('navigation', () => {
+    it('navigates to d11 team page when row is clicked', async () => {
+      const stat = fakeD11TeamSeasonStat();
+      await setup([stat]);
+
+      fixture.nativeElement.querySelector('.col-span-4').click();
+
+      expect(mockRouterService.navigateToD11Team).toHaveBeenCalledExactlyOnceWith(
+        stat.d11Team.id,
+        stat.season.id,
+      );
+    });
+  });
+
+  // Separator -------------------------------------------------------------------------------------
+
+  describe('separator', () => {
+    it('adds app-grid-separator to non-last rows', async () => {
+      await setup([fakeD11TeamSeasonStat(), fakeD11TeamSeasonStat()]);
+
+      const rows = fixture.nativeElement.querySelectorAll('.col-span-4');
+      expect(rows[0].classList).toContain('app-grid-separator');
+      expect(rows[1].classList).not.toContain('app-grid-separator');
+    });
+  });
+
   // Row background classes ------------------------------------------------------------------------
 
   describe('backgrounds', () => {
@@ -165,6 +218,16 @@ describe('D11TeamSeasonStatsCardComponent', () => {
       }
       expect(rows[0].classList).not.toContain('bg-surface-500');
       expect(rows[4].classList).not.toContain('bg-surface-500');
+    });
+
+    it('rows at index 0 to 3 have text-primary-contrast class', async () => {
+      await setup(buildTable(10));
+
+      const rows = getRows();
+      for (let i = 0; i <= 3; i++) {
+        expect(rows[i].classList).toContain('text-primary-contrast');
+      }
+      expect(rows[4].classList).not.toContain('text-primary-contrast');
     });
 
     it('rows from index 4 onward have neither bg-primary nor bg-surface-500', async () => {
