@@ -18,6 +18,7 @@ import {
   Position,
   Season,
   SeasonBase,
+  SeasonWinners,
   Stadium,
   StadiumBase,
   Status,
@@ -279,6 +280,13 @@ export const fakeD11TeamSeasonStat = (): D11TeamSeasonStat => ({
   previousRanking: faker.number.int({ min: 1, max: 20 }),
   d11Team: fakeD11TeamBase(),
   season: fakeSeason(),
+});
+
+export const fakeSeasonWinners = (): SeasonWinners => ({
+  season: fakeSeason(),
+  d11TeamSeasonStat: fakeD11TeamSeasonStat(),
+  teamSeasonStat: fakeTeamSeasonStat(),
+  playerSeasonStat: fakePlayerSeasonStat(),
 });
 
 export const fakePlayerMatchStat = (): PlayerMatchStat => ({

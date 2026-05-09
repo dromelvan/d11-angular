@@ -2,10 +2,12 @@ import { TestBed } from '@angular/core/testing';
 import { firstValueFrom, of, throwError } from 'rxjs';
 import { beforeEach, describe } from 'vitest';
 import { faker } from '@faker-js/faker';
-import { fakeSeason, GetFn } from '@app/test';
+import { fakeSeason, fakeSeasonWinners, GetFn } from '@app/test';
 import { ApiService } from '@app/core/api/api.service';
 import { Season } from '@app/core/api/model/season.model';
+import { SeasonWinners } from '@app/core/api/model/season-winners.model';
 import { SeasonApiService } from './season-api.service';
+import { SeasonWinnersResponseBody } from './season-winners-response-body.model';
 import { SeasonsResponseBody } from './seasons-response-body.model';
 
 describe('SeasonApiService', () => {
@@ -163,6 +165,46 @@ describe('SeasonApiService', () => {
 
       expect(result).toEqual(season);
       expect(apiServiceMock.get).toHaveBeenCalledOnce();
+    });
+  });
+
+  // getSeasonWinners ------------------------------------------------------------------------------
+
+  describe('getSeasonWinners', () => {
+    const seasonWinners: SeasonWinners[] = [fakeSeasonWinners(), fakeSeasonWinners()];
+    const response: SeasonWinnersResponseBody = { seasonWinners };
+
+    it('calls get with namespace and endpoint', async () => {
+      apiServiceMock.get = vi.fn().mockReturnValue(of(response)) as GetFn;
+
+      await firstValueFrom(seasonApi.getSeasonWinners());
+
+      expect(apiServiceMock.get).toHaveBeenCalledExactlyOnceWith(
+        expect.objectContaining({ namespace: seasonApi.namespace, endpoint: 'winners' }),
+      );
+    });
+
+    it('maps the result', async () => {
+      apiServiceMock.get = vi.fn().mockReturnValue(of(response)) as GetFn;
+
+      const result = await firstValueFrom(seasonApi.getSeasonWinners());
+
+      expect(result).toEqual(seasonWinners);
+    });
+
+    it('propagates errors', async () => {
+      const httpError = new Error('NOT_FOUND');
+      apiServiceMock.get = vi.fn().mockReturnValue(throwError(() => httpError)) as GetFn;
+
+      expect(firstValueFrom(seasonApi.getSeasonWinners())).rejects.toThrow(httpError.message);
+    });
+
+    it('does not map the result on error', async () => {
+      apiServiceMock.get = vi
+        .fn()
+        .mockReturnValue(throwError(() => new Error('NOT_FOUND'))) as GetFn;
+
+      expect(firstValueFrom(seasonApi.getSeasonWinners())).rejects.toBeInstanceOf(Error);
     });
   });
 });

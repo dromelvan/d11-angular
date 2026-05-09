@@ -27,6 +27,7 @@ export * from './model/player-season-stat-sort.model';
 export * from './model/position.model';
 export * from './model/season.model';
 export * from './model/season-base.model';
+export * from './model/season-winners.model';
 export * from './model/stadium.model';
 export * from './model/stadium-base.model';
 export * from './model/status.model';

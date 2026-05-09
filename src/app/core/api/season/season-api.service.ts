@@ -3,6 +3,8 @@ import { map, Observable } from 'rxjs';
 import { ApiService } from '@app/core/api/api.service';
 import { LocalStorageCachedObservable } from '@app/core/api/local-storage-cache';
 import { Season } from '@app/core/api/model/season.model';
+import { SeasonWinners } from '@app/core/api/model/season-winners.model';
+import { SeasonWinnersResponseBody } from './season-winners-response-body.model';
 import { SeasonsResponseBody } from './seasons-response-body.model';
 
 @Injectable({
@@ -30,5 +32,11 @@ export class SeasonApiService {
     return this.seasonsCache
       .get()
       .pipe(map((seasons) => seasons.reduce((latest, s) => (s.date > latest.date ? s : latest))));
+  }
+
+  getSeasonWinners(): Observable<SeasonWinners[]> {
+    return this.apiService
+      .get<SeasonWinnersResponseBody>({ namespace: this.namespace, endpoint: 'winners' })
+      .pipe(map((result) => result.seasonWinners));
   }
 }
