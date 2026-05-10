@@ -1,0 +1,8 @@
+@for (badge of badges(); track $index) {
+  <span
+    class="w-5 h-5 rounded-full flex items-center justify-center text-[0.6rem] text-primary-contrast font-bold"
+    [ngClass]="badge.bgClass"
+  >
+    {{ badge.label }}
+  </span>
+}
