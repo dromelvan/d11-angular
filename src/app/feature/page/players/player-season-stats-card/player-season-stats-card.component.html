@@ -76,18 +76,7 @@
               }
               @case ('FORM') {
                 <div class="app-row gap-0">
-                  @for (points of stat.formMatchPoints; track $index) {
-                    <span
-                      class="w-5 h-5 rounded-full flex items-center justify-center text-[0.6rem] text-primary-contrast"
-                      [ngClass]="{
-                        'bg-success': points > 0,
-                        'bg-error': points < 0,
-                        'bg-neutral': points === 0,
-                      }"
-                    >
-                      {{ points }}
-                    </span>
-                  }
+                  <app-form-match-points [formMatchPoints]="stat.formMatchPoints" type="player" />
                 </div>
               }
               @default {

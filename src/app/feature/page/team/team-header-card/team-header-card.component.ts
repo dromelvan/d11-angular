@@ -2,13 +2,14 @@ import { NgClass } from '@angular/common';
 import { Component, computed, input } from '@angular/core';
 import { PRIMARY } from '@app/app.theme';
 import type { Team, TeamSeasonStat } from '@app/core/api';
+import { FormMatchPointsComponent } from '@app/shared/form-match-points';
 import { TeamImgComponent } from '@app/shared/img';
 import { contrastTextClass } from '@app/shared/util/contrast-text.util';
 import { Card } from 'primeng/card';
 
 @Component({
   selector: 'app-team-header-card',
-  imports: [Card, NgClass, TeamImgComponent],
+  imports: [Card, NgClass, TeamImgComponent, FormMatchPointsComponent],
   templateUrl: './team-header-card.component.html',
 })
 export class TeamHeaderCardComponent {

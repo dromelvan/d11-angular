@@ -47,7 +47,7 @@ describe('D11TeamHeaderCardComponent', () => {
   it('renders form dots when formMatchPoints has values', async () => {
     const d11Team = fakeD11TeamBase();
     const d11TeamSeasonStat = fakeD11TeamSeasonStat();
-    d11TeamSeasonStat.formMatchPoints = [3, -1, 0];
+    d11TeamSeasonStat.formMatchPoints = [3, 1, 0];
 
     await render(D11TeamHeaderCardComponent, { inputs: { d11Team, d11TeamSeasonStat } });
 

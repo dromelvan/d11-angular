@@ -1,9 +1,9 @@
 import { Component, computed, DestroyRef, effect, inject, input, signal } from '@angular/core';
-import { NgClass } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { rxResource } from '@angular/core/rxjs-interop';
 import { of } from 'rxjs';
 import { PlayerSeasonStat, PlayerSeasonStatPage, POSITION_IDS } from '@app/core/api';
+import { FormMatchPointsComponent } from '@app/shared/form-match-points';
 import { PlayerSeasonStatApiService } from '@app/core/api/player-season-stat/player-season-stat-api.service';
 import { PlayerSeasonStatSort } from '@app/core/api/model/player-season-stat-sort.model';
 import { LoadingService } from '@app/core/loading/loading.service';
@@ -20,7 +20,6 @@ import { DynamicDialogService } from '@app/shared/dialog/dynamic-dialog-service/
 @Component({
   selector: 'app-player-season-stats-card',
   imports: [
-    NgClass,
     Card,
     Drawer,
     FormsModule,
@@ -29,6 +28,7 @@ import { DynamicDialogService } from '@app/shared/dialog/dynamic-dialog-service/
     TeamImgComponent,
     IconButtonComponent,
     RatingPipe,
+    FormMatchPointsComponent,
   ],
   templateUrl: './player-season-stats-card.component.html',
 })

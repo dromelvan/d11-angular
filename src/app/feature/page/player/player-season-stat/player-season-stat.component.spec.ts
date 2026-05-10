@@ -110,7 +110,7 @@ describe('PlayerSeasonStatComponent', () => {
 
   it('renders form match points circles', async () => {
     await waitFor(() => {
-      for (const pts of pss.formMatchPoints.slice(0, 5)) {
+      for (const pts of pss.formMatchPoints) {
         expect(screen.getByText(String(pts))).toBeInTheDocument();
       }
     });

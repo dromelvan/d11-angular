@@ -55,7 +55,7 @@ describe('TeamHeaderCardComponent', () => {
     const team = fakeTeam();
     team.dummy = false;
     const teamSeasonStat = fakeTeamSeasonStat();
-    teamSeasonStat.formMatchPoints = [3, -1, 0];
+    teamSeasonStat.formMatchPoints = [3, 1, 0];
 
     await render(TeamHeaderCardComponent, { inputs: { team, teamSeasonStat } });
 
