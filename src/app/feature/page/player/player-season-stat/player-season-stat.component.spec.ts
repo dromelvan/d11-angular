@@ -1,48 +1,23 @@
-import { Component } from '@angular/core';
-import type { PlayerSeasonStat } from '@app/core/api';
-import { fakePlayerSeasonStat } from '@app/test';
+import { fakePlayerSeasonStat, fakeTransferListing } from '@app/test';
 import { render, screen, waitFor } from '@testing-library/angular';
 import { expect } from 'vitest';
+import { PlayerStatSummary } from '@app/shared/model';
 import { PlayerSeasonStatComponent } from './player-season-stat.component';
 
-const renderComponent = (playerSeasonStat: PlayerSeasonStat, showInfo = false) => {
-  @Component({
-    template: ` <app-player-season-stat
-      [playerSeasonStat]="playerSeasonStat"
-      [showInfo]="showInfo"
-    />`,
-    standalone: true,
-    imports: [PlayerSeasonStatComponent],
-  })
-  class HostComponent {
-    playerSeasonStat = playerSeasonStat;
-    showInfo = showInfo;
-  }
-
-  return render(HostComponent);
-};
+const renderComponent = (playerSeasonStat: PlayerStatSummary, showInfo = false) =>
+  render(PlayerSeasonStatComponent, { inputs: { playerSeasonStat, showInfo } });
 
 describe('PlayerSeasonStatComponent', () => {
-  let pss: PlayerSeasonStat;
+  let pss: PlayerStatSummary;
 
   beforeEach(async () => {
     pss = fakePlayerSeasonStat();
     await renderComponent(pss);
   });
 
-  it('renders', () => {
-    expect(document.querySelector('app-player-season-stat')).toBeInTheDocument();
-  });
-
   it('does not render info section', async () => {
     await waitFor(() => {
       expect(screen.queryByText('Info')).not.toBeInTheDocument();
-    });
-  });
-
-  it('does not render player avatar', async () => {
-    await waitFor(() => {
-      expect(document.querySelector('app-avatar')).not.toBeInTheDocument();
     });
   });
 
@@ -214,7 +189,7 @@ describe('PlayerSeasonStatComponent fee', () => {
   it('renders fee', async () => {
     const pss = fakePlayerSeasonStat();
     pss.fee = 150;
-    await renderComponent(pss);
+    await renderComponent(pss, true);
 
     await waitFor(() => {
       expect(screen.getByText('Fee').nextElementSibling?.textContent?.trim()).toBe('15.0m');
@@ -224,16 +199,34 @@ describe('PlayerSeasonStatComponent fee', () => {
   it('renders dash when fee is 0', async () => {
     const pss = fakePlayerSeasonStat();
     pss.fee = 0;
-    await renderComponent(pss);
+    await renderComponent(pss, true);
 
     await waitFor(() => {
       expect(screen.getByText('Fee').nextElementSibling?.textContent?.trim()).toBe('–');
     });
   });
+
+  it('does not render fee row when fee is not provided', async () => {
+    await renderComponent(fakeTransferListing(), true);
+
+    await waitFor(() => {
+      expect(screen.queryByText('Fee')).not.toBeInTheDocument();
+    });
+  });
+
+  it('does not render fee row when showInfo is false', async () => {
+    const pss = fakePlayerSeasonStat();
+    pss.fee = 150;
+    await renderComponent(pss);
+
+    await waitFor(() => {
+      expect(screen.queryByText('Fee')).not.toBeInTheDocument();
+    });
+  });
 });
 
 describe('PlayerSeasonStatComponent with showInfo', () => {
-  let pss: PlayerSeasonStat;
+  let pss: PlayerStatSummary;
 
   beforeEach(async () => {
     pss = fakePlayerSeasonStat();

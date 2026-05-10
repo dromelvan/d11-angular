@@ -1,6 +1,6 @@
 import { DecimalPipe } from '@angular/common';
 import { Component, input } from '@angular/core';
-import { PlayerSeasonStat } from '@app/core/api';
+import { PlayerStatSummary } from '@app/shared/model';
 import { FormMatchPointsComponent } from '@app/shared/form-match-points';
 import { FeePipe } from '@app/shared/pipes';
 import { RatingPipe } from '@app/shared/pipes/rating.pipe';
@@ -19,6 +19,6 @@ import { D11TeamBaseComponent, TeamBaseComponent } from '@app/shared/resource';
   templateUrl: './player-season-stat.component.html',
 })
 export class PlayerSeasonStatComponent {
-  playerSeasonStat = input.required<PlayerSeasonStat>();
+  playerSeasonStat = input.required<PlayerStatSummary>();
   showInfo = input(false);
 }

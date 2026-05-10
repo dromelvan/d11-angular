@@ -18,6 +18,17 @@
     <span class="app-grid-cell justify-end whitespace-nowrap">
       <app-d11-team-base [d11Team]="pss.d11Team" imgWidth="24" justify="end" />
     </span>
+    @if (pss.fee !== undefined) {
+      <div class="app-grid-separator col-span-2"></div>
+      <span class="app-grid-cell app-text-low-emphasis">Fee</span>
+      <span class="app-grid-cell justify-end">
+        @if (pss.fee > 0) {
+          {{ pss.fee | fee }}m
+        } @else {
+          &ndash;
+        }
+      </span>
+    }
   }
 
   <div class="col-span-2" [class]="showInfo() ? 'app-grid-sub-header' : 'app-grid-header'">D11</div>
@@ -46,15 +57,6 @@
   <span class="app-grid-cell app-text-low-emphasis">Points / Appearance</span>
   <span class="app-grid-cell justify-end">
     {{ pss.pointsPerAppearance / 100 | number: '1.2-2' }}
-  </span>
-  <div class="app-grid-separator col-span-2"></div>
-  <span class="app-grid-cell app-text-low-emphasis">Fee</span>
-  <span class="app-grid-cell justify-end">
-    @if (pss.fee > 0) {
-      {{ pss.fee | fee }}m
-    } @else {
-      &ndash;
-    }
   </span>
 
   <div class="app-grid-sub-header col-span-2">Appearances</div>
