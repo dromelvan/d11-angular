@@ -28,7 +28,7 @@ describe('UtilityBarComponent', () => {
   });
 
   it('renders search button for mobile', () => {
-    const buttonIcon = document.querySelector('app-button-icon');
+    const buttonIcon = document.querySelector('app-material-icon-button');
     expect(buttonIcon).toBeInTheDocument();
     expect(buttonIcon).toHaveTextContent('search');
     expect(buttonIcon).toHaveClass('sm:hidden!');
@@ -50,7 +50,7 @@ describe('UtilityBarComponent', () => {
     const drawer = document.querySelector('.app-search-drawer');
     expect(drawer).not.toHaveClass('translate-y-0');
 
-    await userEvent.click(document.querySelector('app-button-icon')!);
+    await userEvent.click(document.querySelector('app-material-icon-button')!);
 
     expect(drawer).toHaveClass('translate-y-0');
   });
