@@ -1,11 +1,11 @@
 import { Component, input } from '@angular/core';
 import { PlayerSeasonStat } from '@app/core/api';
 import { Card } from 'primeng/card';
-import { PlayerSeasonStatComponent } from '../player-season-stat/player-season-stat.component';
+import { PlayerStatSummaryComponent } from '../player-stat-summary/player-stat-summary.component';
 
 @Component({
   selector: 'app-player-season-stat-card',
-  imports: [Card, PlayerSeasonStatComponent],
+  imports: [Card, PlayerStatSummaryComponent],
   templateUrl: './player-season-stat-card.component.html',
 })
 export class PlayerSeasonStatCardComponent {

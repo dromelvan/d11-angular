@@ -1,4 +1,4 @@
 @let pss = playerSeasonStat();
 <p-card class="app-player-season-stat-card" [header]="`Stats ${pss.season.name}`">
-  <app-player-season-stat [playerSeasonStat]="pss" [showInfo]="showInfo()" />
+  <app-player-stat-summary [playerStatSummary]="pss" [showInfo]="showInfo()" />
 </p-card>

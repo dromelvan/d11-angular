@@ -2,12 +2,12 @@ import { fakePlayerSeasonStat, fakeTransferListing } from '@app/test';
 import { render, screen, waitFor } from '@testing-library/angular';
 import { expect } from 'vitest';
 import { PlayerStatSummary } from '@app/shared/model';
-import { PlayerSeasonStatComponent } from './player-season-stat.component';
+import { PlayerStatSummaryComponent } from './player-stat-summary.component';
 
-const renderComponent = (playerSeasonStat: PlayerStatSummary, showInfo = false) =>
-  render(PlayerSeasonStatComponent, { inputs: { playerSeasonStat, showInfo } });
+const renderComponent = (playerStatSummary: PlayerStatSummary, showInfo = false) =>
+  render(PlayerStatSummaryComponent, { inputs: { playerStatSummary, showInfo } });
 
-describe('PlayerSeasonStatComponent', () => {
+describe('PlayerStatSummaryComponent', () => {
   let pss: PlayerStatSummary;
 
   beforeEach(async () => {
@@ -185,7 +185,7 @@ describe('PlayerSeasonStatComponent', () => {
   });
 });
 
-describe('PlayerSeasonStatComponent fee', () => {
+describe('PlayerStatSummaryComponent fee', () => {
   it('renders fee', async () => {
     const pss = fakePlayerSeasonStat();
     pss.fee = 150;
@@ -225,7 +225,7 @@ describe('PlayerSeasonStatComponent fee', () => {
   });
 });
 
-describe('PlayerSeasonStatComponent with showInfo', () => {
+describe('PlayerStatSummaryComponent with showInfo', () => {
   let pss: PlayerStatSummary;
 
   beforeEach(async () => {

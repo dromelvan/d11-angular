@@ -1,11 +1,11 @@
 import { Component, computed, inject } from '@angular/core';
 import { TransferListing } from '@app/core/api';
-import { PlayerSeasonStatComponent } from '@app/feature/page/player/player-season-stat/player-season-stat.component';
+import { PlayerStatSummaryComponent } from '@app/feature/page/player/player-stat-summary/player-stat-summary.component';
 import { DynamicDialogConfig } from 'primeng/dynamicdialog';
 
 @Component({
   selector: 'app-transfer-listing-dialog',
-  imports: [PlayerSeasonStatComponent],
+  imports: [PlayerStatSummaryComponent],
   templateUrl: './transfer-listing-dialog.component.html',
 })
 export class TransferListingDialogComponent {

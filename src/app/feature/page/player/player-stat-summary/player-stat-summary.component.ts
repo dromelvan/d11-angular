@@ -7,7 +7,7 @@ import { RatingPipe } from '@app/shared/pipes/rating.pipe';
 import { D11TeamBaseComponent, TeamBaseComponent } from '@app/shared/resource';
 
 @Component({
-  selector: 'app-player-season-stat',
+  selector: 'app-player-stat-summary',
   imports: [
     FeePipe,
     RatingPipe,
@@ -16,9 +16,9 @@ import { D11TeamBaseComponent, TeamBaseComponent } from '@app/shared/resource';
     D11TeamBaseComponent,
     FormMatchPointsComponent,
   ],
-  templateUrl: './player-season-stat.component.html',
+  templateUrl: './player-stat-summary.component.html',
 })
-export class PlayerSeasonStatComponent {
-  playerSeasonStat = input.required<PlayerStatSummary>();
+export class PlayerStatSummaryComponent {
+  playerStatSummary = input.required<PlayerStatSummary>();
   showInfo = input(false);
 }

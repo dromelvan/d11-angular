@@ -42,7 +42,7 @@ describe('PlayerSeasonStatCardComponent', () => {
 
   it('renders player season stat', async () => {
     await waitFor(() => {
-      expect(document.querySelector('app-player-season-stat')).toBeInTheDocument();
+      expect(document.querySelector('app-player-stat-summary')).toBeInTheDocument();
     });
   });
 });

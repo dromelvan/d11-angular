@@ -1,11 +1,11 @@
 import { Component, computed, inject } from '@angular/core';
 import { PlayerSeasonStat } from '@app/core/api';
 import { DynamicDialogConfig } from 'primeng/dynamicdialog';
-import { PlayerSeasonStatComponent } from '@app/feature/page/player/player-season-stat/player-season-stat.component';
+import { PlayerStatSummaryComponent } from '@app/feature/page/player/player-stat-summary/player-stat-summary.component';
 
 @Component({
   selector: 'app-player-dialog-season-stat',
-  imports: [PlayerSeasonStatComponent],
+  imports: [PlayerStatSummaryComponent],
   templateUrl: './player-dialog-season-stat.component.html',
 })
 export class PlayerDialogSeasonStatComponent {

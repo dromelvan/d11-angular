@@ -14,10 +14,10 @@ describe('TransferListingDialogComponent', () => {
     return transferListing;
   }
 
-  it('renders player season stat', async () => {
+  it('renders player stat summary', async () => {
     await setup();
 
-    expect(document.querySelector('app-player-season-stat')).toBeInTheDocument();
+    expect(document.querySelector('app-player-stat-summary')).toBeInTheDocument();
   });
 
   it('renders position name', async () => {
