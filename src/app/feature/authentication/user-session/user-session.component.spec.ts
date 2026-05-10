@@ -56,7 +56,7 @@ describe('UserSessionComponent', () => {
 
     const host = fixture.nativeElement as HTMLElement;
     expect(host.querySelector('app-avatar')).toBeInTheDocument();
-    expect(host.querySelector('app-icon-user-circle')).not.toBeInTheDocument();
+    expect(host.querySelector('app-icon')).not.toBeInTheDocument();
   });
 
   it('renders menu when logged in', () => {
