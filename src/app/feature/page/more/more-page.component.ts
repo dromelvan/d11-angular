@@ -21,6 +21,7 @@ export class MorePageComponent {
       icon: 'd11_teams',
       navigate: () => this.routerService.navigateToD11Teams(),
     },
+    { label: 'History', icon: 'history', navigate: () => this.routerService.navigateToHistory() },
   ];
 
   private routerService = inject(RouterService);

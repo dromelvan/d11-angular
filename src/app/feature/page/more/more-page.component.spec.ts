@@ -6,6 +6,7 @@ import { expect, vi } from 'vitest';
 import { MorePageComponent } from './more-page.component';
 
 const mockRouterService = {
+  navigateToHistory: vi.fn(),
   navigateToRules: vi.fn(),
   navigateToD11Teams: vi.fn(),
 };
@@ -27,6 +28,16 @@ describe('MorePageComponent', () => {
 
   it('renders', () => {
     expect(document.querySelector('app-more-page')).toBeInTheDocument();
+  });
+
+  it('renders History button', () => {
+    expect(screen.getByText('History')).toBeInTheDocument();
+  });
+
+  it('calls navigateToHistory on History click', async () => {
+    await userEvent.click(screen.getByText('History'));
+
+    expect(mockRouterService.navigateToHistory).toHaveBeenCalledOnce();
   });
 
   it('renders Rules button', () => {
