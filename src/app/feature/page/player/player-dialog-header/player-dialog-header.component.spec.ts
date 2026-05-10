@@ -36,12 +36,29 @@ describe('PlayerDialogHeaderComponent', () => {
     expect(document.querySelector('app-avatar')).toBeInTheDocument();
   });
 
+  it('applies contrast text class to chevron icons', async () => {
+    const items = [fakeItem(), fakeItem(), fakeItem()];
+    items[0].team.dummy = true;
+    const current = signal(items[0]);
+    await render(PlayerDialogHeaderComponent, {
+      providers: [
+        {
+          provide: DynamicDialogConfig,
+          useValue: { data: { player: fakePlayer(), current, list: items } },
+        },
+      ],
+    });
+
+    const icons = document.querySelectorAll('app-material-icon-button app-icon');
+    icons.forEach((icon) => expect(icon).toHaveClass('text-white!'));
+  });
+
   describe('chevron buttons', () => {
     it('disables left and enables right at first item', async () => {
       await setup(0);
 
       const [left, right] = document.querySelectorAll<HTMLButtonElement>(
-        'app-button-icon-old button',
+        'app-material-icon-button button',
       );
 
       expect(left).toBeDisabled();
@@ -52,7 +69,7 @@ describe('PlayerDialogHeaderComponent', () => {
       await setup(2);
 
       const [left, right] = document.querySelectorAll<HTMLButtonElement>(
-        'app-button-icon-old button',
+        'app-material-icon-button button',
       );
 
       expect(left).not.toBeDisabled();
@@ -63,7 +80,7 @@ describe('PlayerDialogHeaderComponent', () => {
       await setup(1);
 
       const [left, right] = document.querySelectorAll<HTMLButtonElement>(
-        'app-button-icon-old button',
+        'app-material-icon-button button',
       );
 
       expect(left).not.toBeDisabled();

@@ -4,12 +4,12 @@ import { Transfer } from '@app/core/api';
 import { PlayerBase } from '@app/core/api/model/player-base.model';
 import { TeamBase } from '@app/core/api/model/team-base.model';
 import { AvatarComponent } from '@app/shared/avatar/avatar.component';
-import { ButtonIconOldComponent } from '@app/shared/form';
+import { IconButtonComponent } from '@app/shared/button/icon-button/icon-button.component';
 import { DynamicListDialogHeaderComponent } from '@app/shared/dialog/dynamic-list-dialog-header/dynamic-list-dialog-header.component';
 
 @Component({
   selector: 'app-transfer-bids-dialog-header',
-  imports: [AvatarComponent, NgClass, ButtonIconOldComponent],
+  imports: [AvatarComponent, NgClass, IconButtonComponent],
   templateUrl: './transfer-bids-dialog-header.component.html',
 })
 export class TransferBidsDialogHeaderComponent extends DynamicListDialogHeaderComponent<Transfer> {

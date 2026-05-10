@@ -4,7 +4,7 @@ import { TeamBase } from '@app/core/api/model/team-base.model';
 import { AvatarComponent } from '@app/shared/avatar/avatar.component';
 import { NgClass } from '@angular/common';
 import { DynamicListDialogHeaderComponent } from '@app/shared/dialog/dynamic-list-dialog-header/dynamic-list-dialog-header.component';
-import { ButtonIconOldComponent } from '@app/shared/form';
+import { IconButtonComponent } from '@app/shared/button/icon-button/icon-button.component';
 
 interface PlayerStat {
   player: PlayerBase;
@@ -13,7 +13,7 @@ interface PlayerStat {
 
 @Component({
   selector: 'app-player-dialog-header',
-  imports: [AvatarComponent, NgClass, ButtonIconOldComponent],
+  imports: [AvatarComponent, NgClass, IconButtonComponent],
   templateUrl: './player-dialog-header.component.html',
 })
 export class PlayerDialogHeaderComponent extends DynamicListDialogHeaderComponent<PlayerStat> {

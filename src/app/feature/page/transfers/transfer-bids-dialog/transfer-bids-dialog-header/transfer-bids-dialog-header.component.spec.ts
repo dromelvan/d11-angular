@@ -27,6 +27,18 @@ describe('TransferBidsDialogHeaderComponent', () => {
     expect(document.querySelector('app-avatar')).toBeInTheDocument();
   });
 
+  it('applies contrast text class to chevron icons', async () => {
+    const items: Transfer[] = [fakeTransfer(), fakeTransfer(), fakeTransfer()];
+    items[0].transferListing.team.dummy = true;
+    const current = signal(items[0]);
+    await render(TransferBidsDialogHeaderComponent, {
+      providers: [{ provide: DynamicDialogConfig, useValue: { data: { current, list: items } } }],
+    });
+
+    const icons = document.querySelectorAll('app-material-icon-button app-icon');
+    icons.forEach((icon) => expect(icon).toHaveClass('text-white!'));
+  });
+
   it('renders player name', async () => {
     const config = await setup();
 
@@ -38,7 +50,7 @@ describe('TransferBidsDialogHeaderComponent', () => {
       await setup(0);
 
       const [left, right] = document.querySelectorAll<HTMLButtonElement>(
-        'app-button-icon-old button',
+        'app-material-icon-button button',
       );
 
       expect(left).toBeDisabled();
@@ -49,7 +61,7 @@ describe('TransferBidsDialogHeaderComponent', () => {
       await setup(2);
 
       const [left, right] = document.querySelectorAll<HTMLButtonElement>(
-        'app-button-icon-old button',
+        'app-material-icon-button button',
       );
 
       expect(left).not.toBeDisabled();
@@ -60,7 +72,7 @@ describe('TransferBidsDialogHeaderComponent', () => {
       await setup(1);
 
       const [left, right] = document.querySelectorAll<HTMLButtonElement>(
-        'app-button-icon-old button',
+        'app-material-icon-button button',
       );
 
       expect(left).not.toBeDisabled();
