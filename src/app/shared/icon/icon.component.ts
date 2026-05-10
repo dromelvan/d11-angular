@@ -18,6 +18,7 @@ export type IconPreset =
   | 'ranking_down'
   | 'ranking_up'
   | 'red_card'
+  | 'history'
   | 'rules'
   | 'search'
   | 'shared_mom'
@@ -42,6 +43,7 @@ export const ICON_PRESETS: Record<
   chevron_right: { name: 'chevron_right', weight: 300, size: 42 },
   d11_teams: { name: 'groups', fill: true, weight: 400 },
   goal: { name: 'sports_and_outdoors', weight: 200, size: 22 },
+  history: { name: 'history', fill: true, weight: 400 },
   league_table: { name: 'table_rows_narrow', weight: 300 },
   match: { name: 'date_range', weight: 300, size: 32 },
   match_week: { name: 'date_range', weight: 300 },

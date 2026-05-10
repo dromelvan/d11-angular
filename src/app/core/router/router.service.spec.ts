@@ -195,6 +195,13 @@ describe('RouterService', () => {
     expect(result).toBe(true);
   });
 
+  it('should navigate to history', async () => {
+    const result = await service.navigateToHistory();
+
+    expect(mockRouter.navigate).toHaveBeenCalledWith(['history']);
+    expect(result).toBe(true);
+  });
+
   it('should navigate to rules', async () => {
     const result = await service.navigateToRules();
 
@@ -258,6 +265,7 @@ describe('RouterService', () => {
             { path: 'matches/week/:id', component: BlankComponent },
             { path: 'matches/:id', component: BlankComponent },
             { path: 'd11-matches/:id', component: BlankComponent },
+            { path: 'players', component: BlankComponent },
             { path: 'players/:id', component: BlankComponent },
             { path: 'seasons', component: BlankComponent },
             { path: 'teams/:id', component: BlankComponent },
@@ -317,11 +325,38 @@ describe('RouterService', () => {
       expect(service.hasStack()).toBe(false);
     });
 
+    it('pushes to stack when navigating from non-match-week route to a match week', async () => {
+      const router = TestBed.inject(Router);
+      await router.navigate(['/matches/1']);
+
+      await service.navigateToMatchWeek(1);
+
+      expect(service.hasStack()).toBe(true);
+    });
+
     it('does not push to stack on navigation to same component', async () => {
       const router = TestBed.inject(Router);
       await router.navigate(['/match-weeks/1']);
 
       await service.navigateToMatchWeek(2);
+
+      expect(service.hasStack()).toBe(false);
+    });
+
+    it('pushes to stack when navigating from non-player route to a player', async () => {
+      const router = TestBed.inject(Router);
+      await router.navigate(['/match-weeks/1']);
+
+      await service.navigateToPlayer(1);
+
+      expect(service.hasStack()).toBe(true);
+    });
+
+    it('does not push to stack when navigating from one player to another', async () => {
+      const router = TestBed.inject(Router);
+      await router.navigate(['/players/1']);
+
+      await service.navigateToPlayer(2);
 
       expect(service.hasStack()).toBe(false);
     });

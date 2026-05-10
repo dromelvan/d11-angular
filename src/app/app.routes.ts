@@ -98,6 +98,14 @@ export const routes: Routes = [
     data: { section: 'More' },
   },
   {
+    path: 'history',
+    loadComponent: () =>
+      import('@app/feature/page/history/history-page.component').then(
+        (m) => m.HistoryPageComponent,
+      ),
+    data: { section: 'History' },
+  },
+  {
     path: 'rules',
     loadComponent: () =>
       import('@app/feature/page/rules/rules-page.component').then((m) => m.RulesPageComponent),

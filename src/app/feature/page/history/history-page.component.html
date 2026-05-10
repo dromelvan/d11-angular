@@ -1,0 +1,9 @@
+<div class="app-history-page max-w-sm mx-auto pb-8 px-4 pt-4 app-col gap-4">
+  <h1 class="text-2xl font-bold">Season History</h1>
+  @for (winners of seasonWinners(); track winners.season.id) {
+    <app-history-season-card [seasonWinners]="winners" />
+  }
+  @if (seasonWinners().length === 0 && !isLoading()) {
+    <div class="app-text-low-emphasis">No season history found</div>
+  }
+</div>

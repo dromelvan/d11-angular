@@ -98,6 +98,11 @@ export class RouterService {
     return this.router.navigate(['more']);
   }
 
+  public navigateToHistory(): Promise<boolean> {
+    this.stack.set([]);
+    return this.router.navigate(['history']);
+  }
+
   public navigateToRules(): Promise<boolean> {
     this.stack.set([]);
     return this.router.navigate(['rules']);
