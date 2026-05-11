@@ -85,6 +85,13 @@ describe('PlayersPageComponent', () => {
       });
     });
 
+    it('loads stats for the provided season', async () => {
+      await waitFor(() => {
+        const [seasonId] = mockPlayerSeasonStatApi.getPlayerSeasonStatsBySeasonId.mock.calls[0];
+        expect(seasonId).toBe(seasons[1].id);
+      });
+    });
+
     it('navigates to previous season on previous button click', async () => {
       await waitFor(() => screen.getByText(seasons[1].name, { exact: false }));
       const [prevButton] = fixture.nativeElement.querySelectorAll('app-material-icon-button');
@@ -131,6 +138,13 @@ describe('PlayersPageComponent', () => {
         expect(
           fixture.nativeElement.querySelector('app-player-season-stats-card'),
         ).toBeInTheDocument();
+      });
+    });
+
+    it('loads stats for the most recent season', async () => {
+      await waitFor(() => {
+        const [seasonId] = mockPlayerSeasonStatApi.getPlayerSeasonStatsBySeasonId.mock.calls[0];
+        expect(seasonId).toBe(seasons[0].id);
       });
     });
 

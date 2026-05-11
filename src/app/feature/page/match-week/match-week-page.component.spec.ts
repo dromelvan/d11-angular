@@ -1,18 +1,19 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { of } from 'rxjs';
 import { beforeEach, describe, expect, vi } from 'vitest';
-import { Match, MatchWeek } from '@app/core/api';
+import { Match, MatchWeek, Season } from '@app/core/api';
 import { MatchApiService } from '@app/core/api/match/match-api.service';
 import { MatchWeekApiService } from '@app/core/api/match-week/match-week-api.service';
 import { SeasonApiService } from '@app/core/api/season/season-api.service';
 import { LoadingService } from '@app/core/loading/loading.service';
 import { RouterService } from '@app/core/router/router.service';
-import { fakeMatch, fakeMatchWeek } from '@app/test';
+import { fakeMatch, fakeMatchWeek, fakeSeason } from '@app/test';
 import { MatchWeekPageComponent } from './match-week-page.component';
 
 describe('MatchWeekPageComponent', () => {
   let fixture: ComponentFixture<MatchWeekPageComponent>;
   let matchWeek: MatchWeek;
+  let previousSeason: Season;
   let matches: Match[];
   let matchWeekApi: Partial<MatchWeekApiService>;
   let matchApi: Partial<MatchApiService>;
@@ -30,6 +31,7 @@ describe('MatchWeekPageComponent', () => {
     HTMLElement.prototype.scrollIntoView = vi.fn();
 
     matchWeek = fakeMatchWeek();
+    previousSeason = { ...fakeSeason(), id: matchWeek.season.id + 1, date: '2022-08-01' };
     matches = [
       {
         ...fakeMatch(),
@@ -62,7 +64,22 @@ describe('MatchWeekPageComponent', () => {
       providers: [
         { provide: MatchWeekApiService, useValue: matchWeekApi },
         { provide: MatchApiService, useValue: matchApi },
-        { provide: SeasonApiService, useValue: { getAll: vi.fn().mockReturnValue(of([])) } },
+        {
+          provide: SeasonApiService,
+          useValue: {
+            getAll: vi.fn().mockReturnValue(
+              of([
+                {
+                  ...fakeSeason(),
+                  id: matchWeek.season.id,
+                  name: matchWeek.season.name,
+                  date: '2023-08-01',
+                },
+                previousSeason,
+              ]),
+            ),
+          },
+        },
         { provide: LoadingService, useValue: { register: vi.fn() } },
         { provide: RouterService, useValue: routerService },
       ],
@@ -121,5 +138,42 @@ describe('MatchWeekPageComponent', () => {
     liveButton.click();
     fixture.detectChanges();
     expect(liveButton.classList).not.toContain('bg-primary');
+  });
+
+  describe('when user selects the previous season', () => {
+    let firstMatchWeekOfPreviousSeason: MatchWeek;
+
+    beforeEach(async () => {
+      firstMatchWeekOfPreviousSeason = {
+        ...fakeMatchWeek(),
+        id: matchWeek.id + 100,
+        matchWeekNumber: 1,
+      };
+
+      (matchWeekApi.getMatchWeeksBySeasonId as ReturnType<typeof vi.fn>).mockImplementation(
+        (seasonId: number) =>
+          of(seasonId === previousSeason.id ? [firstMatchWeekOfPreviousSeason] : [matchWeek]),
+      );
+
+      fixture = TestBed.createComponent(MatchWeekPageComponent);
+      fixture.componentRef.setInput('matchWeekId', matchWeek.id);
+      fixture.detectChanges();
+      await fixture.whenStable();
+
+      const [prevButton] = fixture.nativeElement.querySelectorAll('app-material-icon-button');
+      prevButton.click();
+      fixture.detectChanges();
+      await fixture.whenStable();
+    });
+
+    it('loads match weeks for the selected season', () => {
+      expect(matchWeekApi.getMatchWeeksBySeasonId).toHaveBeenCalledWith(previousSeason.id);
+    });
+
+    it('navigates to the first match week of the selected season', () => {
+      expect(routerService.navigateToMatchWeek).toHaveBeenCalledWith(
+        firstMatchWeekOfPreviousSeason.id,
+      );
+    });
   });
 });

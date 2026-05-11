@@ -101,6 +101,14 @@ describe('D11TeamsPageComponent', () => {
       });
     });
 
+    it('gets stats for the provided season', async () => {
+      await waitFor(() => {
+        expect(mockD11TeamSeasonStatApi.getD11TeamSeasonStatsBySeasonId).toHaveBeenCalledWith(
+          seasons[1].id,
+        );
+      });
+    });
+
     it('navigates to previous season on previous button click', async () => {
       await waitFor(() => screen.getByText(seasons[1].name, { exact: false }));
       const [prevButton] = fixture.nativeElement.querySelectorAll('app-material-icon-button');
@@ -135,6 +143,14 @@ describe('D11TeamsPageComponent', () => {
     it('renders most recent season name', async () => {
       await waitFor(() => {
         expect(screen.getByText(seasons[0].name, { exact: false })).toBeInTheDocument();
+      });
+    });
+
+    it('renders d11-team-squad-card for each stat', async () => {
+      await waitFor(() => {
+        expect(fixture.nativeElement.querySelectorAll('app-d11-team-squad-card').length).toBe(
+          d11TeamSeasonStats.length,
+        );
       });
     });
 

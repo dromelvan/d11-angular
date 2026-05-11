@@ -1,38 +1,27 @@
-import { Component, DestroyRef, effect, inject, input, numberAttribute } from '@angular/core';
+import { Component, computed, inject, input, numberAttribute, signal } from '@angular/core';
+import { SeasonBase } from '@app/core/api';
 import { RouterService } from '@app/core/router/router.service';
-import { LoadingService } from '@app/core/loading/loading.service';
-import { SeasonNavigatorService } from '@app/shared/season-navigator.service';
-import { IconButtonComponent } from '@app/shared/button/icon-button/icon-button.component';
+import { SeasonPickerComponent } from '@app/shared/season-picker/season-picker.component';
 import { PlayerSeasonStatsCardComponent } from './player-season-stats-card/player-season-stats-card.component';
 
 @Component({
   selector: 'app-players-page',
-  imports: [IconButtonComponent, PlayerSeasonStatsCardComponent],
+  imports: [SeasonPickerComponent, PlayerSeasonStatsCardComponent],
   templateUrl: './players-page.component.html',
-  providers: [SeasonNavigatorService],
 })
 export class PlayersPageComponent {
   readonly seasonId = input<number | undefined, unknown>(undefined, {
     transform: (v: unknown) => (v != null && v !== '' ? numberAttribute(v as string) : undefined),
   });
 
-  protected readonly nav = inject(SeasonNavigatorService);
+  protected season = signal<SeasonBase | undefined>(undefined);
+  protected selectedSeasonId = computed(() => this.seasonId() ?? this.season()?.id);
 
   private readonly routerService = inject(RouterService);
-  private readonly loadingService = inject(LoadingService);
 
-  constructor() {
-    effect(() => this.nav.setSeasonId(this.seasonId()));
-    this.loadingService.register(inject(DestroyRef), this.nav.rxAllSeasons.isLoading);
-  }
-
-  protected navigateToPrevious(): void {
-    const prev = this.nav.sortedSeasons()[this.nav.currentIndex() + 1];
-    if (prev) this.routerService.navigateToPlayers(prev.id);
-  }
-
-  protected navigateToNext(): void {
-    const next = this.nav.sortedSeasons()[this.nav.currentIndex() - 1];
-    if (next) this.routerService.navigateToPlayers(next.id);
+  protected onSeasonSelected(season: SeasonBase): void {
+    const shouldNavigate = this.seasonId() !== undefined || this.season() !== undefined;
+    this.season.set(season);
+    if (shouldNavigate) this.routerService.navigateToPlayers(season.id);
   }
 }

@@ -12,12 +12,11 @@ import {
   viewChild,
 } from '@angular/core';
 import { rxResource } from '@angular/core/rxjs-interop';
-import { MatchWeek } from '@app/core/api';
+import { MatchWeek, SeasonBase } from '@app/core/api';
 import { MatchWeekApiService } from '@app/core/api/match-week/match-week-api.service';
 import { LoadingService } from '@app/core/loading/loading.service';
 import { RouterService } from '@app/core/router/router.service';
-import { SeasonNavigatorService } from '@app/shared/season-navigator.service';
-import { IconButtonComponent } from '@app/shared/button/icon-button/icon-button.component';
+import { SeasonPickerComponent } from '@app/shared/season-picker/season-picker.component';
 import { ScrollPickerComponent } from '@app/shared/scroll-picker/scroll-picker.component';
 import { ScrollPickerItem } from '@app/shared/scroll-picker/scroll-picker-item.model';
 import { IconComponent } from '@app/shared/icon/icon.component';
@@ -27,15 +26,14 @@ import { MatchWeekPickerDrawerComponent } from './match-week-picker-drawer/match
 @Component({
   selector: 'app-match-week',
   imports: [
+    SeasonPickerComponent,
     ScrollPickerComponent,
     MatchWeekMatchesCardComponent,
     NgClass,
     IconComponent,
-    IconButtonComponent,
     MatchWeekPickerDrawerComponent,
   ],
   templateUrl: './match-week-page.component.html',
-  providers: [SeasonNavigatorService],
 })
 export class MatchWeekPageComponent {
   readonly matchWeekId = input.required<number, unknown>({ transform: numberAttribute });
@@ -43,8 +41,6 @@ export class MatchWeekPageComponent {
   protected active = signal(false);
 
   protected model = computed(() => ({
-    hasPreviousSeason: this.seasonNavigatorService.hasPrevious,
-    hasNextSeason: this.seasonNavigatorService.hasNext,
     matchWeek: this.matchWeek(),
     scrollItems: this.scrollItems(),
     matchWeeks: this.rxMatchWeeks.value() ?? [],
@@ -62,7 +58,7 @@ export class MatchWeekPageComponent {
   });
 
   private rxMatchWeeks = rxResource<MatchWeek[], number | undefined>({
-    params: () => this.seasonId() ?? this.matchWeek()?.season.id,
+    params: () => this.selectedSeasonId() ?? this.matchWeek()?.season.id,
     stream: ({ params }) => this.matchWeekApiService.getMatchWeeksBySeasonId(params!),
   });
 
@@ -74,7 +70,7 @@ export class MatchWeekPageComponent {
   );
 
   private readonly matchWeek = signal<MatchWeek | undefined>(undefined);
-  private readonly seasonId = signal<number | undefined>(undefined);
+  private readonly selectedSeasonId = signal<number | undefined>(undefined);
 
   private readonly safeDatePipe = new SafeDatePipe();
   private scrollItems = computed<ScrollPickerItem[]>(() =>
@@ -88,7 +84,6 @@ export class MatchWeekPageComponent {
   private matchWeekPickerDrawer = viewChild.required(MatchWeekPickerDrawerComponent);
 
   private matchWeekApiService = inject(MatchWeekApiService);
-  private seasonNavigatorService = inject(SeasonNavigatorService);
   private loadingService = inject(LoadingService);
   private routerService = inject(RouterService);
 
@@ -100,14 +95,12 @@ export class MatchWeekPageComponent {
       if (matchWeek !== undefined) this.matchWeek.set(matchWeek);
     });
 
-    effect(() => this.seasonNavigatorService.setSeasonId(this.matchWeek()?.season.id));
-
     effect(() => {
       const matchWeek = this.rxMatchWeeks
         .value()
         ?.find((matchWeek) => matchWeek.matchWeekNumber === 1);
 
-      if (matchWeek && this.seasonId() !== undefined) {
+      if (matchWeek && this.selectedSeasonId() !== undefined) {
         this.routerService.navigateToMatchWeek(matchWeek.id);
       }
     });
@@ -122,15 +115,7 @@ export class MatchWeekPageComponent {
     this.active.set(false);
   }
 
-  protected onPreviousSeason(): void {
-    const previous =
-      this.seasonNavigatorService.sortedSeasons()[this.seasonNavigatorService.currentIndex() + 1];
-    if (previous) this.seasonId.set(previous.id);
-  }
-
-  protected onNextSeason(): void {
-    const next =
-      this.seasonNavigatorService.sortedSeasons()[this.seasonNavigatorService.currentIndex() - 1];
-    if (next) this.seasonId.set(next.id);
+  protected onSeasonSelected(season: SeasonBase): void {
+    this.selectedSeasonId.set(season.id);
   }
 }
