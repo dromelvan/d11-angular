@@ -2,11 +2,11 @@ import { Component, computed, DestroyRef, inject } from '@angular/core';
 import { rxResource } from '@angular/core/rxjs-interop';
 import { SeasonApiService, SeasonWinners, Status } from '@app/core/api';
 import { LoadingService } from '@app/core/loading/loading.service';
-import { HistorySeasonCardComponent } from './history-season-card/history-season-card.component';
+import { SeasonHistoryCardComponent } from '@app/feature/card/season-history-card/season-history-card.component';
 
 @Component({
   selector: 'app-history-page',
-  imports: [HistorySeasonCardComponent],
+  imports: [SeasonHistoryCardComponent],
   templateUrl: './history-page.component.html',
 })
 export class HistoryPageComponent {

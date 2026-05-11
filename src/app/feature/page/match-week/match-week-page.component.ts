@@ -20,8 +20,8 @@ import { SeasonPickerComponent } from '@app/shared/season-picker/season-picker.c
 import { ScrollPickerComponent } from '@app/shared/scroll-picker/scroll-picker.component';
 import { ScrollPickerItem } from '@app/shared/scroll-picker/scroll-picker-item.model';
 import { IconComponent } from '@app/shared/icon/icon.component';
-import { MatchWeekMatchesCardComponent } from './match-week-matches-card/match-week-matches-card.component';
-import { MatchWeekPickerDrawerComponent } from './match-week-picker-drawer/match-week-picker-drawer.component';
+import { MatchWeekMatchesCardComponent } from '@app/feature/card/match-week-matches-card/match-week-matches-card.component';
+import { MatchWeekPickerDrawerComponent } from '@app/feature/component/match-week-picker-drawer/match-week-picker-drawer.component';
 
 @Component({
   selector: 'app-match-week',

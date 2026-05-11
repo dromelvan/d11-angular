@@ -1,0 +1,33 @@
+<div class="app-row-md items-start">
+  <app-d11-team-img [d11Team]="d11Team()" width="80" />
+  <div class="app-col-sm gap-0">
+    <h1 class="text-3xl font-bold">{{ d11Team().name }}</h1>
+    @if (d11TeamSeasonStat(); as stat) {
+      <div class="grid grid-cols-[auto_auto_1fr] gap-x-4 mt-2">
+        <div class="text-xs font-semibold">#</div>
+        <div class="text-xs font-semibold">Pts</div>
+        <div class="text-xs font-semibold">Form</div>
+        <div class="text-lg font-bold" data-testid="ranking">{{ stat.ranking }}</div>
+        <div class="text-lg font-bold" data-testid="points">{{ stat.points }}</div>
+        <div class="flex gap-1 items-center pt-0.5">
+          <app-form-match-points [formMatchPoints]="stat.formMatchPoints" type="team" />
+        </div>
+      </div>
+    }
+    @if (playerSeasonStats().length > 0) {
+      <div class="grid grid-cols-[auto_auto] gap-x-4 mt-2">
+        <div class="text-xs font-semibold">Lineup</div>
+        <div class="text-xs font-semibold">Value</div>
+        <div class="flex items-center gap-0.5 text-sm font-bold" data-testid="lineup">
+          @for (entry of positionSummary(); track entry.position.id; let last = $last) {
+            <span [class.text-error]="entry.hasError">{{ entry.count }}</span>
+            @if (!last) {
+              <span class="opacity-50">-</span>
+            }
+          }
+        </div>
+        <div class="text-sm font-bold" data-testid="value">{{ totalFee() | fee }}m</div>
+      </div>
+    }
+  </div>
+</div>

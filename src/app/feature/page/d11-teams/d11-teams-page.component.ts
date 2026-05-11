@@ -16,7 +16,7 @@ import { LoadingService } from '@app/core/loading/loading.service';
 import { RouterService } from '@app/core/router/router.service';
 import { SeasonPickerComponent } from '@app/shared/season-picker/season-picker.component';
 import { of } from 'rxjs';
-import { D11TeamSquadCardComponent } from './d11-team-squad-card/d11-team-squad-card.component';
+import { D11TeamSquadCardComponent } from '@app/feature/card/d11-team-squad-card/d11-team-squad-card.component';
 
 @Component({
   selector: 'app-d11-teams-page',

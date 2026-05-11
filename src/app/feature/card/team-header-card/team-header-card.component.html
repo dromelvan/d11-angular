@@ -1,0 +1,9 @@
+@if (team(); as team) {
+  <p-card
+    class="app-team-header-card app-bg-header min-h-40 relative"
+    [ngClass]="textClass()"
+    [style.background-color]="backgroundColor()"
+  >
+    <app-team-header [team]="team" [teamSeasonStat]="teamSeasonStat()" />
+  </p-card>
+}

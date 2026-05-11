@@ -5,9 +5,9 @@ import { TransferWindowApiService } from '@app/core/api/transfer-window/transfer
 import { LoadingService } from '@app/core/loading/loading.service';
 import { RouterService } from '@app/core/router/router.service';
 import { Tab, TabList, TabPanel, TabPanels, Tabs } from 'primeng/tabs';
-import { TransferDayTransferListingsCardComponent } from './transfer-day-transfer-listings-card/transfer-day-transfer-listings-card.component';
-import { TransferDayTransfersCardComponent } from './transfer-day-transfers-card/transfer-day-transfers-card.component';
-import { TransfersHeaderCardComponent } from './transfers-header-card/transfers-header-card.component';
+import { TransferDayTransferListingsCardComponent } from '@app/feature/card/transfer-day-transfer-listings-card/transfer-day-transfer-listings-card.component';
+import { TransferDayTransfersCardComponent } from '@app/feature/card/transfer-day-transfers-card/transfer-day-transfers-card.component';
+import { TransfersHeaderCardComponent } from '@app/feature/card/transfers-header-card/transfers-header-card.component';
 
 @Component({
   selector: 'app-transfers-page',

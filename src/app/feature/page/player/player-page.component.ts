@@ -17,12 +17,12 @@ import {
 } from '@app/core/api';
 import { LoadingService } from '@app/core/loading/loading.service';
 import { Tab, TabList, TabPanel, TabPanels, Tabs } from 'primeng/tabs';
-import { PlayerHeaderCardComponent } from './player-header-card/player-header-card.component';
-import { PlayerInfoCardComponent } from './player-info-card/player-info-card.component';
-import { PlayerSeasonSummaryCardComponent } from './player-season-summary-card/player-season-summary-card.component';
-import { PlayerMatchStatsCardComponent } from './player-match-stats-card/player-match-stats-card.component';
-import { PlayerSeasonStatCardComponent } from './player-season-stat-card/player-season-stat-card.component';
-import { PlayerCareerCardComponent } from '@app/feature/page/player/player-career-card/player-career-card.component';
+import { PlayerHeaderCardComponent } from '@app/feature/card/player-header-card/player-header-card.component';
+import { PlayerInfoCardComponent } from '@app/feature/card/player-info-card/player-info-card.component';
+import { PlayerSeasonSummaryCardComponent } from '@app/feature/card/player-season-summary-card/player-season-summary-card.component';
+import { PlayerMatchStatsCardComponent } from '@app/feature/card/player-match-stats-card/player-match-stats-card.component';
+import { PlayerSeasonStatCardComponent } from '@app/feature/card/player-season-stat-card/player-season-stat-card.component';
+import { PlayerCareerCardComponent } from '@app/feature/card/player-career-card/player-career-card.component';
 
 @Component({
   selector: 'app-player-page',

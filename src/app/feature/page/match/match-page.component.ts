@@ -3,8 +3,8 @@ import { rxResource } from '@angular/core/rxjs-interop';
 import { Match, PlayerMatchStat, Status } from '@app/core/api';
 import { MatchApiService } from '@app/core/api/match/match-api.service';
 import { LoadingService } from '@app/core/loading/loading.service';
-import { MatchHeaderCardComponent } from '@app/feature/page/match/match-header-card/match-header-card.component';
-import { MatchPlayerMatchStatsCardComponent } from '@app/feature/page/match/match-player-match-stats-card/match-player-match-stats-card.component';
+import { MatchHeaderCardComponent } from '@app/feature/card/match-header-card/match-header-card.component';
+import { MatchPlayerMatchStatsCardComponent } from '@app/feature/card/match-player-match-stats-card/match-player-match-stats-card.component';
 import { sortByTeam } from '@app/shared/util/player-match-stat-util';
 
 @Component({

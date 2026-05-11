@@ -1,0 +1,11 @@
+<p-card class="app-d11-match-player-match-stats-card mb-4 sm:mb-0" header="Player stats">
+  <div class="app-col">
+    @for (squad of teamSquads(); track squad.d11Team.id) {
+      <app-d11-team-player-match-stats
+        [d11Team]="squad.d11Team"
+        [stats]="squad.stats"
+        (statClick)="openDialog($event)"
+      />
+    }
+  </div>
+</p-card>

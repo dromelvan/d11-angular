@@ -1,0 +1,42 @@
+@if (playerMatchStats(); as playerMatchStats) {
+  <div class="grid grid-cols-[2rem_1fr_2.5rem_2rem] gap-0">
+    <div class="app-grid-header">Date</div>
+    <div class="app-grid-header text-center">Match</div>
+    <div class="app-grid-header app-grid-number">Rtg</div>
+    <div class="app-grid-header app-grid-number">Pts</div>
+
+    @for (playerMatchStat of playerMatchStats; track playerMatchStat.match.id) {
+      <div
+        class="col-span-4 grid grid-cols-subgrid cursor-pointer"
+        (click)="openDialog(playerMatchStat)"
+      >
+        <div class="app-grid-cell app-text-grid">
+          {{ playerMatchStat.match.datetime | date: 'd.M' }}
+        </div>
+        <app-match-base
+          class="app-grid-cell"
+          [match]="playerMatchStat.match"
+          [team]="playerMatchStat.team"
+        />
+        @if (
+          playerMatchStat.lineup === Lineup.DID_NOT_PARTICIPATE ||
+          (playerMatchStat.lineup === Lineup.SUBSTITUTE && playerMatchStat.substitutionOnTime <= 0)
+        ) {
+          <span class="app-grid-cell app-text-grid col-span-2 justify-end">{{
+            playerMatchStat.lineup === Lineup.DID_NOT_PARTICIPATE ? 'DNP' : 'SUB'
+          }}</span>
+        } @else {
+          <span class="app-grid-cell app-grid-number" data-testid="rating">
+            {{ playerMatchStat.rating | rating }}
+          </span>
+          <span class="app-grid-cell app-grid-number font-semibold" data-testid="points">
+            {{ playerMatchStat.points }}
+          </span>
+        }
+      </div>
+      <div class="app-grid-separator col-span-4"></div>
+    } @empty {
+      <p class="text-center text-muted-color text-sm pt-4">No matches played this season.</p>
+    }
+  </div>
+}

@@ -1,0 +1,7 @@
+<p-card header="Season history" [pt]="{ body: { class: 'px-2!' } }">
+  <app-team-season-history
+    [teamSeasonStats]="teamSeasonStats()"
+    [currentSeasonId]="currentSeasonId()"
+    (seasonSelected)="seasonSelected.emit($event)"
+  />
+</p-card>

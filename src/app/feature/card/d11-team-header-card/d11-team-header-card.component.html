@@ -1,0 +1,14 @@
+@if (d11Team(); as d11Team) {
+  <p-card
+    class="app-d11-team-header-card app-bg-header min-h-40 relative"
+    [ngClass]="textClass()"
+    [style.background-color]="backgroundColor()"
+  >
+    <app-d11-team-header
+      [d11Team]="d11Team"
+      [d11TeamSeasonStat]="d11TeamSeasonStat()"
+      [playerSeasonStats]="playerSeasonStats()"
+      [positions]="positions()"
+    />
+  </p-card>
+}

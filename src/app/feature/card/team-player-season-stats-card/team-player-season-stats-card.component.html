@@ -1,0 +1,3 @@
+<p-card [header]="season() ? 'Players ' + season()!.name : 'Players'">
+  <app-team-player-season-stats [playerSeasonStats]="playerSeasonStats()" [showTeam]="showTeam()" />
+</p-card>

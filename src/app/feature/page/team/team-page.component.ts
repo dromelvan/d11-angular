@@ -22,10 +22,10 @@ import { LoadingService } from '@app/core/loading/loading.service';
 import { RouterService } from '@app/core/router/router.service';
 import { of } from 'rxjs';
 import { Tab, TabList, TabPanel, TabPanels, Tabs } from 'primeng/tabs';
-import { TeamHeaderCardComponent } from './team-header-card/team-header-card.component';
-import { TeamMatchesCardComponent } from './team-matches-card/team-matches-card.component';
-import { TeamPlayerSeasonStatsCardComponent } from './team-player-season-stats-card/team-player-season-stats-card.component';
-import { TeamSeasonHistoryCardComponent } from './team-season-history-card/team-season-history-card.component';
+import { TeamHeaderCardComponent } from '@app/feature/card/team-header-card/team-header-card.component';
+import { TeamMatchesCardComponent } from '@app/feature/card/team-matches-card/team-matches-card.component';
+import { TeamPlayerSeasonStatsCardComponent } from '@app/feature/card/team-player-season-stats-card/team-player-season-stats-card.component';
+import { TeamSeasonHistoryCardComponent } from '@app/feature/card/team-season-history-card/team-season-history-card.component';
 
 @Component({
   selector: 'app-team-page',

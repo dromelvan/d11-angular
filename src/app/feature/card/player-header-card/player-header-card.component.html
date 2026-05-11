@@ -1,0 +1,9 @@
+@if (player(); as player) {
+  <p-card
+    class="app-player-header-card app-bg-header min-h-40 relative"
+    [ngClass]="textClass()"
+    [style.background-color]="backgroundColor()"
+  >
+    <app-player-header [player]="player" [playerSeasonStat]="playerSeasonStat()" />
+  </p-card>
+}

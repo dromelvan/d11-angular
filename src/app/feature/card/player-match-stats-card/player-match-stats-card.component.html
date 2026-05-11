@@ -1,0 +1,4 @@
+@let pss = playerSeasonStat();
+<p-card class="app-player-match-stats-card" [header]="`Matches ${pss.season.name}`">
+  <app-player-match-stats [playerSeasonStat]="playerSeasonStat()" />
+</p-card>

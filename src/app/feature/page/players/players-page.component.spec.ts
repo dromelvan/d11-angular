@@ -80,7 +80,7 @@ describe('PlayersPageComponent', () => {
     it('renders player season stats card', async () => {
       await waitFor(() => {
         expect(
-          fixture.nativeElement.querySelector('app-player-season-stats-card'),
+          fixture.nativeElement.querySelector('app-players-season-stats-card'),
         ).toBeInTheDocument();
       });
     });
@@ -136,7 +136,7 @@ describe('PlayersPageComponent', () => {
     it('renders player season stats card', async () => {
       await waitFor(() => {
         expect(
-          fixture.nativeElement.querySelector('app-player-season-stats-card'),
+          fixture.nativeElement.querySelector('app-players-season-stats-card'),
         ).toBeInTheDocument();
       });
     });

@@ -8,10 +8,10 @@ import {
   fakeTransfer,
   fakeTransferListing,
 } from '@app/test';
-import { PlayerDialogMatchStatComponent } from '@app/feature/page/player/player-dialog-match-stat/player-dialog-match-stat.component';
-import { PlayerDialogSeasonStatComponent } from '@app/feature/page/player/player-dialog-season-stat/player-dialog-season-stat.component';
-import { TransferBidsDialogComponent } from '@app/feature/page/transfers/transfer-bids-dialog/transfer-bids-dialog.component';
-import { TransferListingDialogComponent } from '@app/feature/page/transfers/transfer-listing-dialog/transfer-listing-dialog.component';
+import { PlayerMatchStatComponent } from '@app/feature/component/player-match-stat/player-match-stat.component';
+import { PlayerSeasonStatComponent } from '@app/feature/component/player-season-stat/player-season-stat.component';
+import { TransferBidsComponent } from '@app/feature/component/transfer-bids/transfer-bids.component';
+import { TransferListingComponent } from '@app/feature/component/transfer-listing/transfer-listing.component';
 import { DialogFooterAction } from '@app/shared/dialog/dynamic-dialog-footer/dynamic-dialog-footer.component';
 
 function buildDialogService() {
@@ -44,7 +44,7 @@ describe('DynamicDialogService', () => {
       service.openPlayerMatchStat(stat, [stat], fakeAction());
 
       expect(dialogService.open).toHaveBeenCalledWith(
-        PlayerDialogMatchStatComponent,
+        PlayerMatchStatComponent,
         expect.objectContaining({ modal: true }),
       );
     });
@@ -92,7 +92,7 @@ describe('DynamicDialogService', () => {
       service.openPlayerSeasonStat(stat, [stat], fakeAction());
 
       expect(dialogService.open).toHaveBeenCalledWith(
-        PlayerDialogSeasonStatComponent,
+        PlayerSeasonStatComponent,
         expect.objectContaining({ modal: true }),
       );
     });
@@ -140,7 +140,7 @@ describe('DynamicDialogService', () => {
       service.openTransfer(transfer, [transfer], fakeAction());
 
       expect(dialogService.open).toHaveBeenCalledWith(
-        TransferBidsDialogComponent,
+        TransferBidsComponent,
         expect.objectContaining({ modal: true }),
       );
     });
@@ -188,7 +188,7 @@ describe('DynamicDialogService', () => {
       service.openTransferListing(transferListing, [transferListing], fakeAction());
 
       expect(dialogService.open).toHaveBeenCalledWith(
-        TransferListingDialogComponent,
+        TransferListingComponent,
         expect.objectContaining({ modal: true }),
       );
     });

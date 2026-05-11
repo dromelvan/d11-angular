@@ -3,8 +3,8 @@ import { rxResource } from '@angular/core/rxjs-interop';
 import { D11Match, PlayerMatchStat, Status } from '@app/core/api';
 import { D11MatchApiService } from '@app/core/api/d11-match/d11-match-api.service';
 import { LoadingService } from '@app/core/loading/loading.service';
-import { D11MatchHeaderCardComponent } from '@app/feature/page/d11-match/d11-match-header-card/d11-match-header-card.component';
-import { D11MatchPlayerMatchStatsCardComponent } from '@app/feature/page/d11-match/d11-match-player-match-stats-card/d11-match-player-match-stats-card.component';
+import { D11MatchHeaderCardComponent } from '@app/feature/card/d11-match-header-card/d11-match-header-card.component';
+import { D11MatchPlayerMatchStatsCardComponent } from '@app/feature/card/d11-match-player-match-stats-card/d11-match-player-match-stats-card.component';
 
 @Component({
   selector: 'app-d11-match-page',
