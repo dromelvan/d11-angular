@@ -1,4 +1,4 @@
-import { fakeD11MatchBase, fakeD11TeamBase } from '@app/test';
+import { fakeD11MatchBase, fakeD11TeamBase, fakeSeason } from '@app/test';
 import { RouterService } from '@app/core/router/router.service';
 import { render, screen } from '@testing-library/angular';
 import { expect } from 'vitest';
@@ -8,6 +8,21 @@ const mockRouterService = { navigateToD11Match: vi.fn() };
 const providers = [{ provide: RouterService, useValue: mockRouterService }];
 
 describe('D11TeamMatchesComponent', () => {
+  it('renders Matches heading without season', async () => {
+    await render(D11TeamMatchesComponent, { inputs: { d11Matches: [] }, providers });
+
+    expect(screen.getByRole('heading', { name: 'Matches', level: 2 })).toBeInTheDocument();
+  });
+
+  it('renders heading with season name when season is provided', async () => {
+    const season = fakeSeason();
+    await render(D11TeamMatchesComponent, { inputs: { d11Matches: [], season }, providers });
+
+    expect(
+      screen.getByRole('heading', { name: `Matches ${season.name}`, level: 2 }),
+    ).toBeInTheDocument();
+  });
+
   it('renders home and away d11 team names for each match', async () => {
     const homeD11Team = { ...fakeD11TeamBase(), name: 'Team1' };
     const awayD11Team = { ...fakeD11TeamBase(), name: 'Team2' };

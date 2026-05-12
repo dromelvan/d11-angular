@@ -1,4 +1,3 @@
-import { Component } from '@angular/core';
 import { PlayerApiService, type PlayerMatchStat, type PlayerSeasonStat } from '@app/core/api';
 import { Lineup } from '@app/core/api/model/lineup.model';
 import { fakePlayerMatchStat, fakePlayerSeasonStat } from '@app/test';
@@ -11,42 +10,25 @@ import { of } from 'rxjs';
 import { expect, vi } from 'vitest';
 import { PlayerMatchStatsComponent } from './player-match-stats.component';
 
-function buildDynamicDialogService() {
-  return { openPlayerMatchStat: vi.fn() } as unknown as DynamicDialogService;
-}
-
-const renderComponent = (
-  playerSeasonStat: PlayerSeasonStat,
+function buildProviders(
   playerMatchStats: PlayerMatchStat[],
-  dynamicDialogService = buildDynamicDialogService(),
-) => {
-  @Component({
-    template: ` <app-player-match-stats [playerSeasonStat]="playerSeasonStat" />`,
-    standalone: true,
-    imports: [PlayerMatchStatsComponent],
-  })
-  class HostComponent {
-    playerSeasonStat = playerSeasonStat;
-  }
-
-  const playerApi = {
-    getPlayerMatchStatsByPlayerIdAndSeasonId: vi.fn().mockReturnValue(of(playerMatchStats)),
-  } as unknown as PlayerApiService;
-
-  const loadingService = { register: vi.fn() } as unknown as LoadingService;
-  const routerService = { navigateToMatch: vi.fn() } as unknown as RouterService;
-
-  const promise = render(HostComponent, {
+  dynamicDialogService = { openPlayerMatchStat: vi.fn() } as unknown as DynamicDialogService,
+) {
+  return {
     providers: [
-      { provide: PlayerApiService, useValue: playerApi },
-      { provide: LoadingService, useValue: loadingService },
-      { provide: RouterService, useValue: routerService },
+      {
+        provide: PlayerApiService,
+        useValue: {
+          getPlayerMatchStatsByPlayerIdAndSeasonId: vi.fn().mockReturnValue(of(playerMatchStats)),
+        },
+      },
+      { provide: LoadingService, useValue: { register: vi.fn() } },
+      { provide: RouterService, useValue: { navigateToMatch: vi.fn() } },
       { provide: DynamicDialogService, useValue: dynamicDialogService },
     ],
-  });
-
-  return Object.assign(promise, { dynamicDialogService });
-};
+    dynamicDialogService,
+  };
+}
 
 describe('PlayerMatchStatsComponent', () => {
   let playerSeasonStat: PlayerSeasonStat;
@@ -55,7 +37,14 @@ describe('PlayerMatchStatsComponent', () => {
   beforeEach(async () => {
     playerSeasonStat = fakePlayerSeasonStat();
     playerMatchStats = [fakePlayerMatchStat(), fakePlayerMatchStat()];
-    await renderComponent(playerSeasonStat, playerMatchStats);
+    const { providers } = buildProviders(playerMatchStats);
+    await render(PlayerMatchStatsComponent, { inputs: { playerSeasonStat }, providers });
+  });
+
+  it('renders season name header', async () => {
+    await waitFor(() => {
+      expect(screen.getByText(`Matches ${playerSeasonStat.season.name}`)).toBeInTheDocument();
+    });
   });
 
   it('renders column headers', async () => {
@@ -82,7 +71,8 @@ describe('PlayerMatchStatsComponent with starting lineup', () => {
       { ...fakePlayerMatchStat(), lineup: Lineup.STARTING_LINEUP, rating: 750 },
       { ...fakePlayerMatchStat(), lineup: Lineup.DID_NOT_PARTICIPATE },
     ];
-    await renderComponent(playerSeasonStat, playerMatchStats);
+    const { providers } = buildProviders(playerMatchStats);
+    await render(PlayerMatchStatsComponent, { inputs: { playerSeasonStat }, providers });
   });
 
   it('renders rating', async () => {
@@ -103,7 +93,8 @@ describe('PlayerMatchStatsComponent with active substitute', () => {
   beforeEach(async () => {
     const playerSeasonStat = fakePlayerSeasonStat();
     const stat = { ...fakePlayerMatchStat(), lineup: Lineup.SUBSTITUTE, substitutionOnTime: 60 };
-    await renderComponent(playerSeasonStat, [stat]);
+    const { providers } = buildProviders([stat]);
+    await render(PlayerMatchStatsComponent, { inputs: { playerSeasonStat }, providers });
   });
 
   it('renders rating', async () => {
@@ -122,9 +113,9 @@ describe('PlayerMatchStatsComponent with active substitute', () => {
 describe('PlayerMatchStatsComponent with DID_NOT_PARTICIPATE', () => {
   beforeEach(async () => {
     const playerSeasonStat = fakePlayerSeasonStat();
-    const stat = fakePlayerMatchStat();
-    stat.lineup = Lineup.DID_NOT_PARTICIPATE;
-    await renderComponent(playerSeasonStat, [stat]);
+    const stat = { ...fakePlayerMatchStat(), lineup: Lineup.DID_NOT_PARTICIPATE };
+    const { providers } = buildProviders([stat]);
+    await render(PlayerMatchStatsComponent, { inputs: { playerSeasonStat }, providers });
   });
 
   it('renders DNP label', async () => {
@@ -143,10 +134,9 @@ describe('PlayerMatchStatsComponent with DID_NOT_PARTICIPATE', () => {
 describe('PlayerMatchStatsComponent with unused SUBSTITUTE', () => {
   beforeEach(async () => {
     const playerSeasonStat = fakePlayerSeasonStat();
-    const stat = fakePlayerMatchStat();
-    stat.lineup = Lineup.SUBSTITUTE;
-    stat.substitutionOnTime = 0;
-    await renderComponent(playerSeasonStat, [stat]);
+    const stat = { ...fakePlayerMatchStat(), lineup: Lineup.SUBSTITUTE, substitutionOnTime: 0 };
+    const { providers } = buildProviders([stat]);
+    await render(PlayerMatchStatsComponent, { inputs: { playerSeasonStat }, providers });
   });
 
   it('renders SUB label', async () => {
@@ -164,7 +154,11 @@ describe('PlayerMatchStatsComponent with unused SUBSTITUTE', () => {
 
 describe('PlayerMatchStatsComponent with no match stats', () => {
   beforeEach(async () => {
-    await renderComponent(fakePlayerSeasonStat(), []);
+    const { providers } = buildProviders([]);
+    await render(PlayerMatchStatsComponent, {
+      inputs: { playerSeasonStat: fakePlayerSeasonStat() },
+      providers,
+    });
   });
 
   it('renders empty message', async () => {
@@ -182,9 +176,9 @@ describe('PlayerMatchStatsComponent open dialog', () => {
   beforeEach(async () => {
     playerSeasonStat = fakePlayerSeasonStat();
     playerMatchStats = [fakePlayerMatchStat(), fakePlayerMatchStat()];
-    dynamicDialogService = buildDynamicDialogService();
-
-    await renderComponent(playerSeasonStat, playerMatchStats, dynamicDialogService);
+    dynamicDialogService = { openPlayerMatchStat: vi.fn() } as unknown as DynamicDialogService;
+    const { providers } = buildProviders(playerMatchStats, dynamicDialogService);
+    await render(PlayerMatchStatsComponent, { inputs: { playerSeasonStat }, providers });
   });
 
   it('opens the dialog with the clicked stat', async () => {

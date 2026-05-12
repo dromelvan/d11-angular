@@ -1,15 +1,15 @@
 import { Component, computed, DestroyRef, inject, input, numberAttribute } from '@angular/core';
 import { rxResource } from '@angular/core/rxjs-interop';
-import { Match, PlayerMatchStat, Status } from '@app/core/api';
+import { Match, PlayerMatchStat, Status, TeamBase } from '@app/core/api';
 import { MatchApiService } from '@app/core/api/match/match-api.service';
 import { LoadingService } from '@app/core/loading/loading.service';
 import { MatchHeaderCardComponent } from '@app/feature/card/match-header-card/match-header-card.component';
-import { MatchPlayerMatchStatsCardComponent } from '@app/feature/card/match-player-match-stats-card/match-player-match-stats-card.component';
+import { TeamPlayerMatchStatsComponent } from '@app/feature/component/team-player-match-stats/team-player-match-stats.component';
 import { sortByTeam } from '@app/shared/util/player-match-stat-util';
 
 @Component({
   selector: 'app-match-page',
-  imports: [MatchHeaderCardComponent, MatchPlayerMatchStatsCardComponent],
+  imports: [MatchHeaderCardComponent, TeamPlayerMatchStatsComponent],
   templateUrl: './match-page.component.html',
 })
 export class MatchPageComponent {
@@ -28,15 +28,16 @@ export class MatchPageComponent {
 
   protected model = computed(() => {
     const match = this.rxMatch.value();
-
     const playerMatchStats =
       match && this.rxPlayerMatchStats.value()
         ? sortByTeam(this.rxPlayerMatchStats.value()!)
         : undefined;
+    const teams: TeamBase[] = match ? [match.homeTeam, match.awayTeam] : [];
 
     return {
       match,
       playerMatchStats,
+      teams,
     };
   });
   protected isLoading = computed(

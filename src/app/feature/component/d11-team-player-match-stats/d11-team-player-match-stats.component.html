@@ -8,10 +8,10 @@
   <div class="app-grid-header app-grid-number">Rtg</div>
   <div class="app-grid-header app-grid-number">Pts</div>
 
-  @for (pms of stats(); track pms.player.id) {
+  @for (pms of filteredStats(); track pms.player.id) {
     <div
       class="col-span-4 grid grid-cols-subgrid cursor-pointer app-grid-separator"
-      (click)="statClick.emit(pms)"
+      (click)="openDialog(pms)"
     >
       <div class="app-grid-cell app-text-grid">
         {{ pms.position.code }}

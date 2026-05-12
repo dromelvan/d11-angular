@@ -11,13 +11,13 @@
       <p-tabpanels>
         <p-tabpanel value="0">
           @defer (when activeTab === '0') {
-            <app-team-matches-card [matches]="model.matches" [season]="model.season" />
+            <app-team-matches [matches]="model.matches" [season]="model.season" />
           }
         </p-tabpanel>
 
         <p-tabpanel value="1">
           @defer (when activeTab === '1') {
-            <app-team-player-season-stats-card
+            <app-team-player-season-stats
               [playerSeasonStats]="model.playerSeasonStats"
               [season]="model.season"
             />
@@ -26,7 +26,7 @@
 
         <p-tabpanel value="2">
           @defer (when activeTab === '2') {
-            <app-team-season-history-card
+            <app-team-season-history
               [teamSeasonStats]="model.teamSeasonStats"
               [currentSeasonId]="model.season?.id"
               (seasonSelected)="navigateToSeason($event)"

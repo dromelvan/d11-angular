@@ -23,7 +23,7 @@
               <div class="app-col">
                 @for (transferDay of model().transferDays; track transferDay.id) {
                   @if (transferDay.status === Status.FINISHED) {
-                    <app-transfer-day-transfers-card
+                    <app-transfer-day-transfers
                       [transferDay]="transferDay"
                       [draft]="model().transferWindow?.draft ?? false"
                     />
@@ -33,7 +33,7 @@
             }
             @if (column === 'Transfer Listings') {
               @if (model().lastTransferDay) {
-                <app-transfer-day-transfer-listings-card [transferDay]="model().lastTransferDay!" />
+                <app-transfer-day-transfer-listings [transferDay]="model().lastTransferDay!" />
               }
             }
           </p-tabpanel>

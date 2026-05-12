@@ -6,12 +6,13 @@ import { Position } from '@app/core/api/model/position.model';
 import { LoadingService } from '@app/core/loading/loading.service';
 import { RouterService } from '@app/core/router/router.service';
 import { DynamicDialogService } from '@app/shared/dialog/dynamic-dialog-service/dynamic-dialog.service';
+import { D11TeamImgComponent } from '@app/shared/img/d11-team-img/d11-team-img.component';
 import { TeamImgComponent } from '@app/shared/img/team-img/team-img.component';
 import { FeePipe } from '@app/shared/pipes/fee.pipe';
 
 @Component({
   selector: 'app-d11-team-squad',
-  imports: [TeamImgComponent, FeePipe],
+  imports: [D11TeamImgComponent, TeamImgComponent, FeePipe],
   templateUrl: './d11-team-squad.component.html',
 })
 export class D11TeamSquadComponent {

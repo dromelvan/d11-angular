@@ -1,9 +1,12 @@
-@if (d11Matches().length > 0) {
-  <div class="grid grid-cols-[auto_1fr_auto_auto_auto] gap-x-2">
-    @for (d11Match of d11Matches(); track d11Match.id; let last = $last) {
-      <app-d11-match-result-col [d11Match]="d11Match" [isLast]="last" [showDate]="true" />
-    }
-  </div>
-} @else {
-  <div class="app-text-low-emphasis">No matches found</div>
-}
+<div class="app-col gap-2">
+  <h2>{{ season() ? 'Matches ' + season()!.name : 'Matches' }}</h2>
+  @if (d11Matches().length > 0) {
+    <div class="grid grid-cols-[auto_1fr_auto_auto_auto] gap-x-2">
+      @for (d11Match of d11Matches(); track d11Match.id; let last = $last) {
+        <app-d11-match-result-col [d11Match]="d11Match" [isLast]="last" [showDate]="true" />
+      }
+    </div>
+  } @else {
+    <div class="app-text-low-emphasis">No matches found</div>
+  }
+</div>

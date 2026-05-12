@@ -1,14 +1,14 @@
 import { Component, computed, DestroyRef, inject, input, numberAttribute } from '@angular/core';
 import { rxResource } from '@angular/core/rxjs-interop';
-import { D11Match, PlayerMatchStat, Status } from '@app/core/api';
+import { D11Match, D11TeamBase, PlayerMatchStat, Status } from '@app/core/api';
 import { D11MatchApiService } from '@app/core/api/d11-match/d11-match-api.service';
 import { LoadingService } from '@app/core/loading/loading.service';
 import { D11MatchHeaderCardComponent } from '@app/feature/card/d11-match-header-card/d11-match-header-card.component';
-import { D11MatchPlayerMatchStatsCardComponent } from '@app/feature/card/d11-match-player-match-stats-card/d11-match-player-match-stats-card.component';
+import { D11TeamPlayerMatchStatsComponent } from '@app/feature/component/d11-team-player-match-stats/d11-team-player-match-stats.component';
 
 @Component({
   selector: 'app-d11-match-page',
-  imports: [D11MatchHeaderCardComponent, D11MatchPlayerMatchStatsCardComponent],
+  imports: [D11MatchHeaderCardComponent, D11TeamPlayerMatchStatsComponent],
   templateUrl: './d11-match-page.component.html',
 })
 export class D11MatchPageComponent {
@@ -29,10 +29,12 @@ export class D11MatchPageComponent {
     const d11Match = this.rxD11Match.value();
     const playerMatchStats =
       d11Match && this.rxPlayerMatchStats.value() ? this.rxPlayerMatchStats.value() : undefined;
+    const d11Teams: D11TeamBase[] = d11Match ? [d11Match.homeD11Team, d11Match.awayD11Team] : [];
 
     return {
       d11Match,
       playerMatchStats,
+      d11Teams,
     };
   });
 

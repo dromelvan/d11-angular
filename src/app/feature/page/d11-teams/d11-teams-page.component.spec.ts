@@ -84,17 +84,17 @@ describe('D11TeamsPageComponent', () => {
       });
     });
 
-    it('renders d11-team-squad-card for each stat', async () => {
+    it('renders d11-team-squad for each stat', async () => {
       await waitFor(() => {
-        expect(fixture.nativeElement.querySelectorAll('app-d11-team-squad-card').length).toBe(
+        expect(fixture.nativeElement.querySelectorAll('app-d11-team-squad').length).toBe(
           d11TeamSeasonStats.length,
         );
       });
     });
 
-    it('renders d11-team-squad-cards sorted by d11 team name', async () => {
+    it('renders d11-team-squads sorted by d11 team name', async () => {
       await waitFor(() => {
-        const cards = fixture.nativeElement.querySelectorAll('app-d11-team-squad-card');
+        const cards = fixture.nativeElement.querySelectorAll('app-d11-team-squad');
         expect(cards.length).toBe(2);
         expect(cards[0].textContent).toContain('D11Team1');
         expect(cards[1].textContent).toContain('D11Team2');
@@ -146,9 +146,9 @@ describe('D11TeamsPageComponent', () => {
       });
     });
 
-    it('renders d11-team-squad-card for each stat', async () => {
+    it('renders d11-team-squad for each stat', async () => {
       await waitFor(() => {
-        expect(fixture.nativeElement.querySelectorAll('app-d11-team-squad-card').length).toBe(
+        expect(fixture.nativeElement.querySelectorAll('app-d11-team-squad').length).toBe(
           d11TeamSeasonStats.length,
         );
       });

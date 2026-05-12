@@ -2,11 +2,11 @@ import { Component, computed, inject, input, numberAttribute, signal } from '@an
 import { SeasonBase } from '@app/core/api';
 import { RouterService } from '@app/core/router/router.service';
 import { SeasonPickerComponent } from '@app/shared/season-picker/season-picker.component';
-import { PlayersSeasonStatsCardComponent } from '@app/feature/card/players-season-stats-card/players-season-stats-card.component';
+import { PlayersSeasonStatsComponent } from '@app/feature/component/players-season-stats/players-season-stats.component';
 
 @Component({
   selector: 'app-players-page',
-  imports: [SeasonPickerComponent, PlayersSeasonStatsCardComponent],
+  imports: [SeasonPickerComponent, PlayersSeasonStatsComponent],
   templateUrl: './players-page.component.html',
 })
 export class PlayersPageComponent {

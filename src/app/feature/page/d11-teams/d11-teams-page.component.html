@@ -1,6 +1,6 @@
 <div class="app-d11-teams-page app-col max-w-3xl mx-auto pb-4">
   <app-season-picker [seasonId]="seasonId()" (season)="onSeasonSelected($event)" />
   @for (stat of model().d11TeamSeasonStats; track stat.id) {
-    <app-d11-team-squad-card [d11TeamSeasonStat]="stat" [positions]="model().positions" />
+    <app-d11-team-squad [d11TeamSeasonStat]="stat" [positions]="model().positions" />
   }
 </div>

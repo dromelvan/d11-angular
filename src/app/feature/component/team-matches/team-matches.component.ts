@@ -1,5 +1,5 @@
 import { Component, input } from '@angular/core';
-import { MatchBase } from '@app/core/api';
+import { MatchBase, Season } from '@app/core/api';
 import { MatchResultColComponent } from '@app/feature/component/match-result-col/match-result-col.component';
 
 @Component({
@@ -9,4 +9,5 @@ import { MatchResultColComponent } from '@app/feature/component/match-result-col
 })
 export class TeamMatchesComponent {
   matches = input.required<MatchBase[]>();
+  season = input<Season | undefined>();
 }

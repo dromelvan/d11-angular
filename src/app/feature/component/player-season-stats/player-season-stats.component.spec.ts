@@ -24,6 +24,20 @@ describe('PlayerSeasonStatsComponent', () => {
     await renderComponent(playerSeasonStats);
   });
 
+  it('renders Career stats heading', async () => {
+    await waitFor(() => {
+      expect(screen.getByRole('heading', { name: 'Career stats', level: 2 })).toBeInTheDocument();
+    });
+  });
+
+  it('renders column headers', async () => {
+    await waitFor(() => {
+      expect(screen.getByText('Season')).toBeInTheDocument();
+      expect(screen.getByText('Team')).toBeInTheDocument();
+      expect(screen.getByText('Rank')).toBeInTheDocument();
+    });
+  });
+
   it('renders season stats', async () => {
     await waitFor(() => {
       expect(document.querySelectorAll('.app-grid-separator')).toHaveLength(
@@ -144,6 +158,14 @@ describe('PlayerSeasonStatsComponent with no stats', () => {
   it('renders empty message', async () => {
     await waitFor(() => {
       expect(screen.getByText('No season stats found')).toBeInTheDocument();
+    });
+  });
+
+  it('does not render Career stats heading', async () => {
+    await waitFor(() => {
+      expect(
+        screen.queryByRole('heading', { name: 'Career stats', level: 2 }),
+      ).not.toBeInTheDocument();
     });
   });
 });

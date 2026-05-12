@@ -1,3 +1,7 @@
+@if (seasonName()) {
+  <h2 class="pb-4">Stats {{ seasonName() }}</h2>
+}
+
 @let pss = playerStatSummary();
 <div class="app-player-stat-summary grid grid-cols-2">
   @if (showInfo()) {

@@ -1,148 +1,154 @@
 @let m = model();
-<p-paginator
-  class="absolute top-4 right-12 p-0! gap-0!"
-  [first]="m.page * 25"
-  [rows]="25"
-  [totalRecords]="m.totalElements"
-  [showPageLinks]="false"
-  [showJumpToPageDropdown]="false"
-  (onPageChange)="onPageChange($event)"
-/>
-<app-material-icon-button
-  icon="more_vertical"
-  variant="text"
-  class="absolute! top-4 right-2 z-2`"
-  (click)="drawerVisible.set(true)"
-/>
+<div class="app-col">
+  <div class="app-row gap-0">
+    <h2>Statistics</h2>
+    <div class="flex-1"></div>
+    <p-paginator
+      class="p-0! gap-0!"
+      [first]="m.page * 25"
+      [rows]="25"
+      [totalRecords]="m.totalElements"
+      [showPageLinks]="false"
+      [showJumpToPageDropdown]="false"
+      (onPageChange)="onPageChange($event)"
+    />
+    <app-material-icon-button
+      icon="more_vertical"
+      variant="text"
+      class="z-2`"
+      (click)="drawerVisible.set(true)"
+    />
+  </div>
 
-<div [class.min-h-360]="m.playerSeasonStats.length >= 25">
-  <div
-    [style.grid-template-columns]="
-      (m.maxRanking < 1000 ? '1.5rem' : '2rem') +
-      (m.sort === 'FORM' ? ' 1.5rem 1fr 6.5rem' : ' 1.5rem 1fr 2.5rem')
-    "
-    class="grid gap-x-1 text-sm pb-10"
-  >
-    <div class="app-grid-header text-center">#</div>
-    <div class="app-grid-header col-span-2">Player</div>
-    <div class="app-grid-header app-grid-number">
-      @switch (m.sort) {
-        @case ('GOALS') {
-          Goals
+  <div [class.min-h-360]="m.playerSeasonStats.length >= 25">
+    <div
+      [style.grid-template-columns]="
+        (m.maxRanking < 1000 ? '1.5rem' : '2rem') +
+        (m.sort === 'FORM' ? ' 1.5rem 1fr 6.5rem' : ' 1.5rem 1fr 2.5rem')
+      "
+      class="grid gap-x-1 text-sm pb-10"
+    >
+      <div class="app-grid-header text-center">#</div>
+      <div class="app-grid-header col-span-2">Player</div>
+      <div class="app-grid-header app-grid-number">
+        @switch (m.sort) {
+          @case ('GOALS') {
+            Goals
+          }
+          @case ('RATING') {
+            Rtg
+          }
+          @case ('FORM') {
+            Form
+          }
+          @default {
+            Pts
+          }
         }
-        @case ('RATING') {
-          Rtg
-        }
-        @case ('FORM') {
-          Form
-        }
-        @default {
-          Pts
-        }
+      </div>
+
+      @for (stat of m.playerSeasonStats; track stat.id; let last = $last) {
+        <div
+          class="col-span-4 grid grid-cols-subgrid cursor-pointer"
+          [class.app-grid-separator]="!last"
+          (click)="openDialog(stat)"
+        >
+          <div class="app-grid-cell justify-center" data-testid="ranking">
+            {{ stat.ranking }}
+          </div>
+          <div class="app-grid-cell justify-center">
+            @if (!stat.team.dummy) {
+              <app-team-img [team]="stat.team" width="20" />
+            }
+          </div>
+          <div class="app-grid-cell app-col gap-0 w-full overflow-hidden">
+            <span class="w-full truncate">{{ stat.player.name }}</span>
+            <span class="app-text-lowest-emphasis w-full truncate">
+              {{ stat.position.name }}
+              @if (!stat.d11Team.dummy) {
+                - {{ stat.d11Team.name }}
+              }
+            </span>
+          </div>
+          <div class="app-grid-cell app-grid-number font-bold">
+            @switch (m.sort) {
+              @case ('GOALS') {
+                {{ stat.goals }}
+              }
+              @case ('RATING') {
+                {{ stat.rating | rating }}
+              }
+              @case ('FORM') {
+                <div class="app-row gap-0">
+                  <app-form-match-points [formMatchPoints]="stat.formMatchPoints" type="player" />
+                </div>
+              }
+              @default {
+                {{ stat.points }}
+              }
+            }
+          </div>
+        </div>
       }
     </div>
+  </div>
+  @if (m.playerSeasonStats.length > 0) {
+    <p-paginator
+      class="p-0! gap-0!"
+      [first]="m.page * 25"
+      [rows]="25"
+      [totalRecords]="m.totalElements"
+      [showPageLinks]="false"
+      [showJumpToPageDropdown]="false"
+      (onPageChange)="onPageChange($event)"
+    />
+  }
 
-    @for (stat of m.playerSeasonStats; track stat.id; let last = $last) {
-      <div
-        class="col-span-4 grid grid-cols-subgrid cursor-pointer"
-        [class.app-grid-separator]="!last"
-        (click)="openDialog(stat)"
-      >
-        <div class="app-grid-cell justify-center" data-testid="ranking">
-          {{ stat.ranking }}
-        </div>
-        <div class="app-grid-cell justify-center">
-          @if (!stat.team.dummy) {
-            <app-team-img [team]="stat.team" width="20" />
-          }
-        </div>
-        <div class="app-grid-cell app-col gap-0 w-full overflow-hidden">
-          <span class="w-full truncate">{{ stat.player.name }}</span>
-          <span class="app-text-lowest-emphasis w-full truncate">
-            {{ stat.position.name }}
-            @if (!stat.d11Team.dummy) {
-              - {{ stat.d11Team.name }}
-            }
-          </span>
-        </div>
-        <div class="app-grid-cell app-grid-number font-bold">
-          @switch (m.sort) {
-            @case ('GOALS') {
-              {{ stat.goals }}
-            }
-            @case ('RATING') {
-              {{ stat.rating | rating }}
-            }
-            @case ('FORM') {
-              <div class="app-row gap-0">
-                <app-form-match-points [formMatchPoints]="stat.formMatchPoints" type="player" />
-              </div>
-            }
-            @default {
-              {{ stat.points }}
-            }
-          }
-        </div>
+  <p-drawer
+    [(visible)]="drawerVisible"
+    position="bottom"
+    [closable]="false"
+    [pt]="{ root: { class: 'rounded-t-[25px] h-auto!' } }"
+  >
+    <ng-template #header>
+      <div class="grid grid-cols-[1fr_auto_1fr] items-center w-full">
+        <span></span>
+        <span class="font-semibold">Filter and Sort</span>
+        <a (click)="drawerVisible.set(false)" class="text-sm justify-self-end">Done</a>
       </div>
-    }
-  </div>
+    </ng-template>
+    <div class="app-col">
+      <div class="app-col gap-2">
+        <span class="text-sm font-medium">Availability</span>
+        <p-selectbutton
+          [options]="availabilityOptions"
+          [(ngModel)]="dummy"
+          optionLabel="label"
+          optionValue="value"
+          [pt]="{ pcToggleButton: { label: { class: 'text-sm!' } } }"
+        />
+      </div>
+      <div class="app-col gap-2">
+        <span class="text-sm font-medium">Position</span>
+        <p-selectbutton
+          [options]="positionIdOptions"
+          [(ngModel)]="positionIds"
+          optionLabel="label"
+          optionValue="value"
+          [multiple]="true"
+          [pt]="{ pcToggleButton: { label: { class: 'text-xs!' } } }"
+        />
+      </div>
+      <div class="app-col gap-2">
+        <span class="text-sm font-medium">Sort</span>
+        <p-selectbutton
+          [options]="sortOptions"
+          [(ngModel)]="sort"
+          optionLabel="label"
+          optionValue="value"
+          [pt]="{ pcToggleButton: { label: { class: 'text-sm!' } } }"
+        />
+      </div>
+    </div>
+  </p-drawer>
 </div>
-@if (m.playerSeasonStats.length > 0) {
-  <p-paginator
-    class="absolute bottom-4 right-5 p-0! gap-0!"
-    [first]="m.page * 25"
-    [rows]="25"
-    [totalRecords]="m.totalElements"
-    [showPageLinks]="false"
-    [showJumpToPageDropdown]="false"
-    (onPageChange)="onPageChange($event)"
-  />
-}
-
-<p-drawer
-  [(visible)]="drawerVisible"
-  position="bottom"
-  [closable]="false"
-  [pt]="{ root: { class: 'rounded-t-[25px] h-auto!' } }"
->
-  <ng-template #header>
-    <div class="grid grid-cols-[1fr_auto_1fr] items-center w-full">
-      <span></span>
-      <span class="font-semibold">Filter and Sort</span>
-      <a (click)="drawerVisible.set(false)" class="text-sm justify-self-end">Done</a>
-    </div>
-  </ng-template>
-  <div class="app-col">
-    <div class="app-col gap-2">
-      <span class="text-sm font-medium">Availability</span>
-      <p-selectbutton
-        [options]="availabilityOptions"
-        [(ngModel)]="dummy"
-        optionLabel="label"
-        optionValue="value"
-        [pt]="{ pcToggleButton: { label: { class: 'text-sm!' } } }"
-      />
-    </div>
-    <div class="app-col gap-2">
-      <span class="text-sm font-medium">Position</span>
-      <p-selectbutton
-        [options]="positionIdOptions"
-        [(ngModel)]="positionIds"
-        optionLabel="label"
-        optionValue="value"
-        [multiple]="true"
-        [pt]="{ pcToggleButton: { label: { class: 'text-xs!' } } }"
-      />
-    </div>
-    <div class="app-col gap-2">
-      <span class="text-sm font-medium">Sort</span>
-      <p-selectbutton
-        [options]="sortOptions"
-        [(ngModel)]="sort"
-        optionLabel="label"
-        optionValue="value"
-        [pt]="{ pcToggleButton: { label: { class: 'text-sm!' } } }"
-      />
-    </div>
-  </div>
-</p-drawer>

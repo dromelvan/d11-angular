@@ -1,6 +1,6 @@
-<div class="app-players-page app-col max-w-3xl mx-auto pb-4">
+<div class="app-players-page app-col max-w-3xl mx-auto pb-4 gap-2">
   <app-season-picker [seasonId]="seasonId()" (season)="onSeasonSelected($event)" />
   @if (selectedSeasonId(); as seasonId) {
-    <app-players-season-stats-card [seasonId]="seasonId" />
+    <app-players-season-stats [seasonId]="seasonId" />
   }
 </div>

@@ -1,3 +1,8 @@
+<div class="app-row gap-0 items-end font-semibold pb-4">
+  <h2 class="flex-1">Transfer Day {{ transferDay().transferDayNumber }}</h2>
+  <div class="text-sm">{{ transferDay().datetime | date: 'mediumDate' }}</div>
+</div>
+
 @if (transfers().length) {
   <div class="grid grid-cols-[1.5rem_1fr_auto] gap-0">
     <div class="app-grid-header col-span-2">Player</div>

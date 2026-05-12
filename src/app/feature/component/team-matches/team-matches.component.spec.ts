@@ -1,6 +1,6 @@
 import { Status } from '@app/core/api';
 import { RouterService } from '@app/core/router/router.service';
-import { fakeMatchBase, fakeTeamBase } from '@app/test';
+import { fakeMatchBase, fakeSeason, fakeTeamBase } from '@app/test';
 import { render, screen } from '@testing-library/angular';
 import { expect, vi } from 'vitest';
 import { TeamMatchesComponent } from './team-matches.component';
@@ -8,6 +8,21 @@ import { TeamMatchesComponent } from './team-matches.component';
 const providers = [{ provide: RouterService, useValue: { navigateToMatch: vi.fn() } }];
 
 describe('TeamMatchesComponent', () => {
+  it('renders Matches heading without season', async () => {
+    await render(TeamMatchesComponent, { inputs: { matches: [] }, providers });
+
+    expect(screen.getByRole('heading', { name: 'Matches', level: 2 })).toBeInTheDocument();
+  });
+
+  it('renders heading with season name when season is provided', async () => {
+    const season = fakeSeason();
+    await render(TeamMatchesComponent, { inputs: { matches: [], season }, providers });
+
+    expect(
+      screen.getByRole('heading', { name: `Matches ${season.name}`, level: 2 }),
+    ).toBeInTheDocument();
+  });
+
   it('renders home and away team names for each match', async () => {
     const homeTeam = { ...fakeTeamBase(), name: 'Team1' };
     const awayTeam = { ...fakeTeamBase(), name: 'Team2' };

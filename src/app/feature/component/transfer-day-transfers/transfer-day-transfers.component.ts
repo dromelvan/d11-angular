@@ -1,3 +1,4 @@
+import { DatePipe } from '@angular/common';
 import { Component, computed, DestroyRef, inject, input } from '@angular/core';
 import { rxResource } from '@angular/core/rxjs-interop';
 import { Status, Transfer, TransferDay } from '@app/core/api';
@@ -11,7 +12,7 @@ import { FeePipe } from '@app/shared/pipes';
 
 @Component({
   selector: 'app-transfer-day-transfers',
-  imports: [FeePipe, TeamImgComponent, D11TeamImgComponent],
+  imports: [DatePipe, FeePipe, TeamImgComponent, D11TeamImgComponent],
   templateUrl: './transfer-day-transfers.component.html',
 })
 export class TransferDayTransfersComponent {

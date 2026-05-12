@@ -16,13 +16,13 @@
       <p-tabpanels>
         <p-tabpanel value="0">
           @defer (when activeTab === '0') {
-            <app-d11-team-matches-card [d11Matches]="model.d11Matches" [season]="model.season" />
+            <app-d11-team-matches [d11Matches]="model.d11Matches" [season]="model.season" />
           }
         </p-tabpanel>
 
         <p-tabpanel value="1">
           @defer (when activeTab === '1') {
-            <app-team-player-season-stats-card
+            <app-team-player-season-stats
               [playerSeasonStats]="model.playerSeasonStats"
               [season]="model.season"
               [showTeam]="true"
@@ -32,7 +32,7 @@
 
         <p-tabpanel value="2">
           @defer (when activeTab === '2') {
-            <app-d11-team-season-history-card
+            <app-d11-team-season-history
               [d11TeamSeasonStats]="model.d11TeamSeasonStats"
               [currentSeasonId]="model.season?.id"
               (seasonSelected)="navigateToSeason($event)"

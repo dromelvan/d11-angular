@@ -1,11 +1,11 @@
 import { Component } from '@angular/core';
-import { Match, PlayerMatchStat, Status } from '@app/core/api';
+import { Match, PlayerMatchStat, Status, TeamBase } from '@app/core/api';
 import { MatchApiService } from '@app/core/api/match/match-api.service';
 import { fakeMatch, fakePlayerMatchStat, fakeTeamBase } from '@app/test';
 import { LoadingService } from '@app/core/loading/loading.service';
 import { RouterService } from '@app/core/router/router.service';
 import { DynamicDialogService } from '@app/shared/dialog/dynamic-dialog-service/dynamic-dialog.service';
-import { render, screen, waitFor } from '@testing-library/angular';
+import { render, waitFor } from '@testing-library/angular';
 import { of } from 'rxjs';
 import { expect, vi } from 'vitest';
 import { MatchPageComponent } from './match-page.component';
@@ -66,15 +66,18 @@ describe('MatchPageComponent', () => {
 
     it('does not render player stats', async () => {
       await waitFor(() => {
-        expect(screen.queryByText('Player stats')).not.toBeInTheDocument();
+        expect(document.querySelector('app-team-player-match-stats')).not.toBeInTheDocument();
       });
     });
   });
 
   describe('not pending', () => {
+    let homeTeam: TeamBase;
+    let awayTeam: TeamBase;
+
     beforeEach(async () => {
-      const homeTeam = fakeTeamBase();
-      const awayTeam = fakeTeamBase();
+      homeTeam = fakeTeamBase();
+      awayTeam = fakeTeamBase();
       match = { ...fakeMatch(), homeTeam, awayTeam, status: Status.FINISHED };
 
       const playerMatchStat = fakePlayerMatchStat();
@@ -113,9 +116,9 @@ describe('MatchPageComponent', () => {
       });
     });
 
-    it('renders player stats', async () => {
+    it('renders player stats for both teams', async () => {
       await waitFor(() => {
-        expect(screen.getByText('Player stats')).toBeInTheDocument();
+        expect(document.querySelectorAll('app-team-player-match-stats')).toHaveLength(2);
       });
     });
   });

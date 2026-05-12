@@ -1,5 +1,5 @@
 import type { Season, Team, TeamSeasonStat } from '@app/core/api';
-import { SeasonApiService } from '@app/core/api';
+import { POSITION_IDS, SeasonApiService } from '@app/core/api';
 import { TeamSeasonStatApiService } from '@app/core/api/team-season-stat/team-season-stat-api.service';
 import { TeamApiService } from '@app/core/api/team/team-api.service';
 import {
@@ -10,6 +10,7 @@ import {
   fakeTeamBase,
   fakeTeamSeasonStat,
 } from '@app/test';
+import { DynamicDialogService } from '@app/shared/dialog/dynamic-dialog-service/dynamic-dialog.service';
 import { LoadingService } from '@app/core/loading/loading.service';
 import { RouterService } from '@app/core/router/router.service';
 import { DeferBlockBehavior } from '@angular/core/testing';
@@ -20,6 +21,7 @@ import { expect } from 'vitest';
 import { TeamPageComponent } from './team-page.component';
 
 const mockRouterService = { navigateToTeam: vi.fn() };
+const mockDynamicDialogService = { openPlayerSeasonStat: vi.fn() };
 
 function buildProviders(overrides: {
   teamApi: TeamApiService;
@@ -33,6 +35,7 @@ function buildProviders(overrides: {
     { provide: SeasonApiService, useValue: overrides.seasonApi },
     { provide: LoadingService, useValue: overrides.loadingService },
     { provide: RouterService, useValue: mockRouterService },
+    { provide: DynamicDialogService, useValue: mockDynamicDialogService },
   ];
 }
 
@@ -256,6 +259,91 @@ describe('TeamPageComponent history navigation', () => {
       1,
       teamSeasonStat.season.id,
     );
+  });
+});
+
+describe('TeamPageComponent players tab', () => {
+  it('renders player name when Players tab is clicked', async () => {
+    vi.clearAllMocks();
+
+    const user = userEvent.setup();
+    const team = fakeTeam();
+    team.dummy = false;
+    const season = fakeSeason();
+    const playerSeasonStat = fakePlayerSeasonStat();
+    playerSeasonStat.position.id = POSITION_IDS.KEEPER;
+
+    const teamApi = {
+      getById: vi.fn().mockReturnValue(of(team)),
+      getMatchesByTeamIdAndSeasonId: vi.fn().mockReturnValue(of([])),
+      getPlayerSeasonStatsByTeamIdAndSeasonId: vi.fn().mockReturnValue(of([playerSeasonStat])),
+    } as unknown as TeamApiService;
+
+    const teamSeasonStatApi = {
+      getTeamSeasonStatsByTeamId: vi.fn().mockReturnValue(of([])),
+    } as unknown as TeamSeasonStatApiService;
+
+    const seasonApi = {
+      getAll: vi.fn().mockReturnValue(of([season])),
+    } as unknown as SeasonApiService;
+
+    const loadingService = {
+      isLoading: vi.fn().mockReturnValue(false),
+      register: vi.fn(),
+    } as unknown as LoadingService;
+
+    await render(TeamPageComponent, {
+      inputs: { teamId: 1, seasonId: undefined },
+      deferBlockBehavior: DeferBlockBehavior.Playthrough,
+      providers: buildProviders({ teamApi, teamSeasonStatApi, seasonApi, loadingService }),
+    });
+
+    await waitFor(() => expect(screen.getByText('Players')).toBeInTheDocument());
+    await user.click(screen.getByText('Players'));
+
+    await waitFor(() => {
+      expect(screen.getByText(playerSeasonStat.player.name)).toBeInTheDocument();
+    });
+  });
+});
+
+describe('TeamPageComponent seasonId input', () => {
+  it('uses the season matching seasonId when provided', async () => {
+    vi.clearAllMocks();
+
+    const season1 = fakeSeason();
+    const season2 = fakeSeason();
+    const team = fakeTeam();
+    team.dummy = false;
+
+    const teamApi = {
+      getById: vi.fn().mockReturnValue(of(team)),
+      getMatchesByTeamIdAndSeasonId: vi.fn().mockReturnValue(of([])),
+      getPlayerSeasonStatsByTeamIdAndSeasonId: vi.fn().mockReturnValue(of([])),
+    } as unknown as TeamApiService;
+
+    const teamSeasonStatApi = {
+      getTeamSeasonStatsByTeamId: vi.fn().mockReturnValue(of([])),
+    } as unknown as TeamSeasonStatApiService;
+
+    const seasonApi = {
+      getAll: vi.fn().mockReturnValue(of([season1, season2])),
+    } as unknown as SeasonApiService;
+
+    const loadingService = {
+      isLoading: vi.fn().mockReturnValue(false),
+      register: vi.fn(),
+    } as unknown as LoadingService;
+
+    await render(TeamPageComponent, {
+      inputs: { teamId: 1, seasonId: season2.id },
+      deferBlockBehavior: DeferBlockBehavior.Playthrough,
+      providers: buildProviders({ teamApi, teamSeasonStatApi, seasonApi, loadingService }),
+    });
+
+    await waitFor(() => {
+      expect(screen.getByText(`Matches ${season2.name}`)).toBeInTheDocument();
+    });
   });
 });
 

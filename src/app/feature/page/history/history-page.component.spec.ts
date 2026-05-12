@@ -53,10 +53,10 @@ describe('HistoryPageComponent', () => {
       expect(fixture.nativeElement).toBeInTheDocument();
     });
 
-    it('renders a card for each season', async () => {
+    it('renders a component for each season', async () => {
       await screen.findByText(seasonWinner1.season.name);
 
-      expect(document.querySelectorAll('app-history-season-card')).toHaveLength(2);
+      expect(document.querySelectorAll('app-season-history')).toHaveLength(2);
     });
 
     it('renders season names', async () => {
@@ -74,10 +74,10 @@ describe('HistoryPageComponent', () => {
       fixture = result.fixture;
     });
 
-    it('filters out pending seasons', async () => {
+    it('filters out pending season components', async () => {
       await screen.findByText(seasonWinner1.season.name);
 
-      expect(document.querySelectorAll('app-history-season-card')).toHaveLength(1);
+      expect(document.querySelectorAll('app-season-history')).toHaveLength(1);
       expect(screen.queryByText(pendingSeasonWinner.season.name)).not.toBeInTheDocument();
     });
   });

@@ -14,13 +14,13 @@ import { TeamSeasonStatApiService } from '@app/core/api/team-season-stat/team-se
 import { LoadingService } from '@app/core/loading/loading.service';
 import { RouterService } from '@app/core/router/router.service';
 import { SeasonPickerComponent } from '@app/shared/season-picker/season-picker.component';
-import { D11TeamSeasonStatsCardComponent } from '@app/feature/card/d11-team-season-stats-card/d11-team-season-stats-card.component';
-import { TeamSeasonStatsCardComponent } from '@app/feature/card/team-season-stats-card/team-season-stats-card.component';
+import { D11TeamSeasonStatsComponent } from '@app/feature/component/d11-team-season-stats/d11-team-season-stats.component';
+import { TeamSeasonStatsComponent } from '@app/feature/component/team-season-stats/team-season-stats.component';
 import { of } from 'rxjs';
 
 @Component({
   selector: 'app-season-page',
-  imports: [SeasonPickerComponent, TeamSeasonStatsCardComponent, D11TeamSeasonStatsCardComponent],
+  imports: [SeasonPickerComponent, TeamSeasonStatsComponent, D11TeamSeasonStatsComponent],
   templateUrl: './season-page.component.html',
 })
 export class SeasonPageComponent {

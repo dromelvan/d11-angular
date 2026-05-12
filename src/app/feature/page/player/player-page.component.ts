@@ -20,9 +20,9 @@ import { Tab, TabList, TabPanel, TabPanels, Tabs } from 'primeng/tabs';
 import { PlayerHeaderCardComponent } from '@app/feature/card/player-header-card/player-header-card.component';
 import { PlayerInfoCardComponent } from '@app/feature/card/player-info-card/player-info-card.component';
 import { PlayerSeasonSummaryCardComponent } from '@app/feature/card/player-season-summary-card/player-season-summary-card.component';
-import { PlayerMatchStatsCardComponent } from '@app/feature/card/player-match-stats-card/player-match-stats-card.component';
-import { PlayerSeasonStatCardComponent } from '@app/feature/card/player-season-stat-card/player-season-stat-card.component';
-import { PlayerCareerCardComponent } from '@app/feature/card/player-career-card/player-career-card.component';
+import { PlayerMatchStatsComponent } from '@app/feature/component/player-match-stats/player-match-stats.component';
+import { PlayerStatSummaryComponent } from '@app/feature/component/player-stat-summary/player-stat-summary.component';
+import { PlayerSeasonStatsComponent } from '@app/feature/component/player-season-stats/player-season-stats.component';
 
 @Component({
   selector: 'app-player-page',
@@ -35,9 +35,9 @@ import { PlayerCareerCardComponent } from '@app/feature/card/player-career-card/
     PlayerInfoCardComponent,
     PlayerSeasonSummaryCardComponent,
     PlayerHeaderCardComponent,
-    PlayerMatchStatsCardComponent,
-    PlayerSeasonStatCardComponent,
-    PlayerCareerCardComponent,
+    PlayerMatchStatsComponent,
+    PlayerStatSummaryComponent,
+    PlayerSeasonStatsComponent,
   ],
   templateUrl: './player-page.component.html',
 })

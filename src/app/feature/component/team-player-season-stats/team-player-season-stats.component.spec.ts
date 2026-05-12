@@ -1,7 +1,7 @@
 import { PlayerSeasonStat, POSITION_IDS } from '@app/core/api';
 import { RouterService } from '@app/core/router/router.service';
 import { DynamicDialogService } from '@app/shared/dialog/dynamic-dialog-service/dynamic-dialog.service';
-import { fakeD11TeamBase, fakePlayerSeasonStat, fakeTeamBase } from '@app/test';
+import { fakeD11TeamBase, fakePlayerSeasonStat, fakeSeason, fakeTeamBase } from '@app/test';
 import { render, screen } from '@testing-library/angular';
 import userEvent from '@testing-library/user-event';
 import { beforeEach, expect, vi } from 'vitest';
@@ -23,6 +23,29 @@ function fakeStat(positionId: number = POSITION_IDS.KEEPER): PlayerSeasonStat {
 describe('TeamPlayerSeasonStatsComponent', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+  });
+
+  // Heading --------------------------------------------------------------------------------------
+
+  it('renders Players heading without season', async () => {
+    await render(TeamPlayerSeasonStatsComponent, {
+      inputs: { playerSeasonStats: [] },
+      providers,
+    });
+
+    expect(screen.getByRole('heading', { name: 'Players', level: 2 })).toBeInTheDocument();
+  });
+
+  it('renders heading with season name when season is provided', async () => {
+    const season = fakeSeason();
+    await render(TeamPlayerSeasonStatsComponent, {
+      inputs: { playerSeasonStats: [], season },
+      providers,
+    });
+
+    expect(
+      screen.getByRole('heading', { name: `Players ${season.name}`, level: 2 }),
+    ).toBeInTheDocument();
   });
 
   // Grouping -------------------------------------------------------------------------------------

@@ -40,6 +40,10 @@ describe('TeamSeasonStatsComponent', () => {
     });
   });
 
+  it('renders Premier League heading', () => {
+    expect(screen.getByRole('heading', { name: 'Premier League', level: 2 })).toBeInTheDocument();
+  });
+
   it('renders column headers', () => {
     expect(screen.getByText('Team')).toBeInTheDocument();
     expect(screen.getByText('GD')).toBeInTheDocument();

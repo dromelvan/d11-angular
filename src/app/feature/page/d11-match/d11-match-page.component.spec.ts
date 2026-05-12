@@ -1,5 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { D11Match, PlayerMatchStat, Status } from '@app/core/api';
+import { D11Match, D11TeamBase, PlayerMatchStat, Status } from '@app/core/api';
 import { D11MatchApiService } from '@app/core/api/d11-match/d11-match-api.service';
 import { fakeD11Match, fakeD11TeamBase, fakePlayerMatchStat } from '@app/test';
 import { LoadingService } from '@app/core/loading/loading.service';
@@ -66,7 +66,9 @@ describe('D11MatchPageComponent', () => {
 
     it('does not render player stats', async () => {
       await waitFor(() => {
-        expect(fixture.nativeElement.textContent).not.toContain('Player stats');
+        expect(
+          fixture.nativeElement.querySelector('app-d11-team-player-match-stats'),
+        ).not.toBeInTheDocument();
       });
     });
   });
@@ -74,9 +76,12 @@ describe('D11MatchPageComponent', () => {
   // Not pending -----------------------------------------------------------------------------------
 
   describe('not pending', () => {
+    let homeD11Team: D11TeamBase;
+    let awayD11Team: D11TeamBase;
+
     beforeEach(async () => {
-      const homeD11Team = fakeD11TeamBase();
-      const awayD11Team = fakeD11TeamBase();
+      homeD11Team = fakeD11TeamBase();
+      awayD11Team = fakeD11TeamBase();
       const playerMatchStat = { ...fakePlayerMatchStat(), d11Team: homeD11Team };
       await setup({ ...fakeD11Match(), homeD11Team, awayD11Team, status: Status.FINISHED }, [
         playerMatchStat,
@@ -97,9 +102,15 @@ describe('D11MatchPageComponent', () => {
       });
     });
 
-    it('renders player stats', async () => {
+    it('renders home D11 team player stats', async () => {
       await waitFor(() => {
-        expect(fixture.nativeElement.textContent).toContain('Player stats');
+        expect(fixture.nativeElement.textContent).toContain(homeD11Team.name);
+      });
+    });
+
+    it('renders away D11 team player stats', async () => {
+      await waitFor(() => {
+        expect(fixture.nativeElement.textContent).toContain(awayD11Team.name);
       });
     });
   });

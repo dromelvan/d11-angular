@@ -1,9 +1,9 @@
-<div class="app-season-page app-col max-w-3xl mx-auto pb-4">
+<div class="app-season-page app-col max-w-3xl mx-auto gap-2">
   <app-season-picker [seasonId]="seasonId()" (season)="onSeasonSelected($event)" />
   @if (model().teamSeasonStats.length > 0) {
-    <app-team-season-stats-card [teamSeasonStats]="model().teamSeasonStats" />
+    <app-team-season-stats [teamSeasonStats]="model().teamSeasonStats" class="pb-4" />
   }
   @if (model().d11TeamSeasonStats.length > 0) {
-    <app-d11-team-season-stats-card [d11TeamSeasonStats]="model().d11TeamSeasonStats" />
+    <app-d11-team-season-stats [d11TeamSeasonStats]="model().d11TeamSeasonStats" />
   }
 </div>

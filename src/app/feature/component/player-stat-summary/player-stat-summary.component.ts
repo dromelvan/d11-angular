@@ -20,5 +20,6 @@ import { D11TeamBaseComponent, TeamBaseComponent } from '@app/shared/resource';
 })
 export class PlayerStatSummaryComponent {
   playerStatSummary = input.required<PlayerStatSummary>();
+  seasonName = input('');
   showInfo = input(false);
 }

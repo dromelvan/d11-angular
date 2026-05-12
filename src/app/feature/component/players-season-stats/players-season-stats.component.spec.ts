@@ -101,6 +101,12 @@ describe('PlayersSeasonStatsComponent', () => {
       await renderComponent();
     });
 
+    it('renders Statistics heading', async () => {
+      await waitFor(() => {
+        expect(screen.getByRole('heading', { name: 'Statistics', level: 2 })).toBeInTheDocument();
+      });
+    });
+
     it('renders column headers', async () => {
       await waitFor(() => {
         expect(screen.getByText('#')).toBeInTheDocument();

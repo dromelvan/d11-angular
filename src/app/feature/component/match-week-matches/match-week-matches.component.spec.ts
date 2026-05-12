@@ -71,7 +71,7 @@ describe('MatchWeekMatchesComponent', () => {
   });
 
   it('renders Premier League heading', () => {
-    expect(fixture.nativeElement.textContent).toContain('Premier League');
+    expect(fixture.nativeElement.querySelector('h2')?.textContent?.trim()).toBe('Premier League');
   });
 
   it('renders home team name for each match', () => {

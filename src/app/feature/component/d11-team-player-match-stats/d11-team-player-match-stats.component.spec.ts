@@ -1,9 +1,13 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { D11TeamBase, PlayerMatchStat } from '@app/core/api';
-import { Lineup } from '@app/core/api/model/lineup.model';
+import { D11TeamBase, Lineup, PlayerMatchStat } from '@app/core/api';
 import { fakeD11TeamBase, fakePlayerMatchStat } from '@app/test';
-import { beforeEach, describe, expect } from 'vitest';
+import { DynamicDialogService } from '@app/shared/dialog/dynamic-dialog-service/dynamic-dialog.service';
+import { RouterService } from '@app/core/router/router.service';
+import { beforeEach, describe, expect, vi } from 'vitest';
 import { D11TeamPlayerMatchStatsComponent } from './d11-team-player-match-stats.component';
+
+const mockDynamicDialogService = { openPlayerMatchStat: vi.fn() };
+const mockRouterService = { navigateToPlayer: vi.fn() };
 
 let d11Team: D11TeamBase;
 
@@ -33,9 +37,14 @@ describe('D11TeamPlayerMatchStatsComponent', () => {
 
   beforeEach(async () => {
     d11Team = fakeD11TeamBase();
+    vi.clearAllMocks();
 
     await TestBed.configureTestingModule({
       imports: [D11TeamPlayerMatchStatsComponent],
+      providers: [
+        { provide: DynamicDialogService, useValue: mockDynamicDialogService },
+        { provide: RouterService, useValue: mockRouterService },
+      ],
     }).compileComponents();
   });
 
@@ -67,6 +76,46 @@ describe('D11TeamPlayerMatchStatsComponent', () => {
 
     it('renders position code', () => {
       expect(fixture.nativeElement.textContent).toContain(stat.position.code);
+    });
+  });
+
+  // Filtering -------------------------------------------------------------------------------------
+
+  describe('filtering', () => {
+    let otherTeam: D11TeamBase;
+    let otherStat: PlayerMatchStat;
+
+    beforeEach(async () => {
+      otherTeam = fakeD11TeamBase();
+      otherStat = { ...fakeStat(), d11Team: otherTeam };
+      await setup([fakeStat(), otherStat]);
+    });
+
+    it('does not render players from other teams', () => {
+      expect(fixture.nativeElement.textContent).not.toContain(otherStat.player.name);
+    });
+  });
+
+  // Sorting ---------------------------------------------------------------------------------------
+
+  describe('sorting', () => {
+    let stat1: PlayerMatchStat;
+    let stat2: PlayerMatchStat;
+
+    beforeEach(async () => {
+      stat1 = fakeStat({ position: { ...fakePlayerMatchStat().position, sortOrder: 2 } });
+      stat2 = fakeStat({ position: { ...fakePlayerMatchStat().position, sortOrder: 1 } });
+      await setup([stat1, stat2]);
+    });
+
+    it('renders stats sorted by position sort order', () => {
+      const names = (fixture.nativeElement as HTMLElement).querySelectorAll<HTMLElement>(
+        '.cursor-pointer',
+      );
+      const texts = Array.from(names).map((el) => el.textContent ?? '');
+      const index1 = texts.findIndex((text) => text.includes(stat1.player.name));
+      const index2 = texts.findIndex((text) => text.includes(stat2.player.name));
+      expect(index2).toBeLessThan(index1);
     });
   });
 
@@ -161,25 +210,26 @@ describe('D11TeamPlayerMatchStatsComponent', () => {
     });
   });
 
-  // Row click -------------------------------------------------------------------------------------
+  // Open dialog -----------------------------------------------------------------------------------
 
-  describe('row click', () => {
+  describe('open dialog', () => {
     let stat: PlayerMatchStat;
-    let emitted: PlayerMatchStat | undefined;
 
     beforeEach(async () => {
       stat = fakeStat();
       await setup([stat]);
-      emitted = undefined;
-      fixture.componentInstance.statClick.subscribe((value) => (emitted = value));
     });
 
-    it('emits statClick with the clicked stat', () => {
+    it('calls openPlayerMatchStat with the clicked stat and filtered stats', () => {
       const row = (fixture.nativeElement as HTMLElement).querySelector<HTMLElement>(
         '.cursor-pointer',
       );
       row?.click();
-      expect(emitted).toBe(stat);
+      expect(mockDynamicDialogService.openPlayerMatchStat).toHaveBeenCalledWith(
+        stat,
+        [stat],
+        expect.objectContaining({ label: 'Player profile', icon: 'player' }),
+      );
     });
   });
 });

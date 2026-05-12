@@ -23,9 +23,9 @@ import { RouterService } from '@app/core/router/router.service';
 import { of } from 'rxjs';
 import { Tab, TabList, TabPanel, TabPanels, Tabs } from 'primeng/tabs';
 import { TeamHeaderCardComponent } from '@app/feature/card/team-header-card/team-header-card.component';
-import { TeamMatchesCardComponent } from '@app/feature/card/team-matches-card/team-matches-card.component';
-import { TeamPlayerSeasonStatsCardComponent } from '@app/feature/card/team-player-season-stats-card/team-player-season-stats-card.component';
-import { TeamSeasonHistoryCardComponent } from '@app/feature/card/team-season-history-card/team-season-history-card.component';
+import { TeamMatchesComponent } from '@app/feature/component/team-matches/team-matches.component';
+import { TeamPlayerSeasonStatsComponent } from '@app/feature/component/team-player-season-stats/team-player-season-stats.component';
+import { TeamSeasonHistoryComponent } from '@app/feature/component/team-season-history/team-season-history.component';
 
 @Component({
   selector: 'app-team-page',
@@ -36,9 +36,9 @@ import { TeamSeasonHistoryCardComponent } from '@app/feature/card/team-season-hi
     TabList,
     Tab,
     TeamHeaderCardComponent,
-    TeamMatchesCardComponent,
-    TeamPlayerSeasonStatsCardComponent,
-    TeamSeasonHistoryCardComponent,
+    TeamMatchesComponent,
+    TeamPlayerSeasonStatsComponent,
+    TeamSeasonHistoryComponent,
   ],
   templateUrl: './team-page.component.html',
 })

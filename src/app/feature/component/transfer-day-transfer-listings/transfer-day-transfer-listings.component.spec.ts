@@ -1,4 +1,3 @@
-import { Component } from '@angular/core';
 import { TransferDay, TransferListing, TransferListingApiService } from '@app/core/api';
 import { LoadingService } from '@app/core/loading/loading.service';
 import { RouterService } from '@app/core/router/router.service';
@@ -10,19 +9,17 @@ import { of } from 'rxjs';
 import { expect, vi } from 'vitest';
 import { TransferDayTransferListingsComponent } from './transfer-day-transfer-listings.component';
 
-let transferDay: TransferDay;
-
-@Component({
-  template: ` <app-transfer-day-transfer-listings [transferDay]="transferDay" />`,
-  standalone: true,
-  imports: [TransferDayTransferListingsComponent],
-})
-class HostComponent {
-  transferDay = transferDay;
+function baseProviders() {
+  return [
+    { provide: LoadingService, useValue: { register: vi.fn() } },
+    { provide: DynamicDialogService, useValue: { openTransferListing: vi.fn() } },
+    { provide: RouterService, useValue: { navigateToPlayer: vi.fn() } },
+  ];
 }
 
 describe('TransferDayTransferListingsComponent', () => {
   describe('with transfer listings', () => {
+    let transferDay: TransferDay;
     let transferListings: TransferListing[];
     let transferListingApi: { getTransferListingsByTransferDayId: ReturnType<typeof vi.fn> };
     let dynamicDialogService: { openTransferListing: ReturnType<typeof vi.fn> };
@@ -41,13 +38,22 @@ describe('TransferDayTransferListingsComponent', () => {
       dynamicDialogService = { openTransferListing: vi.fn() };
       routerService = { navigateToPlayer: vi.fn() };
 
-      await render(HostComponent, {
+      await render(TransferDayTransferListingsComponent, {
+        inputs: { transferDay },
         providers: [
           { provide: TransferListingApiService, useValue: transferListingApi },
           { provide: LoadingService, useValue: { register: vi.fn() } },
           { provide: DynamicDialogService, useValue: dynamicDialogService },
           { provide: RouterService, useValue: routerService },
         ],
+      });
+    });
+
+    it('renders transfer day number', async () => {
+      await waitFor(() => {
+        expect(
+          screen.getByText(`Transfer Day ${transferDay.transferDayNumber}`),
+        ).toBeInTheDocument();
       });
     });
 
@@ -129,19 +135,16 @@ describe('TransferDayTransferListingsComponent', () => {
 
   describe('with no transfer listings', () => {
     beforeEach(async () => {
-      transferDay = fakeTransferDay();
+      const transferDay = fakeTransferDay();
 
-      await render(HostComponent, {
+      await render(TransferDayTransferListingsComponent, {
+        inputs: { transferDay },
         providers: [
           {
             provide: TransferListingApiService,
-            useValue: {
-              getTransferListingsByTransferDayId: vi.fn().mockReturnValue(of([])),
-            },
+            useValue: { getTransferListingsByTransferDayId: vi.fn().mockReturnValue(of([])) },
           },
-          { provide: LoadingService, useValue: { register: vi.fn() } },
-          { provide: DynamicDialogService, useValue: { openTransferListing: vi.fn() } },
-          { provide: RouterService, useValue: { navigateToPlayer: vi.fn() } },
+          ...baseProviders(),
         ],
       });
     });

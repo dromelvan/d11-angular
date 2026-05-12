@@ -26,6 +26,13 @@ describe('D11TeamSeasonStatsComponent', () => {
     }).compileComponents();
   });
 
+  // Heading ---------------------------------------------------------------------------------------
+
+  it('renders D11 heading', async () => {
+    await setup([fakeD11TeamSeasonStat()]);
+    expect(fixture.nativeElement.querySelector('h2')?.textContent?.trim()).toBe('D11');
+  });
+
   // Column headers --------------------------------------------------------------------------------
 
   it('renders column headers', async () => {

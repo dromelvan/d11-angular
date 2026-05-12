@@ -16,11 +16,11 @@ import { LoadingService } from '@app/core/loading/loading.service';
 import { RouterService } from '@app/core/router/router.service';
 import { SeasonPickerComponent } from '@app/shared/season-picker/season-picker.component';
 import { of } from 'rxjs';
-import { D11TeamSquadCardComponent } from '@app/feature/card/d11-team-squad-card/d11-team-squad-card.component';
+import { D11TeamSquadComponent } from '@app/feature/component/d11-team-squad/d11-team-squad.component';
 
 @Component({
   selector: 'app-d11-teams-page',
-  imports: [SeasonPickerComponent, D11TeamSquadCardComponent],
+  imports: [SeasonPickerComponent, D11TeamSquadComponent],
   templateUrl: './d11-teams-page.component.html',
 })
 export class D11TeamsPageComponent {

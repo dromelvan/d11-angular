@@ -101,6 +101,12 @@ describe('D11TeamSquadComponent', () => {
       });
     });
 
+    it('renders d11 team name', async () => {
+      await waitFor(() => {
+        expect(screen.getByText(d11Team.name)).toBeInTheDocument();
+      });
+    });
+
     it('fetches player season stats by d11TeamId and seasonId', async () => {
       await waitFor(() => {
         expect(

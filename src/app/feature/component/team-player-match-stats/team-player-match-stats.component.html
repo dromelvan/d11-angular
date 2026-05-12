@@ -1,4 +1,4 @@
-<h3 class="text-sm font-semibold">
+<h3 class="text-sm font-semibold pb-4">
   <app-team-base [team]="team()" />
 </h3>
 
@@ -8,7 +8,7 @@
   <div class="app-grid-header app-grid-number">Rtg</div>
   <div class="app-grid-header app-grid-number">Pts</div>
 
-  @for (pms of stats(); track pms.player.id; let index = $index) {
+  @for (pms of filteredStats(); track pms.player.id; let index = $index) {
     @if (index === substituteIndex()) {
       <div class="col-span-4 app-grid-header pt-2 pb-2">Substitutes</div>
     }
@@ -16,7 +16,7 @@
     <div
       class="col-span-4 grid grid-cols-subgrid cursor-pointer"
       [class.app-grid-separator]="index !== substituteIndex() - 1"
-      (click)="statClick.emit(pms)"
+      (click)="openDialog(pms)"
     >
       <div class="app-grid-cell app-text-grid">
         {{ pms.position.code }}

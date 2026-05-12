@@ -15,6 +15,12 @@ describe('PlayerStatSummaryComponent', () => {
     await renderComponent(pss);
   });
 
+  it('does not render season name header', async () => {
+    await waitFor(() => {
+      expect(screen.queryByText(/^Stats /)).not.toBeInTheDocument();
+    });
+  });
+
   it('does not render info section', async () => {
     await waitFor(() => {
       expect(screen.queryByText('Info')).not.toBeInTheDocument();
@@ -181,6 +187,19 @@ describe('PlayerStatSummaryComponent', () => {
       expect(screen.getByText('Own goals').nextElementSibling?.textContent?.trim()).toBe(
         String(pss.ownGoals),
       );
+    });
+  });
+});
+
+describe('PlayerStatSummaryComponent with seasonName', () => {
+  it('renders season name header', async () => {
+    const pss = fakePlayerSeasonStat();
+    await render(PlayerStatSummaryComponent, {
+      inputs: { playerStatSummary: pss, seasonName: pss.season.name },
+    });
+
+    await waitFor(() => {
+      expect(screen.getByText(`Stats ${pss.season.name}`)).toBeInTheDocument();
     });
   });
 });

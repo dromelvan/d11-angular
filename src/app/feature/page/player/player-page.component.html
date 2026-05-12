@@ -22,19 +22,22 @@
 
         <p-tabpanel value="1">
           @defer (when activeTab === '1') {
-            <app-player-match-stats-card [playerSeasonStat]="model.playerSeasonStat!" />
+            <app-player-match-stats [playerSeasonStat]="model.playerSeasonStat!" />
           }
         </p-tabpanel>
 
         <p-tabpanel value="2">
           @defer (when activeTab === '2') {
-            <app-player-season-stat-card [playerSeasonStat]="model.playerSeasonStat!" />
+            <app-player-stat-summary
+              [playerStatSummary]="model.playerSeasonStat!"
+              [seasonName]="model.playerSeasonStat!.season.name"
+            />
           }
         </p-tabpanel>
 
         <p-tabpanel value="3">
           @defer (when activeTab === '3') {
-            <app-player-career-card [playerSeasonStats]="model.playerSeasonStats!" />
+            <app-player-season-stats [playerSeasonStats]="model.playerSeasonStats!" />
           }
         </p-tabpanel>
       </p-tabpanels>

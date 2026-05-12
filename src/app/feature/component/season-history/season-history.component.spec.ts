@@ -30,6 +30,12 @@ describe('SeasonHistoryComponent', () => {
     });
   });
 
+  it('renders season name as heading', () => {
+    expect(
+      screen.getByRole('heading', { name: seasonWinner.season.name, level: 2 }),
+    ).toBeInTheDocument();
+  });
+
   it('renders D11 team name', () => {
     expect(screen.getByText(seasonWinner.d11TeamSeasonStat.d11Team.name)).toBeInTheDocument();
   });
