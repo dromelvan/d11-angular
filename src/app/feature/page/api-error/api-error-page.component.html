@@ -1,0 +1,36 @@
+<div class="app-api-error-page max-w-3xl mx-auto pb-8 px-4 pt-4 app-col gap-6">
+  @if (error(); as apiError) {
+    <h1 class="text-2xl font-bold text-error">
+      @if (apiError.status === 0) {
+        Network Error
+      } @else {
+        HTTP {{ apiError.status }}
+      }
+    </h1>
+
+    <div class="app-col gap-4">
+      <div class="app-col gap-1">
+        <span class="text-xs font-semibold uppercase tracking-wider text-surface-400">Request</span>
+        <span class="font-mono text-sm">{{ apiError.method }} {{ apiError.url }}</span>
+      </div>
+
+      <div class="app-col gap-1">
+        <span class="text-xs font-semibold uppercase tracking-wider text-surface-400">Message</span>
+        <span class="text-sm">{{ apiError.message }}</span>
+      </div>
+
+      @if (apiError.body) {
+        <div class="app-col gap-1">
+          <span class="text-xs font-semibold uppercase tracking-wider text-surface-400"
+            >Response body</span
+          >
+          <!-- prettier-ignore -->
+          <pre class="text-sm bg-surface-100 rounded-lg p-4 overflow-x-auto">{{ apiError.body }}</pre>
+        </div>
+      }
+    </div>
+  } @else {
+    <h1 class="text-2xl font-bold text-error">Error</h1>
+    <p class="text-sm">No error details available.</p>
+  }
+</div>

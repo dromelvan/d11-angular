@@ -132,5 +132,12 @@ export const routes: Routes = [
     loadComponent: () =>
       import('@app/feature/page/login/login-page.component').then((m) => m.LoginPageComponent),
   },
+  {
+    path: 'api-error',
+    loadComponent: () =>
+      import('@app/feature/page/api-error/api-error-page.component').then(
+        (m) => m.ApiErrorPageComponent,
+      ),
+  },
   { path: '**', redirectTo: '' },
 ];

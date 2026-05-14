@@ -181,6 +181,13 @@ describe('RouterService', () => {
     expect(result).toBe(true);
   });
 
+  it('should navigate to api-error', async () => {
+    const result = await service.navigateToApiError();
+
+    expect(mockRouter.navigate).toHaveBeenCalledWith(['api-error']);
+    expect(result).toBe(true);
+  });
+
   it('should navigate to login', async () => {
     const result = await service.navigateToLogin();
 

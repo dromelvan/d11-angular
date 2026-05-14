@@ -78,6 +78,11 @@ export class RouterService {
     return this.router.navigate(['transfers', transferWindowId]);
   }
 
+  public navigateToApiError(): Promise<boolean> {
+    this.stack.set([]);
+    return this.router.navigate(['api-error']);
+  }
+
   public navigateToLogin(): Promise<boolean> {
     this.stack.set([]);
     return this.router.navigate(['login']);
