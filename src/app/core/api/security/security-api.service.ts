@@ -16,19 +16,19 @@ export class SecurityApiService {
   readonly namespace = 'security';
   private apiService = inject(ApiService);
 
-  authenticate(userCredentials: UserCredentialsModel): Observable<string> {
+  authenticate(userCredentials: UserCredentialsModel): Observable<AuthenticationResponseBody> {
     const authenticationRequestBody: AuthenticationRequestBody = {
       ...userCredentials,
     };
-    return this.apiService
-      .post<AuthenticationResponseBody>(this.namespace, 'authenticate', authenticationRequestBody)
-      .pipe(map((result) => result.jwt));
+    return this.apiService.post<AuthenticationResponseBody>(
+      this.namespace,
+      'authenticate',
+      authenticationRequestBody,
+    );
   }
 
-  authorize(): Observable<string> {
-    return this.apiService
-      .post<AuthorizationResponseBody>(this.namespace, 'authorize', {})
-      .pipe(map((result) => result.jwt));
+  authorize(): Observable<AuthorizationResponseBody> {
+    return this.apiService.post<AuthorizationResponseBody>(this.namespace, 'authorize', {});
   }
 
   unauthorize(): Observable<boolean> {

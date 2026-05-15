@@ -2,7 +2,7 @@ import { TestBed } from '@angular/core/testing';
 import { firstValueFrom, of, throwError } from 'rxjs';
 import { beforeEach, describe } from 'vitest';
 import { ApiService } from '@app/core/api/api.service';
-import { PostFn, userCredentials } from '@app/test';
+import { fakeD11TeamBase, fakeUser, PostFn, userCredentials } from '@app/test';
 import { AuthenticationResponseBody } from './authentication-response-body.model';
 import { AuthorizationResponseBody } from './authorization-response-body.model';
 import { RequestPasswordResetRequestBody } from './request-password-reset-request-body.model';
@@ -11,6 +11,8 @@ import { SecurityApiService } from './security-api.service';
 import { UnauthorizationResponseBody } from './unauthorization-response-body.model';
 
 describe('SecurityApiService', () => {
+  const d11Team = fakeD11TeamBase();
+
   let securityApi: SecurityApiService;
   let apiServiceMock: { post: PostFn };
 
@@ -34,7 +36,8 @@ describe('SecurityApiService', () => {
 
   describe('authenticate', () => {
     const authenticationResponse: AuthenticationResponseBody = {
-      user: { name: 'Foo', administrator: false },
+      user: fakeUser(),
+      d11Team,
       jwt: 'authenticate-token',
       expiresAt: '1070-01-01T00:00:00',
       persistent: true,
@@ -52,12 +55,12 @@ describe('SecurityApiService', () => {
       );
     });
 
-    it('maps the result on authenticate', async () => {
+    it('returns the response body on authenticate', async () => {
       apiServiceMock.post = vi.fn().mockReturnValue(of(authenticationResponse)) as PostFn;
 
-      const jwt = await firstValueFrom(securityApi.authenticate(userCredentials));
+      const result = await firstValueFrom(securityApi.authenticate(userCredentials));
 
-      expect(jwt).toBe(authenticationResponse.jwt);
+      expect(result).toEqual(authenticationResponse);
     });
 
     it('propagates errors on authenticate', async () => {
@@ -65,19 +68,9 @@ describe('SecurityApiService', () => {
 
       apiServiceMock.post = vi.fn().mockReturnValue(throwError(() => httpError)) as PostFn;
 
-      await expect(firstValueFrom(securityApi.authenticate(userCredentials))).rejects.toThrow(
+      expect(firstValueFrom(securityApi.authenticate(userCredentials))).rejects.toThrow(
         httpError.message,
       );
-    });
-
-    it('does not map the result on authenticate error', async () => {
-      apiServiceMock.post = vi
-        .fn()
-        .mockReturnValue(throwError(() => new Error('INVALID'))) as PostFn;
-
-      await expect(
-        firstValueFrom(securityApi.authenticate(userCredentials)),
-      ).rejects.toBeInstanceOf(Error);
     });
   });
 
@@ -85,7 +78,8 @@ describe('SecurityApiService', () => {
 
   describe('authorize', () => {
     const authorizationResponse: AuthorizationResponseBody = {
-      user: { name: 'Foo', administrator: false },
+      user: fakeUser(),
+      d11Team,
       jwt: 'authorize-token',
       expiresAt: '1070-01-01T00:00:00',
       persistent: true,
@@ -103,12 +97,12 @@ describe('SecurityApiService', () => {
       );
     });
 
-    it('maps the result on authorize', async () => {
+    it('returns the response body on authorize', async () => {
       apiServiceMock.post = vi.fn().mockReturnValue(of(authorizationResponse)) as PostFn;
 
-      const jwt = await firstValueFrom(securityApi.authorize());
+      const result = await firstValueFrom(securityApi.authorize());
 
-      expect(jwt).toBe(authorizationResponse.jwt);
+      expect(result).toEqual(authorizationResponse);
     });
 
     it('propagates errors on authorize', async () => {
@@ -117,14 +111,6 @@ describe('SecurityApiService', () => {
       apiServiceMock.post = vi.fn().mockReturnValue(throwError(() => httpError)) as PostFn;
 
       await expect(firstValueFrom(securityApi.authorize())).rejects.toThrow(httpError.message);
-    });
-
-    it('does not map the result on authorize error', async () => {
-      apiServiceMock.post = vi
-        .fn()
-        .mockReturnValue(throwError(() => new Error('INVALID'))) as PostFn;
-
-      await expect(firstValueFrom(securityApi.authorize())).rejects.toBeInstanceOf(Error);
     });
   });
 
