@@ -1,0 +1,36 @@
+@if (userActionService.drawerVisible()) {
+  <div
+    class="fixed inset-0 bg-black/40"
+    style="z-index: 1099"
+    (click)="userActionService.close()"
+  ></div>
+}
+
+<p-drawer
+  appendTo="body"
+  position="bottom"
+  [modal]="false"
+  [closable]="false"
+  [visible]="userActionService.drawerVisible()"
+  (visibleChange)="userActionService.drawerVisible.set($event)"
+  [pt]="{ root: { class: 'rounded-t-[25px] h-auto! max-h-[70%]' } }"
+>
+  <ng-template #header>
+    <div class="grid grid-cols-[1fr_auto_1fr] items-center w-full">
+      <span></span>
+      <span class="font-semibold">Account</span>
+      <a class="text-sm justify-self-end cursor-pointer" (click)="userActionService.close()"
+        >Done</a
+      >
+    </div>
+  </ng-template>
+
+  <button
+    type="button"
+    class="flex items-center gap-3 w-full cursor-pointer"
+    (click)="userActionService.onLogout()"
+  >
+    <app-icon name="logout" />
+    <span>Sign out</span>
+  </button>
+</p-drawer>
