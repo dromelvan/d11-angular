@@ -1,29 +1,37 @@
 import { computed, inject, Injectable, signal } from '@angular/core';
-import { SecurityApiService, UserCredentialsModel } from '@app/core/api';
-import { Observable, tap } from 'rxjs';
+import { D11TeamBase, SecurityApiService, User, UserCredentialsModel } from '@app/core/api';
+import { map, Observable, tap } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
 })
 export class UserSessionService {
   public readonly jwt = signal<string | undefined>(undefined);
+  public readonly user = signal<User | undefined>(undefined);
+  public readonly d11Team = signal<D11TeamBase | undefined>(undefined);
   public readonly loggedIn = computed(() => this.jwt() !== undefined);
 
   private securityApi = inject(SecurityApiService);
 
   authenticate(userCredentials: UserCredentialsModel): Observable<string> {
     return this.securityApi.authenticate(userCredentials).pipe(
-      tap((token) => {
-        this.jwt.set(token);
+      tap((response) => {
+        this.jwt.set(response.jwt);
+        this.user.set(response.user);
+        this.d11Team.set(response.d11Team);
       }),
+      map((response) => response.jwt),
     );
   }
 
   authorize(): Observable<string> {
     return this.securityApi.authorize().pipe(
-      tap((token) => {
-        this.jwt.set(token);
+      tap((response) => {
+        this.jwt.set(response.jwt);
+        this.user.set(response.user);
+        this.d11Team.set(response.d11Team);
       }),
+      map((response) => response.jwt),
     );
   }
 
@@ -32,6 +40,8 @@ export class UserSessionService {
       tap((loggedOut) => {
         if (loggedOut) {
           this.jwt.set(undefined);
+          this.user.set(undefined);
+          this.d11Team.set(undefined);
         }
       }),
     );

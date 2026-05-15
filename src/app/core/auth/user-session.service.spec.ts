@@ -1,11 +1,29 @@
 import { TestBed } from '@angular/core/testing';
 import { firstValueFrom, of, throwError } from 'rxjs';
 import { SecurityApiService } from '@app/core/api';
-import { userCredentials } from '@app/test';
+import { AuthenticationResponseBody } from '@app/core/api/security/authentication-response-body.model';
+import { AuthorizationResponseBody } from '@app/core/api/security/authorization-response-body.model';
+import { fakeD11TeamBase, fakeUser, userCredentials } from '@app/test';
 import { UserSessionService } from './user-session.service';
 
 describe('UserSessionService', () => {
   const TOKEN = 'token';
+  const user = fakeUser();
+  const d11TeamBase = fakeD11TeamBase();
+  const authenticateResponse: AuthenticationResponseBody = {
+    user: user,
+    d11Team: d11TeamBase,
+    jwt: TOKEN,
+    expiresAt: '1970-01-01T00:00:00',
+    persistent: false,
+  };
+  const authorizeResponse: AuthorizationResponseBody = {
+    user: user,
+    d11Team: d11TeamBase,
+    jwt: TOKEN,
+    expiresAt: '1970-01-01T00:00:00',
+    persistent: false,
+  };
 
   let userSession: UserSessionService;
   let securityApi: {
@@ -30,8 +48,9 @@ describe('UserSessionService', () => {
 
   it('is created', () => {
     expect(userSession).toBeTruthy();
-
     expect(userSession.jwt()).toBeUndefined();
+    expect(userSession.user()).toBeUndefined();
+    expect(userSession.d11Team()).toBeUndefined();
     expect(userSession.loggedIn()).toBe(false);
   });
 
@@ -62,17 +81,19 @@ describe('UserSessionService', () => {
   // Authenticate ----------------------------------------------------------------------------------
 
   describe('authenticate', () => {
-    it('sets jwt on authenticate', async () => {
-      securityApi.authenticate.mockReturnValue(of(TOKEN));
+    it('sets jwt, user and d11Team on authenticate', async () => {
+      securityApi.authenticate.mockReturnValue(of(authenticateResponse));
 
       const result = await firstValueFrom(userSession.authenticate(userCredentials));
 
       expect(result).toBe(TOKEN);
       expect(userSession.jwt()).toBe(TOKEN);
+      expect(userSession.user()).toEqual(user);
+      expect(userSession.d11Team()).toEqual(d11TeamBase);
       expect(securityApi.authenticate).toHaveBeenCalledExactlyOnceWith(userCredentials);
     });
 
-    it('does not set jwt on authenticate error', async () => {
+    it('does not set jwt, user or d11Team on authenticate error', async () => {
       securityApi.authenticate.mockReturnValue(throwError(() => new Error('INVALID')));
 
       try {
@@ -80,6 +101,8 @@ describe('UserSessionService', () => {
       } catch {}
 
       expect(userSession.jwt()).toBeUndefined();
+      expect(userSession.user()).toBeUndefined();
+      expect(userSession.d11Team()).toBeUndefined();
       expect(securityApi.authenticate).toHaveBeenCalledExactlyOnceWith(userCredentials);
     });
   });
@@ -87,25 +110,29 @@ describe('UserSessionService', () => {
   // Authorize -------------------------------------------------------------------------------------
 
   describe('authorize', () => {
-    it('sets jwt on authorize', async () => {
-      securityApi.authorize.mockReturnValue(of(TOKEN));
+    it('sets jwt, user and d11Team on authorize', async () => {
+      securityApi.authorize.mockReturnValue(of(authorizeResponse));
 
       const result = await firstValueFrom(userSession.authorize());
 
       expect(result).toBe(TOKEN);
       expect(userSession.jwt()).toBe(TOKEN);
+      expect(userSession.user()).toEqual(user);
+      expect(userSession.d11Team()).toEqual(d11TeamBase);
       expect(securityApi.authorize).toHaveBeenCalledOnce();
     });
 
-    it('does not set jwt on authorize error', async () => {
-      securityApi.authenticate.mockReturnValue(throwError(() => new Error('INVALID')));
+    it('does not set jwt, user or d11Team on authorize error', async () => {
+      securityApi.authorize.mockReturnValue(throwError(() => new Error('INVALID')));
 
       try {
-        await firstValueFrom(userSession.authenticate(userCredentials));
+        await firstValueFrom(userSession.authorize());
       } catch {}
 
       expect(userSession.jwt()).toBeUndefined();
-      expect(securityApi.authenticate).toHaveBeenCalledExactlyOnceWith(userCredentials);
+      expect(userSession.user()).toBeUndefined();
+      expect(userSession.d11Team()).toBeUndefined();
+      expect(securityApi.authorize).toHaveBeenCalledOnce();
     });
   });
 
@@ -114,29 +141,35 @@ describe('UserSessionService', () => {
   describe('unauthorize', () => {
     beforeEach(() => {
       userSession.jwt.set(TOKEN);
+      userSession.user.set(user);
+      userSession.d11Team.set(d11TeamBase);
     });
 
-    it('clears jwt on unauthorize', async () => {
+    it('clears jwt, user and d11Team on unauthorize', async () => {
       securityApi.unauthorize.mockReturnValue(of(true));
 
       const result = await firstValueFrom(userSession.unauthorize());
 
       expect(result).toBe(true);
       expect(userSession.jwt()).toBeUndefined();
+      expect(userSession.user()).toBeUndefined();
+      expect(userSession.d11Team()).toBeUndefined();
       expect(securityApi.unauthorize).toHaveBeenCalledOnce();
     });
 
-    it('does not clear jwt on unauthorize failure', async () => {
+    it('does not clear jwt, user or d11Team on unauthorize failure', async () => {
       securityApi.unauthorize.mockReturnValue(of(false));
 
       const result = await firstValueFrom(userSession.unauthorize());
 
       expect(result).toBe(false);
       expect(userSession.jwt()).toBe(TOKEN);
+      expect(userSession.user()).toEqual(user);
+      expect(userSession.d11Team()).toEqual(d11TeamBase);
       expect(securityApi.unauthorize).toHaveBeenCalledOnce();
     });
 
-    it('does not clear jwt on unauthorize error', async () => {
+    it('does not clear jwt, user or d11Team on unauthorize error', async () => {
       securityApi.unauthorize.mockReturnValue(throwError(() => new Error('ERROR')));
 
       try {
@@ -144,6 +177,8 @@ describe('UserSessionService', () => {
       } catch {}
 
       expect(userSession.jwt()).toBe(TOKEN);
+      expect(userSession.user()).toEqual(user);
+      expect(userSession.d11Team()).toEqual(d11TeamBase);
       expect(securityApi.unauthorize).toHaveBeenCalledOnce();
     });
   });
