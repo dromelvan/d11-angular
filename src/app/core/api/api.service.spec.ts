@@ -89,6 +89,60 @@ describe('ApiService', () => {
     await expect(errorPromise).rejects.toMatchObject({ status: options.status });
   });
 
+  it('calls post without endpoint', async () => {
+    const namespaceUrl = `/${apiVersion}/${namespace}`;
+    const body = { foo: 'bar' };
+    const promise = firstValueFrom(apiService.post(namespace, undefined, body));
+
+    const testRequest = httpMock.expectOne(namespaceUrl);
+    expect(testRequest.request.method).toBe('POST');
+    expect(testRequest.request.body).toEqual(body);
+
+    testRequest.flush({});
+
+    await promise;
+  });
+
+  it('calls put with id url and body', async () => {
+    const idUrl = `/${apiVersion}/${namespace}/${id}`;
+    const body = { foo: 'bar' };
+    const promise = firstValueFrom(apiService.put(namespace, id, body));
+
+    const testRequest = httpMock.expectOne(idUrl);
+    expect(testRequest.request.method).toBe('PUT');
+    expect(testRequest.request.body).toEqual(body);
+
+    testRequest.flush({});
+
+    await promise;
+  });
+
+  it('calls patch with id url and body', async () => {
+    const idUrl = `/${apiVersion}/${namespace}/${id}`;
+    const body = { foo: 'bar' };
+    const promise = firstValueFrom(apiService.patch(namespace, id, body));
+
+    const testRequest = httpMock.expectOne(idUrl);
+    expect(testRequest.request.method).toBe('PATCH');
+    expect(testRequest.request.body).toEqual(body);
+
+    testRequest.flush({});
+
+    await promise;
+  });
+
+  it('calls delete with id url', async () => {
+    const idUrl = `/${apiVersion}/${namespace}/${id}`;
+    const promise = firstValueFrom(apiService.delete(namespace, id));
+
+    const testRequest = httpMock.expectOne(idUrl);
+    expect(testRequest.request.method).toBe('DELETE');
+
+    testRequest.flush(null, { status: 204, statusText: 'No Content' });
+
+    await promise;
+  });
+
   it('calls get with id url', async () => {
     const idUrl = `/${apiVersion}/${namespace}/${id}`;
     const promise = firstValueFrom(apiService.get({ namespace: namespace, id: id }));

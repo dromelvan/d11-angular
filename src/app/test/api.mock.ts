@@ -11,4 +11,10 @@ export type PostFn = <T>(
   },
 ) => Observable<T>;
 
+export type PutFn = <T>(namespace: string, id: number, body: unknown) => Observable<T>;
+
+export type PatchFn = <T>(namespace: string, id: number, body: unknown) => Observable<T>;
+
+export type DeleteFn = (namespace: string, id: number) => Observable<void>;
+
 export type GetFn = <T>(apiGetRequest: ApiGetRequest) => Observable<T>;

@@ -13,15 +13,30 @@ export class ApiService {
 
   post<T>(
     namespace: string,
-    endpoint: string,
+    endpoint: string | undefined,
     body: unknown,
     options?: {
       headers?: HttpHeaders;
       params?: HttpParams;
     },
   ): Observable<T> {
-    const url = `/${this.apiVersion}/${namespace}/${endpoint}`;
+    const url = '/' + [this.apiVersion, namespace, endpoint].filter(Boolean).join('/');
     return this.http.post<T>(url, body, options);
+  }
+
+  put<T>(namespace: string, id: number, body: unknown): Observable<T> {
+    const url = `/${this.apiVersion}/${namespace}/${id}`;
+    return this.http.put<T>(url, body);
+  }
+
+  patch<T>(namespace: string, id: number, body: unknown): Observable<T> {
+    const url = `/${this.apiVersion}/${namespace}/${id}`;
+    return this.http.patch<T>(url, body);
+  }
+
+  delete(namespace: string, id: number): Observable<void> {
+    const url = `/${this.apiVersion}/${namespace}/${id}`;
+    return this.http.delete<void>(url);
   }
 
   get<T>(apiGetRequest: ApiGetRequest): Observable<T> {
