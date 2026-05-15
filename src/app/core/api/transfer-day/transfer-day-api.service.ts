@@ -5,6 +5,8 @@ import { ApiService } from '@app/core/api/api.service';
 import { TransferDay } from '@app/core/api/model/transfer-day.model';
 import { TransferDayResponseBody } from './transfer-day-response-body.model';
 import { TransferDaysResponseBody } from './transfer-days-response-body.model';
+import { UpdateTransferDayRequestBody } from './update-transfer-day-request-body.model';
+import { UpdateTransferDayStatusRequestBody } from './update-transfer-day-status-request-body.model';
 
 @Injectable({
   providedIn: 'root',
@@ -29,6 +31,24 @@ export class TransferDayApiService {
         namespace: this.namespace,
         id,
       })
+      .pipe(map((result) => result.transferDay));
+  }
+
+  updateTransferDay(
+    transferDayId: number,
+    body: UpdateTransferDayRequestBody,
+  ): Observable<TransferDay> {
+    return this.apiService
+      .put<TransferDayResponseBody>(this.namespace, transferDayId, body)
+      .pipe(map((result) => result.transferDay));
+  }
+
+  updateTransferDayStatus(
+    transferDayId: number,
+    body: UpdateTransferDayStatusRequestBody,
+  ): Observable<TransferDay> {
+    return this.apiService
+      .patch<TransferDayResponseBody>(this.namespace, transferDayId, body)
       .pipe(map((result) => result.transferDay));
   }
 

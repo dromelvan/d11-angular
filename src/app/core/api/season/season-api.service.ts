@@ -4,8 +4,10 @@ import { ApiService } from '@app/core/api/api.service';
 import { LocalStorageCachedObservable } from '@app/core/api/local-storage-cache';
 import { Season } from '@app/core/api/model/season.model';
 import { SeasonWinners } from '@app/core/api/model/season-winners.model';
+import { SeasonResponseBody } from './season-response-body.model';
 import { SeasonWinnersResponseBody } from './season-winners-response-body.model';
 import { SeasonsResponseBody } from './seasons-response-body.model';
+import { UpdateSeasonRequestBody } from './update-season-request-body.model';
 
 @Injectable({
   providedIn: 'root',
@@ -32,6 +34,19 @@ export class SeasonApiService {
     return this.seasonsCache
       .get()
       .pipe(map((seasons) => seasons.reduce((latest, s) => (s.date > latest.date ? s : latest))));
+  }
+
+  getSeasonById(seasonId: number): Observable<Season> {
+    return this.apiService
+      .get<SeasonResponseBody>({ namespace: this.namespace, id: seasonId })
+      .pipe(map((result) => result.season));
+  }
+
+  updateSeason(seasonId: number, season: Season): Observable<Season> {
+    const body: UpdateSeasonRequestBody = { season };
+    return this.apiService
+      .put<SeasonResponseBody>(this.namespace, seasonId, body)
+      .pipe(map((result) => result.season));
   }
 
   getSeasonWinners(): Observable<SeasonWinners[]> {

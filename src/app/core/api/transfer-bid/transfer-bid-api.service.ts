@@ -3,7 +3,10 @@ import { inject, Injectable } from '@angular/core';
 import { map, Observable } from 'rxjs';
 import { ApiService } from '@app/core/api/api.service';
 import { TransferBid } from '@app/core/api/model/transfer-bid.model';
+import { CreateTransferBidRequestBody } from './create-transfer-bid-request-body.model';
+import { TransferBidResponseBody } from './transfer-bid-response-body.model';
 import { TransferBidsResponseBody } from './transfer-bids-response-body.model';
+import { UpdateTransferBidFeeRequestBody } from './update-transfer-bid-fee-request-body.model';
 
 @Injectable({
   providedIn: 'root',
@@ -34,5 +37,24 @@ export class TransferBidApiService {
         options: { params },
       })
       .pipe(map((result) => result.transferBids));
+  }
+
+  createTransferBid(body: CreateTransferBidRequestBody): Observable<TransferBid> {
+    return this.apiService
+      .post<TransferBidResponseBody>(this.namespace, undefined, body)
+      .pipe(map((result) => result.transferBid));
+  }
+
+  updateTransferBidFee(
+    transferBidId: number,
+    body: UpdateTransferBidFeeRequestBody,
+  ): Observable<TransferBid> {
+    return this.apiService
+      .patch<TransferBidResponseBody>(this.namespace, transferBidId, body)
+      .pipe(map((result) => result.transferBid));
+  }
+
+  deleteTransferBid(transferBidId: number): Observable<void> {
+    return this.apiService.delete(this.namespace, transferBidId);
   }
 }

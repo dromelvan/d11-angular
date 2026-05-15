@@ -3,6 +3,8 @@ import { inject, Injectable } from '@angular/core';
 import { map, Observable } from 'rxjs';
 import { ApiService } from '@app/core/api/api.service';
 import { TransferListing } from '@app/core/api/model/transfer-listing.model';
+import { CreateTransferListingRequestBody } from './create-transfer-listing-request-body.model';
+import { TransferListingResponseBody } from './transfer-listing-response-body.model';
 import { TransferListingsResponseBody } from './transfer-listings-response-body.model';
 
 @Injectable({
@@ -33,5 +35,15 @@ export class TransferListingApiService {
         options: { params },
       })
       .pipe(map((result) => result.transferListings));
+  }
+
+  createTransferListing(body: CreateTransferListingRequestBody): Observable<TransferListing> {
+    return this.apiService
+      .post<TransferListingResponseBody>(this.namespace, undefined, body)
+      .pipe(map((result) => result.transferListing));
+  }
+
+  deleteTransferListing(transferListingId: number): Observable<void> {
+    return this.apiService.delete(this.namespace, transferListingId);
   }
 }

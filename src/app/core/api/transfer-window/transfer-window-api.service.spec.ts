@@ -1,27 +1,37 @@
 import { HttpParams } from '@angular/common/http';
 import { TestBed } from '@angular/core/testing';
 import { ApiService } from '@app/core/api/api.service';
-import { fakeTransferWindow, GetFn } from '@app/test';
+import { fakeTransferWindow, GetFn, PostFn, PutFn } from '@app/test';
 import { firstValueFrom, of, throwError } from 'rxjs';
 import { describe } from 'vitest';
+import { CreateTransferWindowRequestBody } from './create-transfer-window-request-body.model';
 import { TransferWindowApiService } from './transfer-window-api.service';
 import { TransferWindowResponseBody } from './transfer-window-response-body.model';
 import { TransferWindowsResponseBody } from './transfer-windows-response-body.model';
+import { Status } from '@app/core/api/model/status.model';
+import { UpdateTransferWindowRequestBody } from './update-transfer-window-request-body.model';
 
 describe('TransferWindowApiService', () => {
   let transferWindowApi: TransferWindowApiService;
-  let apiServiceMock: { get: GetFn };
+  let apiServiceMock: { get: GetFn; post: PostFn; put: PutFn };
 
   beforeEach(() => {
     TestBed.configureTestingModule({
       providers: [
         TransferWindowApiService,
-        { provide: ApiService, useValue: { get: vi.fn() as GetFn } },
+        {
+          provide: ApiService,
+          useValue: {
+            get: vi.fn() as GetFn,
+            post: vi.fn() as PostFn,
+            put: vi.fn() as PutFn,
+          },
+        },
       ],
     });
 
     transferWindowApi = TestBed.inject(TransferWindowApiService);
-    apiServiceMock = TestBed.inject(ApiService) as { get: GetFn };
+    apiServiceMock = TestBed.inject(ApiService) as { get: GetFn; post: PostFn; put: PutFn };
   });
 
   it('is created', () => {
@@ -80,6 +90,56 @@ describe('TransferWindowApiService', () => {
     });
   });
 
+  // createTransferWindow -------------------------------------------------------------------------
+
+  describe('createTransferWindow', () => {
+    const transferWindow = fakeTransferWindow();
+    const matchWeek = transferWindow.matchWeek;
+    const season = transferWindow.season;
+    const response: TransferWindowResponseBody = { transferWindow, matchWeek, season };
+    const body: CreateTransferWindowRequestBody = {
+      datetime: '2024-01-01T00:00:00',
+      transferDayDelay: 1,
+    };
+
+    it('calls post with namespace and body', async () => {
+      apiServiceMock.post = vi.fn().mockReturnValue(of(response)) as PostFn;
+
+      await firstValueFrom(transferWindowApi.createTransferWindow(body));
+
+      expect(apiServiceMock.post).toHaveBeenCalledExactlyOnceWith(
+        transferWindowApi.namespace,
+        undefined,
+        body,
+      );
+    });
+
+    it('maps the result', async () => {
+      apiServiceMock.post = vi.fn().mockReturnValue(of(response)) as PostFn;
+
+      const result = await firstValueFrom(transferWindowApi.createTransferWindow(body));
+
+      expect(result).toEqual(transferWindow);
+    });
+
+    it('propagates errors', async () => {
+      const error = new Error('CONFLICT');
+      apiServiceMock.post = vi.fn().mockReturnValue(throwError(() => error)) as PostFn;
+
+      await expect(firstValueFrom(transferWindowApi.createTransferWindow(body))).rejects.toThrow(
+        error.message,
+      );
+    });
+
+    it('does not map the result on error', async () => {
+      apiServiceMock.post = vi.fn().mockReturnValue(throwError(() => new Error())) as PostFn;
+
+      await expect(
+        firstValueFrom(transferWindowApi.createTransferWindow(body)),
+      ).rejects.toBeInstanceOf(Error);
+    });
+  });
+
   // getTransferWindowById -------------------------------------------------------------------------
 
   describe('getTransferWindowById', () => {
@@ -133,6 +193,63 @@ describe('TransferWindowApiService', () => {
 
       expect(
         firstValueFrom(transferWindowApi.getTransferWindowById(transferWindow.id)),
+      ).rejects.toBeInstanceOf(Error);
+    });
+  });
+
+  // updateTransferWindow -------------------------------------------------------------------------
+
+  describe('updateTransferWindow', () => {
+    const transferWindow = fakeTransferWindow();
+    const matchWeek = transferWindow.matchWeek;
+    const season = transferWindow.season;
+    const response: TransferWindowResponseBody = { transferWindow, matchWeek, season };
+    const body: UpdateTransferWindowRequestBody = {
+      transferWindow: {
+        transferWindowNumber: 1,
+        draft: false,
+        status: Status.ACTIVE,
+        datetime: '2024-01-01T00:00:00',
+        matchWeekId: 1,
+      },
+    };
+
+    it('calls put with namespace, id and body', async () => {
+      apiServiceMock.put = vi.fn().mockReturnValue(of(response)) as PutFn;
+
+      await firstValueFrom(transferWindowApi.updateTransferWindow(transferWindow.id, body));
+
+      expect(apiServiceMock.put).toHaveBeenCalledExactlyOnceWith(
+        transferWindowApi.namespace,
+        transferWindow.id,
+        body,
+      );
+    });
+
+    it('maps the result', async () => {
+      apiServiceMock.put = vi.fn().mockReturnValue(of(response)) as PutFn;
+
+      const result = await firstValueFrom(
+        transferWindowApi.updateTransferWindow(transferWindow.id, body),
+      );
+
+      expect(result).toEqual(transferWindow);
+    });
+
+    it('propagates errors', async () => {
+      const error = new Error('NOT_FOUND');
+      apiServiceMock.put = vi.fn().mockReturnValue(throwError(() => error)) as PutFn;
+
+      await expect(
+        firstValueFrom(transferWindowApi.updateTransferWindow(transferWindow.id, body)),
+      ).rejects.toThrow(error.message);
+    });
+
+    it('does not map the result on error', async () => {
+      apiServiceMock.put = vi.fn().mockReturnValue(throwError(() => new Error())) as PutFn;
+
+      await expect(
+        firstValueFrom(transferWindowApi.updateTransferWindow(transferWindow.id, body)),
       ).rejects.toBeInstanceOf(Error);
     });
   });

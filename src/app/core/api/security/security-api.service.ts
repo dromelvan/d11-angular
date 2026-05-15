@@ -5,6 +5,8 @@ import { ApiService } from '@app/core/api/api.service';
 import { AuthenticationRequestBody } from './authentication-request-body.model';
 import { AuthenticationResponseBody } from './authentication-response-body.model';
 import { AuthorizationResponseBody } from './authorization-response-body.model';
+import { RequestPasswordResetRequestBody } from './request-password-reset-request-body.model';
+import { ResetPasswordRequestBody } from './reset-password-request-body.model';
 import { UnauthorizationResponseBody } from './unauthorization-response-body.model';
 
 @Injectable({
@@ -33,5 +35,13 @@ export class SecurityApiService {
     return this.apiService
       .post<UnauthorizationResponseBody>(this.namespace, 'unauthorize', {})
       .pipe(map((result) => result.loggedOut));
+  }
+
+  requestPasswordReset(body: RequestPasswordResetRequestBody): Observable<void> {
+    return this.apiService.post<void>(this.namespace, 'request-password-reset', body);
+  }
+
+  resetPassword(body: ResetPasswordRequestBody): Observable<void> {
+    return this.apiService.post<void>(this.namespace, 'reset-password', body);
   }
 }

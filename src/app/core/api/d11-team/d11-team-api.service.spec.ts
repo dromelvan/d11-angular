@@ -1,12 +1,20 @@
 import { HttpParams } from '@angular/common/http';
 import { TestBed } from '@angular/core/testing';
 import { ApiService } from '@app/core/api/api.service';
-import { fakeD11MatchBase, fakeD11TeamBase, fakePlayerSeasonStat, GetFn } from '@app/test';
+import {
+  fakeD11MatchBase,
+  fakeD11TeamBase,
+  fakeD11TeamSeasonStat,
+  fakePlayerSeasonStat,
+  GetFn,
+} from '@app/test';
 import { firstValueFrom, of, throwError } from 'rxjs';
 import { beforeEach, describe } from 'vitest';
 import { D11MatchesResponseBody } from '@app/core/api/d11-match/d11-matches-response-body.model';
 import { D11TeamApiService } from './d11-team-api.service';
 import { D11TeamResponseBody } from './d11-team-response-body.model';
+import { D11TeamSeasonStatResponseBody } from './d11-team-season-stat-response-body.model';
+import { D11TeamsResponseBody } from './d11-teams-response-body.model';
 import { PlayerSeasonStatsResponseBody } from './player-season-stats-response-body.model';
 
 describe('D11TeamApiService', () => {
@@ -26,7 +34,45 @@ describe('D11TeamApiService', () => {
     expect(d11TeamApi).toBeTruthy();
   });
 
-  // getById ---------------------------------------------------------------------------------------
+  // getD11Teams ----------------------------------------------------------------------------------
+
+  describe('getD11Teams', () => {
+    const d11Teams = [fakeD11TeamBase(), fakeD11TeamBase()];
+    const response: D11TeamsResponseBody = { d11Teams };
+
+    it('calls get with namespace', async () => {
+      apiServiceMock.get = vi.fn().mockReturnValue(of(response)) as GetFn;
+
+      await firstValueFrom(d11TeamApi.getD11Teams());
+
+      expect(apiServiceMock.get).toHaveBeenCalledExactlyOnceWith(
+        expect.objectContaining({ namespace: d11TeamApi.namespace }),
+      );
+    });
+
+    it('maps the result', async () => {
+      apiServiceMock.get = vi.fn().mockReturnValue(of(response)) as GetFn;
+
+      const result = await firstValueFrom(d11TeamApi.getD11Teams());
+
+      expect(result).toEqual(d11Teams);
+    });
+
+    it('propagates errors', async () => {
+      const httpError = new Error('INTERNAL_SERVER_ERROR');
+      apiServiceMock.get = vi.fn().mockReturnValue(throwError(() => httpError)) as GetFn;
+
+      await expect(firstValueFrom(d11TeamApi.getD11Teams())).rejects.toThrow(httpError.message);
+    });
+
+    it('does not map the result on error', async () => {
+      apiServiceMock.get = vi.fn().mockReturnValue(throwError(() => new Error())) as GetFn;
+
+      await expect(firstValueFrom(d11TeamApi.getD11Teams())).rejects.toBeInstanceOf(Error);
+    });
+  });
+
+  // getById --------------------------------------------------------------------------------------
 
   describe('getById', () => {
     const id = 7;
@@ -184,6 +230,63 @@ describe('D11TeamApiService', () => {
 
       expect(
         firstValueFrom(d11TeamApi.getPlayerSeasonStatsByD11TeamIdAndSeasonId(d11TeamId, seasonId)),
+      ).rejects.toBeInstanceOf(Error);
+    });
+  });
+
+  // getD11TeamSeasonStatByD11TeamIdAndSeasonId ---------------------------------------------------
+
+  describe('getD11TeamSeasonStatByD11TeamIdAndSeasonId', () => {
+    const d11TeamId = 7;
+    const seasonId = 42;
+    const d11TeamSeasonStat = fakeD11TeamSeasonStat();
+    const response: D11TeamSeasonStatResponseBody = { d11TeamSeasonStat };
+
+    it('calls get with namespace, id, endpoint and seasonId param', async () => {
+      apiServiceMock.get = vi.fn().mockReturnValue(of(response)) as GetFn;
+
+      await firstValueFrom(
+        d11TeamApi.getD11TeamSeasonStatByD11TeamIdAndSeasonId(d11TeamId, seasonId),
+      );
+
+      expect(apiServiceMock.get).toHaveBeenCalledExactlyOnceWith(
+        expect.objectContaining({
+          namespace: d11TeamApi.namespace,
+          id: d11TeamId,
+          endpoint: 'd11-team-season-stats',
+          options: expect.objectContaining({ params: expect.any(HttpParams) }),
+        }),
+      );
+
+      const calledParams: HttpParams = (apiServiceMock.get as ReturnType<typeof vi.fn>).mock
+        .calls[0][0].options.params;
+      expect(calledParams.get('seasonId')).toBe(String(seasonId));
+    });
+
+    it('maps the result', async () => {
+      apiServiceMock.get = vi.fn().mockReturnValue(of(response)) as GetFn;
+
+      const result = await firstValueFrom(
+        d11TeamApi.getD11TeamSeasonStatByD11TeamIdAndSeasonId(d11TeamId, seasonId),
+      );
+
+      expect(result).toEqual(d11TeamSeasonStat);
+    });
+
+    it('propagates errors', async () => {
+      const httpError = new Error('NOT_FOUND');
+      apiServiceMock.get = vi.fn().mockReturnValue(throwError(() => httpError)) as GetFn;
+
+      await expect(
+        firstValueFrom(d11TeamApi.getD11TeamSeasonStatByD11TeamIdAndSeasonId(d11TeamId, seasonId)),
+      ).rejects.toThrow(httpError.message);
+    });
+
+    it('does not map the result on error', async () => {
+      apiServiceMock.get = vi.fn().mockReturnValue(throwError(() => new Error())) as GetFn;
+
+      await expect(
+        firstValueFrom(d11TeamApi.getD11TeamSeasonStatByD11TeamIdAndSeasonId(d11TeamId, seasonId)),
       ).rejects.toBeInstanceOf(Error);
     });
   });

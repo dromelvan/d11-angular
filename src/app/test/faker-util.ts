@@ -1,4 +1,5 @@
 import {
+  Country,
   Current,
   D11Match,
   D11MatchBase,
@@ -15,6 +16,7 @@ import {
   PlayerMatchStat,
   PlayerSearchResult,
   PlayerSeasonStat,
+  PlayerTransferContext,
   Position,
   Season,
   SeasonBase,
@@ -32,8 +34,26 @@ import {
   TransferListingBase,
   TransferWindow,
   TransferWindowBase,
+  User,
 } from '@app/core/api';
 import { faker } from '@faker-js/faker';
+
+export const fakeCountry = (): Country => ({
+  id: faker.number.int({ min: 1, max: 200 }),
+  name: faker.location.country(),
+  iso: faker.location.countryCode('alpha-2'),
+});
+
+export const fakeUser = (): User => ({
+  name: faker.person.fullName(),
+  administrator: faker.datatype.boolean(),
+});
+
+export const fakePlayerTransferContext = (): PlayerTransferContext => ({
+  playerId: faker.number.int({ min: 1, max: 10000 }),
+  transferListable: faker.datatype.boolean(),
+  maxBid: faker.number.int({ min: 0, max: 100 }),
+});
 
 export const fakeTransferWindowBase = (): TransferWindowBase => ({
   id: faker.number.int({ min: 1, max: 10000 }),
@@ -204,11 +224,7 @@ export const fakePlayer = (): Player => ({
   dateOfBirth: faker.date.past({ years: 40 }).toISOString().split('T')[0],
   height: faker.number.int({ min: 160, max: 210 }),
   verified: faker.datatype.boolean(),
-  country: {
-    id: faker.number.int({ min: 1, max: 200 }),
-    name: faker.location.country(),
-    iso: faker.location.countryCode('alpha-2'),
-  },
+  country: fakeCountry(),
 });
 
 export const fakePlayerSeasonStat = (): PlayerSeasonStat => ({

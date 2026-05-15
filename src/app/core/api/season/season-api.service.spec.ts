@@ -2,27 +2,34 @@ import { TestBed } from '@angular/core/testing';
 import { firstValueFrom, of, throwError } from 'rxjs';
 import { beforeEach, describe } from 'vitest';
 import { faker } from '@faker-js/faker';
-import { fakeSeason, fakeSeasonWinners, GetFn } from '@app/test';
+import { fakeSeason, fakeSeasonWinners, GetFn, PutFn } from '@app/test';
 import { ApiService } from '@app/core/api/api.service';
 import { Season } from '@app/core/api/model/season.model';
 import { SeasonWinners } from '@app/core/api/model/season-winners.model';
 import { SeasonApiService } from './season-api.service';
+import { SeasonResponseBody } from './season-response-body.model';
 import { SeasonWinnersResponseBody } from './season-winners-response-body.model';
 import { SeasonsResponseBody } from './seasons-response-body.model';
 
 describe('SeasonApiService', () => {
   let seasonApi: SeasonApiService;
-  let apiServiceMock: { get: GetFn };
+  let apiServiceMock: { get: GetFn; put: PutFn };
 
   beforeEach(() => {
     localStorage.clear();
 
     TestBed.configureTestingModule({
-      providers: [SeasonApiService, { provide: ApiService, useValue: { get: vi.fn() as GetFn } }],
+      providers: [
+        SeasonApiService,
+        {
+          provide: ApiService,
+          useValue: { get: vi.fn() as GetFn, put: vi.fn() as PutFn },
+        },
+      ],
     });
 
     seasonApi = TestBed.inject(SeasonApiService);
-    apiServiceMock = TestBed.inject(ApiService) as { get: GetFn };
+    apiServiceMock = TestBed.inject(ApiService) as { get: GetFn; put: PutFn };
   });
 
   it('is created', () => {
@@ -165,6 +172,90 @@ describe('SeasonApiService', () => {
 
       expect(result).toEqual(season);
       expect(apiServiceMock.get).toHaveBeenCalledOnce();
+    });
+  });
+
+  // getSeasonById ---------------------------------------------------------------------------------
+
+  describe('getSeasonById', () => {
+    const season = fakeSeason();
+    const response: SeasonResponseBody = { season };
+
+    it('calls get with namespace and id', async () => {
+      apiServiceMock.get = vi.fn().mockReturnValue(of(response)) as GetFn;
+
+      await firstValueFrom(seasonApi.getSeasonById(season.id!));
+
+      expect(apiServiceMock.get).toHaveBeenCalledExactlyOnceWith(
+        expect.objectContaining({ namespace: seasonApi.namespace, id: season.id }),
+      );
+    });
+
+    it('maps the result', async () => {
+      apiServiceMock.get = vi.fn().mockReturnValue(of(response)) as GetFn;
+
+      const result = await firstValueFrom(seasonApi.getSeasonById(season.id!));
+
+      expect(result).toEqual(season);
+    });
+
+    it('propagates errors', async () => {
+      const httpError = new Error('NOT_FOUND');
+      apiServiceMock.get = vi.fn().mockReturnValue(throwError(() => httpError)) as GetFn;
+
+      await expect(firstValueFrom(seasonApi.getSeasonById(season.id!))).rejects.toThrow(
+        httpError.message,
+      );
+    });
+
+    it('does not map the result on error', async () => {
+      apiServiceMock.get = vi.fn().mockReturnValue(throwError(() => new Error())) as GetFn;
+
+      await expect(firstValueFrom(seasonApi.getSeasonById(season.id!))).rejects.toBeInstanceOf(
+        Error,
+      );
+    });
+  });
+
+  // updateSeason ----------------------------------------------------------------------------------
+
+  describe('updateSeason', () => {
+    const season = fakeSeason();
+    const response: SeasonResponseBody = { season };
+
+    it('calls put with namespace, id and body', async () => {
+      apiServiceMock.put = vi.fn().mockReturnValue(of(response)) as PutFn;
+
+      await firstValueFrom(seasonApi.updateSeason(season.id!, season));
+
+      expect(apiServiceMock.put).toHaveBeenCalledExactlyOnceWith(seasonApi.namespace, season.id, {
+        season,
+      });
+    });
+
+    it('maps the result', async () => {
+      apiServiceMock.put = vi.fn().mockReturnValue(of(response)) as PutFn;
+
+      const result = await firstValueFrom(seasonApi.updateSeason(season.id!, season));
+
+      expect(result).toEqual(season);
+    });
+
+    it('propagates errors', async () => {
+      const httpError = new Error('UNAUTHORIZED');
+      apiServiceMock.put = vi.fn().mockReturnValue(throwError(() => httpError)) as PutFn;
+
+      await expect(firstValueFrom(seasonApi.updateSeason(season.id!, season))).rejects.toThrow(
+        httpError.message,
+      );
+    });
+
+    it('does not map the result on error', async () => {
+      apiServiceMock.put = vi.fn().mockReturnValue(throwError(() => new Error())) as PutFn;
+
+      await expect(
+        firstValueFrom(seasonApi.updateSeason(season.id!, season)),
+      ).rejects.toBeInstanceOf(Error);
     });
   });
 

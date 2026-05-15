@@ -5,8 +5,10 @@ import { ApiService } from '@app/core/api/api.service';
 import { PostFn, userCredentials } from '@app/test';
 import { AuthenticationResponseBody } from './authentication-response-body.model';
 import { AuthorizationResponseBody } from './authorization-response-body.model';
-import { UnauthorizationResponseBody } from './unauthorization-response-body.model';
+import { RequestPasswordResetRequestBody } from './request-password-reset-request-body.model';
+import { ResetPasswordRequestBody } from './reset-password-request-body.model';
 import { SecurityApiService } from './security-api.service';
+import { UnauthorizationResponseBody } from './unauthorization-response-body.model';
 
 describe('SecurityApiService', () => {
   let securityApi: SecurityApiService;
@@ -167,6 +169,65 @@ describe('SecurityApiService', () => {
         .mockReturnValue(throwError(() => new Error('INVALID'))) as PostFn;
 
       await expect(firstValueFrom(securityApi.unauthorize())).rejects.toBeInstanceOf(Error);
+    });
+  });
+
+  // requestPasswordReset --------------------------------------------------------------------------
+
+  describe('requestPasswordReset', () => {
+    const body: RequestPasswordResetRequestBody = {
+      email: 'user@example.com',
+      link: 'https://example.com/reset',
+    };
+
+    it('calls post with namespace, endpoint and body', async () => {
+      apiServiceMock.post = vi.fn().mockReturnValue(of(undefined)) as PostFn;
+
+      await firstValueFrom(securityApi.requestPasswordReset(body));
+
+      expect(apiServiceMock.post).toHaveBeenCalledExactlyOnceWith(
+        securityApi.namespace,
+        'request-password-reset',
+        body,
+      );
+    });
+
+    it('propagates errors', async () => {
+      const error = new Error('BAD_REQUEST');
+      apiServiceMock.post = vi.fn().mockReturnValue(throwError(() => error)) as PostFn;
+
+      await expect(firstValueFrom(securityApi.requestPasswordReset(body))).rejects.toThrow(
+        error.message,
+      );
+    });
+  });
+
+  // resetPassword ---------------------------------------------------------------------------------
+
+  describe('resetPassword', () => {
+    const body: ResetPasswordRequestBody = {
+      email: 'user@example.com',
+      password: 'newpassword',
+      resetPasswordToken: '550e8400-e29b-41d4-a716-446655440000',
+    };
+
+    it('calls post with namespace, endpoint and body', async () => {
+      apiServiceMock.post = vi.fn().mockReturnValue(of(undefined)) as PostFn;
+
+      await firstValueFrom(securityApi.resetPassword(body));
+
+      expect(apiServiceMock.post).toHaveBeenCalledExactlyOnceWith(
+        securityApi.namespace,
+        'reset-password',
+        body,
+      );
+    });
+
+    it('propagates errors', async () => {
+      const error = new Error('UNAUTHORIZED');
+      apiServiceMock.post = vi.fn().mockReturnValue(throwError(() => error)) as PostFn;
+
+      await expect(firstValueFrom(securityApi.resetPassword(body))).rejects.toThrow(error.message);
     });
   });
 });
