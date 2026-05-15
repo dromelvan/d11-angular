@@ -1,7 +1,7 @@
 <div class="app-user-session flex w-12 items-center justify-center">
   @if (userSession.loggedIn()) {
     <button (click)="userActionService.open()" class="cursor-pointer" type="button">
-      <app-avatar resource="d11-team" [id]="1" />
+      <app-avatar resource="d11-team" [id]="d11TeamId()" />
     </button>
   } @else {
     <button type="button" class="cursor-pointer flex items-center" (click)="onLogin()">

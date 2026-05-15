@@ -2,13 +2,18 @@ import { signal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { userEvent } from '@testing-library/user-event';
 import { UserActionService } from '@app/core/auth/user-action.service';
+import { D11TeamBase } from '@app/core/api/model/d11-team-base.model';
 import { UserSessionService } from '@app/core/auth/user-session.service';
+import { fakeD11TeamBase } from '@app/test';
 import { RouterService } from '@app/core/router/router.service';
 import { UserSessionComponent } from './user-session.component';
 
 describe('UserSessionComponent', () => {
   let fixture: ComponentFixture<UserSessionComponent>;
-  let mockUserSession: { loggedIn: ReturnType<typeof signal<boolean>> };
+  let mockUserSession: {
+    loggedIn: ReturnType<typeof signal<boolean>>;
+    d11Team: ReturnType<typeof signal<D11TeamBase | undefined>>;
+  };
   let mockUserActionService: {
     drawerVisible: ReturnType<typeof signal<boolean>>;
     open: ReturnType<typeof vi.fn>;
@@ -19,7 +24,10 @@ describe('UserSessionComponent', () => {
 
   beforeEach(async () => {
     vi.clearAllMocks();
-    mockUserSession = { loggedIn: signal(false) };
+    mockUserSession = {
+      loggedIn: signal(false),
+      d11Team: signal<D11TeamBase | undefined>(undefined),
+    };
     mockUserActionService = {
       drawerVisible: signal(false),
       open: vi.fn(),
@@ -57,6 +65,17 @@ describe('UserSessionComponent', () => {
     const host = fixture.nativeElement as HTMLElement;
     expect(host.querySelector('app-avatar')).toBeInTheDocument();
     expect(host.querySelector('app-icon')).not.toBeInTheDocument();
+  });
+
+  it('d11TeamId uses d11Team id when d11Team is set', () => {
+    const d11Team = fakeD11TeamBase();
+    mockUserSession.d11Team.set(d11Team);
+
+    expect(fixture.componentInstance['d11TeamId']()).toBe(d11Team.id);
+  });
+
+  it('d11TeamId falls back to 1 when d11Team is not set', () => {
+    expect(fixture.componentInstance['d11TeamId']()).toBe(1);
   });
 
   it('calls userActionService.open() when avatar is clicked', async () => {

@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, computed, inject } from '@angular/core';
 import { UserActionService } from '@app/core/auth/user-action.service';
 import { UserSessionService } from '@app/core/auth/user-session.service';
 import { RouterService } from '@app/core/router/router.service';
@@ -14,6 +14,7 @@ import { UserActionDrawerComponent } from '@app/feature/component/user-action-dr
 export class UserSessionComponent {
   protected userSession = inject(UserSessionService);
   protected userActionService = inject(UserActionService);
+  protected d11TeamId = computed(() => this.userSession.d11Team()?.id ?? 1);
 
   private routerService = inject(RouterService);
 
