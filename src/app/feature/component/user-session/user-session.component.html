@@ -1,12 +1,38 @@
 <div class="app-user-session flex w-12 items-center justify-center">
   @if (userSession.loggedIn()) {
-    <button (click)="menu.toggle($event)" class="cursor-pointer" type="button">
+    <button (click)="open()" class="cursor-pointer" type="button">
       <app-avatar resource="d11-team" [id]="1" />
     </button>
-    <p-menu #menu [model]="menuItems" [popup]="true" />
   } @else {
     <button type="button" class="cursor-pointer flex items-center" (click)="onLogin()">
       <app-icon icon="account_circle" class="text-primary-contrast" />
     </button>
   }
 </div>
+
+@if (drawerVisible()) {
+  <div class="fixed inset-0 bg-black/40" style="z-index: 1099" (click)="close()"></div>
+}
+
+<p-drawer
+  appendTo="body"
+  position="bottom"
+  [modal]="false"
+  [closable]="false"
+  [visible]="drawerVisible()"
+  (visibleChange)="drawerVisible.set($event)"
+  [pt]="{ root: { class: 'rounded-t-[25px] h-auto! max-h-[70%]' } }"
+>
+  <ng-template #header>
+    <div class="grid grid-cols-[1fr_auto_1fr] items-center w-full">
+      <span></span>
+      <span class="font-semibold">Account</span>
+      <a class="text-sm justify-self-end cursor-pointer" (click)="close()">Done</a>
+    </div>
+  </ng-template>
+
+  <button type="button" class="flex items-center gap-3 w-full cursor-pointer" (click)="onLogout()">
+    <app-icon name="logout" />
+    <span>Sign out</span>
+  </button>
+</p-drawer>

@@ -8,6 +8,7 @@ import { UserSessionComponent } from './user-session.component';
 
 describe('UserSessionComponent', () => {
   let fixture: ComponentFixture<UserSessionComponent>;
+  let component: UserSessionComponent;
   let mockUserSession: {
     loggedIn: ReturnType<typeof signal<boolean>>;
     unauthorize: ReturnType<typeof vi.fn>;
@@ -33,6 +34,7 @@ describe('UserSessionComponent', () => {
     }).compileComponents();
 
     fixture = TestBed.createComponent(UserSessionComponent);
+    component = fixture.componentInstance;
     fixture.detectChanges();
     await fixture.whenStable();
   });
@@ -45,9 +47,7 @@ describe('UserSessionComponent', () => {
     const icon = host.querySelector('app-icon');
     expect(icon).toBeInTheDocument();
     expect(icon).toHaveAttribute('icon', 'account_circle');
-
     expect(host.querySelector('app-avatar')).not.toBeInTheDocument();
-    expect(host.querySelector('p-menu')).not.toBeInTheDocument();
   });
 
   it('renders avatar when logged in', () => {
@@ -59,21 +59,40 @@ describe('UserSessionComponent', () => {
     expect(host.querySelector('app-icon')).not.toBeInTheDocument();
   });
 
-  it('renders menu when logged in', () => {
-    mockUserSession.loggedIn.set(true);
-    fixture.detectChanges();
-
-    const host = fixture.nativeElement as HTMLElement;
-    expect(host.querySelector('p-menu')).toBeInTheDocument();
+  it('starts with drawer closed', () => {
+    expect(component['drawerVisible']()).toBe(false);
   });
 
-  it('navigates to login when account icon is clicked while logged out', async () => {
-    mockUserSession.loggedIn.set(false);
+  it('opens drawer when avatar button is clicked while logged in', async () => {
+    mockUserSession.loggedIn.set(true);
     fixture.detectChanges();
 
     const button = fixture.nativeElement.querySelector('button') as HTMLButtonElement;
     await userEvent.click(button);
 
+    expect(component['drawerVisible']()).toBe(true);
+  });
+
+  it('closes drawer on close()', () => {
+    component['open']();
+    component['close']();
+    expect(component['drawerVisible']()).toBe(false);
+  });
+
+  it('navigates to login when account icon is clicked while logged out', async () => {
+    const button = fixture.nativeElement.querySelector('button') as HTMLButtonElement;
+    await userEvent.click(button);
+
     expect(mockRouterService.navigateToLogin).toHaveBeenCalled();
+  });
+
+  it('calls unauthorize and closes drawer on sign out', async () => {
+    component['open']();
+    component.onLogout();
+    fixture.detectChanges();
+    await fixture.whenStable();
+
+    expect(component['drawerVisible']()).toBe(false);
+    expect(mockUserSession.unauthorize).toHaveBeenCalled();
   });
 });
