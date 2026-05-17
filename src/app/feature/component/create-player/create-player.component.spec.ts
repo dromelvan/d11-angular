@@ -1,0 +1,135 @@
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { of } from 'rxjs';
+import { CountryApiService, PlayerApiService } from '@app/core/api';
+import { Country } from '@app/core/api/model/country.model';
+import { PlayerInput } from '@app/core/api/model/player-input.model';
+import { RouterService } from '@app/core/router/router.service';
+import { fakeCountry, fakePlayer } from '@app/test';
+import { CreatePlayerComponent } from './create-player.component';
+
+describe('CreatePlayerComponent', () => {
+  let fixture: ComponentFixture<CreatePlayerComponent>;
+  let component: CreatePlayerComponent;
+  let mockCountryApiService: { getCountries: ReturnType<typeof vi.fn> };
+  let mockPlayerApiService: { createPlayer: ReturnType<typeof vi.fn> };
+  let mockRouterService: { navigateToPlayer: ReturnType<typeof vi.fn> };
+  let countries: Country[];
+
+  beforeEach(async () => {
+    vi.clearAllMocks();
+    countries = [fakeCountry(), fakeCountry()];
+    mockCountryApiService = { getCountries: vi.fn().mockReturnValue(of(countries)) };
+    mockPlayerApiService = { createPlayer: vi.fn().mockReturnValue(of(fakePlayer())) };
+    mockRouterService = { navigateToPlayer: vi.fn().mockResolvedValue(true) };
+
+    await TestBed.configureTestingModule({
+      imports: [CreatePlayerComponent],
+      providers: [
+        { provide: CountryApiService, useValue: mockCountryApiService },
+        { provide: PlayerApiService, useValue: mockPlayerApiService },
+        { provide: RouterService, useValue: mockRouterService },
+      ],
+    }).compileComponents();
+
+    fixture = TestBed.createComponent(CreatePlayerComponent);
+    component = fixture.componentInstance;
+    fixture.detectChanges();
+    await fixture.whenStable();
+  });
+
+  it('loads countries on init', () => {
+    expect(mockCountryApiService.getCountries).toHaveBeenCalled();
+  });
+
+  it('renders all form fields', () => {
+    const host = fixture.nativeElement as HTMLElement;
+    expect(host.querySelector('#firstName')).toBeInTheDocument();
+    expect(host.querySelector('#lastName')).toBeInTheDocument();
+    expect(host.querySelector('#fullName')).toBeInTheDocument();
+    expect(host.querySelector('#statSourceId')).toBeInTheDocument();
+    expect(host.querySelector('#premierLeagueId')).toBeInTheDocument();
+    expect(host.querySelector('#dateOfBirth')).toBeInTheDocument();
+    expect(host.querySelector('#height')).toBeInTheDocument();
+    expect(host.querySelector('#country')).toBeInTheDocument();
+  });
+
+  // onCountrySearch -------------------------------------------------------------------------------
+
+  describe('onCountrySearch', () => {
+    it('filters countries by query', () => {
+      const query = countries[0].name.substring(0, 3).toLowerCase();
+      component['onCountrySearch']({ query });
+
+      expect(component['countries']()).toContain(countries[0]);
+    });
+
+    it('returns empty list when no country matches', () => {
+      component['onCountrySearch']({ query: '---no match---' });
+
+      expect(component['countries']()).toEqual([]);
+    });
+  });
+
+  // onSubmit --------------------------------------------------------------------------------------
+
+  describe('onSubmit', () => {
+    it('marks all fields as touched when form is invalid', () => {
+      component['onSubmit']();
+
+      expect(component['form'].touched).toBe(true);
+    });
+
+    it('does not call createPlayer when form is invalid', () => {
+      component['onSubmit']();
+
+      expect(mockPlayerApiService.createPlayer).not.toHaveBeenCalled();
+    });
+
+    it('calls createPlayer with form value on valid submit', async () => {
+      const player = fakePlayer();
+      mockPlayerApiService.createPlayer.mockReturnValue(of(player));
+      const form = component['form'];
+      form.setValue({
+        firstName: 'Test',
+        lastName: 'Player',
+        fullName: 'Test Player',
+        statSourceId: 1,
+        premierLeagueId: 2,
+        dateOfBirth: '1990-01-01',
+        height: 180,
+        country: countries[0],
+      });
+
+      component['onSubmit']();
+      TestBed.tick();
+      fixture.detectChanges();
+      await fixture.whenStable();
+
+      expect(mockPlayerApiService.createPlayer).toHaveBeenCalledWith(
+        form.getRawValue() as PlayerInput,
+      );
+    });
+
+    it('navigates to player after successful create', async () => {
+      const player = fakePlayer();
+      mockPlayerApiService.createPlayer.mockReturnValue(of(player));
+      component['form'].setValue({
+        firstName: 'Test',
+        lastName: 'Player',
+        fullName: 'Test Player',
+        statSourceId: 1,
+        premierLeagueId: 2,
+        dateOfBirth: '1990-01-01',
+        height: 180,
+        country: countries[0],
+      });
+
+      component['onSubmit']();
+      TestBed.tick();
+      fixture.detectChanges();
+      await fixture.whenStable();
+
+      expect(mockRouterService.navigateToPlayer).toHaveBeenCalledWith(player.id);
+    });
+  });
+});

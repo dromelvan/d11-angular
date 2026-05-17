@@ -1,0 +1,30 @@
+<div class="app-create-player flex flex-col gap-6 p-4">
+  <div class="flex flex-col items-center gap-2">
+    <app-avatar resource="player" [id]="1" size="xlarge" />
+    <h1 class="text-xl font-semibold">New player</h1>
+  </div>
+
+  <form [formGroup]="form" (ngSubmit)="onSubmit()" class="flex flex-col gap-4">
+    <app-input-text property="firstName" label="First name" />
+    <app-input-text property="lastName" label="Last name" [required]="true" />
+    <app-input-text property="fullName" label="Full name" />
+
+    <app-input-number property="statSourceId" label="Stat source ID" />
+    <app-input-number property="premierLeagueId" label="Premier League ID" />
+
+    <app-input-date property="dateOfBirth" label="Date of birth" />
+
+    <app-input-number property="height" label="Height (cm)" />
+
+    <app-input-autocomplete
+      property="country"
+      label="Country"
+      optionLabel="name"
+      placeholder="Search country..."
+      [suggestions]="countries()"
+      (completeMethod)="onCountrySearch($event)"
+    />
+
+    <app-button-submit [form]="form" label="Create player" />
+  </form>
+</div>
