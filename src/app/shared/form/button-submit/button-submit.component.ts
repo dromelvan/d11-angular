@@ -1,4 +1,4 @@
-import { Component, Input, WritableSignal } from '@angular/core';
+import { Component, Input, Signal } from '@angular/core';
 import { ButtonDirective, ButtonIcon, ButtonLabel } from 'primeng/button';
 import { FormGroup } from '@angular/forms';
 import { ProgressSpinner } from 'primeng/progressspinner';
@@ -13,5 +13,5 @@ export class ButtonSubmitComponent {
   @Input() form!: FormGroup;
   @Input() label!: string;
   @Input() icon?: string;
-  @Input() working?: WritableSignal<boolean>;
+  @Input() working?: Signal<boolean>;
 }

@@ -1,9 +1,10 @@
-import { Component, effect, inject, signal } from '@angular/core';
+import { Component, computed, DestroyRef, effect, inject, signal } from '@angular/core';
 import { rxResource } from '@angular/core/rxjs-interop';
 import { FormBuilder, FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
 import { CountryApiService, Player, PlayerApiService } from '@app/core/api';
 import { Country } from '@app/core/api/model/country.model';
 import { PlayerInput } from '@app/core/api/model/player-input.model';
+import { LoadingService } from '@app/core/loading/loading.service';
 import { RouterService } from '@app/core/router/router.service';
 import { AvatarComponent } from '@app/shared/avatar/avatar.component';
 import {
@@ -46,6 +47,8 @@ export class CreatePlayerComponent {
 
   protected countries = signal<Country[]>([]);
 
+  protected readonly isLoading = computed(() => this.rxCreatePlayer.isLoading());
+
   private rxCreatePlayer = rxResource<Player, PlayerInput | undefined>({
     params: () => this.playerInput(),
     stream: ({ params }) => (params != null ? this.playerApiService.createPlayer(params) : EMPTY),
@@ -54,10 +57,13 @@ export class CreatePlayerComponent {
   private playerInput = signal<PlayerInput | undefined>(undefined);
 
   private countryApiService = inject(CountryApiService);
+  private loadingService = inject(LoadingService);
   private playerApiService = inject(PlayerApiService);
   private routerService = inject(RouterService);
 
   constructor() {
+    this.loadingService.register(inject(DestroyRef), this.isLoading);
+
     effect(() => {
       const player = this.rxCreatePlayer.value();
       if (player != null) {

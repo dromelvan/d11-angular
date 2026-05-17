@@ -1,4 +1,4 @@
-import { Component, signal } from '@angular/core';
+import { signal, WritableSignal } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { render, screen } from '@testing-library/angular';
 import { waitFor, within } from '@testing-library/dom';
@@ -10,80 +10,63 @@ const LABEL = 'label';
 const ICON = 'pi-icon';
 const LABEL_NO_ICON = 'labelWorking';
 
-@Component({
-  template: `
-    <form [formGroup]="form">
-      <input formControlName="${PROPERTY}" id="${PROPERTY}" />
-      <app-button-submit
-        [form]="form"
-        label="${LABEL}"
-        icon="${ICON}"
-        [working]="working"
-        (click)="onSubmitWork()"
-      />
-      <app-button-submit [form]="form" label="${LABEL_NO_ICON}" (click)="onSubmit()" />
-    </form>
-  `,
-  standalone: true,
-  imports: [ReactiveFormsModule, ButtonSubmitComponent],
-})
-class HostComponent {
-  working = signal(false);
-
-  form = new FormGroup({
-    [PROPERTY]: new FormControl('', Validators.required),
-  });
-
-  onSubmitWork() {
-    this.working.set(true);
-    this.onSubmit();
-  }
-
-  onSubmit() {
-    this.form.reset(this.form.getRawValue());
-  }
-}
+const template = `
+  <form [formGroup]="form">
+    <input formControlName="${PROPERTY}" id="${PROPERTY}" />
+    <app-button-submit [form]="form" label="${LABEL}" icon="${ICON}" [working]="working" />
+    <app-button-submit [form]="form" label="${LABEL_NO_ICON}" />
+  </form>
+`;
 
 describe('ButtonSubmitComponent', () => {
-  let component: HostComponent;
+  let form: FormGroup;
+  let working: WritableSignal<boolean>;
   let input: HTMLInputElement;
   let button: HTMLButtonElement;
   let buttonNoIcon: HTMLButtonElement;
   let user: ReturnType<typeof userEvent.setup>;
 
   beforeEach(async () => {
-    const { fixture } = await render(HostComponent);
+    form = new FormGroup({
+      [PROPERTY]: new FormControl('', Validators.required),
+    });
+    working = signal(false);
 
-    component = fixture.componentInstance;
+    await render(template, {
+      imports: [ReactiveFormsModule, ButtonSubmitComponent],
+      componentProperties: { form, working },
+    });
+
     input = screen.getByRole('textbox');
-    button = screen.getByRole('button', { name: ICON + LABEL });
+    button = screen.getByRole('button', { name: `${ICON}${LABEL}` });
     buttonNoIcon = screen.getByRole('button', { name: LABEL_NO_ICON });
     user = userEvent.setup();
   });
 
-  it('renders', async () => {
+  it('renders', () => {
     expect(button).toBeInTheDocument();
     expect(button).toBeDisabled();
     expect(button).toHaveTextContent(LABEL);
   });
 
-  it('renders icon when icon is provided', async () => {
+  it('renders icon when icon is provided', () => {
     expect(within(button).getByText(ICON)).toBeInTheDocument();
   });
 
-  it('does not render icon when icon is not provided', async () => {
+  it('does not render icon when icon is not provided', () => {
     expect(within(buttonNoIcon).queryByText(ICON)).not.toBeInTheDocument();
   });
 
   it('renders spinner when working and working is provided', async () => {
     expect(within(button).queryByRole('progressbar')).not.toBeInTheDocument();
 
-    await user.type(input, 'userInput');
-    await user.click(button);
+    working.set(true);
 
-    expect(within(button).getByRole('progressbar')).toBeInTheDocument();
+    await waitFor(() => {
+      expect(within(button).getByRole('progressbar')).toBeInTheDocument();
+    });
 
-    component.working.set(false);
+    working.set(false);
 
     await waitFor(() => {
       expect(within(button).queryByRole('progressbar')).not.toBeInTheDocument();
@@ -94,13 +77,14 @@ describe('ButtonSubmitComponent', () => {
     expect(within(button).getByText(LABEL)).toBeInTheDocument();
     expect(within(button).getByText(ICON)).toBeInTheDocument();
 
-    await user.type(input, 'userInput');
-    await user.click(button);
+    working.set(true);
 
-    expect(within(button).queryByText(LABEL)).not.toBeInTheDocument();
-    expect(within(button).queryByText(ICON)).not.toBeInTheDocument();
+    await waitFor(() => {
+      expect(within(button).queryByText(LABEL)).not.toBeInTheDocument();
+      expect(within(button).queryByText(ICON)).not.toBeInTheDocument();
+    });
 
-    component.working.set(false);
+    working.set(false);
 
     await waitFor(() => {
       expect(within(button).getByText(LABEL)).toBeInTheDocument();
@@ -109,8 +93,6 @@ describe('ButtonSubmitComponent', () => {
   });
 
   it('disables when form is not dirty and valid', async () => {
-    const form = component.form;
-
     expect(form.valid).toBe(false);
     expect(form.dirty).toBe(false);
     expect(buttonNoIcon).toBeDisabled();
@@ -128,26 +110,31 @@ describe('ButtonSubmitComponent', () => {
     expect(buttonNoIcon).toBeDisabled();
 
     await user.type(input, 'userInput');
-    await user.click(buttonNoIcon);
+    form.markAsPristine();
 
-    expect(form.valid).toBe(true);
-    expect(form.dirty).toBe(false);
-    expect(buttonNoIcon).toBeDisabled();
+    await waitFor(() => {
+      expect(buttonNoIcon).toBeDisabled();
+    });
   });
 
   it('disables when working and working is provided', async () => {
     expect(button).toBeDisabled();
 
     await user.type(input, 'userInput');
+
     expect(button).toBeEnabled();
 
-    await user.click(button);
+    working.set(true);
+
+    await waitFor(() => {
+      expect(button).toBeDisabled();
+    });
+
+    await user.type(input, 'moreInput');
+
     expect(button).toBeDisabled();
 
-    await user.type(input, 'userInput');
-    expect(button).toBeDisabled();
-
-    component.working.set(false);
+    working.set(false);
 
     await waitFor(() => {
       expect(button).toBeEnabled();

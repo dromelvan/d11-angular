@@ -1,11 +1,23 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { of } from 'rxjs';
-import { CountryApiService, PlayerApiService } from '@app/core/api';
+import { of, Subject } from 'rxjs';
+import { CountryApiService, Player, PlayerApiService } from '@app/core/api';
 import { Country } from '@app/core/api/model/country.model';
 import { PlayerInput } from '@app/core/api/model/player-input.model';
+import { LoadingService } from '@app/core/loading/loading.service';
 import { RouterService } from '@app/core/router/router.service';
 import { fakeCountry, fakePlayer } from '@app/test';
 import { CreatePlayerComponent } from './create-player.component';
+
+const validFormValue = {
+  firstName: 'Test',
+  lastName: 'Player',
+  fullName: 'Test Player',
+  statSourceId: 1,
+  premierLeagueId: 2,
+  dateOfBirth: '1990-01-01',
+  height: 180,
+  country: null as Country | null,
+};
 
 describe('CreatePlayerComponent', () => {
   let fixture: ComponentFixture<CreatePlayerComponent>;
@@ -13,6 +25,7 @@ describe('CreatePlayerComponent', () => {
   let mockCountryApiService: { getCountries: ReturnType<typeof vi.fn> };
   let mockPlayerApiService: { createPlayer: ReturnType<typeof vi.fn> };
   let mockRouterService: { navigateToPlayer: ReturnType<typeof vi.fn> };
+  let mockLoadingService: { register: ReturnType<typeof vi.fn> };
   let countries: Country[];
 
   beforeEach(async () => {
@@ -21,6 +34,7 @@ describe('CreatePlayerComponent', () => {
     mockCountryApiService = { getCountries: vi.fn().mockReturnValue(of(countries)) };
     mockPlayerApiService = { createPlayer: vi.fn().mockReturnValue(of(fakePlayer())) };
     mockRouterService = { navigateToPlayer: vi.fn().mockResolvedValue(true) };
+    mockLoadingService = { register: vi.fn() };
 
     await TestBed.configureTestingModule({
       imports: [CreatePlayerComponent],
@@ -28,6 +42,7 @@ describe('CreatePlayerComponent', () => {
         { provide: CountryApiService, useValue: mockCountryApiService },
         { provide: PlayerApiService, useValue: mockPlayerApiService },
         { provide: RouterService, useValue: mockRouterService },
+        { provide: LoadingService, useValue: mockLoadingService },
       ],
     }).compileComponents();
 
@@ -51,6 +66,41 @@ describe('CreatePlayerComponent', () => {
     expect(host.querySelector('#dateOfBirth')).toBeInTheDocument();
     expect(host.querySelector('#height')).toBeInTheDocument();
     expect(host.querySelector('#country')).toBeInTheDocument();
+  });
+
+  // isLoading -------------------------------------------------------------------------------------
+
+  describe('isLoading', () => {
+    it('is false initially', () => {
+      expect(component['isLoading']()).toBe(false);
+    });
+
+    it('registers with LoadingService', () => {
+      expect(mockLoadingService.register).toHaveBeenCalledWith(
+        expect.anything(),
+        component['isLoading'],
+      );
+    });
+
+    it('is true while creating player and false after', async () => {
+      const subject = new Subject<Player>();
+      mockPlayerApiService.createPlayer.mockReturnValue(subject);
+      component['form'].setValue({ ...validFormValue, country: countries[0] });
+
+      component['onSubmit']();
+      TestBed.tick();
+      fixture.detectChanges();
+
+      expect(component['isLoading']()).toBe(true);
+
+      subject.next(fakePlayer());
+      subject.complete();
+      TestBed.tick();
+      fixture.detectChanges();
+      await fixture.whenStable();
+
+      expect(component['isLoading']()).toBe(false);
+    });
   });
 
   // onCountrySearch -------------------------------------------------------------------------------
@@ -89,16 +139,7 @@ describe('CreatePlayerComponent', () => {
       const player = fakePlayer();
       mockPlayerApiService.createPlayer.mockReturnValue(of(player));
       const form = component['form'];
-      form.setValue({
-        firstName: 'Test',
-        lastName: 'Player',
-        fullName: 'Test Player',
-        statSourceId: 1,
-        premierLeagueId: 2,
-        dateOfBirth: '1990-01-01',
-        height: 180,
-        country: countries[0],
-      });
+      form.setValue({ ...validFormValue, country: countries[0] });
 
       component['onSubmit']();
       TestBed.tick();
@@ -113,16 +154,7 @@ describe('CreatePlayerComponent', () => {
     it('navigates to player after successful create', async () => {
       const player = fakePlayer();
       mockPlayerApiService.createPlayer.mockReturnValue(of(player));
-      component['form'].setValue({
-        firstName: 'Test',
-        lastName: 'Player',
-        fullName: 'Test Player',
-        statSourceId: 1,
-        premierLeagueId: 2,
-        dateOfBirth: '1990-01-01',
-        height: 180,
-        country: countries[0],
-      });
+      component['form'].setValue({ ...validFormValue, country: countries[0] });
 
       component['onSubmit']();
       TestBed.tick();
