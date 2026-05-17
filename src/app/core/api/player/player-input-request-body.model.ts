@@ -1,16 +1,6 @@
-import { Country } from '@app/core/api/model/country.model';
+import { PlayerInput } from '@app/core/api/model/player-input.model';
 
-export interface PlayerInput {
-  firstName: string;
-  lastName: string;
-  statSourceId: number;
-  premierLeagueId: number;
-  fullName: string;
-  dateOfBirth: string;
-  height: number;
-  verified: boolean;
-  country: Country;
-}
+export type { PlayerInput };
 
 export interface PlayerInputRequestBody {
   player: PlayerInput;
