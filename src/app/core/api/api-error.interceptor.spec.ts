@@ -1,3 +1,4 @@
+import { ApplicationRef } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import {
   HttpClient,
@@ -7,6 +8,7 @@ import {
 } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { Router } from '@angular/router';
+import { MessageService } from 'primeng/api';
 import { firstValueFrom } from 'rxjs';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { ApiErrorService } from './api-error.service';
@@ -17,12 +19,35 @@ describe('apiErrorInterceptor', () => {
   let httpMock: HttpTestingController;
   let router: Router;
   let apiErrorService: ApiErrorService;
+  let messageService: MessageService;
+  let appRef: ApplicationRef;
 
   async function postRequest(status: number): Promise<void> {
     const promise = firstValueFrom(http.post('/api', {}));
 
     const request = httpMock.expectOne('/api');
     request.flush({ detail: 'Detail' }, { status: status, statusText: 'statusText' });
+
+    try {
+      await promise;
+    } catch {
+      // Expected
+    }
+  }
+
+  async function post400Request(): Promise<void> {
+    const promise = firstValueFrom(http.post('/api', {}));
+
+    const request = httpMock.expectOne('/api');
+    request.flush(
+      {
+        validationErrors: [
+          { property: 'player.country', error: 'is missing' },
+          { property: 'player.height', error: 'is missing' },
+        ],
+      },
+      { status: 400, statusText: 'Bad Request' },
+    );
 
     try {
       await promise;
@@ -40,12 +65,17 @@ describe('apiErrorInterceptor', () => {
       setError: vi.fn(),
     };
 
+    const messageServiceMock = {
+      add: vi.fn(),
+    };
+
     TestBed.configureTestingModule({
       providers: [
         provideHttpClient(withInterceptors([apiErrorInterceptor])),
         provideHttpClientTesting(),
         { provide: Router, useValue: routerMock },
         { provide: ApiErrorService, useValue: apiErrorServiceMock },
+        { provide: MessageService, useValue: messageServiceMock },
       ],
     });
 
@@ -53,6 +83,9 @@ describe('apiErrorInterceptor', () => {
     httpMock = TestBed.inject(HttpTestingController);
     router = TestBed.inject(Router);
     apiErrorService = TestBed.inject(ApiErrorService);
+    messageService = TestBed.inject(MessageService);
+    appRef = TestBed.inject(ApplicationRef);
+    vi.spyOn(appRef, 'tick').mockImplementation(() => {});
   });
 
   afterEach(() => {
@@ -92,7 +125,7 @@ describe('apiErrorInterceptor', () => {
     );
   });
 
-  it.each([400, 403, 404, 409, 500])('sets API error for HTTP status %i', async (status) => {
+  it.each([403, 404, 409, 500])('sets API error for HTTP status %i', async (status) => {
     await postRequest(status);
 
     expect(apiErrorService.setError).toHaveBeenCalledWith(
@@ -104,14 +137,11 @@ describe('apiErrorInterceptor', () => {
     );
   });
 
-  it.each([400, 403, 404, 409, 500])(
-    'navigates to api-error for HTTP status %i',
-    async (status) => {
-      await postRequest(status);
+  it.each([403, 404, 409, 500])('navigates to api-error for HTTP status %i', async (status) => {
+    await postRequest(status);
 
-      expect(router.navigate).toHaveBeenCalledWith(['api-error']);
-    },
-  );
+    expect(router.navigate).toHaveBeenCalledWith(['api-error']);
+  });
 
   it('does not set error for HTTP status 401', async () => {
     await postRequest(401);
@@ -139,5 +169,33 @@ describe('apiErrorInterceptor', () => {
         body: '{\n  "detail": "Detail"\n}',
       }),
     );
+  });
+
+  it('shows toast with validation errors for HTTP status 400', async () => {
+    await post400Request();
+
+    expect(messageService.add).toHaveBeenCalledWith({
+      severity: 'error',
+      summary: 'Validation error',
+      detail: 'Country is missing\nHeight is missing',
+    });
+  });
+
+  it('ticks change detection after showing toast for HTTP status 400', async () => {
+    await post400Request();
+
+    expect(appRef.tick).toHaveBeenCalled();
+  });
+
+  it('does not navigate for HTTP status 400', async () => {
+    await post400Request();
+
+    expect(router.navigate).not.toHaveBeenCalled();
+  });
+
+  it('does not set API error for HTTP status 400', async () => {
+    await post400Request();
+
+    expect(apiErrorService.setError).not.toHaveBeenCalled();
   });
 });
