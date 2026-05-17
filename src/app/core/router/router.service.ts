@@ -83,6 +83,11 @@ export class RouterService {
     return this.router.navigate(['api-error']);
   }
 
+  public navigateToCreatePlayer(): Promise<boolean> {
+    this.stack.set([]);
+    return this.router.navigate(['players', 'create']);
+  }
+
   public navigateToLogin(): Promise<boolean> {
     this.stack.set([]);
     return this.router.navigate(['login']);

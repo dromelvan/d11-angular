@@ -36,7 +36,7 @@ describe('RouterService', () => {
     service = TestBed.inject(RouterService);
   });
 
-  it('should navigate to match', async () => {
+  it('navigates to match', async () => {
     const matchId = 1;
     const result = await service.navigateToMatch(matchId);
 
@@ -44,7 +44,7 @@ describe('RouterService', () => {
     expect(result).toBe(true);
   });
 
-  it('should navigate to D11 match', async () => {
+  it('navigates to D11 match', async () => {
     const d11MatchId = 1;
     const result = await service.navigateToD11Match(d11MatchId);
 
@@ -52,7 +52,7 @@ describe('RouterService', () => {
     expect(result).toBe(true);
   });
 
-  it('should navigate to match week', async () => {
+  it('navigates to match week', async () => {
     const matchWeekId = 1;
     const result = await service.navigateToMatchWeek(matchWeekId);
 
@@ -60,7 +60,7 @@ describe('RouterService', () => {
     expect(result).toBe(true);
   });
 
-  it('should navigate to season', async () => {
+  it('navigates to season', async () => {
     const seasonId = 5;
     const result = await service.navigateToSeason(seasonId);
 
@@ -68,14 +68,14 @@ describe('RouterService', () => {
     expect(result).toBe(true);
   });
 
-  it('should navigate to players', async () => {
+  it('navigates to players without seasonId', async () => {
     const result = await service.navigateToPlayers();
 
     expect(mockRouter.navigate).toHaveBeenCalledWith(['players'], {});
     expect(result).toBe(true);
   });
 
-  it('should navigate to players with seasonId', async () => {
+  it('navigates to players with seasonId', async () => {
     const seasonId = 5;
     const result = await service.navigateToPlayers(seasonId);
 
@@ -83,7 +83,7 @@ describe('RouterService', () => {
     expect(result).toBe(true);
   });
 
-  it('should navigate to player without seasonId', async () => {
+  it('navigates to player without seasonId', async () => {
     const playerId = 1;
     const result = await service.navigateToPlayer(playerId);
 
@@ -91,10 +91,9 @@ describe('RouterService', () => {
     expect(result).toBe(true);
   });
 
-  it('should navigate to player with seasonId', async () => {
+  it('navigates to player with seasonId', async () => {
     const playerId = 1;
     const seasonId = 1;
-
     const result = await service.navigateToPlayer(playerId, seasonId);
 
     expect(mockRouter.navigate).toHaveBeenCalledWith(['players', playerId], {
@@ -103,7 +102,7 @@ describe('RouterService', () => {
     expect(result).toBe(true);
   });
 
-  it('should navigate to team without seasonId', async () => {
+  it('navigates to team without seasonId', async () => {
     const teamId = 1;
     const result = await service.navigateToTeam(teamId);
 
@@ -111,7 +110,7 @@ describe('RouterService', () => {
     expect(result).toBe(true);
   });
 
-  it('should navigate to team with seasonId', async () => {
+  it('navigates to team with seasonId', async () => {
     const teamId = 1;
     const seasonId = 5;
     const result = await service.navigateToTeam(teamId, seasonId);
@@ -122,7 +121,7 @@ describe('RouterService', () => {
     expect(result).toBe(true);
   });
 
-  it('should navigate to transfer window with transferWindowId', async () => {
+  it('navigates to transfer window', async () => {
     const transferWindowId = 1;
     const result = await service.navigateToTransferWindow(transferWindowId);
 
@@ -130,7 +129,7 @@ describe('RouterService', () => {
     expect(result).toBe(true);
   });
 
-  it('should navigate to d11 team without seasonId', async () => {
+  it('navigates to D11 team without seasonId', async () => {
     const d11TeamId = 1;
     const result = await service.navigateToD11Team(d11TeamId);
 
@@ -138,7 +137,7 @@ describe('RouterService', () => {
     expect(result).toBe(true);
   });
 
-  it('should navigate to d11 team with seasonId', async () => {
+  it('navigates to D11 team with seasonId', async () => {
     const d11TeamId = 1;
     const seasonId = 5;
     const result = await service.navigateToD11Team(d11TeamId, seasonId);
@@ -149,14 +148,14 @@ describe('RouterService', () => {
     expect(result).toBe(true);
   });
 
-  it('should navigate to current D11 teams', async () => {
+  it('navigates to D11 teams without seasonId', async () => {
     const result = await service.navigateToD11Teams();
 
     expect(mockRouter.navigate).toHaveBeenCalledWith(['d11-teams'], {});
     expect(result).toBe(true);
   });
 
-  it('should navigate to D11 teams with seasonId', async () => {
+  it('navigates to D11 teams with seasonId', async () => {
     const seasonId = 1;
     const result = await service.navigateToD11Teams(seasonId);
 
@@ -166,14 +165,14 @@ describe('RouterService', () => {
     expect(result).toBe(true);
   });
 
-  it('should navigate to matches', async () => {
+  it('navigates to matches', async () => {
     const result = await service.navigateToMatches();
 
     expect(mockRouter.navigate).toHaveBeenCalledWith(['matches']);
     expect(result).toBe(true);
   });
 
-  it('should navigate to match week matches', async () => {
+  it('navigates to match week matches', async () => {
     const matchWeekId = 1;
     const result = await service.navigateToMatchWeekMatches(matchWeekId);
 
@@ -181,35 +180,42 @@ describe('RouterService', () => {
     expect(result).toBe(true);
   });
 
-  it('should navigate to api-error', async () => {
+  it('navigates to api-error', async () => {
     const result = await service.navigateToApiError();
 
     expect(mockRouter.navigate).toHaveBeenCalledWith(['api-error']);
     expect(result).toBe(true);
   });
 
-  it('should navigate to login', async () => {
+  it('navigates to create player', async () => {
+    const result = await service.navigateToCreatePlayer();
+
+    expect(mockRouter.navigate).toHaveBeenCalledWith(['players', 'create']);
+    expect(result).toBe(true);
+  });
+
+  it('navigates to login', async () => {
     const result = await service.navigateToLogin();
 
     expect(mockRouter.navigate).toHaveBeenCalledWith(['login']);
     expect(result).toBe(true);
   });
 
-  it('should navigate to more', async () => {
+  it('navigates to more', async () => {
     const result = await service.navigateToMore();
 
     expect(mockRouter.navigate).toHaveBeenCalledWith(['more']);
     expect(result).toBe(true);
   });
 
-  it('should navigate to history', async () => {
+  it('navigates to history', async () => {
     const result = await service.navigateToHistory();
 
     expect(mockRouter.navigate).toHaveBeenCalledWith(['history']);
     expect(result).toBe(true);
   });
 
-  it('should navigate to rules', async () => {
+  it('navigates to rules', async () => {
     const result = await service.navigateToRules();
 
     expect(mockRouter.navigate).toHaveBeenCalledWith(['rules']);
@@ -273,6 +279,7 @@ describe('RouterService', () => {
             { path: 'matches/:id', component: BlankComponent },
             { path: 'd11-matches/:id', component: BlankComponent },
             { path: 'players', component: BlankComponent },
+            { path: 'players/create', component: BlankComponent },
             { path: 'players/:id', component: BlankComponent },
             { path: 'seasons', component: BlankComponent },
             { path: 'teams/:id', component: BlankComponent },
@@ -283,7 +290,7 @@ describe('RouterService', () => {
       service = TestBed.inject(RouterService);
     });
 
-    it('hasStack is false', () => {
+    it('hasStack is false initially', () => {
       expect(service.hasStack()).toBe(false);
     });
 
@@ -341,7 +348,7 @@ describe('RouterService', () => {
       expect(service.hasStack()).toBe(true);
     });
 
-    it('does not push to stack on navigation to same component', async () => {
+    it('does not push to stack when navigating from one match week to another', async () => {
       const router = TestBed.inject(Router);
       await router.navigate(['/match-weeks/1']);
 
@@ -368,7 +375,7 @@ describe('RouterService', () => {
       expect(service.hasStack()).toBe(false);
     });
 
-    it('pushes to stack when navigating from non-d11-team route to a d11 team', async () => {
+    it('pushes to stack when navigating from non-d11-team route to a D11 team', async () => {
       const router = TestBed.inject(Router);
       await router.navigate(['/match-weeks/1']);
 
@@ -377,7 +384,7 @@ describe('RouterService', () => {
       expect(service.hasStack()).toBe(true);
     });
 
-    it('does not push to stack when navigating from one d11 team to another', async () => {
+    it('does not push to stack when navigating from one D11 team to another', async () => {
       const router = TestBed.inject(Router);
       await router.navigate(['/d11-teams/1']);
 
@@ -437,6 +444,16 @@ describe('RouterService', () => {
       await service.navigateToMatch(1);
 
       await service.navigateToMatches();
+
+      expect(service.hasStack()).toBe(false);
+    });
+
+    it('clears the stack on navigateToCreatePlayer', async () => {
+      const router = TestBed.inject(Router);
+      await router.navigate(['/match-weeks/1']);
+      await service.navigateToMatch(1);
+
+      await service.navigateToCreatePlayer();
 
       expect(service.hasStack()).toBe(false);
     });

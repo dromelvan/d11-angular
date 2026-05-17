@@ -20,6 +20,13 @@ export const routes: Routes = [
     data: { section: 'Players' },
   },
   {
+    path: 'players/create',
+    loadComponent: () =>
+      import('@app/feature/page/create-player/create-player-page.component').then(
+        (m) => m.CreatePlayerPageComponent,
+      ),
+  },
+  {
     path: 'players/:playerId',
     loadComponent: () =>
       import('@app/feature/page/player/player-page.component').then((m) => m.PlayerPageComponent),
