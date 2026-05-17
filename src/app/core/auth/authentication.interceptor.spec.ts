@@ -1,17 +1,27 @@
 import { HttpClient, provideHttpClient, withInterceptors } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
+import { signal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
+import { environment } from '../../../environments/environment';
+import { UserSessionService } from './user-session.service';
 import { authenticationInterceptor } from './authentication.interceptor';
+
+const JWT = 'test-jwt-token';
+const API_URL = `/${environment.apiVersion}/players`;
 
 describe('authenticationInterceptor', () => {
   let http: HttpClient;
   let httpMock: HttpTestingController;
+  let jwtSignal: ReturnType<typeof signal<string | undefined>>;
 
   beforeEach(() => {
+    jwtSignal = signal<string | undefined>(undefined);
+
     TestBed.configureTestingModule({
       providers: [
         provideHttpClient(withInterceptors([authenticationInterceptor])),
         provideHttpClientTesting(),
+        { provide: UserSessionService, useValue: { jwt: jwtSignal } },
       ],
     });
 
@@ -40,10 +50,37 @@ describe('authenticationInterceptor', () => {
     expect(request.request.credentials).toBeUndefined();
   });
 
-  it('forwards the request to next handler', () => {
-    http.get('/forward/url').subscribe();
+  it('adds Authorization header for API calls when JWT is present', () => {
+    jwtSignal.set(JWT);
 
-    const request = httpMock.expectOne('/forward/url');
-    expect(request.request.method).toBe('GET');
+    http.get(API_URL).subscribe();
+
+    const request = httpMock.expectOne(API_URL);
+    expect(request.request.headers.get('Authorization')).toBe(`Bearer ${JWT}`);
+  });
+
+  it('does not add Authorization header for API calls when JWT is not present', () => {
+    http.get(API_URL).subscribe();
+
+    const request = httpMock.expectOne(API_URL);
+    expect(request.request.headers.get('Authorization')).toBeNull();
+  });
+
+  it('does not add Authorization header for non-API relative URLs', () => {
+    jwtSignal.set(JWT);
+
+    http.get('/assets/image.png').subscribe();
+
+    const request = httpMock.expectOne('/assets/image.png');
+    expect(request.request.headers.get('Authorization')).toBeNull();
+  });
+
+  it('does not add Authorization header for absolute URLs', () => {
+    jwtSignal.set(JWT);
+
+    http.get('https://absolute.com/url').subscribe();
+
+    const request = httpMock.expectOne('https://absolute.com/url');
+    expect(request.request.headers.get('Authorization')).toBeNull();
   });
 });
