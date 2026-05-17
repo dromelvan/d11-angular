@@ -1,15 +1,22 @@
 import { TestBed } from '@angular/core/testing';
 import { of } from 'rxjs';
 import { UserSessionService } from '@app/core/auth/user-session.service';
+import { User } from '@app/core/api/model/user.model';
+import { fakeUser } from '@app/test';
+import { signal } from '@angular/core';
 import { UserActionService } from './user-action.service';
 
 describe('UserActionService', () => {
   let service: UserActionService;
-  let mockUserSession: { unauthorize: ReturnType<typeof vi.fn> };
+  let mockUserSession: {
+    user: ReturnType<typeof signal<User | undefined>>;
+    unauthorize: ReturnType<typeof vi.fn>;
+  };
 
   beforeEach(() => {
     vi.clearAllMocks();
     mockUserSession = {
+      user: signal<User | undefined>(undefined),
       unauthorize: vi.fn().mockReturnValue(of(true)),
     };
 
@@ -42,5 +49,23 @@ describe('UserActionService', () => {
 
     expect(service.drawerVisible()).toBe(false);
     expect(mockUserSession.unauthorize).toHaveBeenCalled();
+  });
+
+  // isAdministrator -------------------------------------------------------------------------------
+
+  describe('isAdministrator', () => {
+    it('is false when user is undefined', () => {
+      expect(service.isAdministrator()).toBe(false);
+    });
+
+    it('is false when user is not administrator', () => {
+      mockUserSession.user.set({ ...fakeUser(), administrator: false });
+      expect(service.isAdministrator()).toBe(false);
+    });
+
+    it('is true when user is administrator', () => {
+      mockUserSession.user.set({ ...fakeUser(), administrator: true });
+      expect(service.isAdministrator()).toBe(true);
+    });
   });
 });

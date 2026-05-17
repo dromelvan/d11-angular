@@ -1,4 +1,4 @@
-import { inject, Injectable, signal } from '@angular/core';
+import { computed, inject, Injectable, signal } from '@angular/core';
 import { rxResource } from '@angular/core/rxjs-interop';
 import { of } from 'rxjs';
 import { UserSessionService } from './user-session.service';
@@ -8,6 +8,7 @@ import { UserSessionService } from './user-session.service';
 })
 export class UserActionService {
   readonly drawerVisible = signal(false);
+  readonly isAdministrator = computed(() => this.userSession.user()?.administrator ?? false);
 
   private userSession = inject(UserSessionService);
   private logoutTrigger = signal(0);
