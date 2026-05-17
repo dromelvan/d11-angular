@@ -1,0 +1,16 @@
+<div class="app-input-date">
+  <label class="font-medium pt-10" for="{{ property() }}">{{ label() }}</label>
+  <p-datepicker
+    class="pt-2"
+    [formControlName]="property()"
+    [inputId]="property()"
+    dateFormat="yy-mm-dd"
+    dataType="string"
+    [showIcon]="true"
+    [invalid]="!!(control?.invalid && control?.touched)"
+    fluid
+  />
+  @if (required() && control?.invalid && control?.touched) {
+    <p-message severity="error" size="small" variant="simple">{{ label() }} is required.</p-message>
+  }
+</div>
