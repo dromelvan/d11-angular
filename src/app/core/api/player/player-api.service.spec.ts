@@ -60,7 +60,6 @@ describe('PlayerApiService', () => {
       fullName: player.fullName ?? player.firstName,
       dateOfBirth: player.dateOfBirth ?? '1990-01-01',
       height: player.height ?? 180,
-      verified: player.verified,
       country: player.country,
     };
     const response: PlayerResponseBody = { player };
@@ -87,17 +86,13 @@ describe('PlayerApiService', () => {
       const error = new Error('BAD_REQUEST');
       apiServiceMock.post = vi.fn().mockReturnValue(throwError(() => error)) as PostFn;
 
-      await expect(firstValueFrom(playerApi.createPlayer(playerInput))).rejects.toThrow(
-        error.message,
-      );
+      expect(firstValueFrom(playerApi.createPlayer(playerInput))).rejects.toThrow(error.message);
     });
 
     it('does not map the result on error', async () => {
       apiServiceMock.post = vi.fn().mockReturnValue(throwError(() => new Error())) as PostFn;
 
-      await expect(firstValueFrom(playerApi.createPlayer(playerInput))).rejects.toBeInstanceOf(
-        Error,
-      );
+      expect(firstValueFrom(playerApi.createPlayer(playerInput))).rejects.toBeInstanceOf(Error);
     });
   });
 
@@ -156,7 +151,6 @@ describe('PlayerApiService', () => {
       fullName: player.fullName ?? player.firstName,
       dateOfBirth: player.dateOfBirth ?? '1990-01-01',
       height: player.height ?? 180,
-      verified: player.verified,
       country: player.country,
     };
     const response: PlayerResponseBody = { player };

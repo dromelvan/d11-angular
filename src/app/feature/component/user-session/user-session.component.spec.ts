@@ -16,6 +16,7 @@ describe('UserSessionComponent', () => {
   };
   let mockUserActionService: {
     drawerVisible: ReturnType<typeof signal<boolean>>;
+    isAdministrator: ReturnType<typeof signal<boolean>>;
     open: ReturnType<typeof vi.fn>;
     close: ReturnType<typeof vi.fn>;
     onLogout: ReturnType<typeof vi.fn>;
@@ -30,6 +31,7 @@ describe('UserSessionComponent', () => {
     };
     mockUserActionService = {
       drawerVisible: signal(false),
+      isAdministrator: signal(false),
       open: vi.fn(),
       close: vi.fn(),
       onLogout: vi.fn(),
