@@ -2,7 +2,6 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { of, Subject } from 'rxjs';
 import { CountryApiService, Player, PlayerApiService } from '@app/core/api';
 import { Country } from '@app/core/api/model/country.model';
-import { PlayerInput } from '@app/core/api/model/player-input.model';
 import { LoadingService } from '@app/core/loading/loading.service';
 import { RouterService } from '@app/core/router/router.service';
 import { fakeCountry, fakePlayer } from '@app/test';
@@ -138,8 +137,26 @@ describe('CreatePlayerComponent', () => {
     it('calls createPlayer with form value on valid submit', async () => {
       const player = fakePlayer();
       mockPlayerApiService.createPlayer.mockReturnValue(of(player));
-      const form = component['form'];
-      form.setValue({ ...validFormValue, country: countries[0] });
+      component['form'].setValue({ ...validFormValue, country: countries[0] });
+
+      component['onSubmit']();
+      TestBed.tick();
+      fixture.detectChanges();
+      await fixture.whenStable();
+
+      expect(mockPlayerApiService.createPlayer).toHaveBeenCalledWith({
+        ...validFormValue,
+        country: countries[0],
+      });
+    });
+
+    it('defaults null country to country with id 1', async () => {
+      const country1 = { ...fakeCountry(), id: 1 };
+      mockCountryApiService.getCountries.mockReturnValue(of([country1, ...countries]));
+      fixture.detectChanges();
+      await fixture.whenStable();
+
+      component['form'].setValue({ ...validFormValue, country: null });
 
       component['onSubmit']();
       TestBed.tick();
@@ -147,13 +164,45 @@ describe('CreatePlayerComponent', () => {
       await fixture.whenStable();
 
       expect(mockPlayerApiService.createPlayer).toHaveBeenCalledWith(
-        form.getRawValue() as PlayerInput,
+        expect.objectContaining({ country: country1 }),
+      );
+    });
+
+    it('defaults null fullName to undefined', async () => {
+      component['form'].setValue({ ...validFormValue, fullName: null, country: countries[0] });
+
+      component['onSubmit']();
+      TestBed.tick();
+      fixture.detectChanges();
+      await fixture.whenStable();
+
+      const called = mockPlayerApiService.createPlayer.mock.calls[0][0] as Record<string, unknown>;
+      expect(called['fullName']).toBeUndefined();
+    });
+
+    it('defaults null statSourceId, premierLeagueId and height to 0', async () => {
+      component['form'].setValue({
+        ...validFormValue,
+        statSourceId: null,
+        premierLeagueId: null,
+        height: null,
+        country: countries[0],
+      });
+
+      component['onSubmit']();
+      TestBed.tick();
+      fixture.detectChanges();
+      await fixture.whenStable();
+
+      expect(mockPlayerApiService.createPlayer).toHaveBeenCalledWith(
+        expect.objectContaining({ statSourceId: 0, premierLeagueId: 0, height: 0 }),
       );
     });
 
     it('navigates to player after successful create', async () => {
       const player = fakePlayer();
       mockPlayerApiService.createPlayer.mockReturnValue(of(player));
+
       component['form'].setValue({ ...validFormValue, country: countries[0] });
 
       component['onSubmit']();

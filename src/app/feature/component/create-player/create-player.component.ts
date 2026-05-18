@@ -33,7 +33,7 @@ export class CreatePlayerComponent {
   protected form = inject(FormBuilder).group({
     firstName: new FormControl(''),
     lastName: new FormControl('', Validators.required),
-    fullName: new FormControl(''),
+    fullName: new FormControl<string | null>(null),
     statSourceId: new FormControl<number | null>(null),
     premierLeagueId: new FormControl<number | null>(null),
     dateOfBirth: new FormControl(''),
@@ -86,6 +86,16 @@ export class CreatePlayerComponent {
       this.form.markAllAsTouched();
       return;
     }
-    this.playerInput.set(this.form.getRawValue() as PlayerInput);
+    const rawValue = this.form.getRawValue();
+    this.playerInput.set({
+      firstName: rawValue.firstName ?? undefined,
+      lastName: rawValue.lastName ?? '',
+      fullName: rawValue.fullName ?? undefined,
+      statSourceId: rawValue.statSourceId ?? 0,
+      premierLeagueId: rawValue.premierLeagueId ?? 0,
+      dateOfBirth: rawValue.dateOfBirth ?? undefined,
+      height: rawValue.height ?? 0,
+      country: rawValue.country ?? this.rxCountries.value()?.find((country) => country.id === 1),
+    });
   }
 }
