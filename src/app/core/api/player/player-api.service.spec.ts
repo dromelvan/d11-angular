@@ -59,8 +59,8 @@ describe('PlayerApiService', () => {
       premierLeagueId: player.premierLeagueId,
       fullName: player.fullName ?? player.firstName,
       dateOfBirth: player.dateOfBirth ?? '1990-01-01',
-      height: player.height ?? 180,
-      country: player.country,
+      height: player.height ?? 0,
+      countryId: player.country.id,
     };
     const response: PlayerResponseBody = { player };
 
@@ -150,8 +150,8 @@ describe('PlayerApiService', () => {
       premierLeagueId: player.premierLeagueId,
       fullName: player.fullName ?? player.firstName,
       dateOfBirth: player.dateOfBirth ?? '1990-01-01',
-      height: player.height ?? 180,
-      country: player.country,
+      height: player.height ?? 0,
+      countryId: player.country.id,
     };
     const response: PlayerResponseBody = { player };
 
@@ -395,8 +395,8 @@ describe('PlayerApiService', () => {
 
   describe('search', () => {
     const playerSearchResults: PlayerSearchResult[] = [
-      { id: 1, name: 'Foo Bar', teamId: 1, teamName: 'TeamA' },
-      { id: 2, name: 'Bar Foo', teamId: 2, teamName: 'TeamB' },
+      { id: 1, name: 'Foo Bar', teamId: 1, teamName: 'Team1' },
+      { id: 2, name: 'Bar Foo', teamId: 2, teamName: 'Team2' },
     ];
 
     const searchResponse: PlayerSearchResultsResponseBody = {

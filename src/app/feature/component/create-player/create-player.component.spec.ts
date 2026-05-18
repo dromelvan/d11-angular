@@ -145,17 +145,18 @@ describe('CreatePlayerComponent', () => {
       await fixture.whenStable();
 
       expect(mockPlayerApiService.createPlayer).toHaveBeenCalledWith({
-        ...validFormValue,
-        country: countries[0],
+        firstName: validFormValue.firstName,
+        lastName: validFormValue.lastName,
+        fullName: validFormValue.fullName,
+        statSourceId: validFormValue.statSourceId,
+        premierLeagueId: validFormValue.premierLeagueId,
+        dateOfBirth: validFormValue.dateOfBirth,
+        height: validFormValue.height,
+        countryId: countries[0].id,
       });
     });
 
     it('defaults null country to country with id 1', async () => {
-      const country1 = { ...fakeCountry(), id: 1 };
-      mockCountryApiService.getCountries.mockReturnValue(of([country1, ...countries]));
-      fixture.detectChanges();
-      await fixture.whenStable();
-
       component['form'].setValue({ ...validFormValue, country: null });
 
       component['onSubmit']();
@@ -164,7 +165,7 @@ describe('CreatePlayerComponent', () => {
       await fixture.whenStable();
 
       expect(mockPlayerApiService.createPlayer).toHaveBeenCalledWith(
-        expect.objectContaining({ country: country1 }),
+        expect.objectContaining({ countryId: 1 }),
       );
     });
 

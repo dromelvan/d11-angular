@@ -88,14 +88,14 @@ export class CreatePlayerComponent {
     }
     const rawValue = this.form.getRawValue();
     this.playerInput.set({
-      firstName: rawValue.firstName ?? undefined,
+      firstName: rawValue.firstName ?? '',
       lastName: rawValue.lastName ?? '',
       fullName: rawValue.fullName ?? undefined,
       statSourceId: rawValue.statSourceId ?? 0,
       premierLeagueId: rawValue.premierLeagueId ?? 0,
       dateOfBirth: rawValue.dateOfBirth ?? undefined,
       height: rawValue.height ?? 0,
-      country: rawValue.country ?? this.rxCountries.value()?.find((country) => country.id === 1),
+      countryId: rawValue.country?.id ?? 1,
     });
   }
 }
