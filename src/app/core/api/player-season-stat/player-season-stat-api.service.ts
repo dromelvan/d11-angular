@@ -2,7 +2,11 @@ import { HttpParams } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { map, Observable } from 'rxjs';
 import { ApiService } from '@app/core/api/api.service';
+import { CreatePlayerSeasonStatInput } from '@app/core/api/model/create-player-season-stat-input.model';
+import { CreatePlayerSeasonStatInputRequestBody } from './create-player-season-stat-input-request-body.model';
+import { PlayerSeasonStat } from '@app/core/api/model/player-season-stat.model';
 import { PlayerSeasonStatSort } from '../model/player-season-stat-sort.model';
+import { PlayerSeasonStatResponseBody } from '../player/player-season-stat-response-body.model';
 import { PlayerSeasonStatsResponseBody } from './player-season-stats-response-body.model';
 import { PlayerSeasonStatPage } from '@app/core/api';
 
@@ -38,5 +42,12 @@ export class PlayerSeasonStatApiService {
         options: { params },
       })
       .pipe(map(({ playerSeasonStats, ...rest }) => ({ ...rest, elements: playerSeasonStats })));
+  }
+
+  createPlayerSeasonStat(input: CreatePlayerSeasonStatInput): Observable<PlayerSeasonStat> {
+    const body: CreatePlayerSeasonStatInputRequestBody = { playerSeasonStat: input };
+    return this.apiService
+      .post<PlayerSeasonStatResponseBody>(this.namespace, undefined, body)
+      .pipe(map((result) => result.playerSeasonStat));
   }
 }

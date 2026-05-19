@@ -20,6 +20,7 @@ export * from './model/match-base.model';
 export * from './model/match-week.model';
 export * from './model/match-week-base.model';
 export * from './model/most-valuable-player.model';
+export * from './model/create-player-season-stat-input.model';
 export * from './model/player-input.model';
 export * from './model/player.model';
 export * from './model/player-base.model';

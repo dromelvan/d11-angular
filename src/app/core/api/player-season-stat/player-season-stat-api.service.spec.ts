@@ -1,31 +1,85 @@
 import { HttpParams } from '@angular/common/http';
 import { TestBed } from '@angular/core/testing';
 import { ApiService } from '@app/core/api/api.service';
-import { fakePlayerSeasonStat, GetFn } from '@app/test';
+import { CreatePlayerSeasonStatInput } from '@app/core/api/model/create-player-season-stat-input.model';
+import { fakePlayerSeasonStat, GetFn, PostFn } from '@app/test';
 import { firstValueFrom, of, throwError } from 'rxjs';
 import { beforeEach, describe } from 'vitest';
-import { PlayerSeasonStatApiService } from './player-season-stat-api.service';
+import { PlayerSeasonStatResponseBody } from '../player/player-season-stat-response-body.model';
 import { PlayerSeasonStatSort } from '../model/player-season-stat-sort.model';
+import { PlayerSeasonStatApiService } from './player-season-stat-api.service';
 import { PlayerSeasonStatsResponseBody } from './player-season-stats-response-body.model';
 
 describe('PlayerSeasonStatApiService', () => {
   let playerSeasonStatApi: PlayerSeasonStatApiService;
-  let apiServiceMock: { get: GetFn };
+  let apiServiceMock: { get: GetFn; post: PostFn };
 
   beforeEach(() => {
     TestBed.configureTestingModule({
       providers: [
         PlayerSeasonStatApiService,
-        { provide: ApiService, useValue: { get: vi.fn() as GetFn } },
+        {
+          provide: ApiService,
+          useValue: { get: vi.fn() as GetFn, post: vi.fn() as PostFn },
+        },
       ],
     });
 
     playerSeasonStatApi = TestBed.inject(PlayerSeasonStatApiService);
-    apiServiceMock = TestBed.inject(ApiService) as { get: GetFn };
+    apiServiceMock = TestBed.inject(ApiService) as { get: GetFn; post: PostFn };
   });
 
   it('is created', () => {
     expect(playerSeasonStatApi).toBeTruthy();
+  });
+
+  // createPlayerSeasonStat -----------------------------------------------------------------------
+
+  describe('createPlayerSeasonStat', () => {
+    const playerSeasonStat = fakePlayerSeasonStat();
+    const input: CreatePlayerSeasonStatInput = {
+      playerId: playerSeasonStat.player.id,
+      teamId: playerSeasonStat.team.id,
+      positionId: playerSeasonStat.position.id,
+    };
+    const response: PlayerSeasonStatResponseBody = { playerSeasonStat };
+
+    it('calls post with namespace and body', async () => {
+      apiServiceMock.post = vi.fn().mockReturnValue(of(response)) as PostFn;
+
+      await firstValueFrom(playerSeasonStatApi.createPlayerSeasonStat(input));
+
+      expect(apiServiceMock.post).toHaveBeenCalledExactlyOnceWith(
+        playerSeasonStatApi.namespace,
+        undefined,
+        { playerSeasonStat: input },
+      );
+    });
+
+    it('maps the result', async () => {
+      apiServiceMock.post = vi.fn().mockReturnValue(of(response)) as PostFn;
+
+      const result = await firstValueFrom(playerSeasonStatApi.createPlayerSeasonStat(input));
+
+      expect(result).toEqual(playerSeasonStat);
+    });
+
+    it('propagates errors', async () => {
+      const error = new Error('BAD_REQUEST');
+      apiServiceMock.post = vi.fn().mockReturnValue(throwError(() => error)) as PostFn;
+
+      expect(firstValueFrom(playerSeasonStatApi.createPlayerSeasonStat(input))).rejects.toThrow(
+        error.message,
+      );
+    });
+
+    it('does not map the result on error', async () => {
+      apiServiceMock.post = vi.fn().mockReturnValue(throwError(() => new Error())) as PostFn;
+
+      expect(
+        firstValueFrom(playerSeasonStatApi.createPlayerSeasonStat(input)),
+      ).rejects.toBeInstanceOf(Error);
+    });
   });
 
   // getPlayerSeasonStatsBySeasonId ----------------------------------------------------------------
