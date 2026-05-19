@@ -9,6 +9,26 @@
     <app-input-text property="lastName" label="Last name" [required]="true" />
     <app-input-text property="fullName" label="Full name" />
 
+    <app-input-autocomplete
+      property="position"
+      label="Position"
+      optionLabel="name"
+      placeholder="Search position..."
+      [suggestions]="positions()"
+      [required]="true"
+      (completeMethod)="onPositionSearch($event)"
+    />
+
+    <app-input-autocomplete
+      property="team"
+      label="Team"
+      optionLabel="name"
+      placeholder="Search team..."
+      [suggestions]="teams()"
+      [required]="true"
+      (completeMethod)="onTeamSearch($event)"
+    />
+
     <app-input-number property="statSourceId" label="Stat source ID" />
     <app-input-number property="premierLeagueId" label="Premier League ID" />
 
