@@ -88,6 +88,11 @@ export class RouterService {
     return this.router.navigate(['players', 'create']);
   }
 
+  public navigateToEditPlayer(playerId: number): Promise<boolean> {
+    this.stack.set([]);
+    return this.router.navigate(['players', playerId, 'edit']);
+  }
+
   public navigateToLogin(): Promise<boolean> {
     this.stack.set([]);
     return this.router.navigate(['login']);

@@ -194,6 +194,14 @@ describe('RouterService', () => {
     expect(result).toBe(true);
   });
 
+  it('navigates to edit player', async () => {
+    const playerId = 1;
+    const result = await service.navigateToEditPlayer(playerId);
+
+    expect(mockRouter.navigate).toHaveBeenCalledWith(['players', playerId, 'edit']);
+    expect(result).toBe(true);
+  });
+
   it('navigates to login', async () => {
     const result = await service.navigateToLogin();
 
@@ -281,6 +289,7 @@ describe('RouterService', () => {
             { path: 'players', component: BlankComponent },
             { path: 'players/create', component: BlankComponent },
             { path: 'players/:id', component: BlankComponent },
+            { path: 'players/:id/edit', component: BlankComponent },
             { path: 'seasons', component: BlankComponent },
             { path: 'teams/:id', component: BlankComponent },
             { path: 'd11-teams/:id', component: BlankComponent },
@@ -411,6 +420,26 @@ describe('RouterService', () => {
       expect(service.hasStack()).toBe(false);
     });
 
+    it('clears the stack when navigateToMatch is called with push false', async () => {
+      const router = TestBed.inject(Router);
+      await router.navigate(['/match-weeks/1']);
+      await service.navigateToMatch(1);
+
+      await service.navigateToMatch(2, false);
+
+      expect(service.hasStack()).toBe(false);
+    });
+
+    it('clears the stack when navigateToD11Match is called with push false', async () => {
+      const router = TestBed.inject(Router);
+      await router.navigate(['/match-weeks/1']);
+      await service.navigateToMatch(1);
+
+      await service.navigateToD11Match(1, false);
+
+      expect(service.hasStack()).toBe(false);
+    });
+
     it('clears the stack when push is false', async () => {
       const router = TestBed.inject(Router);
       await router.navigate(['/match-weeks/1']);
@@ -454,6 +483,16 @@ describe('RouterService', () => {
       await service.navigateToMatch(1);
 
       await service.navigateToCreatePlayer();
+
+      expect(service.hasStack()).toBe(false);
+    });
+
+    it('clears the stack on navigateToEditPlayer', async () => {
+      const router = TestBed.inject(Router);
+      await router.navigate(['/match-weeks/1']);
+      await service.navigateToMatch(1);
+
+      await service.navigateToEditPlayer(1);
 
       expect(service.hasStack()).toBe(false);
     });

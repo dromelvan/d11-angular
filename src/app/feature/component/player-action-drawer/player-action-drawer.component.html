@@ -1,0 +1,38 @@
+@if (playerActionService.drawerVisible()) {
+  <div
+    class="fixed inset-0 bg-black/40"
+    style="z-index: 1099"
+    (click)="playerActionService.close()"
+  ></div>
+}
+
+<p-drawer
+  appendTo="body"
+  position="bottom"
+  [modal]="false"
+  [closable]="false"
+  [visible]="playerActionService.drawerVisible()"
+  (visibleChange)="playerActionService.drawerVisible.set($event)"
+  [pt]="{ root: { class: 'rounded-t-[25px] h-auto! max-h-[70%]' } }"
+>
+  <ng-template #header>
+    <div class="grid grid-cols-[1fr_auto_1fr] items-center w-full">
+      <span></span>
+      <span class="font-semibold">{{ playerActionService.player()?.name }}</span>
+      <a class="text-sm justify-self-end cursor-pointer" (click)="playerActionService.close()"
+        >Done</a
+      >
+    </div>
+  </ng-template>
+
+  @if (playerActionService.isAdministrator()) {
+    <button
+      type="button"
+      class="flex items-center gap-3 w-full cursor-pointer"
+      (click)="onEditPlayer()"
+    >
+      <app-icon name="edit" />
+      <span>Edit player</span>
+    </button>
+  }
+</p-drawer>
