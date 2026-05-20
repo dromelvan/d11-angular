@@ -1,9 +1,12 @@
-<app-material-icon-button
-  icon="more_vertical"
-  variant="text"
-  class="absolute! top-2 right-2 z-2`"
-  iconClass="text-primary-contrast"
-/>
+@if (showPlayerAction()) {
+  <app-material-icon-button
+    icon="more_vertical"
+    variant="text"
+    class="absolute! top-2 right-2 z-2`"
+    iconClass="text-primary-contrast"
+    (click)="onOpenDrawer()"
+  />
+}
 
 <div class="app-row-md">
   <app-player-img [player]="player()" [width]="ImgWidth.XXLARGE" />
@@ -30,3 +33,5 @@
     }
   </div>
 </div>
+
+<app-player-action-drawer />
