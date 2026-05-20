@@ -1,4 +1,3 @@
-import { Component } from '@angular/core';
 import type { Player, PlayerSeasonStat, Season } from '@app/core/api';
 import { PlayerApiService, SeasonApiService } from '@app/core/api';
 import { fakePlayer, fakePlayerSeasonStat, fakeSeason } from '@app/test';
@@ -17,14 +16,12 @@ let playerApi: PlayerApiService;
 let seasonApi: SeasonApiService;
 let loadingService: LoadingService;
 
-@Component({
-  template: ` <app-player-page [playerId]="playerId" [seasonId]="seasonId" /> `,
-  standalone: true,
-  imports: [PlayerPageComponent],
-})
-class HostComponent {
-  playerId = 1;
-  seasonId: number | undefined = undefined;
+function buildProviders() {
+  return [
+    { provide: PlayerApiService, useValue: playerApi },
+    { provide: SeasonApiService, useValue: seasonApi },
+    { provide: LoadingService, useValue: loadingService },
+  ];
 }
 
 describe('PlayerPageComponent', () => {
@@ -41,30 +38,24 @@ describe('PlayerPageComponent', () => {
     playerApi = {
       getById: vi.fn().mockReturnValue(of(player)),
       getPlayerSeasonStatsByPlayerId: vi.fn().mockReturnValue(of(playerSeasonStats)),
+      getPlayerTransferContextByPlayerId: vi.fn().mockReturnValue(of(null)),
     } as unknown as PlayerApiService;
 
     seasonApi = {
       getAll: vi.fn().mockReturnValue(of(seasons)),
     } as unknown as SeasonApiService;
 
-    loadingService = {
-      isLoading: vi.fn().mockReturnValue(false),
-      register: vi.fn(),
-    } as unknown as LoadingService;
+    loadingService = { register: vi.fn() } as unknown as LoadingService;
 
-    await render(HostComponent, {
-      providers: [
-        { provide: PlayerApiService, useValue: playerApi },
-        { provide: SeasonApiService, useValue: seasonApi },
-        { provide: LoadingService, useValue: loadingService },
-      ],
+    await render(PlayerPageComponent, {
+      inputs: { playerId: 1 },
+      providers: buildProviders(),
     });
   });
 
   it('renders page', async () => {
     await waitFor(() => {
-      const page = document.querySelector('.app-player-page');
-      expect(page).toBeInTheDocument();
+      expect(document.querySelector('.app-player-page')).toBeInTheDocument();
     });
   });
 
@@ -102,28 +93,22 @@ describe('PlayerPageComponent with undefined playerSeasonStat', () => {
     player = fakePlayer();
     season = fakeSeason();
     seasons = [season];
-    playerSeasonStats = [];
 
     playerApi = {
       getById: vi.fn().mockReturnValue(of(player)),
       getPlayerSeasonStatsByPlayerId: vi.fn().mockReturnValue(of([])),
+      getPlayerTransferContextByPlayerId: vi.fn().mockReturnValue(of(null)),
     } as unknown as PlayerApiService;
-
-    loadingService = {
-      isLoading: vi.fn().mockReturnValue(false),
-      register: vi.fn(),
-    } as unknown as LoadingService;
 
     seasonApi = {
       getAll: vi.fn().mockReturnValue(of(seasons)),
     } as unknown as SeasonApiService;
 
-    await render(HostComponent, {
-      providers: [
-        { provide: PlayerApiService, useValue: playerApi },
-        { provide: SeasonApiService, useValue: seasonApi },
-        { provide: LoadingService, useValue: loadingService },
-      ],
+    loadingService = { register: vi.fn() } as unknown as LoadingService;
+
+    await render(PlayerPageComponent, {
+      inputs: { playerId: 1 },
+      providers: buildProviders(),
     });
   });
 
@@ -161,6 +146,49 @@ describe('PlayerPageComponent with undefined playerSeasonStat', () => {
   });
 });
 
+describe('PlayerPageComponent with seasonId', () => {
+  let season2: Season;
+
+  beforeEach(async () => {
+    player = fakePlayer();
+    season = fakeSeason();
+    season2 = fakeSeason();
+
+    const playerSeasonStat1 = fakePlayerSeasonStat();
+    playerSeasonStat1.season = season;
+    playerSeasonStat1.player = player;
+
+    const playerSeasonStat2 = fakePlayerSeasonStat();
+    playerSeasonStat2.season = season2;
+    playerSeasonStat2.player = player;
+
+    playerApi = {
+      getById: vi.fn().mockReturnValue(of(player)),
+      getPlayerSeasonStatsByPlayerId: vi
+        .fn()
+        .mockReturnValue(of([playerSeasonStat1, playerSeasonStat2])),
+      getPlayerTransferContextByPlayerId: vi.fn().mockReturnValue(of(null)),
+    } as unknown as PlayerApiService;
+
+    seasonApi = {
+      getAll: vi.fn().mockReturnValue(of([season, season2])),
+    } as unknown as SeasonApiService;
+
+    loadingService = { register: vi.fn() } as unknown as LoadingService;
+
+    await render(PlayerPageComponent, {
+      inputs: { playerId: 1, seasonId: season2.id },
+      providers: buildProviders(),
+    });
+  });
+
+  it('renders the season matching seasonId', async () => {
+    await waitFor(() => {
+      expect(screen.getByText(`Season ${season2.name}`)).toBeInTheDocument();
+    });
+  });
+});
+
 describe('PlayerPageComponent when loading', () => {
   beforeEach(async () => {
     player = fakePlayer();
@@ -170,28 +198,22 @@ describe('PlayerPageComponent when loading', () => {
     playerApi = {
       getById: vi.fn().mockReturnValue(of(player)),
       getPlayerSeasonStatsByPlayerId: vi.fn().mockReturnValue(of([])),
+      getPlayerTransferContextByPlayerId: vi.fn().mockReturnValue(of(null)),
     } as unknown as PlayerApiService;
 
     seasonApi = {
       getAll: vi.fn().mockReturnValue(of(seasons)),
     } as unknown as SeasonApiService;
 
-    loadingService = {
-      isLoading: vi.fn().mockReturnValue(true),
-      register: vi.fn(),
-    } as unknown as LoadingService;
+    loadingService = { register: vi.fn() } as unknown as LoadingService;
 
-    await render(HostComponent, {
-      providers: [
-        { provide: PlayerApiService, useValue: playerApi },
-        { provide: SeasonApiService, useValue: seasonApi },
-        { provide: LoadingService, useValue: loadingService },
-      ],
+    await render(PlayerPageComponent, {
+      inputs: { playerId: 1 },
+      providers: buildProviders(),
     });
   });
 
-  it('does not render page', async () => {
-    const page = document.querySelector('.app-player-page');
-    expect(page).not.toBeInTheDocument();
+  it('does not render page', () => {
+    expect(document.querySelector('.app-player-page')).not.toBeInTheDocument();
   });
 });

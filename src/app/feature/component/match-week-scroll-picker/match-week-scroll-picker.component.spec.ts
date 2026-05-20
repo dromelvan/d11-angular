@@ -148,6 +148,7 @@ describe('MatchWeekScrollPickerComponent', () => {
     fixture.componentRef.setInput('seasonId', matchWeek.season.id);
     fixture.detectChanges();
     await fixture.whenStable();
+    TestBed.tick();
 
     expect(emitted).toEqual([currentMatchWeek]);
   });
