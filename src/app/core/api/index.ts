@@ -29,6 +29,7 @@ export * from './model/player-search-result.model';
 export * from './model/player-season-stat.model';
 export * from './model/player-season-stat-page.model';
 export * from './model/player-season-stat-sort.model';
+export * from './model/player-transfer-context-transfer-bid.model';
 export * from './model/player-transfer-context.model';
 export * from './model/position.model';
 export * from './model/season.model';

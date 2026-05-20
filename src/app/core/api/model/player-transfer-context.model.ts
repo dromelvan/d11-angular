@@ -1,7 +1,6 @@
-export interface PlayerTransferContextTransferBid {
-  id: number;
-  fee: number;
-}
+import { PlayerTransferContextTransferBid } from './player-transfer-context-transfer-bid.model';
+
+export type { PlayerTransferContextTransferBid };
 
 export interface PlayerTransferContext {
   playerId?: number;
