@@ -63,6 +63,14 @@ describe('PlayerActionDrawerComponent', () => {
     expect(mockPlayerActionService.close).toHaveBeenCalled();
   });
 
+  it('shows player name in header when drawer is open', async () => {
+    mockPlayerActionService.drawerVisible.set(true);
+    fixture.detectChanges();
+    await fixture.whenStable();
+
+    expect(screen.getByText(mockPlayerActionService.player()!.name)).toBeInTheDocument();
+  });
+
   it('calls close() when Done is clicked', async () => {
     mockPlayerActionService.drawerVisible.set(true);
     fixture.detectChanges();

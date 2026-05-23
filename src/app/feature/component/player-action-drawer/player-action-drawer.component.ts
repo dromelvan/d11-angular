@@ -15,7 +15,8 @@ export class PlayerActionDrawerComponent {
   private routerService = inject(RouterService);
 
   protected onEditPlayer(): void {
+    const playerId = this.playerActionService.player()!.id;
     this.playerActionService.close();
-    this.routerService.navigateToEditPlayer(this.playerActionService.player()!.id);
+    this.routerService.navigateToEditPlayer(playerId);
   }
 }
