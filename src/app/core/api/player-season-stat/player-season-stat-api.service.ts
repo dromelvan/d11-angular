@@ -3,7 +3,9 @@ import { inject, Injectable } from '@angular/core';
 import { map, Observable } from 'rxjs';
 import { ApiService } from '@app/core/api/api.service';
 import { CreatePlayerSeasonStatInput } from '@app/core/api/model/create-player-season-stat-input.model';
+import { UpdatePlayerSeasonStatInput } from '@app/core/api/model/update-player-season-stat-input.model';
 import { CreatePlayerSeasonStatInputRequestBody } from './create-player-season-stat-input-request-body.model';
+import { UpdatePlayerSeasonStatInputRequestBody } from './update-player-season-stat-input-request-body.model';
 import { PlayerSeasonStat } from '@app/core/api/model/player-season-stat.model';
 import { PlayerSeasonStatSort } from '../model/player-season-stat-sort.model';
 import { PlayerSeasonStatResponseBody } from '../player/player-season-stat-response-body.model';
@@ -48,6 +50,16 @@ export class PlayerSeasonStatApiService {
     const body: CreatePlayerSeasonStatInputRequestBody = { playerSeasonStat: input };
     return this.apiService
       .post<PlayerSeasonStatResponseBody>(this.namespace, undefined, body)
+      .pipe(map((result) => result.playerSeasonStat));
+  }
+
+  updatePlayerSeasonStat(
+    playerSeasonStatId: number,
+    input: UpdatePlayerSeasonStatInput,
+  ): Observable<PlayerSeasonStat> {
+    const body: UpdatePlayerSeasonStatInputRequestBody = { playerSeasonStat: input };
+    return this.apiService
+      .put<PlayerSeasonStatResponseBody>(this.namespace, playerSeasonStatId, body)
       .pipe(map((result) => result.playerSeasonStat));
   }
 }
