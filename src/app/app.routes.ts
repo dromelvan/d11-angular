@@ -27,6 +27,13 @@ export const routes: Routes = [
       ),
   },
   {
+    path: 'players/:playerId/edit',
+    loadComponent: () =>
+      import('@app/feature/page/edit-player/edit-player-page.component').then(
+        (m) => m.EditPlayerPageComponent,
+      ),
+  },
+  {
     path: 'players/:playerId',
     loadComponent: () =>
       import('@app/feature/page/player/player-page.component').then((m) => m.PlayerPageComponent),
