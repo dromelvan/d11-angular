@@ -1,0 +1,11 @@
+<div class="app-create-transfer-window flex flex-col gap-6 p-4">
+  <div class="flex flex-col items-center gap-2">
+    <h1 class="text-xl font-semibold">New transfer window</h1>
+  </div>
+
+  <form [formGroup]="form" (ngSubmit)="onSubmit()" class="flex flex-col gap-4">
+    <app-input-datetime property="datetime" label="Datetime" [required]="true" />
+    <app-input-number property="transferDayDelay" label="Transfer day delay" [required]="true" />
+    <app-button-submit [form]="form" [working]="isLoading" label="Create transfer window" />
+  </form>
+</div>
