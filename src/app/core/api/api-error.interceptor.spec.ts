@@ -56,6 +56,45 @@ describe('apiErrorInterceptor', () => {
     }
   }
 
+  async function post400RequestWithoutValidationErrors(): Promise<void> {
+    const promise = firstValueFrom(http.post('/api', {}));
+
+    const request = httpMock.expectOne('/api');
+    request.flush({}, { status: 400, statusText: 'Bad Request' });
+
+    try {
+      await promise;
+    } catch {
+      // Expected
+    }
+  }
+
+  async function post409Request(): Promise<void> {
+    const promise = firstValueFrom(http.post('/api', {}));
+
+    const request = httpMock.expectOne('/api');
+    request.flush({ message: 'Resource already exists' }, { status: 409, statusText: 'Conflict' });
+
+    try {
+      await promise;
+    } catch {
+      // Expected
+    }
+  }
+
+  async function post409RequestWithoutMessage(): Promise<void> {
+    const promise = firstValueFrom(http.post('/api', {}));
+
+    const request = httpMock.expectOne('/api');
+    request.flush({}, { status: 409, statusText: 'Conflict' });
+
+    try {
+      await promise;
+    } catch {
+      // Expected
+    }
+  }
+
   beforeEach(() => {
     const routerMock = {
       navigate: vi.fn().mockResolvedValue(true),
@@ -125,7 +164,7 @@ describe('apiErrorInterceptor', () => {
     );
   });
 
-  it.each([403, 404, 409, 500])('sets API error for HTTP status %i', async (status) => {
+  it.each([403, 404, 500])('sets API error for HTTP status %i', async (status) => {
     await postRequest(status);
 
     expect(apiErrorService.setError).toHaveBeenCalledWith(
@@ -137,7 +176,7 @@ describe('apiErrorInterceptor', () => {
     );
   });
 
-  it.each([403, 404, 409, 500])('navigates to api-error for HTTP status %i', async (status) => {
+  it.each([403, 404, 500])('navigates to api-error for HTTP status %i', async (status) => {
     await postRequest(status);
 
     expect(router.navigate).toHaveBeenCalledWith(['api-error']);
@@ -197,5 +236,53 @@ describe('apiErrorInterceptor', () => {
     await post400Request();
 
     expect(apiErrorService.setError).not.toHaveBeenCalled();
+  });
+
+  it('uses response message as detail for HTTP status 400 without validation errors', async () => {
+    await post400RequestWithoutValidationErrors();
+
+    expect(messageService.add).toHaveBeenCalledWith(
+      expect.objectContaining({
+        detail: 'Http failure response for /api: 400 Bad Request',
+      }),
+    );
+  });
+
+  it('shows toast with message for HTTP status 409', async () => {
+    await post409Request();
+
+    expect(messageService.add).toHaveBeenCalledWith({
+      severity: 'error',
+      summary: 'Oooops!',
+      detail: 'Resource already exists',
+    });
+  });
+
+  it('ticks change detection after showing toast for HTTP status 409', async () => {
+    await post409Request();
+
+    expect(appRef.tick).toHaveBeenCalled();
+  });
+
+  it('does not navigate for HTTP status 409', async () => {
+    await post409Request();
+
+    expect(router.navigate).not.toHaveBeenCalled();
+  });
+
+  it('does not set API error for HTTP status 409', async () => {
+    await post409Request();
+
+    expect(apiErrorService.setError).not.toHaveBeenCalled();
+  });
+
+  it('uses response message as detail for HTTP status 409 without error message', async () => {
+    await post409RequestWithoutMessage();
+
+    expect(messageService.add).toHaveBeenCalledWith(
+      expect.objectContaining({
+        detail: 'Http failure response for /api: 409 Conflict',
+      }),
+    );
   });
 });

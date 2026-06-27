@@ -44,6 +44,12 @@ function handleHttpError(
     appRef.tick();
     return;
   }
+  if (response.status === 409) {
+    const detail = (response.error as { message?: string })?.message ?? response.message;
+    messageService.add({ severity: 'error', summary: 'Oooops!', detail });
+    appRef.tick();
+    return;
+  }
   apiErrorService.setError({
     status: response.status,
     method: request.method,
