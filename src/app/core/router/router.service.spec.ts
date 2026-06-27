@@ -194,6 +194,13 @@ describe('RouterService', () => {
     expect(result).toBe(true);
   });
 
+  it('navigates to create transfer window', async () => {
+    const result = await service.navigateToCreateTransferWindow();
+
+    expect(mockRouter.navigate).toHaveBeenCalledWith(['transfer-windows', 'create']);
+    expect(result).toBe(true);
+  });
+
   it('navigates to edit player', async () => {
     const playerId = 1;
     const result = await service.navigateToEditPlayer(playerId);
@@ -293,6 +300,7 @@ describe('RouterService', () => {
             { path: 'seasons', component: BlankComponent },
             { path: 'teams/:id', component: BlankComponent },
             { path: 'd11-teams/:id', component: BlankComponent },
+            { path: 'transfer-windows/create', component: BlankComponent },
           ]),
         ],
       });
@@ -483,6 +491,16 @@ describe('RouterService', () => {
       await service.navigateToMatch(1);
 
       await service.navigateToCreatePlayer();
+
+      expect(service.hasStack()).toBe(false);
+    });
+
+    it('clears the stack on navigateToCreateTransferWindow', async () => {
+      const router = TestBed.inject(Router);
+      await router.navigate(['/match-weeks/1']);
+      await service.navigateToMatch(1);
+
+      await service.navigateToCreateTransferWindow();
 
       expect(service.hasStack()).toBe(false);
     });

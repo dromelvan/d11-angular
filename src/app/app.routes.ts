@@ -98,6 +98,13 @@ export const routes: Routes = [
     data: { section: 'Tables' },
   },
   {
+    path: 'transfer-windows/create',
+    loadComponent: () =>
+      import('@app/feature/page/create-transfer-window/create-transfer-window-page.component').then(
+        (m) => m.CreateTransferWindowPageComponent,
+      ),
+  },
+  {
     path: 'transfers/:transferWindowId',
     loadComponent: () =>
       import('@app/feature/page/transfers/transfers-page.component').then(
