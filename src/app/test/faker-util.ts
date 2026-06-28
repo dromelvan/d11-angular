@@ -112,6 +112,7 @@ export const fakeSeasonBase = (): SeasonBase => ({
   id: faker.number.int({ min: 1, max: 100 }),
   name: `${faker.date.past().getFullYear()}-${faker.date.past().getFullYear() + 1}`,
   shortName: `${faker.number.int({ min: 20, max: 25 })}-${faker.number.int({ min: 20, max: 25 })}`,
+  status: faker.helpers.enumValue(Status),
 });
 
 export const fakeSeason = (): Season => ({
