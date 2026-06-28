@@ -1,9 +1,11 @@
 import { HttpInterceptorFn } from '@angular/common/http';
 import { inject } from '@angular/core';
-import { of } from 'rxjs';
-import { switchMap } from 'rxjs/operators';
+import { Observable, of } from 'rxjs';
+import { finalize, shareReplay, switchMap } from 'rxjs/operators';
 import { environment } from '../../../environments/environment';
 import { UserSessionService } from './user-session.service';
+
+let refreshingToken$: Observable<string> | null = null;
 
 export const authenticationInterceptor: HttpInterceptorFn = (request, next) => {
   const userSession = inject(UserSessionService);
@@ -30,7 +32,18 @@ export const authenticationInterceptor: HttpInterceptorFn = (request, next) => {
 
   const isExpired = userSession.isJwtExpired();
 
-  return (isExpired ? userSession.authorize() : of(jwt)).pipe(
+  if (isExpired) {
+    if (!refreshingToken$) {
+      refreshingToken$ = userSession.authorize().pipe(
+        finalize(() => {
+          refreshingToken$ = null;
+        }),
+        shareReplay(1),
+      );
+    }
+  }
+
+  return (isExpired ? refreshingToken$! : of(jwt)).pipe(
     switchMap((freshJwt) =>
       next(request.clone({ setHeaders: { Authorization: `Bearer ${freshJwt}` } })),
     ),

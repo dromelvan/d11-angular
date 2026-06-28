@@ -2,7 +2,7 @@ import { HttpClient, provideHttpClient, withInterceptors } from '@angular/common
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { signal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
-import { of } from 'rxjs';
+import { of, Subject } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { UserSessionService } from './user-session.service';
 import { authenticationInterceptor } from './authentication.interceptor';
@@ -160,6 +160,37 @@ describe('authenticationInterceptor', () => {
       const request = httpMock.expectOne(API_URL);
       expect(mockUserSession.authorize).toHaveBeenCalled();
       expect(request.request.headers.get('Authorization')).toBe(`Bearer ${FRESH_JWT}`);
+    });
+
+    it('calls authorize only once when multiple concurrent requests have an expired JWT', () => {
+      const tokenSubject = new Subject<string>();
+      mockUserSession.authorize.mockReturnValue(tokenSubject);
+      jwtSignal.set(JWT);
+      mockUserSession.isJwtExpired.mockReturnValue(true);
+
+      http.get(API_URL).subscribe();
+      http.get(`${API_URL}/2`).subscribe();
+
+      expect(mockUserSession.authorize).toHaveBeenCalledOnce();
+
+      tokenSubject.next(FRESH_JWT);
+      tokenSubject.complete();
+
+      httpMock.expectOne(API_URL).flush({});
+      httpMock.expectOne(`${API_URL}/2`).flush({});
+    });
+
+    it('calls authorize again after the previous refresh has completed', () => {
+      jwtSignal.set(JWT);
+      mockUserSession.isJwtExpired.mockReturnValue(true);
+
+      http.get(API_URL).subscribe();
+      httpMock.expectOne(API_URL).flush({});
+
+      http.get(`${API_URL}/2`).subscribe();
+      httpMock.expectOne(`${API_URL}/2`);
+
+      expect(mockUserSession.authorize).toHaveBeenCalledTimes(2);
     });
   });
 });
