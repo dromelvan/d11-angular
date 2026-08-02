@@ -2,12 +2,16 @@ import { definePreset, palette } from '@primeuix/themes';
 import Aura from '@primeuix/themes/aura';
 
 export const PRIMARY = '#0b164f';
+export const BACKGROUND = '#f2f1ee';
 
 export const D11Light = definePreset(Aura, {
   semantic: {
     primary: palette(PRIMARY),
     colorScheme: {
       light: {
+        surface: {
+          50: BACKGROUND,
+        },
         primary: {
           hoverColor: 'var(--p-primary-400)',
         },

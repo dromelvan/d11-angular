@@ -3,9 +3,8 @@
 @import "primeicons/primeicons.css";
 
 @theme {
-    --font-sans: InterVariable, sans-serif;
-    --font-sans--font-feature-settings: "cv02", "cv03", "cv04", "cv11";
-
+    /*--font-sans: InterVariable, sans-serif;*/
+    /*--font-sans--font-feature-settings: "cv02", "cv03", "cv04", "cv11";*/
     --breakpoint-sm: 640px;
     --breakpoint-md: 768px;
     --breakpoint-lg: 1024px;
@@ -20,25 +19,26 @@
 }
 
 @layer base {
+    body {
+        background-color: var(--p-surface-50);
+    }
+
     .primary-contrast {
         @apply text-primary-contrast font-semibold hover:text-primary-contrast hover:opacity-85;
     }
 
-    a {
-        @apply text-primary font-medium cursor-pointer;
-    }
-
-    h1 {
-        @apply text-2xl font-bold;
-    }
-
-    h2 {
-        @apply text-xl font-bold;
-    }
-
-    h3 {
-        @apply text-lg font-bold;
-    }
+    /*a {*/
+    /*    @apply text-primary font-medium cursor-pointer;*/
+    /*}*/
+    /*h1 {*/
+    /*    @apply text-2xl font-bold;*/
+    /*}*/
+    /*h2 {*/
+    /*    @apply text-xl font-bold;*/
+    /*}*/
+    /*h3 {*/
+    /*    @apply text-lg font-bold;*/
+    /*}*/
 }
 
 @layer components {
@@ -141,26 +141,21 @@
     }
 
     /* Text styling */
-    .app-text-lowest-emphasis {
-        @apply text-xs text-surface-500;
-    }
-
-    .app-text-low-emphasis {
-        @apply text-sm text-surface-500;
-    }
-
-    .app-text-medium-emphasis {
-        @apply text-sm font-semibold;
-    }
-
-    .app-text-high-emphasis {
-        @apply font-semibold;
-    }
-
-    .app-text-highest-emphasis {
-        @apply text-2xl font-bold text-primary-500;
-    }
-
+    /*.app-text-lowest-emphasis {*/
+    /*    @apply text-xs text-surface-500;*/
+    /*}*/
+    /*.app-text-low-emphasis {*/
+    /*    @apply text-sm text-surface-500;*/
+    /*}*/
+    /*.app-text-medium-emphasis {*/
+    /*    @apply text-sm font-semibold;*/
+    /*}*/
+    /*.app-text-high-emphasis {*/
+    /*    @apply font-semibold;*/
+    /*}*/
+    /*.app-text-highest-emphasis {*/
+    /*    @apply text-2xl font-bold text-primary-500;*/
+    /*}*/
     /* Component styling */
     .app-bg-header {
         @apply bg-[url('/images/header-background.png')]! bg-cover! bg-center!
@@ -183,18 +178,16 @@
         @apply justify-between;
     }
 
-    .p-tab {
-        @apply text-xs uppercase;
-    }
-
+    /*.p-tab {*/
+    /*    @apply text-xs uppercase;*/
+    /*}*/
     .p-avatar img {
         @apply object-cover object-top;
     }
 
-    .p-button-text.p-button-primary {
-        @apply hover:bg-black/10! active:bg-black/20!;
-    }
-
+    /*.p-button-text.p-button-primary {*/
+    /*    @apply hover:bg-black/10! active:bg-black/20!;*/
+    /*}*/
     .p-dialog-header {
         @apply block! p-0!;
     }
@@ -205,6 +198,34 @@
 
     .p-dialog-footer {
         @apply block! border-t border-surface-200;
+    }
+
+    .match-stats-accordion {
+        & .p-accordionpanel {
+            @apply border-0!;
+        }
+
+        & .p-accordionheader {
+            @apply p-0! bg-transparent! border-0! rounded-none! font-normal!;
+            color: inherit !important;
+        }
+
+        & .p-accordionpanel:not(.p-accordionpanel-active):not(.p-disabled) > .p-accordionheader:hover {
+            @apply bg-transparent!;
+            color: inherit !important;
+        }
+
+        & .p-accordioncontent {
+            @apply -mx-4 bg-gray-100!;
+        }
+
+        & .p-accordioncontent-content {
+            @apply p-0! border-0! bg-transparent!;
+        }
+    }
+
+    .match-stats-accordion .p-accordionheader-toggle-icon {
+        display: none !important;
     }
 
 }
