@@ -1,0 +1,17 @@
+<svg
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="1.5"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+  [class]="sizeClass()"
+>
+  @for (element of elements(); track $index) {
+    @if (element.type === 'path') {
+      <path [attr.d]="element.d" />
+    } @else {
+      <circle [attr.cx]="element.cx" [attr.cy]="element.cy" [attr.r]="element.r" />
+    }
+  }
+</svg>
