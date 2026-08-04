@@ -64,6 +64,29 @@ export const D11Light = definePreset(Aura, {
         padding: '1rem 0rem',
       },
     },
+    accordion: {
+      panel: {
+        borderWidth: '0',
+      },
+      header: {
+        padding: '0',
+        fontWeight: '400',
+        borderRadius: '0',
+        color: 'inherit',
+        hoverColor: 'inherit',
+        activeColor: 'inherit',
+        activeHoverColor: 'inherit',
+        background: 'transparent',
+        hoverBackground: 'transparent',
+        activeBackground: 'transparent',
+        activeHoverBackground: 'transparent',
+      },
+      content: {
+        background: '{gray.100}',
+        padding: '0',
+        borderWidth: '0',
+      },
+    },
     dialog: {
       root: {
         borderRadius: '25px',

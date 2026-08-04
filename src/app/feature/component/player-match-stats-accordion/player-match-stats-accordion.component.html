@@ -1,0 +1,121 @@
+<div class="app-row app-text-section-primary pb-2">
+  <div class="w-8">Pos</div>
+  <div class="app-fill">Player</div>
+  <div class="app-text-number w-10">Rtg</div>
+  <div class="app-text-number w-8">Pts</div>
+</div>
+<p-accordion class="player-match-stats-accordion">
+  @for (pms of playerMatchStats(); track pms.player.id; let index = $index) {
+    @if (index === substituteIndex()) {
+      <div class="app-text-section-primary py-2">Substitutes</div>
+    } @else if (index > 0) {
+      <div class="app-section-separator"></div>
+    }
+    <p-accordion-panel [value]="pms.player.id">
+      <p-accordion-header>
+        <div class="app-row app-fill py-2.5 min-w-0">
+          <div class="w-8 shrink-0">{{ pms.position.code }}</div>
+          <div class="app-details-list-row app-fill min-w-0">
+            <span class="app-row-1 min-w-0">
+              <span>{{ pms.player.name }}</span>
+              @if (pms.manOfTheMatch) {
+                <app-icon icon="mom" [size]="16" />
+              }
+              @if (pms.sharedManOfTheMatch) {
+                <app-icon icon="shared_mom" [size]="16" />
+              }
+            </span>
+            <span class="app-row app-text-section-secondary">
+              @if (pms.lineup === Lineup.SUBSTITUTE && pms.substitutionOnTime > 0) {
+                <app-icon icon="substitution_on" [size]="16" />{{ pms.substitutionOnTime }}'
+              }
+              @if (pms.yellowCardTime > 0) {
+                <app-icon icon="yellow_card" [size]="16" />{{ pms.yellowCardTime }}'
+              }
+              @if (pms.redCardTime > 0) {
+                <app-icon icon="red_card" [size]="16" />{{ pms.redCardTime }}'
+              }
+              @if (pms.substitutionOffTime > 0) {
+                <app-icon icon="substitution_off" [size]="16" />{{ pms.substitutionOffTime }}'
+              }
+            </span>
+          </div>
+          @if (pms.lineup === Lineup.SUBSTITUTE && pms.substitutionOnTime <= 0) {
+            <div class="app-text-section-secondary">SUB</div>
+          } @else {
+            <div class="app-text-number w-10">
+              {{ pms.rating | rating }}
+            </div>
+            <div class="app-text-primary app-text-number w-8">
+              {{ pms.points }}
+            </div>
+          }
+        </div>
+      </p-accordion-header>
+
+      <p-accordion-content>
+        <div class="app-col gap-2.5 p-4">
+          @if (!pms.d11Team.dummy) {
+            <div class="app-details-list-row">
+              <span>D11 team</span>
+              <span class="app-row-1">
+                <app-d11-team-img [d11Team]="pms.d11Team" width="20" />
+                {{ pms.d11Team.name }}
+              </span>
+            </div>
+          }
+          @if (pms.lineup === Lineup.DID_NOT_PARTICIPATE) {
+            <div class="app-text-secondary">Did not participate</div>
+          } @else if (pms.lineup === Lineup.SUBSTITUTE && pms.substitutionOnTime <= 0) {
+            <div class="app-text-secondary">Unused substitute</div>
+          } @else {
+            @if (pms.goals > 0) {
+              <div class="app-details-list-row">
+                <span>Goals</span>
+                <span>{{ pms.goals }}</span>
+              </div>
+            }
+            @if (pms.goalAssists > 0) {
+              <div class="app-details-list-row">
+                <span>Assists</span>
+                <span>{{ pms.goalAssists }}</span>
+              </div>
+            }
+            @if (pms.ownGoals > 0) {
+              <div class="app-details-list-row">
+                <span>Own goals</span>
+                <span>{{ pms.ownGoals }}</span>
+              </div>
+            }
+            @if (pms.goalsConceded === 0 && pms.position.id < 5) {
+              <div class="app-details-list-row">
+                <span>Clean sheet</span>
+                <app-icon icon="check" [size]="16" />
+              </div>
+            }
+            @if (pms.goalsConceded > 0 && pms.position.defender) {
+              <div class="app-details-list-row">
+                <span>Goals conceded</span>
+                <span>{{ pms.goalsConceded }}</span>
+              </div>
+            }
+            <div class="app-details-list-row">
+              <span>Minutes played</span>
+              <span>{{ minutesPlayed(pms) }}</span>
+            </div>
+          }
+          <button
+            (click)="navigateToPlayer(pms.player.id)"
+            class="app-text-primary app-details-list-row mt-2"
+          >
+            <span class="app-text-icon">
+              <app-svg-icon name="person" size="sm" />
+              Player profile
+            </span>
+            <app-svg-icon name="chevron-right" size="sm" />
+          </button>
+        </div>
+      </p-accordion-content>
+    </p-accordion-panel>
+  }
+</p-accordion>
