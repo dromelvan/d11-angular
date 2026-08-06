@@ -1,0 +1,13 @@
+<div
+  class="app-hero-background fixed left-0 right-0 z-1"
+  [style.background-color]="color()"
+  [style.height.rem]="height() * 0.25"
+></div>
+
+<div class="pt-18 pb-2 relative z-2" [ngClass]="textClass()">
+  <ng-content select="[heroContent]" />
+</div>
+
+<div class="-mx-4 -mt-4 px-4 pt-4 bg-surface-50 rounded-t-2xl relative z-2">
+  <ng-content />
+</div>
