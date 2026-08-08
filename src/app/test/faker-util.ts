@@ -142,6 +142,7 @@ export const fakeStadium = (): Stadium => ({
 const fakeMatchWeekBase = (): MatchWeekBase => ({
   id: faker.number.int({ min: 1, max: 38 }),
   matchWeekNumber: faker.number.int({ min: 1, max: 38 }),
+  season: fakeSeasonBase(),
 });
 
 export const fakeMatchWeek = (): MatchWeek => ({
