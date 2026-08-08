@@ -1,125 +1,130 @@
-import { Component } from '@angular/core';
+import { signal } from '@angular/core';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { of } from 'rxjs';
+import { beforeEach, describe, expect, vi } from 'vitest';
 import { Match, PlayerMatchStat, Status, TeamBase } from '@app/core/api';
 import { MatchApiService } from '@app/core/api/match/match-api.service';
-import { fakeMatch, fakePlayerMatchStat, fakeTeamBase } from '@app/test';
 import { LoadingService } from '@app/core/loading/loading.service';
-import { RouterService } from '@app/core/router/router.service';
-import { DynamicDialogService } from '@app/shared/dialog/dynamic-dialog-service/dynamic-dialog.service';
-import { render, waitFor } from '@testing-library/angular';
-import { of } from 'rxjs';
-import { expect, vi } from 'vitest';
+import { PageContextService } from '@app/core/page-context/page-context.service';
+import { fakeMatch, fakePlayerMatchStat, fakeTeamBase } from '@app/test';
 import { MatchPageComponent } from './match-page.component';
 
-let match: Match;
-let playerMatchStats: PlayerMatchStat[];
-
-let matchApi: MatchApiService;
-let loadingService: LoadingService;
-
-@Component({
-  template: ` <app-match-page [matchId]="matchId" />`,
-  standalone: true,
-  imports: [MatchPageComponent],
-})
-class HostComponent {
-  matchId = 1;
+interface MatchPageInternal {
+  getTeamStats: (teamId: number) => PlayerMatchStat[];
 }
 
-const mockDynamicDialogService = { openPlayerMatchStat: vi.fn() };
-const mockRouterService = { navigateToPlayer: vi.fn() };
-
 describe('MatchPageComponent', () => {
-  describe('pending', () => {
+  const mockLoadingService = { register: vi.fn() };
+  const mockPageContextService = {
+    register: vi.fn(),
+    backgroundColor: signal('#000000'),
+    textClass: signal('text-white'),
+  };
+
+  async function setup(match: Match, playerMatchStats: PlayerMatchStat[] = []) {
+    vi.clearAllMocks();
+
+    await TestBed.configureTestingModule({
+      imports: [MatchPageComponent],
+      providers: [
+        {
+          provide: MatchApiService,
+          useValue: {
+            getById: vi.fn().mockReturnValue(of(match)),
+            getPlayerMatchStatsByMatchId: vi.fn().mockReturnValue(of(playerMatchStats)),
+          },
+        },
+        { provide: LoadingService, useValue: mockLoadingService },
+        { provide: PageContextService, useValue: mockPageContextService },
+      ],
+    }).compileComponents();
+  }
+
+  async function createFixture(match: Match): Promise<ComponentFixture<MatchPageComponent>> {
+    const fixture = TestBed.createComponent(MatchPageComponent);
+    fixture.componentRef.setInput('matchId', match.id);
+    fixture.detectChanges();
+    await fixture.whenStable();
+    return fixture;
+  }
+
+  describe('pending match', () => {
+    let fixture: ComponentFixture<MatchPageComponent>;
+    let component: MatchPageComponent;
+    let match: Match;
+
     beforeEach(async () => {
-      const homeTeam = fakeTeamBase();
-      const awayTeam = fakeTeamBase();
-      match = { ...fakeMatch(), homeTeam, awayTeam, status: Status.PENDING };
-
-      matchApi = {
-        getById: vi.fn().mockReturnValue(of(match)),
-        getPlayerMatchStatsByMatchId: vi.fn().mockReturnValue(of([])),
-      } as unknown as MatchApiService;
-
-      loadingService = { register: vi.fn() } as unknown as LoadingService;
-
-      await render(HostComponent, {
-        providers: [
-          { provide: MatchApiService, useValue: matchApi },
-          { provide: LoadingService, useValue: loadingService },
-          { provide: DynamicDialogService, useValue: mockDynamicDialogService },
-          { provide: RouterService, useValue: mockRouterService },
-        ],
-      });
+      match = { ...fakeMatch(), status: Status.PENDING };
+      await setup(match);
+      fixture = await createFixture(match);
+      component = fixture.componentInstance;
     });
 
-    it('renders', async () => {
-      await waitFor(() => {
-        expect(document.querySelector('.app-match-page')).toBeInTheDocument();
-      });
+    it('creates the component', () => {
+      expect(component).toBeTruthy();
     });
 
-    it('renders match header', async () => {
-      await waitFor(() => {
-        expect(document.querySelector('.app-match-header-card')).toBeInTheDocument();
-      });
+    it('registers loading with LoadingService', () => {
+      expect(mockLoadingService.register).toHaveBeenCalledOnce();
     });
 
-    it('does not render player stats', async () => {
-      await waitFor(() => {
-        expect(document.querySelector('app-team-player-match-stats')).not.toBeInTheDocument();
-      });
+    it('registers context with PageContextService', () => {
+      expect(mockPageContextService.register).toHaveBeenCalledOnce();
+    });
+
+    it('renders app-match-hero', () => {
+      expect(fixture.nativeElement.querySelector('app-match-hero')).toBeTruthy();
+    });
+
+    it('does not render player stats sections', () => {
+      expect(fixture.nativeElement.querySelector('app-team-player-match-stats-section')).toBeNull();
     });
   });
 
-  describe('not pending', () => {
+  describe('finished match', () => {
+    let fixture: ComponentFixture<MatchPageComponent>;
+
+    beforeEach(async () => {
+      const homeTeam = fakeTeamBase();
+      const awayTeam = fakeTeamBase();
+      const match = { ...fakeMatch(), homeTeam, awayTeam, status: Status.FINISHED };
+      const stat = { ...fakePlayerMatchStat(), team: homeTeam };
+      await setup(match, [stat]);
+      fixture = await createFixture(match);
+    });
+
+    it('renders app-match-hero', () => {
+      expect(fixture.nativeElement.querySelector('app-match-hero')).toBeTruthy();
+    });
+
+    it('renders player stats section for both teams', () => {
+      expect(
+        fixture.nativeElement.querySelectorAll('app-team-player-match-stats-section'),
+      ).toHaveLength(2);
+    });
+  });
+
+  describe('getTeamStats', () => {
+    let component: MatchPageComponent;
     let homeTeam: TeamBase;
     let awayTeam: TeamBase;
 
     beforeEach(async () => {
       homeTeam = fakeTeamBase();
       awayTeam = fakeTeamBase();
-      match = { ...fakeMatch(), homeTeam, awayTeam, status: Status.FINISHED };
-
-      const playerMatchStat = fakePlayerMatchStat();
-      playerMatchStat.match = { ...playerMatchStat.match, homeTeam, awayTeam };
-      playerMatchStat.team = homeTeam;
-      playerMatchStats = [playerMatchStat];
-
-      matchApi = {
-        getById: vi.fn().mockReturnValue(of(match)),
-        getPlayerMatchStatsByMatchId: vi.fn().mockReturnValue(of(playerMatchStats)),
-      } as unknown as MatchApiService;
-
-      loadingService = {
-        register: vi.fn(),
-      } as unknown as LoadingService;
-
-      await render(HostComponent, {
-        providers: [
-          { provide: MatchApiService, useValue: matchApi },
-          { provide: LoadingService, useValue: loadingService },
-          { provide: DynamicDialogService, useValue: mockDynamicDialogService },
-          { provide: RouterService, useValue: mockRouterService },
-        ],
-      });
+      const match = { ...fakeMatch(), homeTeam, awayTeam, status: Status.FINISHED };
+      const homeStat = { ...fakePlayerMatchStat(), team: homeTeam };
+      await setup(match, [homeStat]);
+      const fixture = await createFixture(match);
+      component = fixture.componentInstance;
     });
 
-    it('renders', async () => {
-      await waitFor(() => {
-        expect(document.querySelector('.app-match-page')).toBeInTheDocument();
-      });
+    it('returns stats for the given team', () => {
+      expect((component as unknown as MatchPageInternal).getTeamStats(homeTeam.id)).toHaveLength(1);
     });
 
-    it('renders match header', async () => {
-      await waitFor(() => {
-        expect(document.querySelector('.app-match-header-card')).toBeInTheDocument();
-      });
-    });
-
-    it('renders player stats for both teams', async () => {
-      await waitFor(() => {
-        expect(document.querySelectorAll('app-team-player-match-stats')).toHaveLength(2);
-      });
+    it('returns empty array for a team with no stats', () => {
+      expect((component as unknown as MatchPageInternal).getTeamStats(awayTeam.id)).toHaveLength(0);
     });
   });
 });

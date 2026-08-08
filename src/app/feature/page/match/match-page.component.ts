@@ -1,30 +1,25 @@
 import { Component, computed, DestroyRef, inject, input, numberAttribute } from '@angular/core';
-import { DatePipe, Location, NgClass } from '@angular/common';
-import { RouterLink } from '@angular/router';
 import { rxResource } from '@angular/core/rxjs-interop';
-import { Lineup, Match, PlayerMatchStat, Status, TeamBase } from '@app/core/api';
+import { Match, PlayerMatchStat, Status, TeamBase } from '@app/core/api';
 import { MatchApiService } from '@app/core/api/match/match-api.service';
 import { LoadingService } from '@app/core/loading/loading.service';
-import { RatingPipe } from '@app/shared/pipes/rating.pipe';
+import { PageContextService } from '@app/core/page-context/page-context.service';
 import { sortByTeam } from '@app/shared/util/player-match-stat-util';
-import { contrastTextClass } from '@app/shared/util/contrast-text.util';
 import { matchEvents } from '@app/shared/util/match-events.util';
 import { MatchEvent } from '@app/shared/model';
 import { PRIMARY } from '@app/app.theme';
-import { environment } from '../../../../environments/environment';
-import { Accordion, AccordionContent, AccordionHeader, AccordionPanel } from 'primeng/accordion';
+import { MatchHeroComponent } from '@app/feature/hero/match-hero/match-hero.component';
+import { MatchEventsSectionComponent } from '@app/feature/section/match-events-section/match-events-section.component';
+import { TeamPlayerMatchStatsSectionComponent } from '@app/feature/section/team-player-match-stats-section/team-player-match-stats-section.component';
+import { HeroContainerComponent } from '@app/feature/hero/hero-container/hero-container.component';
 
 @Component({
   selector: 'app-match-page',
   imports: [
-    NgClass,
-    DatePipe,
-    RouterLink,
-    RatingPipe,
-    Accordion,
-    AccordionPanel,
-    AccordionHeader,
-    AccordionContent,
+    MatchHeroComponent,
+    MatchEventsSectionComponent,
+    TeamPlayerMatchStatsSectionComponent,
+    HeroContainerComponent,
   ],
   templateUrl: './match-page.component.html',
 })
@@ -32,8 +27,6 @@ export class MatchPageComponent {
   matchId = input.required({ transform: numberAttribute });
 
   protected readonly Status = Status;
-  protected readonly Lineup = Lineup;
-  protected readonly imageHost = environment.imageHost;
 
   protected rxMatch = rxResource<Match, number>({
     params: () => this.matchId(),
@@ -52,17 +45,12 @@ export class MatchPageComponent {
         : undefined;
     const teams: TeamBase[] = match ? [match.homeTeam, match.awayTeam] : [];
 
-    return {
-      match,
-      playerMatchStats,
-      teams,
-    };
+    return { match, playerMatchStats, teams };
   });
   protected isLoading = computed(
     () => this.rxMatch.isLoading() || this.rxPlayerMatchStats.isLoading(),
   );
   protected backgroundColor = computed(() => this.rxMatch.value()?.homeTeam.colour ?? PRIMARY);
-  protected textClass = computed(() => contrastTextClass(this.backgroundColor()));
   protected matchEventsList = computed<MatchEvent[]>(() => {
     const match = this.rxMatch.value();
     if (!match) return [];
@@ -71,30 +59,25 @@ export class MatchPageComponent {
 
   private matchApiService = inject(MatchApiService);
   private loadingService = inject(LoadingService);
-  private location = inject(Location);
+  private pageContextService = inject(PageContextService);
 
   constructor() {
-    this.loadingService.register(inject(DestroyRef), this.isLoading);
+    const destroyRef = inject(DestroyRef);
+    this.loadingService.register(destroyRef, this.isLoading);
+    this.pageContextService.register(destroyRef, {
+      title: computed(() => {
+        const number = this.rxMatch.value()?.matchWeek.matchWeekNumber;
+        return number !== undefined ? `Match Week ${number}` : undefined;
+      }),
+      subtitle: computed(() => {
+        const name = this.rxMatch.value()?.matchWeek.season.name;
+        return name !== undefined ? `Season ${name}` : undefined;
+      }),
+      backgroundColor: this.backgroundColor,
+    });
   }
 
-  protected goBack(): void {
-    this.location.back();
-  }
-
-  protected getTeamStats(stats: PlayerMatchStat[], teamId: number): PlayerMatchStat[] {
-    return stats.filter((pms) => pms.team.id === teamId);
-  }
-
-  protected getSubstituteIndex(stats: PlayerMatchStat[]): number {
-    return stats.findIndex((pms) => pms.lineup === Lineup.SUBSTITUTE);
-  }
-
-  protected minutesPlayed(pms: PlayerMatchStat): number {
-    const started = pms.lineup === Lineup.STARTING_LINEUP;
-    const played = started || pms.substitutionOnTime > 0;
-    if (!played) return 0;
-    const startTime = started ? 0 : pms.substitutionOnTime;
-    const endTime = pms.substitutionOffTime > 0 ? pms.substitutionOffTime : 90;
-    return endTime - startTime;
+  protected getTeamStats(teamId: number): PlayerMatchStat[] {
+    return (this.model().playerMatchStats ?? []).filter((pms) => pms.team.id === teamId);
   }
 }
