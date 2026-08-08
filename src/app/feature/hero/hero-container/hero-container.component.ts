@@ -1,5 +1,6 @@
-import { Component, input } from '@angular/core';
+import { Component, computed, inject, input } from '@angular/core';
 import { NgClass } from '@angular/common';
+import { PageContextService } from '@app/core/page-context/page-context.service';
 
 @Component({
   selector: 'app-hero-container',
@@ -8,7 +9,10 @@ import { NgClass } from '@angular/common';
   host: { style: 'display: block' },
 })
 export class HeroContainerComponent {
-  readonly color = input.required<string>();
   readonly height = input<number>(70);
-  readonly textClass = input.required<string>();
+
+  protected readonly backgroundColor = computed(() => this.pageContextService.backgroundColor());
+  protected readonly textClass = computed(() => this.pageContextService.textClass());
+
+  private readonly pageContextService = inject(PageContextService);
 }
