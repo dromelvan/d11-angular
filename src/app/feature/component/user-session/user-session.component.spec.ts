@@ -52,11 +52,9 @@ describe('UserSessionComponent', () => {
     await fixture.whenStable();
   });
 
-  it('renders user icon when logged out', () => {
+  it('renders person icon when logged out', () => {
     const host = fixture.nativeElement as HTMLElement;
-    const icon = host.querySelector('app-icon');
-    expect(icon).toBeInTheDocument();
-    expect(icon).toHaveAttribute('icon', 'account_circle');
+    expect(host.querySelector('app-svg-icon[name="person"]')).toBeInTheDocument();
     expect(host.querySelector('app-avatar')).not.toBeInTheDocument();
   });
 
@@ -66,7 +64,7 @@ describe('UserSessionComponent', () => {
 
     const host = fixture.nativeElement as HTMLElement;
     expect(host.querySelector('app-avatar')).toBeInTheDocument();
-    expect(host.querySelector('app-icon')).not.toBeInTheDocument();
+    expect(host.querySelector('app-svg-icon[name="person"]')).not.toBeInTheDocument();
   });
 
   it('d11TeamId uses d11Team id when d11Team is set', () => {
