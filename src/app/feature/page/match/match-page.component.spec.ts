@@ -2,11 +2,11 @@ import { signal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { of } from 'rxjs';
 import { beforeEach, describe, expect, vi } from 'vitest';
-import { Match, PlayerMatchStat, Status, TeamBase } from '@app/core/api';
+import { Lineup, Match, PlayerMatchStat, Status, TeamBase } from '@app/core/api';
 import { MatchApiService } from '@app/core/api/match/match-api.service';
 import { LoadingService } from '@app/core/loading/loading.service';
 import { PageContextService } from '@app/core/page-context/page-context.service';
-import { fakeMatch, fakePlayerMatchStat, fakeTeamBase } from '@app/test';
+import { fakeGoal, fakeMatch, fakePlayerMatchStat, fakeTeamBase } from '@app/test';
 import { MatchPageComponent } from './match-page.component';
 
 interface MatchPageInternal {
@@ -72,6 +72,21 @@ describe('MatchPageComponent', () => {
       expect(mockPageContextService.register).toHaveBeenCalledOnce();
     });
 
+    it('registered context backgroundColor reflects homeTeam colour', () => {
+      const registeredContext = mockPageContextService.register.mock.calls[0][1];
+      expect(registeredContext.backgroundColor()).toBe(match.homeTeam.colour);
+    });
+
+    it('registered context title reflects match week number', () => {
+      const registeredContext = mockPageContextService.register.mock.calls[0][1];
+      expect(registeredContext.title()).toBe(`Match Week ${match.matchWeek.matchWeekNumber}`);
+    });
+
+    it('registered context subtitle reflects season name', () => {
+      const registeredContext = mockPageContextService.register.mock.calls[0][1];
+      expect(registeredContext.subtitle()).toBe(`Season ${match.matchWeek.season.name}`);
+    });
+
     it('renders app-match-hero', () => {
       expect(fixture.nativeElement.querySelector('app-match-hero')).toBeTruthy();
     });
@@ -113,7 +128,7 @@ describe('MatchPageComponent', () => {
       homeTeam = fakeTeamBase();
       awayTeam = fakeTeamBase();
       const match = { ...fakeMatch(), homeTeam, awayTeam, status: Status.FINISHED };
-      const homeStat = { ...fakePlayerMatchStat(), team: homeTeam };
+      const homeStat = { ...fakePlayerMatchStat(), team: homeTeam, lineup: Lineup.STARTING_LINEUP };
       await setup(match, [homeStat]);
       const fixture = await createFixture(match);
       component = fixture.componentInstance;
@@ -125,6 +140,44 @@ describe('MatchPageComponent', () => {
 
     it('returns empty array for a team with no stats', () => {
       expect((component as unknown as MatchPageInternal).getTeamStats(awayTeam.id)).toHaveLength(0);
+    });
+  });
+
+  describe('match events section', () => {
+    it('renders match events section when match has goals', async () => {
+      const match = {
+        ...fakeMatch(),
+        status: Status.FINISHED,
+        homeTeamGoals: [fakeGoal()],
+        awayTeamGoals: [],
+      };
+      await setup(match);
+      const fixture = await createFixture(match);
+
+      expect(fixture.nativeElement.querySelector('app-match-events-section')).toBeTruthy();
+    });
+
+    it('does not render match events section when match has no goals and no red cards', async () => {
+      const homeTeam = fakeTeamBase();
+      const awayTeam = fakeTeamBase();
+      const match = {
+        ...fakeMatch(),
+        homeTeam,
+        awayTeam,
+        status: Status.FINISHED,
+        homeTeamGoals: [],
+        awayTeamGoals: [],
+      };
+      const stat = {
+        ...fakePlayerMatchStat(),
+        team: homeTeam,
+        redCardTime: 0,
+        lineup: Lineup.STARTING_LINEUP,
+      };
+      await setup(match, [stat]);
+      const fixture = await createFixture(match);
+
+      expect(fixture.nativeElement.querySelector('app-match-events-section')).toBeNull();
     });
   });
 });
