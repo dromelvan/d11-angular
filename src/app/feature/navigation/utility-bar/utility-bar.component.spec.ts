@@ -1,61 +1,82 @@
-import { Component } from '@angular/core';
-import { PlayerApiService } from '@app/core/api';
-import { RouterService } from '@app/core/router/router.service';
-import { render, screen } from '@testing-library/angular';
+import { signal } from '@angular/core';
+import { render } from '@testing-library/angular';
 import { userEvent } from '@testing-library/user-event';
-import { expect, vi } from 'vitest';
+import { PlayerApiService } from '@app/core/api';
+import { UserActionService } from '@app/core/auth/user-action.service';
+import { UserSessionService } from '@app/core/auth/user-session.service';
+import { CurrentService } from '@app/core/current/current.service';
+import { RouterService } from '@app/core/router/router.service';
 import { UtilityBarComponent } from './utility-bar.component';
 
-@Component({
-  template: ` <app-utility-bar data-testid="utility-bar" /> `,
-  standalone: true,
-  imports: [UtilityBarComponent],
-})
-class HostComponent {}
-
-const providers = [
-  { provide: PlayerApiService, useValue: { search: vi.fn() } },
-  { provide: RouterService, useValue: { navigateToPlayer: vi.fn() } },
-];
+function setup() {
+  return render(UtilityBarComponent, {
+    providers: [
+      {
+        provide: UserSessionService,
+        useValue: { loggedIn: signal(false), d11Team: signal(undefined), user: signal(undefined) },
+      },
+      {
+        provide: UserActionService,
+        useValue: {
+          drawerVisible: signal(false),
+          isAdministrator: signal(false),
+          open: vi.fn(),
+          close: vi.fn(),
+          onLogout: vi.fn(),
+        },
+      },
+      {
+        provide: RouterService,
+        useValue: {
+          navigateToPlayer: vi.fn(),
+          navigateToLogin: vi.fn(),
+          navigateToCreatePlayer: vi.fn(),
+          navigateToCreateTransferWindow: vi.fn(),
+        },
+      },
+      { provide: PlayerApiService, useValue: { search: vi.fn() } },
+      {
+        provide: CurrentService,
+        useValue: { season: signal(undefined), transferWindow: signal(undefined) },
+      },
+    ],
+  });
+}
 
 describe('UtilityBarComponent', () => {
-  beforeEach(async () => {
-    await render(HostComponent, { providers });
+  it('renders search icon for mobile', async () => {
+    const { container } = await setup();
+    const searchIcon = container.querySelector('app-svg-icon[name="search"]');
+    expect(searchIcon).toBeInTheDocument();
+    expect(searchIcon).toHaveClass('sm:hidden!');
   });
 
-  it('renders', () => {
-    expect(screen.getByTestId('utility-bar')).toBeInTheDocument();
-  });
-
-  it('renders search button for mobile', () => {
-    const buttonIcon = document.querySelector('app-material-icon-button');
-    expect(buttonIcon).toBeInTheDocument();
-    expect(buttonIcon).toHaveTextContent('search');
-    expect(buttonIcon).toHaveClass('sm:hidden!');
-  });
-
-  it('renders search autocomplete for desktop', () => {
-    const autocomplete = document.querySelector('app-search-autocomplete');
+  it('renders search autocomplete for desktop', async () => {
+    const { container } = await setup();
+    const autocomplete = container.querySelector('app-search-autocomplete');
     expect(autocomplete).toBeInTheDocument();
     expect(autocomplete).toHaveClass('hidden sm:block');
   });
 
-  it('renders search drawer for mobile', () => {
-    const drawer = document.querySelector('app-search-drawer');
+  it('renders search drawer for mobile', async () => {
+    const { container } = await setup();
+    const drawer = container.querySelector('app-search-drawer');
     expect(drawer).toBeInTheDocument();
     expect(drawer).toHaveClass('sm:hidden!');
   });
 
-  it('opens search drawer when search button is clicked', async () => {
-    const drawer = document.querySelector('.app-search-drawer');
-    expect(drawer).not.toHaveClass('translate-y-0');
-
-    await userEvent.click(document.querySelector('app-material-icon-button')!);
-
-    expect(drawer).toHaveClass('translate-y-0');
+  it('renders user session', async () => {
+    const { container } = await setup();
+    expect(container.querySelector('app-user-session')).toBeInTheDocument();
   });
 
-  it('renders user session', () => {
-    expect(document.querySelector('app-user-session')).toBeInTheDocument();
+  it('opens search drawer when search icon is clicked', async () => {
+    const { container } = await setup();
+    const drawerPanel = container.querySelector('.app-search-drawer') as HTMLElement;
+    expect(drawerPanel).toHaveClass('-translate-y-full');
+
+    await userEvent.click(container.querySelector('app-svg-icon[name="search"]')!);
+
+    expect(drawerPanel).toHaveClass('translate-y-0');
   });
 });

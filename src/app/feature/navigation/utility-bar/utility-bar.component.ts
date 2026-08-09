@@ -2,7 +2,7 @@ import { Component, ViewChild } from '@angular/core';
 import { SearchAutocompleteComponent } from '@app/feature/component/search/search-autocomplete/search-autocomplete.component';
 import { SearchDrawerComponent } from '@app/feature/component/search/search-drawer/search-drawer.component';
 import { UserSessionComponent } from '@app/feature/component/user-session/user-session.component';
-import { IconButtonComponent } from '@app/shared/button/icon-button/icon-button.component';
+import { SvgIconComponent } from '@app/shared/svg-icon/svg-icon.component';
 
 @Component({
   selector: 'app-utility-bar',
@@ -10,7 +10,7 @@ import { IconButtonComponent } from '@app/shared/button/icon-button/icon-button.
     UserSessionComponent,
     SearchAutocompleteComponent,
     SearchDrawerComponent,
-    IconButtonComponent,
+    SvgIconComponent,
   ],
   templateUrl: './utility-bar.component.html',
 })

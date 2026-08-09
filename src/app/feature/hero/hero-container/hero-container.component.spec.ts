@@ -3,10 +3,9 @@ import { render, screen } from '@testing-library/angular';
 import { PageContextService } from '@app/core/page-context/page-context.service';
 import { HeroContainerComponent } from './hero-container.component';
 
-function mockPageContextService(backgroundColor = '#ff0000', textClass = 'text-white') {
+function mockPageContextService(backgroundColor: string | undefined = '#ff0000') {
   return {
-    backgroundColor: signal(backgroundColor),
-    textClass: signal(textClass),
+    backgroundColor: signal<string | undefined>(backgroundColor),
   };
 }
 
@@ -32,15 +31,28 @@ describe('HeroContainerComponent', () => {
     expect(screen.getByText('Card slot content')).toBeInTheDocument();
   });
 
-  it('applies textClass from PageContextService to hero wrapper', async () => {
+  it('applies textClass derived from backgroundColor to hero wrapper', async () => {
     await render(`<app-hero-container><span heroContent>Hero</span></app-hero-container>`, {
       imports: [HeroContainerComponent],
+      providers: [{ provide: PageContextService, useValue: mockPageContextService('#000000') }],
+    });
+
+    expect(screen.getByText('Hero').closest('div')).toHaveClass('text-white!');
+  });
+
+  it('falls back to PRIMARY background color when PageContextService has no background color', async () => {
+    const { container } = await render(`<app-hero-container></app-hero-container>`, {
+      imports: [HeroContainerComponent],
       providers: [
-        { provide: PageContextService, useValue: mockPageContextService('#000000', 'text-white') },
+        {
+          provide: PageContextService,
+          useValue: { backgroundColor: signal<string | undefined>(undefined) },
+        },
       ],
     });
 
-    expect(screen.getByText('Hero').closest('div')).toHaveClass('text-white');
+    const backgroundDiv = container.querySelector('.app-hero-background') as HTMLElement;
+    expect(backgroundDiv.style.backgroundColor).toBe('rgb(11, 22, 79)');
   });
 
   it('applies background color from PageContextService to background div', async () => {
