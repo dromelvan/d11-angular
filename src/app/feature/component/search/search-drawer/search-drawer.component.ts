@@ -4,20 +4,20 @@ import { PlayerSearchResult } from '@app/core/api';
 import { RouterService } from '@app/core/router/router.service';
 import { AvatarComponent } from '@app/shared/avatar/avatar.component';
 import { InputText } from 'primeng/inputtext';
-import { IconComponent } from '@app/shared/icon/icon.component';
 import { NgClass } from '@angular/common';
 import { PlayerSearchService } from '@app/feature/component/search/player-search.service';
+import { SvgIconComponent } from '@app/shared/svg-icon/svg-icon.component';
 
 @Component({
   selector: 'app-search-drawer',
-  imports: [InputText, FormsModule, AvatarComponent, IconComponent, NgClass],
+  imports: [InputText, FormsModule, AvatarComponent, NgClass, SvgIconComponent],
   templateUrl: './search-drawer.component.html',
   providers: [PlayerSearchService],
 })
 export class SearchDrawerComponent {
-  protected value = signal<string>('');
-  protected results = computed(() => this.playerSearchService.results() ?? []);
-  protected visible = false;
+  protected readonly results = computed(() => this.playerSearchService.results() ?? []);
+  protected readonly value = signal<string>('');
+  protected readonly visible = signal(false);
 
   @ViewChild('searchInput') private searchInput!: ElementRef<HTMLInputElement>;
 
@@ -25,7 +25,7 @@ export class SearchDrawerComponent {
   private routerService = inject(RouterService);
 
   open(): void {
-    this.visible = true;
+    this.visible.set(true);
     this.searchInput.nativeElement.focus();
   }
 
@@ -41,7 +41,7 @@ export class SearchDrawerComponent {
   }
 
   protected onClose(): void {
-    this.visible = false;
+    this.visible.set(false);
     this.value.set('');
     this.playerSearchService.search('');
   }

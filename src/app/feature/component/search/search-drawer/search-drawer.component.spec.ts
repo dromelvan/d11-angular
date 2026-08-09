@@ -26,6 +26,62 @@ describe('SearchDrawerComponent', () => {
     }).compileComponents();
   });
 
+  describe('visibility', () => {
+    beforeEach(() => {
+      fixture = TestBed.createComponent(SearchDrawerComponent);
+      fixture.detectChanges();
+    });
+
+    it('drawer is hidden initially', () => {
+      const drawer = fixture.nativeElement.querySelector('.app-search-drawer') as HTMLElement;
+      expect(drawer).toHaveClass('-translate-y-full');
+    });
+
+    it('open() makes the drawer visible', () => {
+      fixture.componentInstance.open();
+      fixture.detectChanges();
+
+      const drawer = fixture.nativeElement.querySelector('.app-search-drawer') as HTMLElement;
+      expect(drawer).not.toHaveClass('-translate-y-full');
+      expect(drawer).toHaveClass('translate-y-0');
+    });
+  });
+
+  describe('close', () => {
+    beforeEach(() => {
+      fixture = TestBed.createComponent(SearchDrawerComponent);
+      fixture.detectChanges();
+      fixture.componentInstance.open();
+      fixture.detectChanges();
+    });
+
+    it('Close button hides the drawer', async () => {
+      await userEvent.click(screen.getByRole('button', { name: 'Close' }));
+      fixture.detectChanges();
+
+      const drawer = fixture.nativeElement.querySelector('.app-search-drawer') as HTMLElement;
+      expect(drawer).toHaveClass('-translate-y-full');
+    });
+
+    it('backdrop click hides the drawer', async () => {
+      const backdrop = fixture.nativeElement.querySelector(
+        '.app-search-drawer-backdrop',
+      ) as HTMLElement;
+      await userEvent.click(backdrop);
+      fixture.detectChanges();
+
+      const drawer = fixture.nativeElement.querySelector('.app-search-drawer') as HTMLElement;
+      expect(drawer).toHaveClass('-translate-y-full');
+    });
+
+    it('close clears the search input value', async () => {
+      await userEvent.type(screen.getByPlaceholderText('Search players...'), 'test');
+      await userEvent.click(screen.getByRole('button', { name: 'Close' }));
+
+      expect(screen.getByPlaceholderText('Search players...')).toHaveValue('');
+    });
+  });
+
   describe('renders', () => {
     beforeEach(() => {
       fixture = TestBed.createComponent(SearchDrawerComponent);
@@ -136,6 +192,23 @@ describe('SearchDrawerComponent', () => {
       await userEvent.click(screen.getByText(player.name));
 
       expect(mockRouterService.navigateToPlayer).toHaveBeenCalledWith(player.id, undefined, false);
+    });
+
+    it('closes the drawer after selecting a player', async () => {
+      fixture.componentInstance.open();
+      fixture.detectChanges();
+
+      await userEvent.type(
+        screen.getByPlaceholderText('Search players...'),
+        player.name.slice(0, 3),
+      );
+
+      await waitFor(() => screen.getByText(player.name));
+      await userEvent.click(screen.getByText(player.name));
+      fixture.detectChanges();
+
+      const drawer = fixture.nativeElement.querySelector('.app-search-drawer') as HTMLElement;
+      expect(drawer).toHaveClass('-translate-y-full');
     });
   });
 });
