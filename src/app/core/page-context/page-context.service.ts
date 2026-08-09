@@ -1,6 +1,5 @@
 import { computed, DestroyRef, inject, Injectable, signal, Signal } from '@angular/core';
 import { CurrentService } from '@app/core/current/current.service';
-import { PRIMARY } from '@app/app.theme';
 import { contrastTextClass } from '@app/shared/util/contrast-text.util';
 
 export interface PageContext {
@@ -17,8 +16,11 @@ export class PageContextService {
   readonly subtitle = computed(
     () => this.activeContext()?.subtitle?.() ?? this.currentService.season()?.name ?? '',
   );
-  readonly backgroundColor = computed(() => this.activeContext()?.backgroundColor() ?? PRIMARY);
-  readonly textClass = computed(() => contrastTextClass(this.backgroundColor()));
+  readonly backgroundColor = computed(() => this.activeContext()?.backgroundColor());
+  readonly textClass = computed(() => {
+    const color = this.backgroundColor();
+    return color ? contrastTextClass(color) : undefined;
+  });
 
   private readonly currentService = inject(CurrentService);
   private readonly activeContext = signal<PageContext | undefined>(undefined);

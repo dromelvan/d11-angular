@@ -2,7 +2,6 @@ import { signal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { DestroyRef } from '@angular/core';
 import { CurrentService } from '@app/core/current/current.service';
-import { PRIMARY } from '@app/app.theme';
 import { PageContextService } from './page-context.service';
 
 describe('PageContextService', () => {
@@ -43,9 +42,14 @@ describe('PageContextService', () => {
     expect(service.subtitle()).toBe(seasonName);
   });
 
-  it('defaults backgroundColor to PRIMARY', () => {
+  it('defaults backgroundColor to undefined', () => {
     const service = setup();
-    expect(service.backgroundColor()).toBe(PRIMARY);
+    expect(service.backgroundColor()).toBeUndefined();
+  });
+
+  it('defaults textClass to undefined', () => {
+    const service = setup();
+    expect(service.textClass()).toBeUndefined();
   });
 
   it('reflects registered context title and subtitle', () => {
@@ -63,6 +67,30 @@ describe('PageContextService', () => {
     expect(service.backgroundColor()).toBe('#ff0000');
   });
 
+  it('textClass returns text-white! for dark backgroundColor', () => {
+    const service = setup();
+    const { destroyRef } = mockDestroyRef();
+
+    service.register(destroyRef, {
+      title: signal('Title1'),
+      backgroundColor: signal('#000000'),
+    });
+
+    expect(service.textClass()).toBe('text-white!');
+  });
+
+  it('textClass returns text-black! for light backgroundColor', () => {
+    const service = setup();
+    const { destroyRef } = mockDestroyRef();
+
+    service.register(destroyRef, {
+      title: signal('Title1'),
+      backgroundColor: signal('#ffffff'),
+    });
+
+    expect(service.textClass()).toBe('text-black!');
+  });
+
   it('resets to defaults after destroy', () => {
     const service = setup(seasonName);
     const { destroyRef, destroy } = mockDestroyRef();
@@ -77,6 +105,7 @@ describe('PageContextService', () => {
 
     expect(service.title()).toBe('D11');
     expect(service.subtitle()).toBe(seasonName);
-    expect(service.backgroundColor()).toBe(PRIMARY);
+    expect(service.backgroundColor()).toBeUndefined();
+    expect(service.textClass()).toBeUndefined();
   });
 });
