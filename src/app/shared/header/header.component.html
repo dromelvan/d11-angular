@@ -1,27 +1,21 @@
 <div
-  class="flex items-center justify-between px-4 pt-4 pb-4"
+  class="app-row justify-between p-4"
   [ngClass]="headerClasses()"
   [style.background-color]="effectiveBackgroundColor()"
 >
-  <div class="flex items-center gap-2">
+  <div class="app-row-2">
     @if (hasStack()) {
-      <button
-        (click)="navigateToPrevious()"
-        class="opacity-75 flex items-center justify-center shrink-0"
-      >
+      <button (click)="navigateToPrevious()" class="app-button-icon">
         <app-svg-icon name="chevron-left" size="lg" />
       </button>
     } @else {
-      <div
-        class="w-10 h-10 rounded-full grid place-items-center shrink-0"
-        [class.bg-primary]="!backgroundColor()"
-      >
+      <div class="app-circle" [class.bg-primary]="!backgroundColor()">
         <app-d11-lion-light-img [size]="28" />
       </div>
     }
     <div>
-      <div class="font-semibold">{{ title() }}</div>
-      <div class="text-xs opacity-75">{{ subtitle() }}</div>
+      <div class="app-text-title">{{ title() }}</div>
+      <div class="app-text-detail">{{ subtitle() }}</div>
     </div>
   </div>
   <app-navbar-link class="hidden lg:block" />

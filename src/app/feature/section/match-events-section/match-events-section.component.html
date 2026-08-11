@@ -1,11 +1,8 @@
 <app-section>
   <span sectionHeader>Match Events</span>
   @for (event of events(); track $index) {
-    <div class="flex items-center" [class.flex-row-reverse]="event.team === 'away'">
-      <div
-        class="flex flex-1 items-center justify-end gap-1"
-        [class.flex-row-reverse]="event.team === 'away'"
-      >
+    <div class="app-row" [class.flex-row-reverse]="event.team === 'away'">
+      <div class="app-row-1 app-fill justify-end" [class.flex-row-reverse]="event.team === 'away'">
         <span>
           <span class="sm:hidden">{{ event.player.shortName }}</span>
           <span class="hidden sm:block">{{ event.player.name }}</span>
@@ -13,17 +10,17 @@
         @if (event.type === 'goal') {
           <app-icon icon="goal" />
         } @else if (event.type === 'penalty') {
-          <span class="app-text-section-secondary">(P)</span>
+          <span class="app-text-detail">(P)</span>
           <app-icon icon="goal" />
         } @else if (event.type === 'ownGoal') {
-          <span class="app-text-section-secondary">(OG)</span>
+          <span class="app-text-detail">(OG)</span>
           <app-icon icon="own_goal" />
         } @else if (event.type === 'redCard') {
           <app-icon icon="red_card" />
         }
       </div>
-      <span class="app-text-section-secondary text-center w-8 shrink-0">{{ event.time }}'</span>
-      <div class="flex-1"></div>
+      <span class="app-text-detail text-center w-8">{{ event.time }}'</span>
+      <div class="app-fill"></div>
     </div>
   }
 </app-section>

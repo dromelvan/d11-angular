@@ -1,40 +1,44 @@
-<div class="app-hero px-6 py-2">
-  <div class="app-col-2 app-fill items-center">
-    <app-team-img [team]="match().homeTeam" width="56" />
-    <span class="app-text-primary">
-      <span class="sm:hidden">{{ match().homeTeam.shortName }}</span>
-      <span class="hidden sm:block">{{ match().homeTeam.name }}</span>
-    </span>
-  </div>
-
-  @if (match().status !== Status.PENDING && match().status !== Status.POSTPONED) {
-    <div class="app-col-1 items-center">
-      <span class="app-text-hero-primary" data-testid="score">
-        {{ match().homeTeamGoalsScored }}<span class="px-1">&ndash;</span
-        >{{ match().awayTeamGoalsScored }}
+<div class="py-2">
+  <div class="app-hero px-6 pt-4 pb-2">
+    <div class="app-col-2 app-fill items-center">
+      <app-team-img [team]="match().homeTeam" width="56" />
+      <span class="app-text-title">
+        <span class="sm:hidden">{{ match().homeTeam.shortName }}</span>
+        <span class="hidden sm:block">{{ match().homeTeam.name }}</span>
       </span>
-      <span class="">{{ match().elapsed }}</span>
     </div>
-  } @else {
-    <div>vs</div>
-  }
 
-  <div class="app-col-2 app-fill items-center">
-    <app-team-img [team]="match().awayTeam" width="56" />
-    <span class="app-text-primary">
-      <span class="sm:hidden">{{ match().awayTeam.shortName }}</span>
-      <span class="hidden sm:block">{{ match().awayTeam.name }}</span>
+    @if (match().status !== Status.PENDING && match().status !== Status.POSTPONED) {
+      <div class="app-col-1 items-center">
+        <span class="app-text-hero" data-testid="score">
+          {{ match().homeTeamGoalsScored }}<span class="px-1">&ndash;</span
+          >{{ match().awayTeamGoalsScored }}
+        </span>
+        <span class="app-text-base">{{ match().elapsed }}</span>
+      </div>
+    } @else {
+      <div>vs</div>
+    }
+
+    <div class="app-col-2 app-fill items-center">
+      <app-team-img [team]="match().awayTeam" width="56" />
+      <span class="app-text-title">
+        <span class="sm:hidden">{{ match().awayTeam.shortName }}</span>
+        <span class="hidden sm:block">{{ match().awayTeam.name }}</span>
+      </span>
+    </div>
+  </div>
+
+  <div class="app-col-1 app-text-detail items-center pb-6">
+    <span class="" data-testid="stadium"
+      >{{ match().stadium.name }}, {{ match().stadium.city }}</span
+    >
+    <span class="" data-testid="datetime">
+      @if (match().status === Status.POSTPONED) {
+        Postponed
+      } @else {
+        {{ match().datetime | date: 'd MMM yyyy, HH:mm' }}
+      }
     </span>
   </div>
-</div>
-
-<div class="app-col-1 app-text-hero-secondary items-center pb-6">
-  <span class="" data-testid="stadium">{{ match().stadium.name }}, {{ match().stadium.city }}</span>
-  <span class="" data-testid="datetime">
-    @if (match().status === Status.POSTPONED) {
-      Postponed
-    } @else {
-      {{ match().datetime | date: 'd MMM yyyy, HH:mm' }}
-    }
-  </span>
 </div>

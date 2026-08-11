@@ -7,6 +7,7 @@ import { RouterService } from '@app/core/router/router.service';
 import { NavbarLinkComponent } from '@app/feature/navigation/navbar-link/navbar-link.component';
 import { UtilityBarComponent } from '@app/feature/navigation/utility-bar/utility-bar.component';
 import { BACKGROUND } from '@app/app.theme';
+import { AvatarModule } from 'primeng/avatar';
 
 @Component({
   selector: 'app-header',
@@ -17,6 +18,7 @@ import { BACKGROUND } from '@app/app.theme';
     SvgIconComponent,
     NavbarLinkComponent,
     UtilityBarComponent,
+    AvatarModule,
   ],
   host: { style: 'display: block' },
 })

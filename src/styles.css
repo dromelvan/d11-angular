@@ -3,45 +3,19 @@
 @import "primeicons/primeicons.css";
 
 @theme {
-    /*--font-sans: InterVariable, sans-serif;*/
-    /*--font-sans--font-feature-settings: "cv02", "cv03", "cv04", "cv11";*/
-    --breakpoint-sm: 640px;
-    --breakpoint-md: 768px;
-    --breakpoint-lg: 1024px;
-    --breakpoint-xl: 1280px;
-    --breakpoint-2xl: 1536px;
-
-    --container-sm: 640px;
-    --container-md: 768px;
-    --container-lg: 1024px;
-    --container-xl: 1280px;
-    --container-2xl: 1536px;
+    --font-sans: InterVariable, sans-serif;
+    --font-sans--font-feature-settings: "cv02", "cv03", "cv04", "cv11";
 }
 
 @layer base {
     body {
         background-color: var(--p-surface-50);
+        @apply pt-6;
     }
-
-    .primary-contrast {
-        @apply text-primary-contrast font-semibold hover:text-primary-contrast hover:opacity-85;
-    }
-
-    /*a {*/
-    /*    @apply text-primary font-medium cursor-pointer;*/
-    /*}*/
-    /*h1 {*/
-    /*    @apply text-2xl font-bold;*/
-    /*}*/
-    /*h2 {*/
-    /*    @apply text-xl font-bold;*/
-    /*}*/
-    /*h3 {*/
-    /*    @apply text-lg font-bold;*/
-    /*}*/
 }
 
 @layer components {
+
     /* Colour styling */
     .text-success {
         @apply text-(--p-success);
@@ -75,39 +49,17 @@
         @apply bg-(--p-neutral);
     }
 
-    /* Layout styling */
-    .app-responsive {
-        @apply flex flex-col md:flex-row md:items-start gap-4;
-    }
-
-    .app-flex {
-        @apply flex items-center;
-    }
-
-    .app-col-none {
-        @apply flex flex-col gap-0;
-    }
-
-    .app-col-sm {
-        @apply flex flex-col gap-1;
-    }
-
-    .app-col-margin {
-        @apply mb-4;
-    }
-
-    @media (min-width: 40rem) {
-        .sm\:app-col {
-            @apply flex flex-col gap-4;
-        }
-    }
-
+    /* Flex styling */
     .app-fill {
         @apply flex-1 min-w-0;
     }
 
     .app-col {
         @apply flex flex-col;
+    }
+
+    .app-col-05 {
+        @apply flex flex-col gap-0.5;
     }
 
     .app-col-1 {
@@ -118,8 +70,20 @@
         @apply flex flex-col gap-2;
     }
 
+    .app-col-3 {
+        @apply flex flex-col gap-3;
+    }
+
+    .app-col-4 {
+        @apply flex flex-col gap-4;
+    }
+
     .app-row {
         @apply flex flex-row items-center;
+    }
+
+    .app-row-05 {
+        @apply flex flex-row gap-0.5;
     }
 
     .app-row-1 {
@@ -130,152 +94,90 @@
         @apply flex flex-row items-center gap-2;
     }
 
-    .app-row-sm {
-        @apply flex flex-row gap-2 items-center;
+    .app-row-3 {
+        @apply flex flex-row items-center gap-3;
     }
 
-    .app-row-md {
-        @apply flex flex-row gap-4 items-center;
+    .app-row-4 {
+        @apply flex flex-row items-center gap-4;
     }
 
-    @media (min-width: 40rem) {
-        .sm\:app-row {
-            @apply flex flex-row gap-4 items-center;
-        }
+    /* Button styling */
+    .app-button {
+        @apply cursor-pointer shrink-0;
     }
 
-    .app-grid-header {
-        @apply text-xs font-semibold uppercase pb-2;
-    }
-
-    .app-grid-sub-header {
-        @apply text-xs font-semibold uppercase py-2 mt-3;
-    }
-
-    .app-grid-cell {
-        @apply flex text-sm items-center py-2.5;
-    }
-
-    .app-grid-separator {
-        @apply border-b border-surface-200 last:border-0;
-    }
-
-    .app-grid-number {
-        @apply tabular-nums text-right justify-end;
-    }
-
-    /* Section styling */
-    .app-section-separator {
-        @apply border-t border-surface-100 -mx-4;
-    }
-
-    /* Justification styling */
-    .app-hero,
-    .app-details-list-row {
-        @apply flex items-center justify-between;
+    .app-button-icon {
+        @apply cursor-pointer opacity-75 shrink-0;
     }
 
     /* Text styling */
-    .app-text-primary {
-        @apply font-semibold shrink-0;
-    }
-
-    .app-text-secondary {
-        @apply text-surface-500 shrink-0;
-    }
-
-    .app-text-hero-primary {
+    .app-text-hero {
         @apply text-3xl font-semibold;
     }
 
-    .app-text-hero-secondary {
-        @apply text-xs opacity-75;
+    .app-text-title {
+        @apply font-semibold;
     }
 
-    .app-text-section-header {
-        @apply text-xs font-semibold text-surface-500 uppercase shrink-0;
+    .app-text-primary {
+        @apply text-sm font-semibold;
     }
 
-    .app-text-section {
+    .app-text-base {
         @apply text-sm shrink-0;
     }
 
-    .app-text-section-primary {
-        @apply text-xs font-semibold uppercase shrink-0;
+    .app-text-secondary {
+        @apply text-sm text-surface-500 shrink-0;
     }
 
-    .app-text-section-secondary {
-        @apply text-xs text-surface-500 shrink-0;
+    .app-text-header {
+        @apply text-xs font-semibold uppercase;
+    }
+
+    .app-text-label {
+        @apply text-xs font-semibold text-surface-500 uppercase shrink-0;
+    }
+
+    .app-text-detail {
+        @apply text-xs opacity-75 shrink-0;
+    }
+
+    .app-text-drawer {
+        @apply text-surface-900;
     }
 
     .app-text-number {
         @apply tabular-nums text-right justify-end shrink-0;
     }
 
-    .app-text-icon {
-        @apply flex items-center gap-2;
+    /* Layout styling */
+    .app-responsive {
+        @apply flex flex-col md:flex-row md:items-start gap-4;
     }
 
-
-    /*.app-text-lowest-emphasis {*/
-    /*    @apply text-xs text-surface-500;*/
-    /*}*/
-    /*.app-text-low-emphasis {*/
-    /*    @apply text-sm text-surface-500;*/
-    /*}*/
-    /*.app-text-medium-emphasis {*/
-    /*    @apply text-sm font-semibold;*/
-    /*}*/
-    /*.app-text-high-emphasis {*/
-    /*    @apply font-semibold;*/
-    /*}*/
-    /*.app-text-highest-emphasis {*/
-    /*    @apply text-2xl font-bold text-primary-500;*/
-    /*}*/
-    /* Component styling */
-    .app-bg-header {
-        @apply bg-[url('/images/header-background.png')]! bg-cover! bg-center!
+    .app-circle {
+        @apply w-10 h-10 rounded-full grid place-items-center shrink-0;
     }
 
-    .app-dialog-header {
-        @apply p-4;
+    .app-hero {
+        @apply flex items-center justify-between;
     }
 
-    .app-stat-widget {
-        @apply flex flex-col gap-1 py-4 bg-primary-50 rounded-lg;
+    .app-hero-background {
+        @apply bg-[url('/images/hero-background.png')]! lg:bg-cover!
     }
 
-    /* PrimeNG things that can't be styled in theme */
-    .justify-evenly .p-tablist-tab-list {
-        @apply justify-evenly;
+    .app-details-list-row {
+        @apply flex items-center justify-between;
     }
 
-    .justify-between .p-tablist-tab-list {
-        @apply justify-between;
+    .app-separator {
+        @apply border-t border-surface-100 -mx-4;
     }
 
-    /*.p-tab {*/
-    /*    @apply text-xs uppercase;*/
-    /*}*/
-    .p-avatar img {
-        @apply object-cover object-top;
-    }
-
-    /*.p-button-text.p-button-primary {*/
-    /*    @apply hover:bg-black/10! active:bg-black/20!;*/
-    /*}*/
-    .p-dialog-header {
-        @apply block! p-0!;
-    }
-
-    .p-dialog-header-actions {
-        @apply hidden!;
-    }
-
-    .p-dialog-footer {
-        @apply block! border-t border-surface-200;
-    }
-
+    /** PrimeNG styling that can't be done in theme **/
     .p-accordionheader .p-icon {
         display: none !important;
     }
@@ -283,7 +185,6 @@
     .p-accordioncontent {
         @apply -mx-4;
     }
-
 }
 
 .vertical-align-test {

@@ -1,10 +1,10 @@
-<div class="app-user-session flex items-center justify-center sm:h-full">
+<div class="app-row justify-center sm:h-full">
   @if (userSession.loggedIn()) {
-    <button (click)="userActionService.open()" class="cursor-pointer" type="button">
+    <button (click)="userActionService.open()" class="app-button" type="button">
       <app-avatar resource="d11-team" [id]="d11TeamId()" />
     </button>
   } @else {
-    <button type="button" class="cursor-pointer flex items-center opacity-75" (click)="onLogin()">
+    <button type="button" class="app-button-icon" (click)="onLogin()">
       <app-svg-icon name="person" />
     </button>
   }
