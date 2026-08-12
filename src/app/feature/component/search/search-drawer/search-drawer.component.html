@@ -1,10 +1,12 @@
 <div
+  data-testid="search-drawer-backdrop"
   class="fixed inset-0 z-50 bg-black/50 transition-opacity duration-200"
   [class]="visible() ? 'opacity-100' : 'opacity-0 pointer-events-none'"
   (click)="onClose()"
 ></div>
 
 <div
+  data-testid="search-drawer"
   class="fixed top-0 left-0 right-0 z-50 bg-surface-50 transition-transform duration-200 rounded-b-[25px]"
   [class]="visible() ? 'shadow-lg translate-y-0' : '-translate-y-full'"
 >
@@ -23,7 +25,7 @@
         (input)="onInput($event)"
       />
     </div>
-    <button class="app-text-primary" (click)="onClose()">Close</button>
+    <button class="app-text-primary text-primary-contrast" (click)="onClose()">Close</button>
   </div>
 
   <div [ngClass]="results().length > 0 ? 'inline' : 'hidden'">

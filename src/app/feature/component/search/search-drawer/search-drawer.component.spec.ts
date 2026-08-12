@@ -33,7 +33,9 @@ describe('SearchDrawerComponent', () => {
     });
 
     it('drawer is hidden initially', () => {
-      const drawer = fixture.nativeElement.querySelector('.app-search-drawer') as HTMLElement;
+      const drawer = fixture.nativeElement.querySelector(
+        '[data-testid="search-drawer"]',
+      ) as HTMLElement;
       expect(drawer).toHaveClass('-translate-y-full');
     });
 
@@ -41,7 +43,9 @@ describe('SearchDrawerComponent', () => {
       fixture.componentInstance.open();
       fixture.detectChanges();
 
-      const drawer = fixture.nativeElement.querySelector('.app-search-drawer') as HTMLElement;
+      const drawer = fixture.nativeElement.querySelector(
+        '[data-testid="search-drawer"]',
+      ) as HTMLElement;
       expect(drawer).not.toHaveClass('-translate-y-full');
       expect(drawer).toHaveClass('translate-y-0');
     });
@@ -59,18 +63,22 @@ describe('SearchDrawerComponent', () => {
       await userEvent.click(screen.getByRole('button', { name: 'Close' }));
       fixture.detectChanges();
 
-      const drawer = fixture.nativeElement.querySelector('.app-search-drawer') as HTMLElement;
+      const drawer = fixture.nativeElement.querySelector(
+        '[data-testid="search-drawer"]',
+      ) as HTMLElement;
       expect(drawer).toHaveClass('-translate-y-full');
     });
 
     it('backdrop click hides the drawer', async () => {
       const backdrop = fixture.nativeElement.querySelector(
-        '.app-search-drawer-backdrop',
+        '[data-testid="search-drawer-backdrop"]',
       ) as HTMLElement;
       await userEvent.click(backdrop);
       fixture.detectChanges();
 
-      const drawer = fixture.nativeElement.querySelector('.app-search-drawer') as HTMLElement;
+      const drawer = fixture.nativeElement.querySelector(
+        '[data-testid="search-drawer"]',
+      ) as HTMLElement;
       expect(drawer).toHaveClass('-translate-y-full');
     });
 
@@ -94,6 +102,11 @@ describe('SearchDrawerComponent', () => {
 
     it('does not render results', () => {
       expect(screen.queryByRole('listitem')).not.toBeInTheDocument();
+    });
+
+    it('Close button has text-primary-contrast class', () => {
+      const closeButton = screen.getByRole('button', { name: 'Close' });
+      expect(closeButton).toHaveClass('text-primary-contrast');
     });
   });
 
@@ -207,7 +220,9 @@ describe('SearchDrawerComponent', () => {
       await userEvent.click(screen.getByText(player.name));
       fixture.detectChanges();
 
-      const drawer = fixture.nativeElement.querySelector('.app-search-drawer') as HTMLElement;
+      const drawer = fixture.nativeElement.querySelector(
+        '[data-testid="search-drawer"]',
+      ) as HTMLElement;
       expect(drawer).toHaveClass('-translate-y-full');
     });
   });
