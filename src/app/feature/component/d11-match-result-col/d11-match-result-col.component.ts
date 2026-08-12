@@ -12,7 +12,6 @@ import { SafeDatePipe } from '@app/shared/pipes';
   templateUrl: './d11-match-result-col.component.html',
   host: {
     class: 'col-span-5 grid grid-cols-subgrid grid-rows-2 cursor-pointer',
-    '[class.app-grid-separator]': '!isLast()',
     '(click)': 'onClick()',
   },
 })

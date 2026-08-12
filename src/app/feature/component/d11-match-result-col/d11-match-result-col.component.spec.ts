@@ -10,14 +10,9 @@ const mockRouterService = { navigateToD11Match: vi.fn() };
 describe('D11MatchResultColComponent', () => {
   let fixture: ComponentFixture<D11MatchResultColComponent>;
 
-  async function setup(
-    d11MatchInput: D11MatchBase = fakeD11MatchBase(),
-    isLast = true,
-    showDate = false,
-  ) {
+  async function setup(d11MatchInput: D11MatchBase = fakeD11MatchBase(), showDate = false) {
     fixture = TestBed.createComponent(D11MatchResultColComponent);
     fixture.componentRef.setInput('d11Match', d11MatchInput);
-    fixture.componentRef.setInput('isLast', isLast);
     fixture.componentRef.setInput('showDate', showDate);
     fixture.detectChanges();
     await fixture.whenStable();
@@ -45,20 +40,6 @@ describe('D11MatchResultColComponent', () => {
 
     fixture.nativeElement.click();
     expect(mockRouterService.navigateToD11Match).toHaveBeenCalledExactlyOnceWith(match.id);
-  });
-
-  // Separator ------------------------------------------------------------------------------------
-
-  describe('separator', () => {
-    it('has app-grid-separator class when isLast is false', async () => {
-      await setup(fakeD11MatchBase(), false);
-      expect(fixture.nativeElement.classList).toContain('app-grid-separator');
-    });
-
-    it('does not have app-grid-separator class when isLast is true', async () => {
-      await setup(fakeD11MatchBase(), true);
-      expect(fixture.nativeElement.classList).not.toContain('app-grid-separator');
-    });
   });
 
   // Team names -----------------------------------------------------------------------------------
@@ -107,21 +88,21 @@ describe('D11MatchResultColComponent', () => {
   describe('date', () => {
     it('renders date in MMM d format when showDate is true', async () => {
       const datetime = '2025-06-15T14:30:00.000Z';
-      await setup({ ...fakeD11MatchBase(), status: Status.PENDING, datetime }, true, true);
+      await setup({ ...fakeD11MatchBase(), status: Status.PENDING, datetime }, true);
 
       expect(fixture.nativeElement.textContent).toContain('Jun 15');
     });
 
     it('does not render date when showDate is false', async () => {
       const datetime = '2025-06-15T14:30:00.000Z';
-      await setup({ ...fakeD11MatchBase(), status: Status.PENDING, datetime }, true, false);
+      await setup({ ...fakeD11MatchBase(), status: Status.PENDING, datetime });
 
       expect(fixture.nativeElement.textContent).not.toContain('Jun 15');
     });
 
     it('renders date when showDate is true even when kickoff time is 00:00', async () => {
       const datetime = '2025-06-15T00:00:00.000Z';
-      await setup({ ...fakeD11MatchBase(), status: Status.PENDING, datetime }, true, true);
+      await setup({ ...fakeD11MatchBase(), status: Status.PENDING, datetime }, true);
 
       expect(fixture.nativeElement.textContent).toContain('Jun 15');
     });
@@ -385,6 +366,18 @@ describe('D11MatchResultColComponent', () => {
       await setup({
         ...fakeD11MatchBase(),
         status: Status.ACTIVE,
+        homeTeamPoints: 101,
+        awayTeamPoints: 103,
+      });
+
+      expect(fixture.nativeElement.textContent).toContain('(101)');
+      expect(fixture.nativeElement.textContent).toContain('(103)');
+    });
+
+    it('renders home and away team points for full time match', async () => {
+      await setup({
+        ...fakeD11MatchBase(),
+        status: Status.FULL_TIME,
         homeTeamPoints: 101,
         awayTeamPoints: 103,
       });
