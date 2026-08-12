@@ -1,0 +1,6 @@
+@if (groupedMatches().length > 0) {
+  <app-section class="mt-4">
+    <span sectionHeader>Premier League Matches</span>
+    <app-match-week-matches [groups]="groupedMatches()" />
+  </app-section>
+}
