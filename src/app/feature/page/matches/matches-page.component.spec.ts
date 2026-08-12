@@ -6,6 +6,7 @@ import { beforeEach, describe, expect, vi } from 'vitest';
 import { MatchWeek, SeasonBase } from '@app/core/api';
 import { SeasonApiService } from '@app/core/api/season/season-api.service';
 import { MatchApiService } from '@app/core/api/match/match-api.service';
+import { D11MatchApiService } from '@app/core/api/d11-match/d11-match-api.service';
 import { MatchWeekApiService } from '@app/core/api/match-week/match-week-api.service';
 import { CurrentService } from '@app/core/current/current.service';
 import { LoadingService } from '@app/core/loading/loading.service';
@@ -41,7 +42,10 @@ describe('MatchesPageComponent', () => {
         { provide: LoadingService, useValue: { register: vi.fn() } },
         {
           provide: MatchWeekApiService,
-          useValue: { getMatchWeeksBySeasonId: vi.fn().mockReturnValue(of([])) },
+          useValue: {
+            getById: vi.fn().mockReturnValue(of(undefined)),
+            getMatchWeeksBySeasonId: vi.fn().mockReturnValue(of([])),
+          },
         },
         {
           provide: CurrentService,
@@ -58,6 +62,13 @@ describe('MatchesPageComponent', () => {
             getActiveMatches: vi.fn().mockReturnValue(of([])),
           },
         },
+        {
+          provide: D11MatchApiService,
+          useValue: {
+            getD11MatchesByMatchWeekId: vi.fn().mockReturnValue(of([])),
+            getActiveD11Matches: vi.fn().mockReturnValue(of([])),
+          },
+        },
         { provide: RouterService, useValue: mockRouterService },
       ],
     }).compileComponents();
@@ -70,10 +81,6 @@ describe('MatchesPageComponent', () => {
 
   it('creates the component', () => {
     expect(component).toBeTruthy();
-  });
-
-  it('renders season picker', () => {
-    expect(fixture.nativeElement.querySelector('app-season-picker')).toBeTruthy();
   });
 
   it('renders Live button', () => {
@@ -89,23 +96,53 @@ describe('MatchesPageComponent', () => {
       fixture.componentRef.setInput('matchWeekId', '42');
       expect(component.matchWeekId()).toBe(42);
     });
+
+    it('shows match week sections when matchWeekId is set and Live is not active', async () => {
+      fixture.componentRef.setInput('matchWeekId', 1);
+      fixture.detectChanges();
+      await fixture.whenStable();
+
+      expect(fixture.nativeElement.querySelector('app-match-week-matches-section')).toBeTruthy();
+      expect(
+        fixture.nativeElement.querySelector('app-match-week-d11-matches-section'),
+      ).toBeTruthy();
+    });
+
+    it('does not show match week sections when matchWeekId is undefined and Live is not active', () => {
+      expect(fixture.nativeElement.querySelector('app-match-week-matches-section')).toBeNull();
+    });
   });
 
   describe('Live button', () => {
-    it('click shows match week matches', () => {
+    it('click shows match week sections', () => {
       screen.getByText('Live').click();
       fixture.detectChanges();
 
-      expect(fixture.nativeElement.querySelector('app-match-week-matches')).toBeTruthy();
+      expect(fixture.nativeElement.querySelector('app-match-week-matches-section')).toBeTruthy();
+      expect(
+        fixture.nativeElement.querySelector('app-match-week-d11-matches-section'),
+      ).toBeTruthy();
     });
 
-    it('second click hides match week matches', () => {
+    it('second click hides match week sections', () => {
       screen.getByText('Live').click();
       fixture.detectChanges();
       screen.getByText('Live').click();
       fixture.detectChanges();
 
-      expect(fixture.nativeElement.querySelector('app-match-week-matches')).toBeNull();
+      expect(fixture.nativeElement.querySelector('app-match-week-matches-section')).toBeNull();
+    });
+
+    it('applies bg-primary-300 when active', () => {
+      const liveButton = screen.getByText('Live');
+
+      liveButton.click();
+      fixture.detectChanges();
+      expect(liveButton.classList).toContain('bg-primary-300');
+
+      liveButton.click();
+      fixture.detectChanges();
+      expect(liveButton.classList).not.toContain('bg-primary-300');
     });
   });
 

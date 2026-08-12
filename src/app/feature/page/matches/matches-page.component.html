@@ -1,9 +1,7 @@
-<app-season-picker (season)="onSeasonSelected($event)" />
-
-<div class="flex items-center">
+<div class="flex items-center bg-primary text-primary-contrast rounded-sm p-2 mb-6">
   <button
     (click)="active.set(!active())"
-    [ngClass]="active() ? 'bg-primary text-primary-contrast' : ''"
+    [ngClass]="active() ? 'bg-primary-300' : ''"
     class="px-2 py-1 rounded-sm text-xs font-semibold border-none cursor-pointer outline-none min-w-12 h-9.5"
     type="button"
   >
@@ -26,10 +24,12 @@
   }
 </div>
 
-@if (active()) {
-  <app-match-week-matches />
-  <app-match-week-d11-matches />
-} @else if (matchWeekId()) {
-  <app-match-week-matches [matchWeekId]="matchWeekId()!" />
-  <app-match-week-d11-matches [matchWeekId]="matchWeekId()!" />
-}
+<div class="pb-4">
+  @if (active()) {
+    <app-match-week-matches-section />
+    <app-match-week-d11-matches-section />
+  } @else if (matchWeekId()) {
+    <app-match-week-matches-section [matchWeekId]="matchWeekId()!" />
+    <app-match-week-d11-matches-section [matchWeekId]="matchWeekId()!" />
+  }
+</div>
