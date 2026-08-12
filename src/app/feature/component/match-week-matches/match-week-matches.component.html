@@ -1,23 +1,22 @@
-@if (groupedMatches().length > 0) {
-  <div class="app-col px-2 py-4">
-    <h2>Premier League</h2>
-    <div class="grid grid-cols-[auto_1fr_auto_auto] gap-x-2">
-      @for (group of groupedMatches(); track group.date; let first = $first) {
-        <div
-          [class.app-grid-header]="first"
-          [class.app-grid-sub-header]="!first"
-          class="col-span-4"
-        >
-          {{
-            group.date === Status.POSTPONED
-              ? (Status.POSTPONED | titlecase)
-              : (group.date | safeDate: 'EEEE, MMMM d')
-          }}
-        </div>
-        @for (match of group.matches; track match.id; let last = $last) {
-          <app-match-result-col [match]="match" [isLast]="last" />
-        }
-      }
+<div class="grid grid-cols-[auto_1fr_auto_auto] gap-x-2">
+  @for (group of groups(); track group.date; let first = $first) {
+    <div [class.pb-4]="first" [class.py-4]="!first" class="app-text-primary col-span-4">
+      {{
+        group.date === Status.POSTPONED
+          ? (Status.POSTPONED | titlecase)
+          : (group.date | safeDate: 'EEEE, MMMM d')
+      }}
     </div>
-  </div>
-}
+    @for (match of group.matches; track match.id; let first = $first; let last = $last) {
+      <app-match-result-col
+        [match]="match"
+        [isLast]="last"
+        [class.pt-2]="!first"
+        [class.pb-2]="!last"
+      />
+      @if (!last) {
+        <div class="app-separator col-span-4"></div>
+      }
+    }
+  }
+</div>

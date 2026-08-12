@@ -1,14 +1,11 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { MatchBase, Status } from '@app/core/api';
-import { MatchApiService } from '@app/core/api/match/match-api.service';
 import { RouterService } from '@app/core/router/router.service';
-import { fakeMatch, fakeMatchBase } from '@app/test';
-import { of } from 'rxjs';
+import { fakeMatchBase } from '@app/test';
 import { beforeEach, describe, expect, vi } from 'vitest';
 import { MatchWeekMatchesComponent } from './match-week-matches.component';
 
 const mockRouterService = { navigateToMatch: vi.fn() };
-const mockMatchApiService = { getMatchesByMatchWeekId: vi.fn(), getActiveMatches: vi.fn() };
 
 function formatDateHeader(dateStr: string): string {
   return new Intl.DateTimeFormat('en-US', {
@@ -20,13 +17,10 @@ function formatDateHeader(dateStr: string): string {
 
 describe('MatchWeekMatchesComponent', () => {
   let fixture: ComponentFixture<MatchWeekMatchesComponent>;
-  let matches: MatchBase[];
 
-  async function setup(matchWeekId?: number) {
+  async function setup(groups: { date: string; matches: MatchBase[] }[]) {
     fixture = TestBed.createComponent(MatchWeekMatchesComponent);
-    if (matchWeekId !== undefined) {
-      fixture.componentRef.setInput('matchWeekId', matchWeekId);
-    }
+    fixture.componentRef.setInput('groups', groups);
     fixture.detectChanges();
     await fixture.whenStable();
   }
@@ -34,165 +28,81 @@ describe('MatchWeekMatchesComponent', () => {
   beforeEach(async () => {
     vi.clearAllMocks();
 
-    const [m1, m2] = [fakeMatch(), fakeMatch()];
-    matches = [
-      {
-        ...m1,
-        homeTeam: { ...m1.homeTeam, name: 'Team1' },
-        awayTeam: { ...m1.awayTeam, name: 'Team2' },
-      },
-      {
-        ...m2,
-        homeTeam: { ...m2.homeTeam, name: 'Team3' },
-        awayTeam: { ...m2.awayTeam, name: 'Team4' },
-      },
-    ];
-    mockMatchApiService.getMatchesByMatchWeekId.mockReturnValue(of(matches));
-    mockMatchApiService.getActiveMatches.mockReturnValue(of([]));
-
     await TestBed.configureTestingModule({
       imports: [MatchWeekMatchesComponent],
-      providers: [
-        { provide: RouterService, useValue: mockRouterService },
-        { provide: MatchApiService, useValue: mockMatchApiService },
-      ],
+      providers: [{ provide: RouterService, useValue: mockRouterService }],
     }).compileComponents();
-
-    await setup(1);
   });
 
-  it('creates the component', () => {
+  it('creates the component', async () => {
+    await setup([]);
     expect(fixture.componentInstance).toBeTruthy();
   });
 
-  it('calls getMatchesByMatchWeekId with the provided matchWeekId', () => {
-    expect(mockMatchApiService.getMatchesByMatchWeekId).toHaveBeenCalledWith(1);
-    expect(mockMatchApiService.getActiveMatches).not.toHaveBeenCalled();
-  });
+  // Date header ----------------------------------------------------------------------------------
 
-  it('renders Premier League heading', () => {
-    expect(fixture.nativeElement.querySelector('h2')?.textContent?.trim()).toBe('Premier League');
-  });
+  describe('date header', () => {
+    it('renders formatted date header for a group', async () => {
+      const date = '2025-03-15';
+      await setup([{ date, matches: [fakeMatchBase()] }]);
 
-  it('renders home team name for each match', () => {
-    for (const match of matches) {
-      expect(fixture.nativeElement.textContent).toContain(match.homeTeam.name);
-    }
-  });
-
-  it('renders away team name for each match', () => {
-    for (const match of matches) {
-      expect(fixture.nativeElement.textContent).toContain(match.awayTeam.name);
-    }
-  });
-
-  // Empty state ----------------------------------------------------------------------------------
-
-  describe('empty state', () => {
-    it('renders nothing when there are no matches', async () => {
-      mockMatchApiService.getMatchesByMatchWeekId.mockReturnValue(of([]));
-      await setup(1);
-
-      expect(fixture.nativeElement.textContent.trim()).toBe('');
-    });
-  });
-
-  // Date grouping --------------------------------------------------------------------------------
-
-  describe('date grouping', () => {
-    const date1 = '2025-03-15';
-    const date2 = '2025-03-16';
-
-    it('renders date headers in order', async () => {
-      matches = [
-        { ...fakeMatchBase(), status: Status.FINISHED, datetime: `${date1}T15:00:00.000Z` },
-        { ...fakeMatchBase(), status: Status.FINISHED, datetime: `${date2}T15:00:00.000Z` },
-      ];
-      mockMatchApiService.getMatchesByMatchWeekId.mockReturnValue(of(matches));
-      await setup(1);
-
-      const formatted1 = formatDateHeader(date1);
-      const formatted2 = formatDateHeader(date2);
-      const headers = Array.from(
-        fixture.nativeElement.querySelectorAll('.app-grid-header, .app-grid-sub-header'),
-      ).map((element) => (element as HTMLElement).textContent?.trim());
-
-      expect(headers).toContain(formatted1);
-      expect(headers).toContain(formatted2);
-      expect(headers.indexOf(formatted1)).toBeLessThan(headers.indexOf(formatted2));
+      expect(fixture.nativeElement.textContent).toContain(formatDateHeader(date));
     });
 
-    it('sorts matches by datetime within a group', async () => {
-      const earlyBase = fakeMatchBase();
-      const lateBase = fakeMatchBase();
-      const early = {
-        ...earlyBase,
-        status: Status.FINISHED,
-        datetime: `${date1}T12:00:00.000Z`,
-        homeTeam: { ...earlyBase.homeTeam, name: 'Team1' },
-      };
-      const late = {
-        ...lateBase,
-        status: Status.FINISHED,
-        datetime: `${date1}T17:00:00.000Z`,
-        homeTeam: { ...lateBase.homeTeam, name: 'Team2' },
-      };
-      mockMatchApiService.getMatchesByMatchWeekId.mockReturnValue(of([late, early]));
-      await setup(1);
+    it('renders Postponed header when group date is POSTPONED status', async () => {
+      await setup([{ date: Status.POSTPONED, matches: [fakeMatchBase()] }]);
 
-      const rows = fixture.nativeElement.querySelectorAll('.col-span-4.grid');
-      expect(rows[0].textContent).toContain(early.homeTeam.name);
-      expect(rows[1].textContent).toContain(late.homeTeam.name);
-    });
-  });
-
-  // Postponed ------------------------------------------------------------------------------------
-
-  describe('postponed matches', () => {
-    beforeEach(async () => {
-      matches = [
-        { ...fakeMatchBase(), status: Status.FINISHED, datetime: '2025-03-15T15:00:00.000Z' },
-        { ...fakeMatchBase(), status: Status.POSTPONED, datetime: '2025-03-15T15:00:00.000Z' },
-      ];
-      mockMatchApiService.getMatchesByMatchWeekId.mockReturnValue(of(matches));
-      await setup(1);
-    });
-
-    it('renders postponed group header', () => {
       expect(fixture.nativeElement.textContent).toContain('Postponed');
     });
 
-    it('renders only one postponed header', () => {
-      const headers = Array.from(
-        fixture.nativeElement.querySelectorAll('.app-grid-header, .app-grid-sub-header'),
-      ).map((element) => (element as HTMLElement).textContent?.trim());
-      expect(headers.filter((text) => text === 'Postponed')).toHaveLength(1);
-    });
+    it('renders headers for all groups', async () => {
+      const date1 = '2025-03-15';
+      const date2 = '2025-03-16';
+      await setup([
+        { date: date1, matches: [fakeMatchBase()] },
+        { date: date2, matches: [fakeMatchBase()] },
+      ]);
 
-    it('sorts postponed last', () => {
-      const headers = fixture.nativeElement.querySelectorAll(
-        '.app-grid-header, .app-grid-sub-header',
-      );
-      expect(headers[headers.length - 1].textContent?.trim()).toBe('Postponed');
+      expect(fixture.nativeElement.textContent).toContain(formatDateHeader(date1));
+      expect(fixture.nativeElement.textContent).toContain(formatDateHeader(date2));
     });
   });
 
-  // Without matchWeekId (active mode) -----------------------------------------------------------
+  // Match rows -----------------------------------------------------------------------------------
 
-  describe('without matchWeekId', () => {
-    beforeEach(async () => {
-      vi.clearAllMocks();
-      mockMatchApiService.getActiveMatches.mockReturnValue(of(matches));
-      await setup();
+  describe('match rows', () => {
+    it('renders a match result col for each match in a group', async () => {
+      const matches = [fakeMatchBase(), fakeMatchBase()];
+      await setup([{ date: '2025-03-15', matches }]);
+
+      expect(fixture.nativeElement.querySelectorAll('app-match-result-col').length).toBe(2);
     });
 
-    it('calls getActiveMatches', () => {
-      expect(mockMatchApiService.getActiveMatches).toHaveBeenCalled();
-      expect(mockMatchApiService.getMatchesByMatchWeekId).not.toHaveBeenCalled();
+    it('renders match result cols across multiple groups', async () => {
+      await setup([
+        { date: '2025-03-15', matches: [fakeMatchBase(), fakeMatchBase()] },
+        { date: '2025-03-16', matches: [fakeMatchBase()] },
+      ]);
+
+      expect(fixture.nativeElement.querySelectorAll('app-match-result-col').length).toBe(3);
+    });
+  });
+
+  // Separators -----------------------------------------------------------------------------------
+
+  describe('separators', () => {
+    it('renders a separator between each non-last match in a group', async () => {
+      await setup([
+        { date: '2025-03-15', matches: [fakeMatchBase(), fakeMatchBase(), fakeMatchBase()] },
+      ]);
+
+      expect(fixture.nativeElement.querySelectorAll('.app-separator').length).toBe(2);
     });
 
-    it('renders matches from getActiveMatches', () => {
-      expect(fixture.nativeElement.textContent).toContain(matches[0].homeTeam.name);
+    it('does not render a separator after the last match in a group', async () => {
+      await setup([{ date: '2025-03-15', matches: [fakeMatchBase()] }]);
+
+      expect(fixture.nativeElement.querySelectorAll('.app-separator').length).toBe(0);
     });
   });
 });
