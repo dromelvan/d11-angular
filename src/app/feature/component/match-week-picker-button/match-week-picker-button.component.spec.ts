@@ -76,4 +76,33 @@ describe('MatchWeekPickerButtonComponent', () => {
 
     expect(emitted).toEqual([matchWeek]);
   });
+
+  it('does not emit matchWeekSelected when drawer emits an unknown id', () => {
+    const emitted: MatchWeek[] = [];
+    fixture.componentInstance.matchWeekSelected.subscribe((mw) => emitted.push(mw));
+
+    const drawer = fixture.debugElement.query(By.directive(MatchWeekPickerDrawerComponent))
+      .componentInstance as MatchWeekPickerDrawerComponent;
+    drawer.matchWeekSelected.emit(matchWeek.id + 999);
+
+    expect(emitted).toHaveLength(0);
+  });
+
+  it('passes current match week id as currentId to the drawer', () => {
+    const drawer = fixture.debugElement.query(By.directive(MatchWeekPickerDrawerComponent))
+      .componentInstance as MatchWeekPickerDrawerComponent;
+
+    expect(drawer.currentId()).toBe(matchWeek.id);
+  });
+
+  it('returns empty match weeks when loaded season does not match seasonId input', async () => {
+    const differentSeasonId = matchWeek.season.id + 1;
+    fixture.componentRef.setInput('seasonId', differentSeasonId);
+    fixture.detectChanges();
+    await fixture.whenStable();
+
+    const drawer = fixture.debugElement.query(By.directive(MatchWeekPickerDrawerComponent))
+      .componentInstance as MatchWeekPickerDrawerComponent;
+    expect(drawer.matchWeeks()).toHaveLength(0);
+  });
 });
