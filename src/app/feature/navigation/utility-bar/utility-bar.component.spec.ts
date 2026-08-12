@@ -72,7 +72,7 @@ describe('UtilityBarComponent', () => {
 
   it('opens search drawer when search icon is clicked', async () => {
     const { container } = await setup();
-    const drawerPanel = container.querySelector('.app-search-drawer') as HTMLElement;
+    const drawerPanel = container.querySelector('[data-testid="search-drawer"]') as HTMLElement;
     expect(drawerPanel).toHaveClass('-translate-y-full');
 
     await userEvent.click(container.querySelector('app-svg-icon[name="search"]')!);

@@ -23,8 +23,8 @@ describe('NavbarLinkComponent', () => {
     expect(fixture.nativeElement.querySelector('nav')).toHaveClass('hidden lg:flex');
   });
 
-  it('renders Matches link to /match-weeks', () => {
-    expect(screen.getByRole('link', { name: 'Matches' })).toHaveAttribute('href', '/match-weeks');
+  it('renders Matches link to /matches', () => {
+    expect(screen.getByRole('link', { name: 'Matches' })).toHaveAttribute('href', '/matches');
   });
 
   it('renders Tables link to /seasons', () => {

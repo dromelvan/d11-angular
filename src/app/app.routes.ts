@@ -6,8 +6,8 @@ export const routes: Routes = [
   {
     path: '',
     loadComponent: () =>
-      import('@app/feature/page/match-week/match-week-page.component').then(
-        (m) => m.MatchWeekPageComponent,
+      import('@app/feature/page/matches/matches-page.component').then(
+        (m) => m.MatchesPageComponent,
       ),
     data: { section: 'Matches' },
   },
@@ -82,14 +82,6 @@ export const routes: Routes = [
         (m) => m.D11MatchPageComponent,
       ),
     data: { section: 'D11 Matches' },
-  },
-  {
-    path: 'match-weeks/:matchWeekId',
-    loadComponent: () =>
-      import('@app/feature/page/match-week/match-week-page.component').then(
-        (m) => m.MatchWeekPageComponent,
-      ),
-    data: { section: 'Matches' },
   },
   {
     path: 'seasons/:seasonId',

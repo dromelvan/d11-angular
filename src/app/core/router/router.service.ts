@@ -39,11 +39,6 @@ export class RouterService {
     return this.router.navigate(['teams', teamId], extras);
   }
 
-  public navigateToMatchWeek(matchWeekId: number, push = true): Promise<boolean> {
-    this.updateStack('match-weeks', push);
-    return this.router.navigate(['match-weeks', matchWeekId]);
-  }
-
   public navigateToMatch(matchId: number, push = true): Promise<boolean> {
     if (!push) {
       this.stack.set([]);

@@ -1,7 +1,6 @@
 export * from './api-error/api-error-page.component';
 export * from './d11-teams/d11-teams-page.component';
 export * from './match/match-page.component';
-export * from './match-week/match-week-page.component';
 export * from './more/more-page.component';
 export * from './player/player-page.component';
 export * from './players/players-page.component';

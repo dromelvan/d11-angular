@@ -68,7 +68,7 @@ describe('D11TeamMatchesComponent', () => {
     expect(screen.getByText('Jun 15')).toBeInTheDocument();
   });
 
-  it('adds separator to non-last matches', async () => {
+  it('renders a separator between matches but not after the last', async () => {
     const d11Matches = [fakeD11MatchBase(), fakeD11MatchBase()];
 
     await render(D11TeamMatchesComponent, {
@@ -76,8 +76,6 @@ describe('D11TeamMatchesComponent', () => {
       providers,
     });
 
-    const cols = document.querySelectorAll('app-d11-match-result-col');
-    expect(cols[0].classList).toContain('app-grid-separator');
-    expect(cols[1].classList).not.toContain('app-grid-separator');
+    expect(document.querySelectorAll('.app-separator')).toHaveLength(1);
   });
 });

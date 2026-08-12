@@ -68,7 +68,7 @@ export class LoginComponent {
       .subscribe({
         next: (current) => {
           if (current.matchWeek?.id != null) {
-            this.routerService.navigateToMatchWeek(current.matchWeek.id);
+            this.routerService.navigateToMatchWeekMatches(current.matchWeek.id);
           }
         },
         error: (response: HttpErrorResponse) => {

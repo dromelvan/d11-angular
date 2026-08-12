@@ -23,9 +23,9 @@ export class TransfersHeaderCardComponent {
 
   private routerService = inject(RouterService);
 
-  protected navigateToMatchWeek(): void {
+  protected onMatchWeekClick(): void {
     if (this.transferWindow()?.matchWeek.id) {
-      this.routerService.navigateToMatchWeek(this.transferWindow()!.matchWeek!.id!);
+      this.routerService.navigateToMatchWeekMatches(this.transferWindow()!.matchWeek!.id!);
     }
   }
 

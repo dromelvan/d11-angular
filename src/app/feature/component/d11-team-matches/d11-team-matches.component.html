@@ -3,7 +3,10 @@
   @if (d11Matches().length > 0) {
     <div class="grid grid-cols-[auto_1fr_auto_auto_auto] gap-x-2">
       @for (d11Match of d11Matches(); track d11Match.id; let last = $last) {
-        <app-d11-match-result-col [d11Match]="d11Match" [isLast]="last" [showDate]="true" />
+        <app-d11-match-result-col [d11Match]="d11Match" [showDate]="true" />
+        @if (!last) {
+          <div class="app-separator col-span-5"></div>
+        }
       }
     </div>
   } @else {

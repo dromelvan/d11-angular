@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { HttpErrorResponse } from '@angular/common/http';
-import { Observable, of, throwError } from 'rxjs';
+import { NEVER, Observable, of, throwError } from 'rxjs';
 import { screen } from '@testing-library/angular';
 import userEvent from '@testing-library/user-event';
 import { CurrentApiService, UserCredentialsModel } from '@app/core/api';
@@ -19,7 +19,7 @@ describe('LoginComponent', () => {
   let user: ReturnType<typeof userEvent.setup>;
   let mockUserSession: { authenticate: ReturnType<typeof vi.fn> };
   let mockCurrentApiService: { getCurrent: ReturnType<typeof vi.fn> };
-  let mockRouterService: { navigateToMatchWeek: ReturnType<typeof vi.fn> };
+  let mockRouterService: { navigateToMatchWeekMatches: ReturnType<typeof vi.fn> };
   let mockMessageService: { add: ReturnType<typeof vi.fn> };
 
   async function submitCredentials() {
@@ -38,7 +38,7 @@ describe('LoginComponent', () => {
       getCurrent: vi.fn(),
     };
     mockRouterService = {
-      navigateToMatchWeek: vi.fn().mockResolvedValue(true),
+      navigateToMatchWeekMatches: vi.fn().mockResolvedValue(true),
     };
     mockMessageService = {
       add: vi.fn(),
@@ -81,9 +81,29 @@ describe('LoginComponent', () => {
 
     expect(mockUserSession.authenticate).toHaveBeenCalledExactlyOnceWith(userCredentials);
     expect(mockCurrentApiService.getCurrent).toHaveBeenCalled();
-    expect(mockRouterService.navigateToMatchWeek).toHaveBeenCalledExactlyOnceWith(
+    expect(mockRouterService.navigateToMatchWeekMatches).toHaveBeenCalledExactlyOnceWith(
       current.matchWeek!.id,
     );
+  });
+
+  it('does not navigate when current has no match week', async () => {
+    mockUserSession.authenticate = vi.fn().mockReturnValue(of('token'));
+    mockCurrentApiService.getCurrent = vi
+      .fn()
+      .mockReturnValue(of({ ...fakeCurrent(), matchWeek: null }));
+
+    await submitCredentials();
+
+    expect(mockRouterService.navigateToMatchWeekMatches).not.toHaveBeenCalled();
+  });
+
+  it('does not re-submit when already working', async () => {
+    mockUserSession.authenticate = vi.fn().mockReturnValue(NEVER);
+
+    await submitCredentials();
+    await submitCredentials();
+
+    expect(mockUserSession.authenticate).toHaveBeenCalledOnce();
   });
 
   it('shows error toast on 401', async () => {
@@ -93,7 +113,7 @@ describe('LoginComponent', () => {
 
     await submitCredentials();
 
-    expect(mockRouterService.navigateToMatchWeek).not.toHaveBeenCalled();
+    expect(mockRouterService.navigateToMatchWeekMatches).not.toHaveBeenCalled();
     expect(mockMessageService.add).toHaveBeenCalledWith(
       expect.objectContaining({ severity: 'error' }),
     );

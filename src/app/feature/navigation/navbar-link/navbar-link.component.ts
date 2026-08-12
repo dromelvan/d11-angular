@@ -15,7 +15,7 @@ interface NavLink {
 })
 export class NavbarLinkComponent {
   protected readonly links: NavLink[] = [
-    { label: 'Matches', routerLink: ['match-weeks'] },
+    { label: 'Matches', routerLink: ['matches'] },
     { label: 'Tables', routerLink: ['seasons'] },
     { label: 'Players', routerLink: ['players'] },
     { label: 'Transfers', routerLink: ['transfers'] },

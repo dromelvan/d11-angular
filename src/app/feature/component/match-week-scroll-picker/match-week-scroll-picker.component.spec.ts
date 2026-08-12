@@ -110,15 +110,14 @@ describe('MatchWeekScrollPickerComponent', () => {
     expect(emitted).toEqual([matchWeek]);
   });
 
-  it('applies primary background to the current match week button', () => {
+  it('applies border-white to the current match week button', () => {
     const button = fixture.nativeElement.querySelector(`[data-id="${currentMatchWeek.id}"]`);
-    expect(button.classList).toContain('bg-primary');
-    expect(button.classList).toContain('text-primary-contrast');
+    expect(button.classList).toContain('border-white');
   });
 
   it('defaults to the current match week as selected when matchWeekId is not provided', () => {
     const otherButton = fixture.nativeElement.querySelector(`[data-id="${matchWeek.id}"]`);
-    expect(otherButton.classList).not.toContain('bg-surface-300');
+    expect(otherButton.classList).not.toContain('bg-primary-300');
   });
 
   it('defaults to the first match week when the current match week is not in the season', async () => {
@@ -132,12 +131,12 @@ describe('MatchWeekScrollPickerComponent', () => {
     await fixture.whenStable();
 
     const firstButton = fixture.nativeElement.querySelector(`[data-id="${matchWeek.id}"]`);
-    expect(firstButton.classList).toContain('bg-surface-300');
+    expect(firstButton.classList).toContain('bg-primary-300');
   });
 
   it('uses CurrentService matchWeek to mark the current match week', () => {
     const currentButton = fixture.nativeElement.querySelector(`[data-id="${currentMatchWeek.id}"]`);
-    expect(currentButton.classList).toContain('bg-primary');
+    expect(currentButton.classList).toContain('border-white');
   });
 
   it('emits the current match week on initial load', async () => {
