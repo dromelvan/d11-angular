@@ -45,18 +45,30 @@ describe('ScrollPickerComponent', () => {
     expect(button.textContent).toContain(expectedDate);
   });
 
-  it('applies selected highlight to the selected item', () => {
+  it('applies bg-primary-300 to the selected non-current item', () => {
     const selectedButton = fixture.nativeElement.querySelector('[data-id="2"]');
     const otherButton = fixture.nativeElement.querySelector('[data-id="1"]');
-    expect(selectedButton.classList).toContain('bg-surface-300');
-    expect(otherButton.classList).not.toContain('bg-surface-300');
+    expect(selectedButton.classList).toContain('bg-primary-300');
+    expect(otherButton.classList).not.toContain('bg-primary-300');
   });
 
-  it('applies primary background to a current item', () => {
+  it('applies border-white to the current item', () => {
     const currentButton = fixture.nativeElement.querySelector('[data-id="3"]');
-    expect(currentButton.classList).toContain('bg-primary');
-    expect(currentButton.classList).toContain('text-primary-contrast');
-    expect(currentButton.classList).not.toContain('bg-surface-300');
+    expect(currentButton.classList).toContain('border-white');
+  });
+
+  it('does not apply bg-primary-300 to the current item even when selected', () => {
+    fixture.componentRef.setInput('selectedId', 3);
+    fixture.detectChanges();
+
+    const currentButton = fixture.nativeElement.querySelector('[data-id="3"]');
+    expect(currentButton.classList).toContain('border-white');
+    expect(currentButton.classList).not.toContain('bg-primary-300');
+  });
+
+  it('does not apply border-white to a non-current item', () => {
+    const nonCurrentButton = fixture.nativeElement.querySelector('[data-id="1"]');
+    expect(nonCurrentButton.classList).not.toContain('border-white');
   });
 
   it('emits selected id when item is clicked', () => {
