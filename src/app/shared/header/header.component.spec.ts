@@ -157,6 +157,39 @@ describe('HeaderComponent', () => {
     expect(container.querySelector('.app-hero-background')).toBeNull();
   });
 
+  it('does not apply app-hero-background class when backgroundColor is empty string', async () => {
+    const { container } = await render(`<app-header></app-header>`, {
+      imports: [HeaderComponent],
+      providers: [
+        {
+          provide: PageContextService,
+          useValue: mockPageContextService({ backgroundColor: '' }),
+        },
+        { provide: RouterService, useValue: mockRouterService() },
+        ...childProviders(),
+      ],
+    });
+
+    expect(container.querySelector('.app-hero-background')).toBeNull();
+  });
+
+  it('when backgroundColor is empty string should use BACKGROUND color', async () => {
+    const { container } = await render(`<app-header></app-header>`, {
+      imports: [HeaderComponent],
+      providers: [
+        {
+          provide: PageContextService,
+          useValue: mockPageContextService({ backgroundColor: '' }),
+        },
+        { provide: RouterService, useValue: mockRouterService() },
+        ...childProviders(),
+      ],
+    });
+
+    const headerDiv = container.querySelector('div') as HTMLElement;
+    expect(headerDiv.style.backgroundColor).toBe('rgb(242, 241, 238)');
+  });
+
   it('applies no text class when textClass is undefined', async () => {
     await render(`<app-header></app-header>`, {
       imports: [HeaderComponent],
@@ -170,6 +203,35 @@ describe('HeaderComponent', () => {
     const headerDiv = screen.getByText('Title').closest('div') as HTMLElement;
     expect(headerDiv).not.toHaveClass('text-white!');
     expect(headerDiv).not.toHaveClass('text-black!');
+  });
+
+  it('applies bg-primary to lion circle when no background color is set', async () => {
+    const { container } = await render(`<app-header></app-header>`, {
+      imports: [HeaderComponent],
+      providers: [
+        { provide: PageContextService, useValue: mockPageContextService() },
+        { provide: RouterService, useValue: mockRouterService(false) },
+        ...childProviders(),
+      ],
+    });
+
+    expect(container.querySelector('.app-circle')).toHaveClass('bg-primary');
+  });
+
+  it('does not apply bg-primary to lion circle when background color is set', async () => {
+    const { container } = await render(`<app-header></app-header>`, {
+      imports: [HeaderComponent],
+      providers: [
+        {
+          provide: PageContextService,
+          useValue: mockPageContextService({ backgroundColor: '#ff0000' }),
+        },
+        { provide: RouterService, useValue: mockRouterService(false) },
+        ...childProviders(),
+      ],
+    });
+
+    expect(container.querySelector('.app-circle')).not.toHaveClass('bg-primary');
   });
 
   it('shows back button when router has stack', async () => {

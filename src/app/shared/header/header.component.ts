@@ -25,7 +25,7 @@ import { AvatarModule } from 'primeng/avatar';
 export class HeaderComponent {
   protected readonly backgroundColor = computed(() => this.pageContextService.backgroundColor());
   protected readonly effectiveBackgroundColor = computed(
-    () => this.backgroundColor() ?? BACKGROUND,
+    () => this.backgroundColor() || BACKGROUND,
   );
   protected readonly hasStack = computed(() => this.routerService.hasStack());
   protected readonly headerClasses = computed(() => {
