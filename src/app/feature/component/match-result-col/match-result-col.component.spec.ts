@@ -10,10 +10,9 @@ const mockRouterService = { navigateToMatch: vi.fn() };
 describe('MatchResultColComponent', () => {
   let fixture: ComponentFixture<MatchResultColComponent>;
 
-  async function setup(matchInput = fakeMatchBase(), isLast = true, showDate = false) {
+  async function setup(matchInput = fakeMatchBase(), showDate = false) {
     fixture = TestBed.createComponent(MatchResultColComponent);
     fixture.componentRef.setInput('match', matchInput);
-    fixture.componentRef.setInput('isLast', isLast);
     fixture.componentRef.setInput('showDate', showDate);
     fixture.detectChanges();
     await fixture.whenStable();
@@ -41,20 +40,6 @@ describe('MatchResultColComponent', () => {
 
     fixture.nativeElement.click();
     expect(mockRouterService.navigateToMatch).toHaveBeenCalledExactlyOnceWith(match.id);
-  });
-
-  // Separator ------------------------------------------------------------------------------------
-
-  describe('separator', () => {
-    it('has app-grid-separator class when isLast is false', async () => {
-      await setup(fakeMatchBase(), false);
-      expect(fixture.nativeElement.classList).toContain('app-grid-separator');
-    });
-
-    it('does not have app-grid-separator class when isLast is true', async () => {
-      await setup(fakeMatchBase(), true);
-      expect(fixture.nativeElement.classList).not.toContain('app-grid-separator');
-    });
   });
 
   // Team names -----------------------------------------------------------------------------------
@@ -87,9 +72,19 @@ describe('MatchResultColComponent', () => {
       expect(fixture.nativeElement.textContent).toContain(expected);
     });
 
+    it('does not render kickoff time when time is 00:00', async () => {
+      await setup({
+        ...fakeMatchBase(),
+        status: Status.PENDING,
+        datetime: '2025-06-15T00:00:00.000Z',
+      });
+
+      expect(fixture.nativeElement.textContent).not.toContain('00:00');
+    });
+
     it('renders date above time when showDate is true', async () => {
       const datetime = '2025-06-15T14:30:00.000Z';
-      await setup({ ...fakeMatchBase(), status: Status.PENDING, datetime }, true, true);
+      await setup({ ...fakeMatchBase(), status: Status.PENDING, datetime }, true);
 
       expect(fixture.nativeElement.textContent).toContain('Jun 15');
     });
@@ -99,6 +94,13 @@ describe('MatchResultColComponent', () => {
       await setup({ ...fakeMatchBase(), status: Status.PENDING, datetime });
 
       expect(fixture.nativeElement.textContent).not.toContain('Jun 15');
+    });
+
+    it('renders date when showDate is true even when kickoff time is 00:00', async () => {
+      const datetime = '2025-06-15T00:00:00.000Z';
+      await setup({ ...fakeMatchBase(), status: Status.PENDING, datetime }, true);
+
+      expect(fixture.nativeElement.textContent).toContain('Jun 15');
     });
   });
 
@@ -125,6 +127,12 @@ describe('MatchResultColComponent', () => {
 
     it('does not render for pending match', async () => {
       await setup({ ...fakeMatchBase(), status: Status.PENDING, elapsed: 'N/A' });
+
+      expect(fixture.nativeElement.textContent).not.toContain('N/A');
+    });
+
+    it('does not render for postponed match', async () => {
+      await setup({ ...fakeMatchBase(), status: Status.POSTPONED, elapsed: 'N/A' });
 
       expect(fixture.nativeElement.textContent).not.toContain('N/A');
     });
@@ -284,6 +292,20 @@ describe('MatchResultColComponent', () => {
         });
 
         expect(fixture.nativeElement.querySelector('app-icon')).toBeNull();
+      });
+
+      it('shows -N G and down arrow when away goals decreased', async () => {
+        await setup({
+          ...fakeMatchBase(),
+          status: Status.ACTIVE,
+          homeTeamGoalsScored: 0,
+          previousHomeTeamGoalsScored: 0,
+          awayTeamGoalsScored: 1,
+          previousAwayTeamGoalsScored: 2,
+        });
+
+        expect(fixture.nativeElement.querySelector('app-icon.text-error')).toBeTruthy();
+        expect(fixture.nativeElement.textContent).toContain('-1 G');
       });
 
       it('shows +N G and up arrow when away goals increased', async () => {

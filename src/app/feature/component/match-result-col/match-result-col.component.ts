@@ -12,7 +12,6 @@ import { SafeDatePipe } from '@app/shared/pipes';
   templateUrl: './match-result-col.component.html',
   host: {
     class: 'col-span-4 grid grid-cols-subgrid grid-rows-2 cursor-pointer',
-    '[class.app-grid-separator]': '!isLast()',
     '(click)': 'onClick()',
   },
 })
@@ -28,9 +27,11 @@ export class MatchResultColComponent {
     const showDate = this.showDate();
     const homeDiff = match.homeTeamGoalsScored - match.previousHomeTeamGoalsScored;
     const awayDiff = match.awayTeamGoalsScored - match.previousAwayTeamGoalsScored;
+    const kickoff = new Date(match.datetime);
     return {
       match,
       showDate,
+      showKickoff: kickoff.getHours() !== 0 || kickoff.getMinutes() !== 0,
       homeDiff,
       awayDiff,
       showElapsed: [Status.ACTIVE, Status.FULL_TIME, Status.FINISHED].includes(match.status),

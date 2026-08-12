@@ -1,10 +1,12 @@
 @let m = model();
 
-<div class="app-col row-span-2 items-center justify-center gap-0.5 text-xs py-2.5">
+<div class="app-col-05 app-text-detail row-span-2 items-center justify-center">
   @if (m.showDate) {
     <span>{{ m.match.datetime | safeDate: 'MMM d' }}</span>
   }
-  <span>{{ m.match.datetime | safeDate: 'HH:mm' }}</span>
+  @if (m.showKickoff) {
+    <span>{{ m.match.datetime | safeDate: 'HH:mm' }}</span>
+  }
   @if (m.showElapsed) {
     <span
       [class.bg-primary]="m.match.status === Status.ACTIVE"
@@ -20,11 +22,11 @@
     </span>
   }
 </div>
-<div class="app-flex items-center gap-1.5 text-sm pt-2.5 pb-0.5">
+<div class="app-row items-center gap-1.5 pb-0.5">
   <app-team-img [team]="m.match.homeTeam" width="20" />
   <span>{{ m.match.homeTeam.name }}</span>
 </div>
-<div class="app-flex items-center justify-end text-xs font-semibold pt-2.5 pb-0.5">
+<div class="app-row app-text-detail items-center justify-end">
   @if (m.showGoals && m.homeDiff !== 0) {
     {{ m.homeDiff > 0 ? '+' + m.homeDiff : m.homeDiff }} G
     <app-icon
@@ -36,16 +38,16 @@
     />
   }
 </div>
-<div class="app-flex items-center justify-end text-sm pt-2.5 pb-0.5">
+<div class="app-row app-text-number items-center justify-end">
   @if (m.showGoals) {
     {{ m.match.homeTeamGoalsScored }}
   }
 </div>
-<div class="app-flex items-center gap-1.5 text-sm pb-2.5 pt-0.5">
+<div class="app-row items-center gap-1.5">
   <app-team-img [team]="m.match.awayTeam" width="20" />
   <span>{{ m.match.awayTeam.name }}</span>
 </div>
-<div class="app-flex items-center justify-end text-xs font-semibold pb-2.5 pt-0.5">
+<div class="app-row app-text-detail items-center justify-end">
   @if (m.showGoals && m.awayDiff !== 0) {
     {{ m.awayDiff > 0 ? '+' + m.awayDiff : m.awayDiff }} G
     <app-icon
@@ -57,7 +59,7 @@
     />
   }
 </div>
-<div class="app-flex items-center justify-end text-sm pb-2.5 pt-0.5">
+<div class="app-row app-text-number items-center justify-end">
   @if (m.showGoals) {
     {{ m.match.awayTeamGoalsScored }}
   }
