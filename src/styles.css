@@ -174,7 +174,7 @@
     }
 
     .app-separator {
-        @apply border-t border-surface-100 -mx-4;
+        @apply border-t border-surface-200 -mx-4;
     }
 
     /** PrimeNG styling that can't be done in theme **/
