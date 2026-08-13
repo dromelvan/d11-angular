@@ -1,8 +1,9 @@
+import { signal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { of } from 'rxjs';
 import { screen } from '@testing-library/angular';
 import { beforeEach, describe, expect, vi } from 'vitest';
-import { CurrentApiService } from '@app/core/api';
+import { MatchWeekBase, SeasonBase, TransferWindowBase } from '@app/core/api';
+import { CurrentService } from '@app/core/current/current.service';
 import { RouterService } from '@app/core/router/router.service';
 import { fakeCurrent } from '@app/test';
 import { NavbarIconComponent } from './navbar-icon.component';
@@ -13,25 +14,27 @@ describe('NavbarIconComponent', () => {
 
   const mockRouterService = {
     navigateToMatches: vi.fn(),
+    navigateToMatchWeekMatches: vi.fn(),
     navigateToSeason: vi.fn(),
     navigateToPlayers: vi.fn(),
     navigateToTransferWindow: vi.fn(),
     navigateToMore: vi.fn(),
   };
 
-  const mockCurrentApiService = {
-    getCurrent: vi.fn(),
+  const mockCurrentService = {
+    matchWeek: signal<MatchWeekBase | undefined>(current.matchWeek),
+    season: signal<SeasonBase | undefined>(current.season),
+    transferWindow: signal<TransferWindowBase | undefined>(current.transferWindow),
   };
 
   beforeEach(async () => {
     vi.clearAllMocks();
-    mockCurrentApiService.getCurrent.mockReturnValue(of(current));
 
     await TestBed.configureTestingModule({
       imports: [NavbarIconComponent],
       providers: [
         { provide: RouterService, useValue: mockRouterService },
-        { provide: CurrentApiService, useValue: mockCurrentApiService },
+        { provide: CurrentService, useValue: mockCurrentService },
       ],
     }).compileComponents();
 
@@ -50,10 +53,23 @@ describe('NavbarIconComponent', () => {
     expect(screen.getByText('Matches')).toBeInTheDocument();
   });
 
-  it('calls navigateToMatches on Matches click', () => {
+  it('calls navigateToMatchWeekMatches with current match week id on Matches click', () => {
+    screen.getByText('Matches').click();
+
+    expect(mockRouterService.navigateToMatchWeekMatches).toHaveBeenCalledExactlyOnceWith(
+      current.matchWeek!.id,
+    );
+  });
+
+  it('falls back to navigateToMatches when current match week is unavailable', async () => {
+    mockCurrentService.matchWeek.set(undefined);
+    fixture.detectChanges();
+    await fixture.whenStable();
+
     screen.getByText('Matches').click();
 
     expect(mockRouterService.navigateToMatches).toHaveBeenCalledOnce();
+    expect(mockRouterService.navigateToMatchWeekMatches).not.toHaveBeenCalled();
   });
 
   it('renders Tables link', () => {

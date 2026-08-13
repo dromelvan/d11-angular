@@ -185,7 +185,7 @@ describe('MatchWeekScrollPickerComponent', () => {
     expect(emitted).toEqual([]);
   });
 
-  it('does not use matchWeekId when it does not belong to the current season', async () => {
+  it('does not emit when matchWeekId is set but not found in the current season', async () => {
     const newSeasonId = matchWeek.season.id + 1;
     const newMatchWeek = { ...fakeMatchWeek(), season: { ...matchWeek.season, id: newSeasonId } };
     const currentMatchWeekInNewSeason = {
@@ -204,7 +204,6 @@ describe('MatchWeekScrollPickerComponent', () => {
     fixture.detectChanges();
     await fixture.whenStable();
 
-    expect(emitted.length).toBe(1);
-    expect(emitted[0].id).toBe(currentMatchWeek.id);
+    expect(emitted).toEqual([]);
   });
 });

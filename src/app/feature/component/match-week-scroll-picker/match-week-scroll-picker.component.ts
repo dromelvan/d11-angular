@@ -54,9 +54,10 @@ export class MatchWeekScrollPickerComponent {
     const matchWeeks = this.matchWeeks();
     const findById = (id: number | undefined) =>
       matchWeeks.find((matchWeek) => matchWeek.id === id);
-    return (
-      findById(this.matchWeekId()) ?? findById(this.currentService.matchWeek()?.id) ?? matchWeeks[0]
-    );
+    const byMatchWeekId = findById(this.matchWeekId());
+    if (byMatchWeekId) return byMatchWeekId;
+    if (this.matchWeekId() != null) return undefined;
+    return findById(this.currentService.matchWeek()?.id) ?? matchWeeks[0];
   });
 
   private isLoading = computed(
