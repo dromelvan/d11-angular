@@ -14,31 +14,52 @@
   <ng-template #header>
     <div class="grid grid-cols-[1fr_auto_1fr] items-center w-full">
       <span></span>
-      <span class="font-semibold">Match Week</span>
-      <a class="text-sm justify-self-end cursor-pointer" (click)="close()">Done</a>
+      <span class="app-text-title">Match Week</span>
+      <a class="app-text-base justify-self-end cursor-pointer" (click)="close()">Done</a>
     </div>
   </ng-template>
 
-  <div class="grid grid-cols-7 gap-2">
-    @for (matchWeek of matchWeeks(); track matchWeek.id) {
-      <button
-        type="button"
-        class="app-col items-center gap-0.5 py-2 rounded-sm cursor-pointer"
-        [class.bg-surface-300]="matchWeek.id === selectedId() && matchWeek.id !== currentId()"
-        [class.bg-primary]="matchWeek.id === currentId()"
-        [class.text-primary-contrast]="matchWeek.id === currentId()"
-        (click)="onMatchWeekChange(matchWeek.id)"
-      >
-        <span class="flex items-center gap-0.5 text-sm font-semibold">
-          {{ matchWeek.matchWeekNumber }}
-          @if (matchWeek.status === Status.ACTIVE || matchWeek.status === Status.FULL_TIME) {
-            <span class="text-error pt-1">*</span>
-          }
-        </span>
-        <span class="text-[0.6rem] font-semibold">{{
-          matchWeek.date | date: 'd MMM' | uppercase
-        }}</span>
-      </button>
-    }
+  <div class="app-col-4">
+    <div class="grid grid-cols-5 sm:grid-cols-11 gap-2">
+      @for (matchWeek of matchWeeks(); track matchWeek.id) {
+        <button
+          type="button"
+          class="app-col-05 items-center min-h-12 p-1 rounded-sm cursor-pointer"
+          [class.bg-surface-300]="matchWeek.id === selectedId() && matchWeek.id !== currentId()"
+          [class.bg-primary]="matchWeek.id === currentId()"
+          [class.text-primary-contrast]="matchWeek.id === currentId()"
+          (click)="onMatchWeekChange(matchWeek.id)"
+        >
+          <span class="app-row-05 app-text-primary">
+            {{ matchWeek.matchWeekNumber }}
+            @if (matchWeek.status === Status.ACTIVE || matchWeek.status === Status.FULL_TIME) {
+              <span class="text-error pt-1">*</span>
+            }
+          </span>
+          <span class="app-text-detail">{{ matchWeek.date | date: 'd MMM' }}</span>
+        </button>
+      }
+    </div>
+
+    <div class="app-col-4">
+      <span class="app-text-title text-center">Season</span>
+      <div class="grid grid-cols-5 sm:grid-cols-11 gap-2">
+        @for (season of seasons(); track season.id) {
+          <button
+            type="button"
+            class="app-col items-center justify-around min-h-12 p-1 rounded-sm cursor-pointer"
+            [class.bg-surface-300]="
+              season.id === selectedSeasonId() && season.id !== currentSeasonId()
+            "
+            [class.bg-primary]="season.id === currentSeasonId()"
+            [class.text-primary-contrast]="season.id === currentSeasonId()"
+            (click)="onSeasonChange(season.id)"
+          >
+            <span class="app-text-detail">Season</span>
+            <span class="app-text-primary">{{ season.shortName }}</span>
+          </button>
+        }
+      </div>
+    </div>
   </div>
 </p-drawer>

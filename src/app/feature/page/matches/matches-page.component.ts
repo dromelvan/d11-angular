@@ -87,6 +87,7 @@ export class MatchesPageComponent {
   }
 
   protected onMatchWeekSelected(matchWeek: MatchWeek): void {
+    this.season.set(matchWeek.season);
     this.routerService.navigateToMatchWeekMatches(matchWeek.id);
     this.active.set(false);
   }

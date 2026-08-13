@@ -83,7 +83,7 @@
     }
 
     .app-row-05 {
-        @apply flex flex-row gap-0.5;
+        @apply flex flex-row items-center gap-0.5;
     }
 
     .app-row-1 {
