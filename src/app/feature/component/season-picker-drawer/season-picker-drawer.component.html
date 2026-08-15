@@ -1,0 +1,41 @@
+@if (visible()) {
+  <div class="fixed inset-0 bg-black/40" style="z-index: 1099" (click)="close()"></div>
+}
+
+<p-drawer
+  appendTo="body"
+  position="bottom"
+  [modal]="false"
+  [closable]="false"
+  [visible]="visible()"
+  (visibleChange)="visible.set($event)"
+  [pt]="{ root: { class: 'rounded-t-[25px] h-auto! max-h-[70%]' } }"
+>
+  <ng-template #header>
+    <div class="grid grid-cols-[1fr_auto_1fr] items-center w-full">
+      <span></span>
+      <span class="app-text-title">Season</span>
+      <a class="app-text-base justify-self-end cursor-pointer" (click)="close()">Done</a>
+    </div>
+  </ng-template>
+
+  <div class="app-col-4">
+    <div class="grid grid-cols-5 sm:grid-cols-11 gap-2">
+      @for (season of seasons(); track season.id) {
+        <button
+          type="button"
+          class="app-col items-center justify-around min-h-12 p-1 rounded-sm cursor-pointer"
+          [class.bg-surface-300]="
+            season.id === selectedSeasonId() && season.id !== currentSeasonId()
+          "
+          [class.bg-primary]="season.id === currentSeasonId()"
+          [class.text-primary-contrast]="season.id === currentSeasonId()"
+          (click)="onSeasonChange(season.id)"
+        >
+          <span class="app-text-detail">Season</span>
+          <span class="app-text-primary">{{ season.shortName }}</span>
+        </button>
+      }
+    </div>
+  </div>
+</p-drawer>

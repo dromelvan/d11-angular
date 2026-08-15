@@ -1,0 +1,14 @@
+<button
+  class="px-2 py-1 text-xs font-semibold border-none cursor-pointer outline-none min-w-12 h-9.5"
+  type="button"
+  (click)="onMoreClick()"
+>
+  <app-icon icon="more_vertical" />
+</button>
+
+<app-season-picker-drawer
+  [seasons]="seasons()"
+  [selectedSeasonId]="seasonId()"
+  [currentSeasonId]="currentSeasonId()"
+  (seasonSelected)="onSeasonSelected($event)"
+/>
