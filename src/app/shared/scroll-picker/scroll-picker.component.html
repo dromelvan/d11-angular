@@ -8,6 +8,9 @@
     [class.border-white]="item.current"
     (click)="selected.emit(item.id)"
   >
+    @if (item.header) {
+      <span class="text-[0.6rem]">{{ item.header }}</span>
+    }
     <span class="app-text-header">{{ item.label }}</span>
     @if (item.sublabel) {
       <span class="text-[0.6rem] app-text-number">{{ item.sublabel }}</span>

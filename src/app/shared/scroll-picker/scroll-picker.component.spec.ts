@@ -32,6 +32,14 @@ describe('ScrollPickerComponent', () => {
     expect(buttons).toHaveLength(3);
   });
 
+  it('renders the header label when provided', () => {
+    fixture.componentRef.setInput('items', [{ id: 1, label: 'W 1', header: 'Season' }]);
+    fixture.detectChanges();
+
+    const button = fixture.nativeElement.querySelector('[data-id="1"]');
+    expect(button.textContent).toContain('Season');
+  });
+
   it('renders the label and sublabel for an item with a sublabel', () => {
     const button = fixture.nativeElement.querySelector('[data-id="1"]');
     expect(button.textContent).toContain('W 1');
