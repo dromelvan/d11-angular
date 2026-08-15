@@ -8,19 +8,28 @@ import {
   signal,
 } from '@angular/core';
 import { rxResource } from '@angular/core/rxjs-interop';
-import { D11TeamSeasonStat, SeasonBase, TeamSeasonStat } from '@app/core/api';
+import { D11TeamSeasonStat, Season, TeamSeasonStat } from '@app/core/api';
 import { D11TeamSeasonStatApiService } from '@app/core/api/d11-team-season-stat/d11-team-season-stat-api.service';
+import { SeasonApiService } from '@app/core/api/season/season-api.service';
 import { TeamSeasonStatApiService } from '@app/core/api/team-season-stat/team-season-stat-api.service';
+import { CurrentService } from '@app/core/current/current.service';
 import { LoadingService } from '@app/core/loading/loading.service';
+import { PageContextService } from '@app/core/page-context/page-context.service';
 import { RouterService } from '@app/core/router/router.service';
-import { SeasonPickerComponent } from '@app/shared/season-picker/season-picker.component';
+import { SeasonPickerButtonComponent } from '@app/feature/component/season-picker-button/season-picker-button.component';
+import { SeasonScrollPickerComponent } from '@app/feature/component/season-scroll-picker/season-scroll-picker.component';
 import { D11TeamSeasonStatsComponent } from '@app/feature/component/d11-team-season-stats/d11-team-season-stats.component';
-import { TeamSeasonStatsComponent } from '@app/feature/component/team-season-stats/team-season-stats.component';
+import { TeamSeasonStatsSectionComponent } from '@app/feature/section/team-season-stats-section/team-season-stats-section.component';
 import { of } from 'rxjs';
 
 @Component({
   selector: 'app-season-page',
-  imports: [SeasonPickerComponent, TeamSeasonStatsComponent, D11TeamSeasonStatsComponent],
+  imports: [
+    SeasonScrollPickerComponent,
+    SeasonPickerButtonComponent,
+    TeamSeasonStatsSectionComponent,
+    D11TeamSeasonStatsComponent,
+  ],
   templateUrl: './season-page.component.html',
 })
 export class SeasonPageComponent {
@@ -28,8 +37,7 @@ export class SeasonPageComponent {
     transform: (v: unknown) => (v != null && v !== '' ? numberAttribute(v as string) : undefined),
   });
 
-  protected season = signal<SeasonBase | undefined>(undefined);
-  protected selectedSeasonId = computed(() => this.seasonId() ?? this.season()?.id);
+  protected selectedSeasonId = computed(() => this.seasonId() ?? this.localSeasonId());
 
   protected rxTeamSeasonStats = rxResource<TeamSeasonStat[], number | undefined>({
     params: () => this.selectedSeasonId(),
@@ -54,18 +62,45 @@ export class SeasonPageComponent {
     () => this.rxTeamSeasonStats.isLoading() || this.rxD11TeamSeasonStats.isLoading(),
   );
 
+  private localSeasonId = signal<number | undefined>(undefined);
+
+  private rxSeasons = rxResource<Season[], void>({
+    stream: () => this.seasonApiService.getAll(),
+  });
+
+  private selectedSeasonName = computed(() => {
+    const id = this.selectedSeasonId();
+    return (this.rxSeasons.value() ?? []).find((season) => season.id === id)?.name;
+  });
+
+  private readonly currentService = inject(CurrentService);
   private readonly routerService = inject(RouterService);
   private readonly loadingService = inject(LoadingService);
+  private readonly pageContextService = inject(PageContextService);
+  private readonly seasonApiService = inject(SeasonApiService);
   private readonly teamSeasonStatApiService = inject(TeamSeasonStatApiService);
   private readonly d11TeamSeasonStatApiService = inject(D11TeamSeasonStatApiService);
 
   constructor() {
-    this.loadingService.register(inject(DestroyRef), this.isLoading);
+    const destroyRef = inject(DestroyRef);
+    this.loadingService.register(destroyRef, this.isLoading);
+    this.pageContextService.register(destroyRef, {
+      title: signal('League Tables'),
+      subtitle: computed(() => {
+        const name = this.selectedSeasonName();
+        return name !== undefined ? `Season ${name}` : undefined;
+      }),
+      backgroundColor: signal(''),
+    });
   }
 
-  protected onSeasonSelected(season: SeasonBase): void {
-    const shouldNavigate = this.seasonId() !== undefined || this.season() !== undefined;
-    this.season.set(season);
-    if (shouldNavigate) this.routerService.navigateToSeason(season.id);
+  protected onLiveClick(): void {
+    const currentSeasonId = this.currentService.season()?.id;
+    if (currentSeasonId) this.routerService.navigateToSeason(currentSeasonId);
+  }
+
+  protected onSeasonSelected(season: Season): void {
+    this.localSeasonId.set(season.id);
+    this.routerService.navigateToSeason(season.id);
   }
 }
