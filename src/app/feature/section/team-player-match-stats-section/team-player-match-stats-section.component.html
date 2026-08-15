@@ -1,5 +1,5 @@
 <app-section>
   <app-team-img sectionHeader [team]="team()" width="20" />
   <span sectionHeader>{{ team().name }}</span>
-  <app-player-match-stats-accordion [playerMatchStats]="playerMatchStats()" />
+  <app-player-match-stats-accordion context="match" [playerMatchStats]="playerMatchStats()" />
 </app-section>

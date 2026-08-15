@@ -48,22 +48,33 @@
               }
             </span>
           </div>
-          @if (pms.lineup === Lineup.SUBSTITUTE && pms.substitutionOnTime <= 0) {
-            <div class="app-text-secondary">SUB</div>
-          } @else {
-            <div class="app-text-number w-10">
+          <div class="app-text-number w-10">
+            @if (pms.lineup === Lineup.SUBSTITUTE && pms.substitutionOnTime <= 0) {
+              <span class="app-text-secondary">SUB</span>
+            } @else if (pms.lineup === Lineup.DID_NOT_PARTICIPATE) {
+              <span class="app-text-secondary">DNP</span>
+            } @else {
               {{ pms.rating | rating }}
-            </div>
-            <div class="app-text-primary app-text-number w-8">
-              {{ pms.points }}
-            </div>
-          }
+            }
+          </div>
+          <div class="app-text-primary app-text-number w-8">
+            {{ pms.points }}
+          </div>
         </div>
       </p-accordion-header>
 
       <p-accordion-content>
         <div class="app-col gap-2.5 p-4">
-          @if (!pms.d11Team.dummy) {
+          @if (context() !== 'match' && !pms.team.dummy) {
+            <div class="app-details-list-row">
+              <span>Team</span>
+              <span class="app-row-1">
+                <app-team-img [team]="pms.team" width="20" />
+                {{ pms.team.name }}
+              </span>
+            </div>
+          }
+          @if (context() !== 'd11-match' && !pms.d11Team.dummy) {
             <div class="app-details-list-row">
               <span>D11 team</span>
               <span class="app-row-1">
