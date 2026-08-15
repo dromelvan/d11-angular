@@ -10,7 +10,7 @@
 
     @if (match().status !== Status.PENDING && match().status !== Status.POSTPONED) {
       <div class="app-col-1 items-center">
-        <span class="app-text-hero" data-testid="score">
+        <span class="app-text-hero app-text-number" data-testid="score">
           {{ match().homeTeamGoalsScored }}<span class="px-1">&ndash;</span
           >{{ match().awayTeamGoalsScored }}
         </span>
