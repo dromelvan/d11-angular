@@ -202,6 +202,8 @@ export const fakeD11MatchBase = (): D11MatchBase => ({
 
 export const fakeD11Match = (): D11Match => ({
   ...fakeD11MatchBase(),
+  homeTeamGoals: [],
+  awayTeamGoals: [],
 });
 
 export const fakeGoal = (): GoalBase => ({
