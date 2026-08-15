@@ -1,0 +1,75 @@
+<div class="app-row app-text-header pb-2">
+  <div class="w-6 text-left">#</div>
+  <div class="app-fill">Team</div>
+  <div class="app-text-number w-10">GD</div>
+  <div class="app-text-number w-8">Pts</div>
+</div>
+
+<p-accordion>
+  @for (stat of teamSeasonStats(); track stat.team.id; let index = $index) {
+    @if (index > 0) {
+      <div class="app-separator"></div>
+    }
+    <p-accordion-panel [value]="stat.team.id">
+      <p-accordion-header
+        [style.background-color]="rowBackgroundColor(index)"
+        [style.color]="rowTextColor(index)"
+      >
+        <div class="app-row app-fill py-2.5 px-4 min-w-0">
+          <div class="w-6 app-text-number text-left">{{ stat.ranking }}</div>
+          <span class="app-row-1 app-fill min-w-0">
+            <app-team-img [team]="stat.team" width="20" />
+            <span>{{ stat.team.name }}</span>
+            @if (stat.ranking < stat.previousRanking) {
+              <span class="app-row">
+                <app-icon icon="substitution_on" [size]="16" /><span class="app-text-detail"
+                  >+{{ stat.previousRanking - stat.ranking }}</span
+                >
+              </span>
+            }
+            @if (stat.ranking > stat.previousRanking) {
+              <span class="app-row">
+                <app-icon icon="substitution_off" [size]="16" /><span class="app-text-detail"
+                  >-{{ stat.ranking - stat.previousRanking }}</span
+                >
+              </span>
+            }
+          </span>
+          <div class="app-text-number w-10">
+            {{ stat.goalDifference > 0 ? '+' : '' }}{{ stat.goalDifference }}
+          </div>
+          <div class="app-text-primary app-text-number w-8">{{ stat.points }}</div>
+        </div>
+      </p-accordion-header>
+
+      <p-accordion-content>
+        <div class="app-col gap-2.5 p-4">
+          <div class="app-details-list-row">
+            <span>Played</span>
+            <span>{{ stat.matchesPlayed }}</span>
+          </div>
+          <div class="app-details-list-row">
+            <span>Won</span>
+            <span>{{ stat.matchesWon }}</span>
+          </div>
+          <div class="app-details-list-row">
+            <span>Drawn</span>
+            <span>{{ stat.matchesDrawn }}</span>
+          </div>
+          <div class="app-details-list-row">
+            <span>Lost</span>
+            <span>{{ stat.matchesLost }}</span>
+          </div>
+          <div class="app-details-list-row">
+            <span>Goals for</span>
+            <span>+{{ stat.goalsFor }}</span>
+          </div>
+          <div class="app-details-list-row">
+            <span>Goals against</span>
+            <span>-{{ stat.goalsAgainst }}</span>
+          </div>
+        </div>
+      </p-accordion-content>
+    </p-accordion-panel>
+  }
+</p-accordion>
