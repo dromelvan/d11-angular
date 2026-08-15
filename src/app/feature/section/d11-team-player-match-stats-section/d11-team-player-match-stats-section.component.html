@@ -1,0 +1,5 @@
+<app-section>
+  <app-d11-team-img sectionHeader [d11Team]="d11Team()" width="20" />
+  <span sectionHeader>{{ d11Team().name }}</span>
+  <app-player-match-stats-accordion context="d11-match" [playerMatchStats]="playerMatchStats()" />
+</app-section>

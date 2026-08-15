@@ -1,0 +1,52 @@
+<div class="pb-2">
+  <div class="app-hero px-6 pb-2">
+    <div class="app-col-2 app-fill text-nowrap items-center">
+      <app-d11-team-img [d11Team]="match().homeD11Team" width="56" />
+      <span class="app-text-title">
+        <span class="sm:hidden">{{ match().homeD11Team.shortName }}</span>
+        <span class="hidden sm:block">{{ match().homeD11Team.name }}</span>
+      </span>
+    </div>
+
+    @if (match().status !== Status.PENDING && match().status !== Status.POSTPONED) {
+      <div class="app-col-1 items-center">
+        <span
+          class="grid grid-cols-[1.5rem_1fr_1.5rem] gap-x-2 items-center app-text-number app-text-hero"
+          data-testid="score"
+        >
+          <span class="app-text-detail text-right" data-testid="home-team-points">{{
+            match().homeTeamPoints
+          }}</span>
+          <span>
+            {{ match().homeTeamGoalsScored }}<span class="px-1">&ndash;</span
+            >{{ match().awayTeamGoalsScored }}
+          </span>
+          <span class="app-text-detail text-left" data-testid="away-team-points">{{
+            match().awayTeamPoints
+          }}</span>
+        </span>
+        <span class="app-text-base">{{ match().elapsed }}</span>
+      </div>
+    } @else {
+      <div>vs</div>
+    }
+
+    <div class="app-col-2 app-fill text-nowrap items-center">
+      <app-d11-team-img [d11Team]="match().awayD11Team" width="56" />
+      <span class="app-text-title">
+        <span class="sm:hidden">{{ match().awayD11Team.shortName }}</span>
+        <span class="hidden sm:block">{{ match().awayD11Team.name }}</span>
+      </span>
+    </div>
+  </div>
+
+  <div class="app-col-1 app-text-detail items-center pb-6">
+    <span data-testid="datetime">
+      @if (match().status === Status.POSTPONED) {
+        Postponed
+      } @else {
+        {{ match().datetime | date: 'd MMM yyyy, HH:mm' }}
+      }
+    </span>
+  </div>
+</div>

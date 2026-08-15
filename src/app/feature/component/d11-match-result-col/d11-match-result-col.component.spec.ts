@@ -370,8 +370,8 @@ describe('D11MatchResultColComponent', () => {
         awayTeamPoints: 103,
       });
 
-      expect(fixture.nativeElement.textContent).toContain('(101)');
-      expect(fixture.nativeElement.textContent).toContain('(103)');
+      expect(fixture.nativeElement.textContent).toContain('101');
+      expect(fixture.nativeElement.textContent).toContain('103');
     });
 
     it('renders home and away team points for full time match', async () => {
@@ -382,8 +382,8 @@ describe('D11MatchResultColComponent', () => {
         awayTeamPoints: 103,
       });
 
-      expect(fixture.nativeElement.textContent).toContain('(101)');
-      expect(fixture.nativeElement.textContent).toContain('(103)');
+      expect(fixture.nativeElement.textContent).toContain('101');
+      expect(fixture.nativeElement.textContent).toContain('103');
     });
 
     it('renders home and away team points for finished match', async () => {
@@ -394,8 +394,8 @@ describe('D11MatchResultColComponent', () => {
         awayTeamPoints: 103,
       });
 
-      expect(fixture.nativeElement.textContent).toContain('(101)');
-      expect(fixture.nativeElement.textContent).toContain('(103)');
+      expect(fixture.nativeElement.textContent).toContain('101');
+      expect(fixture.nativeElement.textContent).toContain('103');
     });
 
     it('does not render points for pending match', async () => {
@@ -406,8 +406,8 @@ describe('D11MatchResultColComponent', () => {
         awayTeamPoints: 103,
       });
 
-      expect(fixture.nativeElement.textContent).not.toContain('(101)');
-      expect(fixture.nativeElement.textContent).not.toContain('(103)');
+      expect(fixture.nativeElement.textContent).not.toContain('101');
+      expect(fixture.nativeElement.textContent).not.toContain('103');
     });
 
     it('does not render points for postponed match', async () => {
@@ -418,8 +418,8 @@ describe('D11MatchResultColComponent', () => {
         awayTeamPoints: 103,
       });
 
-      expect(fixture.nativeElement.textContent).not.toContain('(101)');
-      expect(fixture.nativeElement.textContent).not.toContain('(103)');
+      expect(fixture.nativeElement.textContent).not.toContain('101');
+      expect(fixture.nativeElement.textContent).not.toContain('103');
     });
   });
 });
