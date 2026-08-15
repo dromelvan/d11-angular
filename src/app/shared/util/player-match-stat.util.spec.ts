@@ -16,7 +16,7 @@ import {
   TeamBase,
 } from '@app/core/api';
 import { describe, expect, it } from 'vitest';
-import { sortByD11Team, sortByTeam } from './player-match-stat-util';
+import { sortByD11Team, sortByTeam } from './player-match-stat.util';
 
 let homeTeam: TeamBase;
 let awayTeam: TeamBase;
@@ -135,13 +135,12 @@ describe('sortByD11TeamAndLineup', () => {
     baseD11Match = { ...fakeD11MatchBase(), homeD11Team, awayD11Team };
   });
 
-  it('filters out DID_NOT_PARTICIPATE', () => {
+  it('includes DID_NOT_PARTICIPATE', () => {
     const dnp = fakeStat(homeTeam, Lineup.DID_NOT_PARTICIPATE, { d11Team: homeD11Team });
     const starter = fakeStat(homeTeam, Lineup.STARTING_LINEUP, { d11Team: homeD11Team });
     const result = sortByD11Team(baseD11Match, [dnp, starter]);
 
-    expect(result).toHaveLength(1);
-    expect(result[0]).toBe(starter);
+    expect(result).toHaveLength(2);
   });
 
   it('sorts home d11Team before away d11Team', () => {
@@ -185,6 +184,47 @@ describe('sortByD11TeamAndLineup', () => {
 
     expect(result[0]).toBe(defender);
     expect(result[1]).toBe(forward);
+  });
+
+  it('sorts by player properties within same position', () => {
+    const position = { ...fakePosition(), sortOrder: 1 };
+    const player5 = { ...fakePlayerBase(), lastName: 'Zzz', firstName: 'Zzz', id: 1 };
+    const player4 = { ...fakePlayerBase(), lastName: 'Sss', firstName: 'Jjj', id: 99 };
+    const player3 = { ...fakePlayerBase(), lastName: 'Sss', firstName: 'Jjj', id: 1 };
+    const player2 = { ...fakePlayerBase(), lastName: 'Sss', firstName: 'Aaa', id: 2 };
+    const player1 = { ...fakePlayerBase(), lastName: 'Aaa', firstName: 'Ttt', id: 2 };
+    const stat5 = fakeStat(homeTeam, Lineup.STARTING_LINEUP, {
+      d11Team: homeD11Team,
+      position,
+      player: player5,
+    });
+    const stat4 = fakeStat(homeTeam, Lineup.STARTING_LINEUP, {
+      d11Team: homeD11Team,
+      position,
+      player: player4,
+    });
+    const stat3 = fakeStat(homeTeam, Lineup.STARTING_LINEUP, {
+      d11Team: homeD11Team,
+      position,
+      player: player3,
+    });
+    const stat2 = fakeStat(homeTeam, Lineup.STARTING_LINEUP, {
+      d11Team: homeD11Team,
+      position,
+      player: player2,
+    });
+    const stat1 = fakeStat(homeTeam, Lineup.STARTING_LINEUP, {
+      d11Team: homeD11Team,
+      position,
+      player: player1,
+    });
+    const result = sortByD11Team(baseD11Match, [stat5, stat4, stat3, stat2, stat1]);
+
+    expect(result[0]).toBe(stat1);
+    expect(result[1]).toBe(stat2);
+    expect(result[2]).toBe(stat3);
+    expect(result[3]).toBe(stat4);
+    expect(result[4]).toBe(stat5);
   });
 
   it('returns empty result for empty input', () => {

@@ -4,7 +4,7 @@ import { Match, PlayerMatchStat, Status, TeamBase } from '@app/core/api';
 import { MatchApiService } from '@app/core/api/match/match-api.service';
 import { LoadingService } from '@app/core/loading/loading.service';
 import { PageContextService } from '@app/core/page-context/page-context.service';
-import { sortByTeam } from '@app/shared/util/player-match-stat-util';
+import { sortByTeam } from '@app/shared/util/player-match-stat.util';
 import { matchEvents } from '@app/shared/util/match-events.util';
 import { MatchEvent } from '@app/shared/model';
 import { PRIMARY } from '@app/app.theme';

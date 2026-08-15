@@ -48,14 +48,12 @@ export function sortByTeam(stats: PlayerMatchStat[]): PlayerMatchStat[] {
 }
 
 export function sortByD11Team(d11Match: D11MatchBase, stats: PlayerMatchStat[]): PlayerMatchStat[] {
-  return stats
-    .filter(({ lineup }) => lineup !== Lineup.DID_NOT_PARTICIPATE)
-    .sort((a, b) => {
-      const aD11TeamOrder = a.d11Team.id === d11Match.homeD11Team.id ? 0 : 1;
-      const bD11TeamOrder = b.d11Team.id === d11Match.homeD11Team.id ? 0 : 1;
-      const d11TeamDiff = aD11TeamOrder - bD11TeamOrder;
-      if (d11TeamDiff !== 0) return d11TeamDiff;
+  return stats.slice().sort((a, b) => {
+    const aD11TeamOrder = a.d11Team.id === d11Match.homeD11Team.id ? 0 : 1;
+    const bD11TeamOrder = b.d11Team.id === d11Match.homeD11Team.id ? 0 : 1;
+    const d11TeamDiff = aD11TeamOrder - bD11TeamOrder;
+    if (d11TeamDiff !== 0) return d11TeamDiff;
 
-      return compareByPlayer(a, b);
-    });
+    return compareByPlayer(a, b);
+  });
 }
