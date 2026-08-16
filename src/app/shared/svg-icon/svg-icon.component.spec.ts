@@ -15,6 +15,9 @@ describe('SvgIconComponent', () => {
     expect(svg).toHaveAttribute('viewBox', '0 0 24 24');
     expect(svg).toHaveAttribute('fill', 'none');
     expect(svg).toHaveAttribute('stroke', 'currentColor');
+    expect(svg).toHaveAttribute('stroke-width', '1.5');
+    expect(svg).toHaveAttribute('stroke-linecap', 'round');
+    expect(svg).toHaveAttribute('stroke-linejoin', 'round');
   });
 
   describe('size', () => {
@@ -72,6 +75,18 @@ describe('SvgIconComponent', () => {
 
       expect(container.querySelector('circle[cx="12"][cy="8"][r="4"]')).toBeInTheDocument();
       expect(container.querySelector('path[d="M4 20c0-4 3.6-7 8-7s8 3 8 7"]')).toBeInTheDocument();
+    });
+  });
+
+  describe('shield', () => {
+    it('renders the shield path', async () => {
+      const { container } = await render(SvgIconComponent, { inputs: { name: 'shield' } });
+
+      expect(
+        container.querySelector(
+          'path[d="M12 2L3 7v5c0 5.25 3.75 10.15 9 11.25C17.25 22.15 21 17.25 21 12V7l-9-5z"]',
+        ),
+      ).toBeInTheDocument();
     });
   });
 });
