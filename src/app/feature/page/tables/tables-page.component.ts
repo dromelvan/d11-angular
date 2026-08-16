@@ -23,16 +23,16 @@ import { D11TeamSeasonStatsSectionComponent } from '@app/feature/section/d11-tea
 import { of } from 'rxjs';
 
 @Component({
-  selector: 'app-season-page',
+  selector: 'app-tables-page',
   imports: [
     SeasonScrollPickerComponent,
     SeasonPickerButtonComponent,
     TeamSeasonStatsSectionComponent,
     D11TeamSeasonStatsSectionComponent,
   ],
-  templateUrl: './season-page.component.html',
+  templateUrl: './tables-page.component.html',
 })
-export class SeasonPageComponent {
+export class TablesPageComponent {
   readonly seasonId = input<number | undefined, unknown>(undefined, {
     transform: (v: unknown) => (v != null && v !== '' ? numberAttribute(v as string) : undefined),
   });

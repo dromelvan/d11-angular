@@ -86,7 +86,7 @@ export const routes: Routes = [
   {
     path: 'seasons/:seasonId',
     loadComponent: () =>
-      import('@app/feature/page/season/season-page.component').then((m) => m.SeasonPageComponent),
+      import('@app/feature/page/tables/tables-page.component').then((m) => m.TablesPageComponent),
     data: { section: 'Tables' },
   },
   {

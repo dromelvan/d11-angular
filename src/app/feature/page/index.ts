@@ -5,5 +5,5 @@ export * from './more/more-page.component';
 export * from './player/player-page.component';
 export * from './players/players-page.component';
 export * from './rules/rules-page.component';
-export * from './season/season-page.component';
+export * from './tables/tables-page.component';
 export * from './transfers/transfers-page.component';

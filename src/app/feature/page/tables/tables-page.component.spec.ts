@@ -14,9 +14,9 @@ import { screen, waitFor } from '@testing-library/angular';
 import userEvent from '@testing-library/user-event';
 import { Observable, of } from 'rxjs';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { SeasonPageComponent } from './season-page.component';
+import { TablesPageComponent } from './tables-page.component';
 
-describe('SeasonPageComponent', () => {
+describe('TablesPageComponent', () => {
   const mockSeasonApi = { getAll: vi.fn<() => Observable<Season[]>>() };
   const mockTeamSeasonStatApi = {
     getTeamSeasonStatsBySeasonId: vi.fn<(id: number) => Observable<TeamSeasonStat[]>>(),
@@ -30,7 +30,7 @@ describe('SeasonPageComponent', () => {
   let seasons: Season[];
   let teamSeasonStats: TeamSeasonStat[];
   let d11TeamSeasonStats: D11TeamSeasonStat[];
-  let fixture: ComponentFixture<SeasonPageComponent>;
+  let fixture: ComponentFixture<TablesPageComponent>;
   let mockCurrentService: {
     season: ReturnType<typeof signal<SeasonBase | undefined>>;
     rxCurrent: { isLoading: ReturnType<typeof signal<boolean>> };
@@ -70,7 +70,7 @@ describe('SeasonPageComponent', () => {
     };
 
     await TestBed.configureTestingModule({
-      imports: [SeasonPageComponent],
+      imports: [TablesPageComponent],
       providers: [
         { provide: SeasonApiService, useValue: mockSeasonApi },
         { provide: TeamSeasonStatApiService, useValue: mockTeamSeasonStatApi },
@@ -84,7 +84,7 @@ describe('SeasonPageComponent', () => {
 
   describe('with seasonId', () => {
     beforeEach(async () => {
-      fixture = TestBed.createComponent(SeasonPageComponent);
+      fixture = TestBed.createComponent(TablesPageComponent);
       fixture.componentRef.setInput('seasonId', seasons[1].id);
       fixture.detectChanges();
       await fixture.whenStable();
@@ -155,7 +155,7 @@ describe('SeasonPageComponent', () => {
 
   describe('without seasonId', () => {
     beforeEach(async () => {
-      fixture = TestBed.createComponent(SeasonPageComponent);
+      fixture = TestBed.createComponent(TablesPageComponent);
       fixture.detectChanges();
       await fixture.whenStable();
       TestBed.tick();
@@ -185,7 +185,7 @@ describe('SeasonPageComponent', () => {
       mockTeamSeasonStatApi.getTeamSeasonStatsBySeasonId.mockReturnValue(of([]));
       mockD11TeamSeasonStatApi.getD11TeamSeasonStatsBySeasonId.mockReturnValue(of([]));
 
-      fixture = TestBed.createComponent(SeasonPageComponent);
+      fixture = TestBed.createComponent(TablesPageComponent);
       fixture.componentRef.setInput('seasonId', seasons[1].id);
       fixture.detectChanges();
       await fixture.whenStable();
@@ -202,7 +202,7 @@ describe('SeasonPageComponent', () => {
 
   describe('live button', () => {
     beforeEach(async () => {
-      fixture = TestBed.createComponent(SeasonPageComponent);
+      fixture = TestBed.createComponent(TablesPageComponent);
       fixture.componentRef.setInput('seasonId', seasons[1].id);
       fixture.detectChanges();
       await fixture.whenStable();
