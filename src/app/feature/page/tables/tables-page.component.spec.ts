@@ -180,6 +180,33 @@ describe('TablesPageComponent', () => {
     });
   });
 
+  describe('seasonId input', () => {
+    beforeEach(async () => {
+      fixture = TestBed.createComponent(TablesPageComponent);
+      fixture.detectChanges();
+      await fixture.whenStable();
+    });
+
+    it('is undefined by default', () => {
+      expect(fixture.componentInstance.seasonId()).toBeUndefined();
+    });
+
+    it('parses a numeric string', () => {
+      fixture.componentRef.setInput('seasonId', '42');
+      expect(fixture.componentInstance.seasonId()).toBe(42);
+    });
+
+    it('parses null as undefined', () => {
+      fixture.componentRef.setInput('seasonId', null);
+      expect(fixture.componentInstance.seasonId()).toBeUndefined();
+    });
+
+    it('parses empty string as undefined', () => {
+      fixture.componentRef.setInput('seasonId', '');
+      expect(fixture.componentInstance.seasonId()).toBeUndefined();
+    });
+  });
+
   describe('empty stats', () => {
     beforeEach(async () => {
       mockTeamSeasonStatApi.getTeamSeasonStatsBySeasonId.mockReturnValue(of([]));

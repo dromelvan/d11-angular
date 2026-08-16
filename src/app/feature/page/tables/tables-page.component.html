@@ -14,16 +14,13 @@
   />
 
   @if (selectedSeasonId(); as selectedId) {
-    <app-season-picker-button
-      [seasonId]="selectedId"
-      (seasonSelected)="onSeasonSelected($event)"
-    />
+    <app-season-picker-button [seasonId]="selectedId" (seasonSelected)="onSeasonSelected($event)" />
   }
 </div>
 
 <div class="app-responsive py-6">
   @if (model().teamSeasonStats.length > 0) {
-    <app-team-season-stats-section [teamSeasonStats]="model().teamSeasonStats" class="pb-4" />
+    <app-team-season-stats-section [teamSeasonStats]="model().teamSeasonStats" />
   }
   @if (model().d11TeamSeasonStats.length > 0) {
     <app-d11-team-season-stats-section [d11TeamSeasonStats]="model().d11TeamSeasonStats" />
