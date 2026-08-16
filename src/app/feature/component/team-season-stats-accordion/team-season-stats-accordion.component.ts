@@ -28,8 +28,8 @@ export class TeamSeasonStatsAccordionComponent {
 
   private readonly routerService = inject(RouterService);
 
-  protected navigateToTeam(teamId: number): void {
-    this.routerService.navigateToTeam(teamId);
+  protected navigateToTeam(stat: TeamSeasonStat): void {
+    this.routerService.navigateToTeam(stat.team.id, stat.season.id);
   }
 
   protected rowBackgroundColor(index: number): string | null {

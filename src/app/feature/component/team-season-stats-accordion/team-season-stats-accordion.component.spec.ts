@@ -231,15 +231,15 @@ describe('TeamSeasonStatsAccordionComponent', () => {
     expect(container.querySelectorAll('.app-text-detail').length).toBe(0);
   });
 
-  it('renders Team page button in accordion body', async () => {
+  it('renders Team stats button in accordion body', async () => {
     await render(TeamSeasonStatsAccordionComponent, {
       inputs: { teamSeasonStats: [fakeStat()] },
     });
 
-    expect(screen.getByText('Team page')).toBeInTheDocument();
+    expect(screen.getByText('Team stats')).toBeInTheDocument();
   });
 
-  it('navigates to team when Team page button is clicked', async () => {
+  it('navigates to team when Team stats button is clicked', async () => {
     const routerService = { navigateToTeam: vi.fn() };
     const stat = fakeStat();
 
@@ -248,9 +248,9 @@ describe('TeamSeasonStatsAccordionComponent', () => {
       providers: [provideRouter([]), { provide: RouterService, useValue: routerService }],
     });
 
-    await userEvent.click(screen.getByText('Team page'));
+    await userEvent.click(screen.getByText('Team stats'));
 
-    expect(routerService.navigateToTeam).toHaveBeenCalledWith(stat.team.id);
+    expect(routerService.navigateToTeam).toHaveBeenCalledWith(stat.team.id, stat.season.id);
   });
 
   it('renders separators between stats', async () => {

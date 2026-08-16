@@ -165,7 +165,10 @@ describe('PlayerMatchStatsAccordionComponent', () => {
 
     await userEvent.click(screen.getByText('Player profile'));
 
-    expect(routerService.navigateToPlayer).toHaveBeenCalledWith(stat.player.id);
+    expect(routerService.navigateToPlayer).toHaveBeenCalledWith(
+      stat.player.id,
+      stat.match.matchWeek.season.id,
+    );
   });
 
   it('renders points', async () => {
@@ -395,5 +398,54 @@ describe('PlayerMatchStatsAccordionComponent', () => {
 
     expect(screen.getByText('Minutes played')).toBeInTheDocument();
     expect(screen.getByText('25')).toBeInTheDocument();
+  });
+
+  it('calculates minutes played for substituted-off starting player', async () => {
+    const stat = { ...startingPlayer(), substitutionOffTime: 70, goalsConceded: 1 };
+
+    await render(PlayerMatchStatsAccordionComponent, {
+      inputs: { context: 'match', playerMatchStats: [stat] },
+      providers: [provideRouter([])],
+    });
+
+    expect(screen.getByText('Minutes played')).toBeInTheDocument();
+    expect(screen.getByText('70')).toBeInTheDocument();
+  });
+
+  it('calculates minutes played for starting player sent off with red card', async () => {
+    const stat = { ...startingPlayer(), redCardTime: 55, goalsConceded: 1 };
+
+    await render(PlayerMatchStatsAccordionComponent, {
+      inputs: { context: 'match', playerMatchStats: [stat] },
+      providers: [provideRouter([])],
+    });
+
+    expect(screen.getByText('Minutes played')).toBeInTheDocument();
+    expect(screen.getByText('55')).toBeInTheDocument();
+  });
+
+  it('renders formatted rating for active player', async () => {
+    const stat = { ...startingPlayer(), rating: 650 };
+
+    await render(PlayerMatchStatsAccordionComponent, {
+      inputs: { context: 'match', playerMatchStats: [stat] },
+      providers: [provideRouter([])],
+    });
+
+    expect(screen.getByText('6.50')).toBeInTheDocument();
+  });
+
+  it('renders separators between starting players', async () => {
+    const stats = Array.from({ length: 3 }, (_, index) => {
+      const stat = startingPlayer();
+      return { ...stat, player: { ...stat.player, id: index + 1 } };
+    });
+
+    const { container } = await render(PlayerMatchStatsAccordionComponent, {
+      inputs: { context: 'match', playerMatchStats: stats },
+      providers: [provideRouter([])],
+    });
+
+    expect(container.querySelectorAll('.app-separator').length).toBe(2);
   });
 });

@@ -39,8 +39,8 @@ export class PlayerMatchStatsAccordionComponent {
 
   private readonly routerService = inject(RouterService);
 
-  protected navigateToPlayer(playerId: number): void {
-    this.routerService.navigateToPlayer(playerId);
+  protected navigateToPlayer(pms: PlayerMatchStat): void {
+    this.routerService.navigateToPlayer(pms.player.id, pms.match.matchWeek.season.id);
   }
 
   protected minutesPlayed(pms: PlayerMatchStat): number {

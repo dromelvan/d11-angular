@@ -231,15 +231,15 @@ describe('D11TeamSeasonStatsAccordionComponent', () => {
     expect(container.querySelectorAll('.app-text-detail').length).toBe(0);
   });
 
-  it('renders D11 team page button in accordion body', async () => {
+  it('renders D11 team stats button in accordion body', async () => {
     await render(D11TeamSeasonStatsAccordionComponent, {
       inputs: { d11TeamSeasonStats: [fakeStat()] },
     });
 
-    expect(screen.getByText('D11 team page')).toBeInTheDocument();
+    expect(screen.getByText('D11 team stats')).toBeInTheDocument();
   });
 
-  it('navigates to D11 team when D11 team page button is clicked', async () => {
+  it('navigates to D11 team when D11 team stats button is clicked', async () => {
     const routerService = { navigateToD11Team: vi.fn() };
     const stat = fakeStat();
 
@@ -248,9 +248,9 @@ describe('D11TeamSeasonStatsAccordionComponent', () => {
       providers: [provideRouter([]), { provide: RouterService, useValue: routerService }],
     });
 
-    await userEvent.click(screen.getByText('D11 team page'));
+    await userEvent.click(screen.getByText('D11 team stats'));
 
-    expect(routerService.navigateToD11Team).toHaveBeenCalledWith(stat.d11Team.id);
+    expect(routerService.navigateToD11Team).toHaveBeenCalledWith(stat.d11Team.id, stat.season.id);
   });
 
   it('renders separators between stats', async () => {

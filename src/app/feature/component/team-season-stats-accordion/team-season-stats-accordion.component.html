@@ -74,13 +74,10 @@
               <app-form-match-points [formMatchPoints]="stat.formMatchPoints" type="team" />
             </span>
           </div>
-          <button
-            (click)="navigateToTeam(stat.team.id)"
-            class="app-text-primary app-details-list-row mt-2"
-          >
+          <button (click)="navigateToTeam(stat)" class="app-text-primary app-details-list-row mt-2">
             <span class="app-row-2">
               <app-svg-icon name="shield" size="sm" />
-              Team page
+              Team stats
             </span>
             <app-svg-icon name="chevron-right" size="sm" />
           </button>
