@@ -1,0 +1,10 @@
+.p-accordionheader {
+    margin-left: -1rem;
+    margin-right: -1rem;
+    width: calc(100% + 2rem);
+}
+
+.p-accordionpanel:first-child > .p-accordionheader,
+.p-accordionpanel:last-child > .p-accordionheader {
+    border-radius: 0;
+}
