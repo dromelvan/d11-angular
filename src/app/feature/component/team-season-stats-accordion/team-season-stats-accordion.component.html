@@ -68,6 +68,22 @@
             <span>Goals against</span>
             <span>-{{ stat.goalsAgainst }}</span>
           </div>
+          <div class="app-details-list-row">
+            <span>Form</span>
+            <span class="app-row-1">
+              <app-form-match-points [formMatchPoints]="stat.formMatchPoints" type="team" />
+            </span>
+          </div>
+          <button
+            (click)="navigateToTeam(stat.team.id)"
+            class="app-text-primary app-details-list-row mt-2"
+          >
+            <span class="app-row-2">
+              <app-svg-icon name="shield" size="sm" />
+              Team page
+            </span>
+            <app-svg-icon name="chevron-right" size="sm" />
+          </button>
         </div>
       </p-accordion-content>
     </p-accordion-panel>
