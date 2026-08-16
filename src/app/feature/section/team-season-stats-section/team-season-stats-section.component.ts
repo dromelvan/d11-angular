@@ -7,7 +7,7 @@ import { SectionComponent } from '@app/shared/section/section.component';
   selector: 'app-team-season-stats-section',
   templateUrl: './team-season-stats-section.component.html',
   imports: [SectionComponent, TeamSeasonStatsAccordionComponent],
-  host: { style: 'display: block' },
+  host: { class: 'app-fill', style: 'display: block' },
 })
 export class TeamSeasonStatsSectionComponent {
   readonly teamSeasonStats = input.required<TeamSeasonStat[]>();
