@@ -45,8 +45,18 @@ describe('SeasonPageComponent', () => {
       { ...fakeSeason(), id: 2 },
       { ...fakeSeason(), id: 3 },
     ];
-    teamSeasonStats = [fakeTeamSeasonStat(), fakeTeamSeasonStat()];
-    d11TeamSeasonStats = [fakeD11TeamSeasonStat(), fakeD11TeamSeasonStat()];
+    const teamStat1 = fakeTeamSeasonStat();
+    const teamStat2 = fakeTeamSeasonStat();
+    teamSeasonStats = [
+      { ...teamStat1, team: { ...teamStat1.team, id: 1 } },
+      { ...teamStat2, team: { ...teamStat2.team, id: 2 } },
+    ];
+    const d11Stat1 = fakeD11TeamSeasonStat();
+    const d11Stat2 = fakeD11TeamSeasonStat();
+    d11TeamSeasonStats = [
+      { ...d11Stat1, d11Team: { ...d11Stat1.d11Team, id: 1 } },
+      { ...d11Stat2, d11Team: { ...d11Stat2.d11Team, id: 2 } },
+    ];
 
     mockSeasonApi.getAll.mockReturnValue(of(seasons));
     mockTeamSeasonStatApi.getTeamSeasonStatsBySeasonId.mockReturnValue(of(teamSeasonStats));
@@ -84,6 +94,10 @@ describe('SeasonPageComponent', () => {
       expect(fixture.nativeElement).toBeInTheDocument();
     });
 
+    it('registers loading state', () => {
+      expect(mockLoadingService.register).toHaveBeenCalled();
+    });
+
     it('calls getAll', () => {
       expect(mockSeasonApi.getAll).toHaveBeenCalled();
     });
@@ -115,7 +129,7 @@ describe('SeasonPageComponent', () => {
 
     it('renders d11 team season stats card', async () => {
       await waitFor(() => {
-        expect(screen.getByText('D11')).toBeInTheDocument();
+        expect(screen.getByText('D11 Table')).toBeInTheDocument();
         for (const stat of d11TeamSeasonStats) {
           expect(screen.getByText(stat.d11Team.name)).toBeInTheDocument();
         }
@@ -163,6 +177,26 @@ describe('SeasonPageComponent', () => {
       await waitFor(() => {
         expect(mockRouterService.navigateToSeason).toHaveBeenCalledWith(seasons[0].id);
       });
+    });
+  });
+
+  describe('empty stats', () => {
+    beforeEach(async () => {
+      mockTeamSeasonStatApi.getTeamSeasonStatsBySeasonId.mockReturnValue(of([]));
+      mockD11TeamSeasonStatApi.getD11TeamSeasonStatsBySeasonId.mockReturnValue(of([]));
+
+      fixture = TestBed.createComponent(SeasonPageComponent);
+      fixture.componentRef.setInput('seasonId', seasons[1].id);
+      fixture.detectChanges();
+      await fixture.whenStable();
+    });
+
+    it('does not render team season stats section when stats are empty', () => {
+      expect(screen.queryByText('Premier League Table')).not.toBeInTheDocument();
+    });
+
+    it('does not render d11 team season stats section when stats are empty', () => {
+      expect(screen.queryByText('D11 Table')).not.toBeInTheDocument();
     });
   });
 

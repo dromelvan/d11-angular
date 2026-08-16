@@ -18,8 +18,8 @@ import { PageContextService } from '@app/core/page-context/page-context.service'
 import { RouterService } from '@app/core/router/router.service';
 import { SeasonPickerButtonComponent } from '@app/feature/component/season-picker-button/season-picker-button.component';
 import { SeasonScrollPickerComponent } from '@app/feature/component/season-scroll-picker/season-scroll-picker.component';
-import { D11TeamSeasonStatsComponent } from '@app/feature/component/d11-team-season-stats/d11-team-season-stats.component';
 import { TeamSeasonStatsSectionComponent } from '@app/feature/section/team-season-stats-section/team-season-stats-section.component';
+import { D11TeamSeasonStatsSectionComponent } from '@app/feature/section/d11-team-season-stats-section/d11-team-season-stats-section.component';
 import { of } from 'rxjs';
 
 @Component({
@@ -28,7 +28,7 @@ import { of } from 'rxjs';
     SeasonScrollPickerComponent,
     SeasonPickerButtonComponent,
     TeamSeasonStatsSectionComponent,
-    D11TeamSeasonStatsComponent,
+    D11TeamSeasonStatsSectionComponent,
   ],
   templateUrl: './season-page.component.html',
 })
