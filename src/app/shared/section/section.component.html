@@ -1,6 +1,9 @@
 <div class="app-row-2 app-text-label mb-2" data-testid="section-header">
   <ng-content select="[sectionHeader]" />
 </div>
-<div class="app-text-base rounded-2xl p-4 bg-surface-0 border border-neutral-300">
+<div
+  [class.grow]="grow()"
+  class="app-col app-text-base rounded-2xl p-4 bg-surface-0 border border-neutral-300"
+>
   <ng-content />
 </div>

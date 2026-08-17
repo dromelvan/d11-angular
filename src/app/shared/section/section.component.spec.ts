@@ -56,4 +56,26 @@ describe('SectionComponent', () => {
     expect(headerWrapper.querySelector('img')).toBeInTheDocument();
     expect(headerWrapper).toContainElement(screen.getByText('Team Name') as HTMLElement);
   });
+
+  describe('grow', () => {
+    it('does not apply grow class by default', async () => {
+      const { container } = await render(
+        `<app-section><span sectionHeader>Header</span><div>Content</div></app-section>`,
+        { imports: [SectionComponent] },
+      );
+
+      expect(container.querySelector('app-section')).not.toHaveClass('grow');
+      expect(container.querySelector('.rounded-2xl')).not.toHaveClass('grow');
+    });
+
+    it('applies grow class to host and content when grow is true', async () => {
+      const { container } = await render(
+        `<app-section grow><span sectionHeader>Header</span><div>Content</div></app-section>`,
+        { imports: [SectionComponent] },
+      );
+
+      expect(container.querySelector('app-section')).toHaveClass('grow');
+      expect(container.querySelector('.rounded-2xl')).toHaveClass('grow');
+    });
+  });
 });
