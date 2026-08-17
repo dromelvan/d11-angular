@@ -1,6 +1,13 @@
 import { Component, computed, input } from '@angular/core';
 
-export type SvgIconName = 'chevron-left' | 'chevron-right' | 'search' | 'person' | 'shield';
+export type SvgIconName =
+  | 'chevron-left'
+  | 'chevron-right'
+  | 'chevrons-left'
+  | 'chevrons-right'
+  | 'search'
+  | 'person'
+  | 'shield';
 type SvgIconSize = 'sm' | 'md' | 'lg';
 
 interface PathElement {
@@ -18,6 +25,14 @@ type SvgElement = PathElement | CircleElement;
 const SVG_ICONS: Record<SvgIconName, SvgElement[]> = {
   'chevron-left': [{ type: 'path', d: 'M15 18l-6-6 6-6' }],
   'chevron-right': [{ type: 'path', d: 'M9 18l6-6-6-6' }],
+  'chevrons-left': [
+    { type: 'path', d: 'M11 18l-5-6 5-6' },
+    { type: 'path', d: 'M17 18l-5-6 5-6' },
+  ],
+  'chevrons-right': [
+    { type: 'path', d: 'M7 18l5-6-5-6' },
+    { type: 'path', d: 'M13 18l5-6-5-6' },
+  ],
   search: [
     { type: 'circle', cx: 11, cy: 11, r: 7 },
     { type: 'path', d: 'M20 20l-3.5-3.5' },

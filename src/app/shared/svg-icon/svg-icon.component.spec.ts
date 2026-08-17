@@ -60,6 +60,24 @@ describe('SvgIconComponent', () => {
     });
   });
 
+  describe('chevrons-left', () => {
+    it('renders the chevrons-left paths', async () => {
+      const { container } = await render(SvgIconComponent, { inputs: { name: 'chevrons-left' } });
+
+      expect(container.querySelector('path[d="M11 18l-5-6 5-6"]')).toBeInTheDocument();
+      expect(container.querySelector('path[d="M17 18l-5-6 5-6"]')).toBeInTheDocument();
+    });
+  });
+
+  describe('chevrons-right', () => {
+    it('renders the chevrons-right paths', async () => {
+      const { container } = await render(SvgIconComponent, { inputs: { name: 'chevrons-right' } });
+
+      expect(container.querySelector('path[d="M7 18l5-6-5-6"]')).toBeInTheDocument();
+      expect(container.querySelector('path[d="M13 18l5-6-5-6"]')).toBeInTheDocument();
+    });
+  });
+
   describe('search', () => {
     it('renders the search circle and line', async () => {
       const { container } = await render(SvgIconComponent, { inputs: { name: 'search' } });
