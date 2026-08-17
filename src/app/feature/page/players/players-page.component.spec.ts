@@ -1,190 +1,237 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { PlayerSeasonStatApiService, PlayerSeasonStatPage, Season } from '@app/core/api';
-import { SeasonApiService } from '@app/core/api/season/season-api.service';
-import { LoadingService } from '@app/core/loading/loading.service';
-import { RouterService } from '@app/core/router/router.service';
-import { DynamicDialogService } from '@app/shared/dialog/dynamic-dialog-service/dynamic-dialog.service';
-import { fakePlayerSeasonStat, fakeSeason } from '@app/test';
-import { screen, waitFor } from '@testing-library/angular';
+import { render, screen } from '@testing-library/angular';
 import userEvent from '@testing-library/user-event';
-import { Observable, of } from 'rxjs';
-import { expect, vi } from 'vitest';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { By } from '@angular/platform-browser';
+import { signal } from '@angular/core';
+import { provideHttpClient } from '@angular/common/http';
+import { provideHttpClientTesting } from '@angular/common/http/testing';
+import { provideRouter } from '@angular/router';
+import { NEVER, of } from 'rxjs';
+import { describe, expect, it, vi, beforeEach } from 'vitest';
+import { Season } from '@app/core/api';
+import { SeasonApiService } from '@app/core/api/season/season-api.service';
+import { PlayerSeasonStatApiService } from '@app/core/api/player-season-stat/player-season-stat-api.service';
+import { CurrentService } from '@app/core/current/current.service';
+import { PageContextService } from '@app/core/page-context/page-context.service';
+import { RouterService } from '@app/core/router/router.service';
+import { SeasonPickerButtonComponent } from '@app/feature/component/season-picker-button/season-picker-button.component';
+import { SeasonScrollPickerComponent } from '@app/feature/component/season-scroll-picker/season-scroll-picker.component';
+import { fakeSeason } from '@app/test';
 import { PlayersPageComponent } from './players-page.component';
 
+const currentSeason = signal<Season | undefined>(undefined);
+
+const mockSeasonApi = { getAll: vi.fn() };
+const mockPlayerSeasonStatApi = { getPlayerSeasonStatsBySeasonId: vi.fn() };
+const mockCurrentService = { season: currentSeason, rxCurrent: { isLoading: signal(false) } };
+const mockRouterService = { navigateToPlayers: vi.fn() };
+const mockPageContextService = { register: vi.fn() };
+
+const providers = [
+  provideHttpClient(),
+  provideHttpClientTesting(),
+  provideRouter([]),
+  { provide: SeasonApiService, useValue: mockSeasonApi },
+  { provide: PlayerSeasonStatApiService, useValue: mockPlayerSeasonStatApi },
+  { provide: CurrentService, useValue: mockCurrentService },
+  { provide: RouterService, useValue: mockRouterService },
+  { provide: PageContextService, useValue: mockPageContextService },
+];
+
+const seasons = [
+  { ...fakeSeason(), id: 1, date: '2023-08-01' },
+  { ...fakeSeason(), id: 2, date: '2022-08-01' },
+];
+
+const emptyStatPage = { page: 0, totalPages: 1, totalElements: 0, elements: [] };
+
+const selectSeason = (fixture: ComponentFixture<PlayersPageComponent>, season: Season): void => {
+  fixture.debugElement
+    .query(By.directive(SeasonScrollPickerComponent))
+    .componentInstance.seasonSelected.emit(season);
+  TestBed.tick();
+};
+
 describe('PlayersPageComponent', () => {
-  const mockSeasonApi = { getAll: vi.fn<() => Observable<Season[]>>() };
-  const mockPlayerSeasonStatApi = {
-    getPlayerSeasonStatsBySeasonId: vi.fn<(id: number) => Observable<PlayerSeasonStatPage>>(),
-  };
-  const mockLoadingService = { register: vi.fn() };
-  const mockRouterService = { navigateToPlayers: vi.fn() };
-  const mockDynamicDialogService = { openPlayerSeasonStat: vi.fn() };
-
-  let seasons: Season[];
-  let playerSeasonStatPage: PlayerSeasonStatPage;
-  let fixture: ComponentFixture<PlayersPageComponent>;
-
-  beforeEach(async () => {
+  beforeEach(() => {
     vi.clearAllMocks();
-    seasons = [
-      { ...fakeSeason(), id: 1, date: '2023-08-01' },
-      { ...fakeSeason(), id: 2, date: '2022-08-01' },
-      { ...fakeSeason(), id: 3, date: '2021-08-01' },
-    ];
-    playerSeasonStatPage = {
-      page: 0,
-      totalPages: 1,
-      totalElements: 2,
-      elements: [fakePlayerSeasonStat(), fakePlayerSeasonStat()],
-    };
+    HTMLElement.prototype.scrollIntoView = vi.fn();
+    currentSeason.set(undefined);
     mockSeasonApi.getAll.mockReturnValue(of(seasons));
-    mockPlayerSeasonStatApi.getPlayerSeasonStatsBySeasonId.mockReturnValue(
-      of(playerSeasonStatPage),
-    );
-
-    await TestBed.configureTestingModule({
-      imports: [PlayersPageComponent],
-      providers: [
-        { provide: SeasonApiService, useValue: mockSeasonApi },
-        { provide: PlayerSeasonStatApiService, useValue: mockPlayerSeasonStatApi },
-        { provide: LoadingService, useValue: mockLoadingService },
-        { provide: RouterService, useValue: mockRouterService },
-        { provide: DynamicDialogService, useValue: mockDynamicDialogService },
-      ],
-    }).compileComponents();
+    mockPlayerSeasonStatApi.getPlayerSeasonStatsBySeasonId.mockReturnValue(of(emptyStatPage));
   });
 
-  describe('with seasonId', () => {
-    beforeEach(() => {
-      fixture = TestBed.createComponent(PlayersPageComponent);
-      fixture.componentRef.setInput('seasonId', seasons[1].id);
-      fixture.detectChanges();
+  describe('renders', () => {
+    it('renders the Live button', async () => {
+      await render(PlayersPageComponent, { providers });
+      TestBed.tick();
+
+      expect(screen.getByRole('button', { name: 'Live' })).toBeInTheDocument();
     });
 
-    it('renders', async () => {
-      await waitFor(() => {
-        expect(fixture.nativeElement.querySelector('.app-players-page')).toBeInTheDocument();
+    it('renders the stats section when seasonId input is set', async () => {
+      const { container } = await render(PlayersPageComponent, {
+        inputs: { seasonId: seasons[0].id },
+        providers,
       });
+      TestBed.tick();
+
+      expect(container.querySelector('app-player-season-stats-section')).toBeInTheDocument();
     });
 
-    it('gets all seasons', () => {
-      expect(mockSeasonApi.getAll).toHaveBeenCalled();
-    });
+    it('does not render the stats section before a season is selected', async () => {
+      mockSeasonApi.getAll.mockReturnValue(NEVER);
+      const { container } = await render(PlayersPageComponent, { providers });
+      TestBed.tick();
 
-    it('renders season name', async () => {
-      await waitFor(() => {
-        expect(screen.getByText(seasons[1].name, { exact: false })).toBeInTheDocument();
-      });
-    });
-
-    it('renders player season stats', async () => {
-      await waitFor(() => {
-        expect(fixture.nativeElement.querySelector('app-players-season-stats')).toBeInTheDocument();
-      });
-    });
-
-    it('loads stats for the provided season', async () => {
-      await waitFor(() => {
-        const [seasonId] = mockPlayerSeasonStatApi.getPlayerSeasonStatsBySeasonId.mock.calls[0];
-        expect(seasonId).toBe(seasons[1].id);
-      });
-    });
-
-    it('navigates to previous season on previous button click', async () => {
-      await waitFor(() => screen.getByText(seasons[1].name, { exact: false }));
-      const [prevButton] = fixture.nativeElement.querySelectorAll('app-material-icon-button');
-
-      await userEvent.click(prevButton);
-
-      expect(mockRouterService.navigateToPlayers).toHaveBeenCalledExactlyOnceWith(seasons[2].id);
-    });
-
-    it('navigates to next season on next button click', async () => {
-      await waitFor(() => screen.getByText(seasons[1].name, { exact: false }));
-      const [, nextButton] = fixture.nativeElement.querySelectorAll('app-material-icon-button');
-
-      await userEvent.click(nextButton);
-
-      expect(mockRouterService.navigateToPlayers).toHaveBeenCalledExactlyOnceWith(seasons[0].id);
+      expect(container.querySelector('app-player-season-stats-section')).not.toBeInTheDocument();
     });
   });
 
-  describe('without seasonId', () => {
-    beforeEach(() => {
-      fixture = TestBed.createComponent(PlayersPageComponent);
-      fixture.detectChanges();
+  describe('Live button', () => {
+    it('navigates to the current season when clicked', async () => {
+      currentSeason.set(seasons[0]);
+      await render(PlayersPageComponent, { providers });
+      TestBed.tick();
+
+      await userEvent.click(screen.getByRole('button', { name: 'Live' }));
+
+      expect(mockRouterService.navigateToPlayers).toHaveBeenCalledWith(seasons[0].id);
     });
 
-    it('renders', async () => {
-      await waitFor(() => {
-        expect(fixture.nativeElement.querySelector('.app-players-page')).toBeInTheDocument();
-      });
-    });
+    it('does nothing when there is no current season', async () => {
+      await render(PlayersPageComponent, { providers });
+      TestBed.tick();
 
-    it('gets all seasons', () => {
-      expect(mockSeasonApi.getAll).toHaveBeenCalled();
-    });
-
-    it('renders most recent season name', async () => {
-      await waitFor(() => {
-        expect(screen.getByText(seasons[0].name, { exact: false })).toBeInTheDocument();
-      });
-    });
-
-    it('renders player season stats', async () => {
-      await waitFor(() => {
-        expect(fixture.nativeElement.querySelector('app-players-season-stats')).toBeInTheDocument();
-      });
-    });
-
-    it('loads stats for the most recent season', async () => {
-      await waitFor(() => {
-        const [seasonId] = mockPlayerSeasonStatApi.getPlayerSeasonStatsBySeasonId.mock.calls[0];
-        expect(seasonId).toBe(seasons[0].id);
-      });
-    });
-
-    it('navigates to previous season on previous button click', async () => {
-      await waitFor(() => screen.getByText(seasons[0].name, { exact: false }));
-      const [prevButton] = fixture.nativeElement.querySelectorAll('app-material-icon-button');
-
-      await userEvent.click(prevButton);
-
-      expect(mockRouterService.navigateToPlayers).toHaveBeenCalledExactlyOnceWith(seasons[1].id);
-    });
-  });
-
-  describe('at last season', () => {
-    beforeEach(() => {
-      fixture = TestBed.createComponent(PlayersPageComponent);
-      fixture.componentRef.setInput('seasonId', seasons[0].id);
-      fixture.detectChanges();
-    });
-
-    it('does not navigate to next season on next button click', async () => {
-      await waitFor(() => screen.getByText(seasons[0].name, { exact: false }));
-      const [, nextButton] = fixture.nativeElement.querySelectorAll('app-material-icon-button');
-
-      await userEvent.click(nextButton);
+      await userEvent.click(screen.getByRole('button', { name: 'Live' }));
 
       expect(mockRouterService.navigateToPlayers).not.toHaveBeenCalled();
     });
   });
 
-  describe('at first season', () => {
-    beforeEach(() => {
-      fixture = TestBed.createComponent(PlayersPageComponent);
-      fixture.componentRef.setInput('seasonId', seasons[2].id);
-      fixture.detectChanges();
+  describe('seasonId input', () => {
+    it('is undefined by default', async () => {
+      const { fixture } = await render(PlayersPageComponent, { providers });
+      TestBed.tick();
+
+      expect(fixture.componentInstance.seasonId()).toBeUndefined();
     });
 
-    it('does not navigate to previous season on previous button click', async () => {
-      await waitFor(() => screen.getByText(seasons[2].name, { exact: false }));
-      const [prevButton] = fixture.nativeElement.querySelectorAll('app-material-icon-button');
+    it('parses a numeric string', async () => {
+      const { fixture } = await render(PlayersPageComponent, { providers });
+      TestBed.tick();
 
-      await userEvent.click(prevButton);
+      fixture.componentRef.setInput('seasonId', '42');
+
+      expect(fixture.componentInstance.seasonId()).toBe(42);
+    });
+
+    it('parses null as undefined', async () => {
+      const { fixture } = await render(PlayersPageComponent, { providers });
+      TestBed.tick();
+
+      fixture.componentRef.setInput('seasonId', null);
+
+      expect(fixture.componentInstance.seasonId()).toBeUndefined();
+    });
+
+    it('parses empty string as undefined', async () => {
+      const { fixture } = await render(PlayersPageComponent, { providers });
+      TestBed.tick();
+
+      fixture.componentRef.setInput('seasonId', '');
+
+      expect(fixture.componentInstance.seasonId()).toBeUndefined();
+    });
+  });
+
+  describe('season selection', () => {
+    beforeEach(() => {
+      mockSeasonApi.getAll.mockReturnValue(NEVER);
+    });
+
+    it('does not navigate on first selection', async () => {
+      const { fixture } = await render(PlayersPageComponent, { providers });
+      TestBed.tick();
+
+      selectSeason(fixture, seasons[0]);
 
       expect(mockRouterService.navigateToPlayers).not.toHaveBeenCalled();
+    });
+
+    it('navigates on subsequent selection', async () => {
+      const { fixture } = await render(PlayersPageComponent, { providers });
+      TestBed.tick();
+
+      selectSeason(fixture, seasons[0]);
+      selectSeason(fixture, seasons[1]);
+
+      expect(mockRouterService.navigateToPlayers).toHaveBeenCalledWith(seasons[1].id);
+    });
+
+    it('navigates when seasonId input is already set', async () => {
+      const { fixture } = await render(PlayersPageComponent, {
+        inputs: { seasonId: seasons[0].id },
+        providers,
+      });
+      TestBed.tick();
+
+      selectSeason(fixture, seasons[1]);
+
+      expect(mockRouterService.navigateToPlayers).toHaveBeenCalledWith(seasons[1].id);
+    });
+
+    it('renders the stats section after season is selected', async () => {
+      const { fixture, container } = await render(PlayersPageComponent, { providers });
+      TestBed.tick();
+
+      selectSeason(fixture, seasons[0]);
+
+      expect(container.querySelector('app-player-season-stats-section')).toBeInTheDocument();
+    });
+
+    it('navigates to selected season when a season picker button selection is made', async () => {
+      const { fixture } = await render(PlayersPageComponent, {
+        inputs: { seasonId: seasons[0].id },
+        providers,
+      });
+      TestBed.tick();
+
+      fixture.debugElement
+        .query(By.directive(SeasonPickerButtonComponent))
+        .componentInstance.seasonSelected.emit(seasons[1]);
+
+      expect(mockRouterService.navigateToPlayers).toHaveBeenCalledWith(seasons[1].id);
+    });
+  });
+
+  describe('page context', () => {
+    it('registers with title Player Stats', async () => {
+      await render(PlayersPageComponent, { providers });
+      TestBed.tick();
+
+      const context = mockPageContextService.register.mock.calls[0][1];
+      expect(context.title()).toBe('Player Stats');
+    });
+
+    it('sets subtitle to Season name after season is selected', async () => {
+      mockSeasonApi.getAll.mockReturnValue(NEVER);
+      const { fixture } = await render(PlayersPageComponent, { providers });
+      TestBed.tick();
+
+      selectSeason(fixture, seasons[0]);
+
+      const context = mockPageContextService.register.mock.calls[0][1];
+      expect(context.subtitle()).toBe(`Season ${seasons[0].name}`);
+    });
+
+    it('has no subtitle before a season is selected', async () => {
+      mockSeasonApi.getAll.mockReturnValue(NEVER);
+      await render(PlayersPageComponent, { providers });
+      TestBed.tick();
+
+      const context = mockPageContextService.register.mock.calls[0][1];
+      expect(context.subtitle()).toBeUndefined();
     });
   });
 });

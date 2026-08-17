@@ -1,6 +1,28 @@
-<div class="app-players-page app-col max-w-3xl mx-auto pb-4 gap-2">
-  <app-season-picker [seasonId]="seasonId()" (season)="onSeasonSelected($event)" />
+<div class="app-players-page app-col pb-4 gap-2">
+  <div class="app-row bg-primary text-primary-contrast rounded-sm p-2">
+    <button
+      (click)="onLiveClick()"
+      class="px-2 py-1 rounded-sm app-text-header border-none cursor-pointer outline-none min-w-12 h-9.5"
+      type="button"
+    >
+      Live
+    </button>
+
+    <app-season-scroll-picker
+      class="min-w-0"
+      [seasonId]="seasonId()"
+      (seasonSelected)="onSeasonSelected($event)"
+    />
+
+    @if (selectedSeasonId(); as selectedId) {
+      <app-season-picker-button
+        [seasonId]="selectedId"
+        (seasonSelected)="onSeasonSelected($event)"
+      />
+    }
+  </div>
+
   @if (selectedSeasonId(); as seasonId) {
-    <app-players-season-stats [seasonId]="seasonId" />
+    <app-player-season-stats-section [seasonId]="seasonId" class="pt-2" />
   }
 </div>

@@ -1,12 +1,27 @@
-import { Component, computed, inject, input, numberAttribute, signal } from '@angular/core';
-import { SeasonBase } from '@app/core/api';
+import {
+  Component,
+  computed,
+  DestroyRef,
+  inject,
+  input,
+  numberAttribute,
+  signal,
+} from '@angular/core';
+import { Season } from '@app/core/api';
+import { CurrentService } from '@app/core/current/current.service';
+import { PageContextService } from '@app/core/page-context/page-context.service';
 import { RouterService } from '@app/core/router/router.service';
-import { SeasonPickerComponent } from '@app/shared/season-picker/season-picker.component';
-import { PlayersSeasonStatsComponent } from '@app/feature/component/players-season-stats/players-season-stats.component';
+import { SeasonPickerButtonComponent } from '@app/feature/component/season-picker-button/season-picker-button.component';
+import { SeasonScrollPickerComponent } from '@app/feature/component/season-scroll-picker/season-scroll-picker.component';
+import { PlayerSeasonStatsSectionComponent } from '@app/feature/section/player-season-stats-section/player-season-stats-section.component';
 
 @Component({
   selector: 'app-players-page',
-  imports: [SeasonPickerComponent, PlayersSeasonStatsComponent],
+  imports: [
+    SeasonScrollPickerComponent,
+    SeasonPickerButtonComponent,
+    PlayerSeasonStatsSectionComponent,
+  ],
   templateUrl: './players-page.component.html',
 })
 export class PlayersPageComponent {
@@ -14,12 +29,31 @@ export class PlayersPageComponent {
     transform: (v: unknown) => (v != null && v !== '' ? numberAttribute(v as string) : undefined),
   });
 
-  protected season = signal<SeasonBase | undefined>(undefined);
+  protected season = signal<Season | undefined>(undefined);
   protected selectedSeasonId = computed(() => this.seasonId() ?? this.season()?.id);
 
+  private readonly currentService = inject(CurrentService);
   private readonly routerService = inject(RouterService);
+  private readonly pageContextService = inject(PageContextService);
 
-  protected onSeasonSelected(season: SeasonBase): void {
+  constructor() {
+    const destroyRef = inject(DestroyRef);
+    this.pageContextService.register(destroyRef, {
+      title: signal('Player Stats'),
+      subtitle: computed(() => {
+        const name = this.season()?.name;
+        return name !== undefined ? `Season ${name}` : undefined;
+      }),
+      backgroundColor: signal(''),
+    });
+  }
+
+  protected onLiveClick(): void {
+    const currentSeasonId = this.currentService.season()?.id;
+    if (currentSeasonId) this.routerService.navigateToPlayers(currentSeasonId);
+  }
+
+  protected onSeasonSelected(season: Season): void {
     const shouldNavigate = this.seasonId() !== undefined || this.season() !== undefined;
     this.season.set(season);
     if (shouldNavigate) this.routerService.navigateToPlayers(season.id);
