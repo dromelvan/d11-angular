@@ -185,6 +185,28 @@
     .p-accordioncontent {
         @apply -mx-4;
     }
+
+    .p-accordioncontent-wrapper {
+        overflow: hidden;
+    }
+
+    .p-drawer-mask.p-overlay-mask {
+        transition: opacity 0.5s cubic-bezier(0.32, 0.72, 0, 1);
+    }
+
+    body:not(:has(.p-drawer-open)) .p-drawer-mask.p-overlay-mask {
+        opacity: 0;
+    }
+
+    .p-progressspinner {
+        width: 4rem !important;
+        height: 4rem !important;
+    }
+
+    .p-progressspinner-circle {
+        stroke: var(--p-primary-color) !important;
+        animation: p-progressspinner-dash 1.5s ease-in-out infinite !important;
+    }
 }
 
 .vertical-align-test {

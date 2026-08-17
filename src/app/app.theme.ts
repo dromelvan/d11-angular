@@ -64,6 +64,15 @@ export const D11Light = definePreset(Aura, {
         padding: '1rem 0rem',
       },
     },
+    paginator: {
+      root: {
+        background: BACKGROUND,
+      },
+      navButton: {
+        color: '{text.color}',
+        hoverColor: '{text.color}',
+      },
+    },
     accordion: {
       panel: {
         borderWidth: '0',
