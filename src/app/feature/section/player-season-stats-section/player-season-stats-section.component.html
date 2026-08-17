@@ -1,0 +1,43 @@
+<app-section [grow]="isGrow()">
+  <span sectionHeader class="app-fill">Season Statistics</span>
+  <p-paginator
+    sectionHeader
+    class="p-0! gap-0!"
+    [first]="page() * 25"
+    [rows]="25"
+    [totalRecords]="totalElements()"
+    [showPageLinks]="false"
+    [showJumpToPageDropdown]="false"
+    (onPageChange)="onPageChange($event)"
+  >
+    <ng-template pTemplate="firstpagelinkicon">
+      <app-svg-icon name="chevrons-left" size="sm" />
+    </ng-template>
+    <ng-template pTemplate="previouspagelinkicon">
+      <app-svg-icon name="chevron-left" size="sm" />
+    </ng-template>
+    <ng-template pTemplate="nextpagelinkicon">
+      <app-svg-icon name="chevron-right" size="sm" />
+    </ng-template>
+    <ng-template pTemplate="lastpagelinkicon">
+      <app-svg-icon name="chevrons-right" size="sm" />
+    </ng-template>
+  </p-paginator>
+  <app-material-icon-button
+    sectionHeader
+    icon="more_vertical"
+    variant="text"
+    (click)="openDrawer()"
+  />
+  <app-player-season-stats-accordion
+    [searchParams]="searchParams()"
+    [page]="page()"
+    (totalElementsCount)="onTotalElementsChange($event)"
+  />
+</app-section>
+
+<app-player-season-stats-filter-drawer
+  [(visible)]="drawerVisible"
+  [filterParams]="filterParams()"
+  (filterParamsChange)="onFilterParamsChange($event)"
+/>
