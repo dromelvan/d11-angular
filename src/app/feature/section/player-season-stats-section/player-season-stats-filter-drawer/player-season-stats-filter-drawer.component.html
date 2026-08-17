@@ -1,0 +1,50 @@
+<p-drawer
+  [(visible)]="visible"
+  position="bottom"
+  [closable]="false"
+  [pt]="{ root: { class: 'rounded-t-[25px] h-auto!' } }"
+>
+  <ng-template #header>
+    <div class="grid grid-cols-[1fr_auto_1fr] items-center w-full">
+      <span></span>
+      <span class="app-text-title">Filter and Sort</span>
+      <a (click)="done()" class="app-text-primary justify-self-end">Done</a>
+    </div>
+  </ng-template>
+  <div class="app-col-2">
+    <div class="app-col-2">
+      <span class="app-text-primary">Availability</span>
+      <p-selectbutton
+        [options]="availabilityOptions"
+        [ngModel]="dirtyFilterParams().dummy"
+        (ngModelChange)="setDummy($event)"
+        optionLabel="label"
+        optionValue="value"
+        [pt]="{ pcToggleButton: { label: { class: 'app-text-base' } } }"
+      />
+    </div>
+    <div class="app-col-2">
+      <span class="app-text-primary">Position</span>
+      <p-selectbutton
+        [options]="positionIdOptions"
+        [ngModel]="dirtyFilterParams().positionIds"
+        (ngModelChange)="setPositionIds($event)"
+        optionLabel="label"
+        optionValue="value"
+        [multiple]="true"
+        [pt]="{ pcToggleButton: { label: { class: 'app-text-base' } } }"
+      />
+    </div>
+    <div class="app-col-2">
+      <span class="app-text-primary">Sort</span>
+      <p-selectbutton
+        [options]="sortOptions"
+        [ngModel]="dirtyFilterParams().sort"
+        (ngModelChange)="setSort($event)"
+        optionLabel="label"
+        optionValue="value"
+        [pt]="{ pcToggleButton: { label: { class: 'app-text-base' } } }"
+      />
+    </div>
+  </div>
+</p-drawer>
