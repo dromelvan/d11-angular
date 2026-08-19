@@ -45,12 +45,14 @@ export class MatchApiService {
       .pipe(map((result) => result.matches));
   }
 
-  getPlayerMatchStatsByMatchId(matchId: number): Observable<PlayerMatchStat[]> {
+  getPlayerMatchStatsByMatchId(matchId: number, teamId?: number): Observable<PlayerMatchStat[]> {
+    const params = teamId ? new HttpParams().set('teamId', teamId) : undefined;
     return this.apiService
       .get<PlayerMatchStatsResponseBody>({
         namespace: this.namespace,
         id: matchId,
         endpoint: 'player-match-stats',
+        options: params ? { params } : undefined,
       })
       .pipe(map((result) => result.playerMatchStats));
   }

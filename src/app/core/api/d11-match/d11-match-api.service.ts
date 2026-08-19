@@ -39,12 +39,17 @@ export class D11MatchApiService {
       .pipe(map((result) => result.d11Matches));
   }
 
-  getPlayerMatchStatsByD11MatchId(d11MatchId: number): Observable<PlayerMatchStat[]> {
+  getPlayerMatchStatsByD11MatchId(
+    d11MatchId: number,
+    d11TeamId?: number,
+  ): Observable<PlayerMatchStat[]> {
+    const params = d11TeamId ? new HttpParams().set('d11TeamId', d11TeamId) : undefined;
     return this.apiService
       .get<PlayerMatchStatsResponseBody>({
         namespace: this.namespace,
         id: d11MatchId,
         endpoint: 'player-match-stats',
+        options: params ? { params } : undefined,
       })
       .pipe(map((result) => result.playerMatchStats));
   }

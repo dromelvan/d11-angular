@@ -226,6 +226,21 @@ describe('D11MatchApiService', () => {
       );
     });
 
+    it('calls get with d11TeamId query param when provided', async () => {
+      const d11TeamId = 7;
+      apiServiceMock.get = vi.fn().mockReturnValue(of(response)) as GetFn;
+
+      await firstValueFrom(d11MatchApi.getPlayerMatchStatsByD11MatchId(d11MatchId, d11TeamId));
+
+      expect(apiServiceMock.get).toHaveBeenCalledExactlyOnceWith(
+        expect.objectContaining({
+          options: expect.objectContaining({
+            params: new HttpParams().set('d11TeamId', d11TeamId),
+          }),
+        }),
+      );
+    });
+
     it('maps the result', async () => {
       apiServiceMock.get = vi.fn().mockReturnValue(of(response)) as GetFn;
 

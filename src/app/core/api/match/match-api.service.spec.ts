@@ -231,6 +231,21 @@ describe('MatchApiService', () => {
       );
     });
 
+    it('calls get with teamId query param when provided', async () => {
+      const teamId = 7;
+      apiServiceMock.get = vi.fn().mockReturnValue(of(response)) as GetFn;
+
+      await firstValueFrom(matchApi.getPlayerMatchStatsByMatchId(matchId, teamId));
+
+      expect(apiServiceMock.get).toHaveBeenCalledExactlyOnceWith(
+        expect.objectContaining({
+          options: expect.objectContaining({
+            params: new HttpParams().set('teamId', teamId),
+          }),
+        }),
+      );
+    });
+
     it('maps the result on getPlayerMatchStatsByMatchId', async () => {
       apiServiceMock.get = vi.fn().mockReturnValue(of(response)) as GetFn;
 
