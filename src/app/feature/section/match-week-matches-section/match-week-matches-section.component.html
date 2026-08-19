@@ -1,6 +1,4 @@
-@if (groupedMatches().length > 0) {
-  <app-section>
-    <span sectionHeader>Premier League Matches</span>
-    <app-match-week-matches [groups]="groupedMatches()" />
-  </app-section>
-}
+<app-section>
+  <span sectionHeader>Premier League Matches</span>
+  <app-match-week-matches [matchWeekId]="matchWeekId()" />
+</app-section>

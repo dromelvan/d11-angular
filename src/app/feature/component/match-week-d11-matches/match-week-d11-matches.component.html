@@ -1,5 +1,11 @@
+@if (isLoading()) {
+  <div class="flex justify-center py-8">
+    <p-progress-spinner />
+  </div>
+}
+
 <div class="grid grid-cols-[auto_1fr_auto_auto_auto] gap-x-2">
-  @for (group of groups(); track group.date; let first = $first) {
+  @for (group of groupedMatches(); track group.date; let first = $first) {
     <div [class.pb-4]="first" [class.py-4]="!first" class="app-text-primary col-span-5">
       {{
         group.date === Status.POSTPONED

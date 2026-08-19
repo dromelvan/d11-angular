@@ -108,6 +108,18 @@ describe('MatchesPageComponent', () => {
       ).toBeTruthy();
     });
 
+    it('shows season pickers when match week loads', async () => {
+      const matchWeekApiService = TestBed.inject(MatchWeekApiService);
+      vi.mocked(matchWeekApiService.getById).mockReturnValue(of(fakeMatchWeek()));
+
+      fixture.componentRef.setInput('matchWeekId', 1);
+      fixture.detectChanges();
+      await fixture.whenStable();
+
+      expect(fixture.nativeElement.querySelector('app-match-week-scroll-picker')).toBeTruthy();
+      expect(fixture.nativeElement.querySelector('app-match-week-picker-button')).toBeTruthy();
+    });
+
     it('does not show match week sections when matchWeekId is undefined and Live is not active', () => {
       expect(fixture.nativeElement.querySelector('app-match-week-matches-section')).toBeNull();
     });
@@ -170,6 +182,14 @@ describe('MatchesPageComponent', () => {
       expect(mockRouterService.navigateToMatchWeekMatches).toHaveBeenCalledExactlyOnceWith(
         matchWeek.id,
       );
+    });
+
+    it('shows season pickers after match week selected', () => {
+      (component as unknown as MatchesPageInternal).onMatchWeekSelected(fakeMatchWeek());
+      fixture.detectChanges();
+
+      expect(fixture.nativeElement.querySelector('app-match-week-scroll-picker')).toBeTruthy();
+      expect(fixture.nativeElement.querySelector('app-match-week-picker-button')).toBeTruthy();
     });
 
     it('sets active to false', () => {

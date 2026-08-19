@@ -24,12 +24,12 @@
   }
 </div>
 
-<div class="app-responsive py-6">
+<div class="app-responsive py-7">
   @if (active()) {
-    <app-match-week-matches-section class="app-fill" />
-    <app-match-week-d11-matches-section class="app-fill" />
+    <app-match-week-matches-section />
+    <app-match-week-d11-matches-section />
   } @else if (matchWeekId()) {
-    <app-match-week-matches-section [matchWeekId]="matchWeekId()!" class="app-fill" />
-    <app-match-week-d11-matches-section [matchWeekId]="matchWeekId()!" class="app-fill" />
+    <app-match-week-matches-section [matchWeekId]="matchWeekId()!" />
+    <app-match-week-d11-matches-section [matchWeekId]="matchWeekId()!" />
   }
 </div>

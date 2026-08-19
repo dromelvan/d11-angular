@@ -1,6 +1,4 @@
-@if (groupedMatches().length > 0) {
-  <app-section>
-    <span sectionHeader>D11 Matches</span>
-    <app-match-week-d11-matches [groups]="groupedMatches()" />
-  </app-section>
-}
+<app-section>
+  <span sectionHeader>D11 Matches</span>
+  <app-match-week-d11-matches [matchWeekId]="matchWeekId()" />
+</app-section>
