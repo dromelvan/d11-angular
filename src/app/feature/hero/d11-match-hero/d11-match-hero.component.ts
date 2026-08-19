@@ -1,6 +1,6 @@
 import { Component, input } from '@angular/core';
 import { DatePipe } from '@angular/common';
-import { D11Match, Status } from '@app/core/api';
+import { D11Match, D11MatchBase, Status } from '@app/core/api';
 import { D11TeamImgComponent } from '@app/shared/img/d11-team-img/d11-team-img.component';
 
 @Component({
@@ -10,7 +10,7 @@ import { D11TeamImgComponent } from '@app/shared/img/d11-team-img/d11-team-img.c
   host: { style: 'display: block' },
 })
 export class D11MatchHeroComponent {
-  readonly match = input.required<D11Match>();
+  readonly match = input.required<D11Match | D11MatchBase>();
 
   protected readonly Status = Status;
 }

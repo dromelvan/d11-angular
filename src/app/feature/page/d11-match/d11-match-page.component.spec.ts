@@ -1,29 +1,31 @@
 import { signal } from '@angular/core';
+import { Location } from '@angular/common';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { of } from 'rxjs';
+import { NEVER, of } from 'rxjs';
 import { beforeEach, describe, expect, vi } from 'vitest';
-import { D11Match, D11TeamBase, PlayerMatchStat, Status } from '@app/core/api';
+import { D11Match, D11MatchBase, D11TeamBase, PlayerMatchStat, Status } from '@app/core/api';
 import { D11MatchApiService } from '@app/core/api/d11-match/d11-match-api.service';
-import { LoadingService } from '@app/core/loading/loading.service';
 import { PageContextService } from '@app/core/page-context/page-context.service';
-import { fakeD11Match, fakeD11TeamBase, fakeGoal, fakePlayerMatchStat } from '@app/test';
-import { RouterService } from '@app/core/router/router.service';
-import { DynamicDialogService } from '@app/shared/dialog/dynamic-dialog-service/dynamic-dialog.service';
+import {
+  fakeD11Match,
+  fakeD11MatchBase,
+  fakeD11TeamBase,
+  fakeGoal,
+  fakePlayerMatchStat,
+} from '@app/test';
 import { D11MatchPageComponent } from './d11-match-page.component';
 
 interface D11MatchPageInternal {
+  d11MatchBase: () => D11MatchBase | undefined;
   getD11TeamStats: (d11TeamId: number) => PlayerMatchStat[];
 }
 
 describe('D11MatchPageComponent', () => {
-  const mockLoadingService = { register: vi.fn() };
   const mockPageContextService = {
     register: vi.fn(),
     backgroundColor: signal('#000000'),
     textClass: signal('text-white'),
   };
-  const mockDynamicDialogService = { openPlayerMatchStat: vi.fn() };
-  const mockRouterService = { navigateToPlayer: vi.fn() };
 
   async function setup(d11Match: D11Match, playerMatchStats: PlayerMatchStat[] = []) {
     vi.clearAllMocks();
@@ -31,6 +33,7 @@ describe('D11MatchPageComponent', () => {
     await TestBed.configureTestingModule({
       imports: [D11MatchPageComponent],
       providers: [
+        { provide: Location, useValue: { getState: () => null } },
         {
           provide: D11MatchApiService,
           useValue: {
@@ -38,10 +41,7 @@ describe('D11MatchPageComponent', () => {
             getPlayerMatchStatsByD11MatchId: vi.fn().mockReturnValue(of(playerMatchStats)),
           },
         },
-        { provide: LoadingService, useValue: mockLoadingService },
         { provide: PageContextService, useValue: mockPageContextService },
-        { provide: DynamicDialogService, useValue: mockDynamicDialogService },
-        { provide: RouterService, useValue: mockRouterService },
       ],
     }).compileComponents();
   }
@@ -70,10 +70,6 @@ describe('D11MatchPageComponent', () => {
 
     it('creates the component', () => {
       expect(component).toBeTruthy();
-    });
-
-    it('registers loading with LoadingService', () => {
-      expect(mockLoadingService.register).toHaveBeenCalledOnce();
     });
 
     it('registers context with PageContextService', () => {
@@ -149,6 +145,57 @@ describe('D11MatchPageComponent', () => {
       expect(
         (component as unknown as D11MatchPageInternal).getD11TeamStats(awayD11Team.id),
       ).toHaveLength(0);
+    });
+  });
+
+  describe('d11MatchBase', () => {
+    it('is undefined when navigation state has no d11MatchBase', async () => {
+      const d11Match = fakeD11Match();
+      await setup(d11Match);
+      const fixture = await createFixture(d11Match);
+
+      expect(
+        (fixture.componentInstance as unknown as D11MatchPageInternal).d11MatchBase(),
+      ).toBeUndefined();
+    });
+
+    describe('with d11MatchBase in navigation state', () => {
+      let fixture: ComponentFixture<D11MatchPageComponent>;
+      let d11MatchBase: D11MatchBase;
+
+      beforeEach(async () => {
+        vi.clearAllMocks();
+        d11MatchBase = fakeD11MatchBase();
+
+        await TestBed.configureTestingModule({
+          imports: [D11MatchPageComponent],
+          providers: [
+            { provide: Location, useValue: { getState: () => ({ d11MatchBase }) } },
+            {
+              provide: D11MatchApiService,
+              useValue: {
+                getById: vi.fn().mockReturnValue(NEVER),
+                getPlayerMatchStatsByD11MatchId: vi.fn().mockReturnValue(NEVER),
+              },
+            },
+            { provide: PageContextService, useValue: mockPageContextService },
+          ],
+        }).compileComponents();
+
+        fixture = TestBed.createComponent(D11MatchPageComponent);
+        fixture.componentRef.setInput('d11MatchId', 1);
+        fixture.detectChanges();
+      });
+
+      it('reads d11MatchBase from navigation state', () => {
+        expect((fixture.componentInstance as unknown as D11MatchPageInternal).d11MatchBase()).toBe(
+          d11MatchBase,
+        );
+      });
+
+      it('renders app-d11-match-hero before rxD11Match loads', () => {
+        expect(fixture.nativeElement.querySelector('app-d11-match-hero')).toBeTruthy();
+      });
     });
   });
 

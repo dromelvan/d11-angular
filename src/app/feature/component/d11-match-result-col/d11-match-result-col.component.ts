@@ -42,6 +42,6 @@ export class D11MatchResultColComponent {
   private routerService = inject(RouterService);
 
   protected onClick(): void {
-    this.routerService.navigateToD11Match(this.d11Match().id);
+    this.routerService.navigateToD11Match(this.d11Match().id, true, this.d11Match());
   }
 }

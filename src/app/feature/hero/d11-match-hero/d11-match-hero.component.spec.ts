@@ -1,6 +1,6 @@
 import { render, screen } from '@testing-library/angular';
 import { Status } from '@app/core/api';
-import { fakeD11Match } from '@app/test/faker-util';
+import { fakeD11Match, fakeD11MatchBase } from '@app/test/faker-util';
 import { D11MatchHeroComponent } from './d11-match-hero.component';
 
 describe('D11MatchHeroComponent', () => {
@@ -158,5 +158,60 @@ describe('D11MatchHeroComponent', () => {
     await render(D11MatchHeroComponent, { inputs: { match } });
 
     expect(screen.getByTestId('datetime')).not.toHaveTextContent('Postponed');
+  });
+
+  describe('with D11MatchBase input', () => {
+    it('renders home and away D11 team names', async () => {
+      const match = { ...fakeD11MatchBase(), status: Status.FINISHED };
+
+      await render(D11MatchHeroComponent, { inputs: { match } });
+
+      expect(screen.getAllByText(match.homeD11Team.name).length).toBeGreaterThan(0);
+      expect(screen.getAllByText(match.awayD11Team.name).length).toBeGreaterThan(0);
+    });
+
+    it('renders score when match is finished', async () => {
+      const match = {
+        ...fakeD11MatchBase(),
+        status: Status.FINISHED,
+        homeTeamGoalsScored: 101,
+        awayTeamGoalsScored: 103,
+      };
+
+      await render(D11MatchHeroComponent, { inputs: { match } });
+
+      expect(screen.getByTestId('score')).toHaveTextContent('101');
+      expect(screen.getByTestId('score')).toHaveTextContent('103');
+    });
+
+    it('renders home and away team points when match is finished', async () => {
+      const match = {
+        ...fakeD11MatchBase(),
+        status: Status.FINISHED,
+        homeTeamPoints: 6,
+        awayTeamPoints: 0,
+      };
+
+      await render(D11MatchHeroComponent, { inputs: { match } });
+
+      expect(screen.getByTestId('home-team-points')).toHaveTextContent('6');
+      expect(screen.getByTestId('away-team-points')).toHaveTextContent('0');
+    });
+
+    it('renders vs when match is pending', async () => {
+      const match = { ...fakeD11MatchBase(), status: Status.PENDING };
+
+      await render(D11MatchHeroComponent, { inputs: { match } });
+
+      expect(screen.getByText('vs')).toBeInTheDocument();
+    });
+
+    it('renders Postponed when match is postponed', async () => {
+      const match = { ...fakeD11MatchBase(), status: Status.POSTPONED };
+
+      await render(D11MatchHeroComponent, { inputs: { match } });
+
+      expect(screen.getByTestId('datetime')).toHaveTextContent('Postponed');
+    });
   });
 });

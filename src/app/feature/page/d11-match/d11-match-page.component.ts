@@ -1,8 +1,16 @@
-import { Component, computed, DestroyRef, inject, input, numberAttribute } from '@angular/core';
+import {
+  Component,
+  computed,
+  DestroyRef,
+  inject,
+  input,
+  numberAttribute,
+  signal,
+} from '@angular/core';
+import { Location } from '@angular/common';
 import { rxResource } from '@angular/core/rxjs-interop';
-import { D11Match, D11TeamBase, PlayerMatchStat, Status } from '@app/core/api';
+import { D11Match, D11MatchBase, D11TeamBase, PlayerMatchStat, Status } from '@app/core/api';
 import { D11MatchApiService } from '@app/core/api/d11-match/d11-match-api.service';
-import { LoadingService } from '@app/core/loading/loading.service';
 import { sortByD11Team } from '@app/shared/util/player-match-stat.util';
 import { d11MatchEvents } from '@app/shared/util/match-events.util';
 import { MatchEvent } from '@app/shared/model';
@@ -12,6 +20,7 @@ import { HeroContainerComponent } from '@app/feature/hero/hero-container/hero-co
 import { D11MatchHeroComponent } from '@app/feature/hero/d11-match-hero/d11-match-hero.component';
 import { MatchEventsSectionComponent } from '@app/feature/section/match-events-section/match-events-section.component';
 import { D11TeamPlayerMatchStatsSectionComponent } from '@app/feature/section/d11-team-player-match-stats-section/d11-team-player-match-stats-section.component';
+import { ProgressSpinner } from 'primeng/progressspinner';
 
 @Component({
   selector: 'app-d11-match-page',
@@ -20,6 +29,7 @@ import { D11TeamPlayerMatchStatsSectionComponent } from '@app/feature/section/d1
     D11MatchHeroComponent,
     MatchEventsSectionComponent,
     D11TeamPlayerMatchStatsSectionComponent,
+    ProgressSpinner,
   ],
   templateUrl: './d11-match-page.component.html',
 })
@@ -27,6 +37,10 @@ export class D11MatchPageComponent {
   d11MatchId = input.required({ transform: numberAttribute });
 
   protected readonly Status = Status;
+
+  protected readonly d11MatchBase = signal<D11MatchBase | undefined>(
+    (inject(Location).getState() as { d11MatchBase?: D11MatchBase })?.d11MatchBase,
+  );
 
   protected rxD11Match = rxResource<D11Match, number>({
     params: () => this.d11MatchId(),
@@ -38,16 +52,15 @@ export class D11MatchPageComponent {
   });
 
   protected model = computed(() => {
-    const d11Match = this.rxD11Match.value();
+    const d11Match = this.d11MatchBase() || this.rxD11Match.value();
     const playerMatchStats =
       d11Match && this.rxPlayerMatchStats.value()
-        ? sortByD11Team(d11Match, this.rxPlayerMatchStats.value()!)
+        ? sortByD11Team(this.rxD11Match.value()!, this.rxPlayerMatchStats.value()!)
         : undefined;
     const d11Teams: D11TeamBase[] = d11Match ? [d11Match.homeD11Team, d11Match.awayD11Team] : [];
 
     return { d11Match, playerMatchStats, d11Teams };
   });
-
   protected isLoading = computed(
     () => this.rxD11Match.isLoading() || this.rxPlayerMatchStats.isLoading(),
   );
@@ -59,19 +72,17 @@ export class D11MatchPageComponent {
   });
 
   private d11MatchApiService = inject(D11MatchApiService);
-  private loadingService = inject(LoadingService);
   private pageContextService = inject(PageContextService);
 
   constructor() {
     const destroyRef = inject(DestroyRef);
-    this.loadingService.register(destroyRef, this.isLoading);
     this.pageContextService.register(destroyRef, {
       title: computed(() => {
-        const number = this.rxD11Match.value()?.matchWeek.matchWeekNumber;
+        const number = this.model().d11Match?.matchWeek.matchWeekNumber;
         return number !== undefined ? `Match Week ${number}` : undefined;
       }),
       subtitle: computed(() => {
-        const name = this.rxD11Match.value()?.matchWeek.season.name;
+        const name = this.model().d11Match?.matchWeek.season.name;
         return name !== undefined ? `Season ${name}` : undefined;
       }),
       backgroundColor: this.backgroundColor,

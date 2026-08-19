@@ -39,7 +39,11 @@ describe('D11MatchResultColComponent', () => {
     await setup(match);
 
     fixture.nativeElement.click();
-    expect(mockRouterService.navigateToD11Match).toHaveBeenCalledExactlyOnceWith(match.id);
+    expect(mockRouterService.navigateToD11Match).toHaveBeenCalledExactlyOnceWith(
+      match.id,
+      true,
+      match,
+    );
   });
 
   // Team names -----------------------------------------------------------------------------------

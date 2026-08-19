@@ -1,15 +1,19 @@
-@if (!isLoading()) {
-  @let model = this.model();
-  @if (model.d11Match; as d11Match) {
-    <app-hero-container>
-      <app-d11-match-hero heroContent [match]="d11Match" />
+@let model = this.model();
+@if (model.d11Match; as d11Match) {
+  <app-hero-container>
+    <app-d11-match-hero heroContent [match]="d11Match" />
 
+    @if (isLoading()) {
+      <div class="flex justify-center py-8">
+        <p-progress-spinner />
+      </div>
+    } @else {
       @if (d11MatchEventsList().length > 0) {
         <app-match-events-section [events]="d11MatchEventsList()" class="mb-4" />
       }
 
       @if (d11Match.status !== Status.PENDING) {
-        <div class="app-responsive">
+        <div class="app-responsive" [class.mt-4]="d11MatchEventsList().length > 0">
           @for (d11Team of model.d11Teams; track d11Team.id) {
             <app-d11-team-player-match-stats-section
               class="app-fill"
@@ -19,6 +23,6 @@
           }
         </div>
       }
-    </app-hero-container>
-  }
+    }
+  </app-hero-container>
 }
