@@ -1,5 +1,4 @@
 import { Component, input } from '@angular/core';
-import { TeamSeasonStat } from '@app/core/api';
 import { TeamSeasonStatsAccordionComponent } from '@app/feature/component/team-season-stats-accordion/team-season-stats-accordion.component';
 import { SectionComponent } from '@app/shared/section/section.component';
 
@@ -7,8 +6,8 @@ import { SectionComponent } from '@app/shared/section/section.component';
   selector: 'app-team-season-stats-section',
   templateUrl: './team-season-stats-section.component.html',
   imports: [SectionComponent, TeamSeasonStatsAccordionComponent],
-  host: { class: 'app-fill', style: 'display: block' },
+  host: { class: 'app-fill' },
 })
 export class TeamSeasonStatsSectionComponent {
-  readonly teamSeasonStats = input.required<TeamSeasonStat[]>();
+  readonly seasonId = input.required<number>();
 }

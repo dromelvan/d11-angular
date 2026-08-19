@@ -6,7 +6,6 @@ import { D11TeamSeasonStatApiService } from '@app/core/api/d11-team-season-stat/
 import { SeasonApiService } from '@app/core/api/season/season-api.service';
 import { TeamSeasonStatApiService } from '@app/core/api/team-season-stat/team-season-stat-api.service';
 import { CurrentService } from '@app/core/current/current.service';
-import { LoadingService } from '@app/core/loading/loading.service';
 import { RouterService } from '@app/core/router/router.service';
 import { SeasonPickerButtonComponent } from '@app/feature/component/season-picker-button/season-picker-button.component';
 import { fakeD11TeamSeasonStat, fakeSeason, fakeTeamSeasonStat } from '@app/test';
@@ -24,7 +23,6 @@ describe('TablesPageComponent', () => {
   const mockD11TeamSeasonStatApi = {
     getD11TeamSeasonStatsBySeasonId: vi.fn<(id: number) => Observable<D11TeamSeasonStat[]>>(),
   };
-  const mockLoadingService = { register: vi.fn() };
   const mockRouterService = { navigateToSeason: vi.fn() };
 
   let seasons: Season[];
@@ -75,7 +73,6 @@ describe('TablesPageComponent', () => {
         { provide: SeasonApiService, useValue: mockSeasonApi },
         { provide: TeamSeasonStatApiService, useValue: mockTeamSeasonStatApi },
         { provide: D11TeamSeasonStatApiService, useValue: mockD11TeamSeasonStatApi },
-        { provide: LoadingService, useValue: mockLoadingService },
         { provide: RouterService, useValue: mockRouterService },
         { provide: CurrentService, useValue: mockCurrentService },
       ],
@@ -92,10 +89,6 @@ describe('TablesPageComponent', () => {
 
     it('renders', () => {
       expect(fixture.nativeElement).toBeInTheDocument();
-    });
-
-    it('registers loading state', () => {
-      expect(mockLoadingService.register).toHaveBeenCalled();
     });
 
     it('calls getAll', () => {
@@ -118,7 +111,7 @@ describe('TablesPageComponent', () => {
       });
     });
 
-    it('renders team season stats card', async () => {
+    it('renders team season stats section', async () => {
       await waitFor(() => {
         expect(screen.getByText('Premier League Table')).toBeInTheDocument();
         for (const stat of teamSeasonStats) {
@@ -127,7 +120,7 @@ describe('TablesPageComponent', () => {
       });
     });
 
-    it('renders d11 team season stats card', async () => {
+    it('renders d11 team season stats section', async () => {
       await waitFor(() => {
         expect(screen.getByText('D11 Table')).toBeInTheDocument();
         for (const stat of d11TeamSeasonStats) {
@@ -165,14 +158,6 @@ describe('TablesPageComponent', () => {
       expect(mockSeasonApi.getAll).toHaveBeenCalled();
     });
 
-    it('auto-selects the current season and loads stats', async () => {
-      await waitFor(() => {
-        expect(mockTeamSeasonStatApi.getTeamSeasonStatsBySeasonId).toHaveBeenCalledWith(
-          seasons[0].id,
-        );
-      });
-    });
-
     it('navigates to the current season on auto-select', async () => {
       await waitFor(() => {
         expect(mockRouterService.navigateToSeason).toHaveBeenCalledWith(seasons[0].id);
@@ -204,26 +189,6 @@ describe('TablesPageComponent', () => {
     it('parses empty string as undefined', () => {
       fixture.componentRef.setInput('seasonId', '');
       expect(fixture.componentInstance.seasonId()).toBeUndefined();
-    });
-  });
-
-  describe('empty stats', () => {
-    beforeEach(async () => {
-      mockTeamSeasonStatApi.getTeamSeasonStatsBySeasonId.mockReturnValue(of([]));
-      mockD11TeamSeasonStatApi.getD11TeamSeasonStatsBySeasonId.mockReturnValue(of([]));
-
-      fixture = TestBed.createComponent(TablesPageComponent);
-      fixture.componentRef.setInput('seasonId', seasons[1].id);
-      fixture.detectChanges();
-      await fixture.whenStable();
-    });
-
-    it('does not render team season stats section when stats are empty', () => {
-      expect(screen.queryByText('Premier League Table')).not.toBeInTheDocument();
-    });
-
-    it('does not render d11 team season stats section when stats are empty', () => {
-      expect(screen.queryByText('D11 Table')).not.toBeInTheDocument();
     });
   });
 

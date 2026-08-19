@@ -5,6 +5,12 @@
   <div class="app-text-number w-8">Pts</div>
 </div>
 
+@if (isLoading()) {
+  <div class="flex justify-center py-8">
+    <p-progress-spinner />
+  </div>
+}
+
 <p-accordion>
   @for (stat of d11TeamSeasonStats(); track stat.d11Team.id; let index = $index) {
     @if (index > 0) {
