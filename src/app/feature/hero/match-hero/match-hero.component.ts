@@ -1,6 +1,6 @@
 import { Component, input } from '@angular/core';
 import { DatePipe } from '@angular/common';
-import { Match, Status } from '@app/core/api';
+import { Match, MatchBase, Status } from '@app/core/api';
 import { TeamImgComponent } from '@app/shared/img/team-img/team-img.component';
 
 @Component({
@@ -10,7 +10,7 @@ import { TeamImgComponent } from '@app/shared/img/team-img/team-img.component';
   host: { style: 'display: block' },
 })
 export class MatchHeroComponent {
-  readonly match = input.required<Match>();
+  readonly match = input.required<Match | MatchBase>();
 
   protected readonly Status = Status;
 }

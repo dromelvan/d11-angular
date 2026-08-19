@@ -1,9 +1,13 @@
-@if (!isLoading()) {
-  @let model = this.model();
-  @if (model.match; as match) {
-    <app-hero-container>
-      <app-match-hero heroContent [match]="match" />
+@let model = this.model();
+@if (model.match; as match) {
+  <app-hero-container>
+    <app-match-hero heroContent [match]="match" />
 
+    @if (isLoading()) {
+      <div class="flex justify-center py-8">
+        <p-progress-spinner />
+      </div>
+    } @else {
       @if (matchEventsList().length > 0) {
         <app-match-events-section [events]="matchEventsList()" class="mb-4" />
       }
@@ -19,6 +23,6 @@
           }
         </div>
       }
-    </app-hero-container>
-  }
+    }
+  </app-hero-container>
 }

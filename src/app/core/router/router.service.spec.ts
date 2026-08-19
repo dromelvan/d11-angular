@@ -4,6 +4,7 @@ import { Component } from '@angular/core';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { waitFor } from '@testing-library/angular';
 import { EMPTY } from 'rxjs';
+import { fakeMatchBase } from '@app/test';
 import { RouterService } from './router.service';
 
 @Component({ template: '', standalone: true })
@@ -42,6 +43,16 @@ describe('RouterService', () => {
 
     expect(mockRouter.navigate).toHaveBeenCalledWith(['matches', matchId]);
     expect(result).toBe(true);
+  });
+
+  it('navigates to match with matchBase passes it in navigation state', async () => {
+    const matchId = 1;
+    const matchBase = fakeMatchBase();
+    await service.navigateToMatch(matchId, true, matchBase);
+
+    expect(mockRouter.navigate).toHaveBeenCalledWith(['matches', matchId], {
+      state: { matchBase },
+    });
   });
 
   it('navigates to D11 match', async () => {

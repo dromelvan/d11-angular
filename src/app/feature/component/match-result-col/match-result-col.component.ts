@@ -42,6 +42,6 @@ export class MatchResultColComponent {
   private routerService = inject(RouterService);
 
   protected onClick(): void {
-    this.routerService.navigateToMatch(this.match().id);
+    this.routerService.navigateToMatch(this.match().id, true, this.match());
   }
 }

@@ -1,6 +1,6 @@
 import { render, screen } from '@testing-library/angular';
 import { Status } from '@app/core/api';
-import { fakeMatch } from '@app/test/faker-util';
+import { fakeMatch, fakeMatchBase } from '@app/test/faker-util';
 import { MatchHeroComponent } from './match-hero.component';
 
 describe('MatchHeroComponent', () => {
@@ -127,5 +127,55 @@ describe('MatchHeroComponent', () => {
     await render(MatchHeroComponent, { inputs: { match } });
 
     expect(screen.getByTestId('datetime')).not.toHaveTextContent('Postponed');
+  });
+
+  describe('with MatchBase input', () => {
+    it('renders home and away team names', async () => {
+      const match = { ...fakeMatchBase(), status: Status.FINISHED };
+
+      await render(MatchHeroComponent, { inputs: { match } });
+
+      expect(screen.getAllByText(match.homeTeam.name).length).toBeGreaterThan(0);
+      expect(screen.getAllByText(match.awayTeam.name).length).toBeGreaterThan(0);
+    });
+
+    it('renders score when match is finished', async () => {
+      const match = {
+        ...fakeMatchBase(),
+        status: Status.FINISHED,
+        homeTeamGoalsScored: 101,
+        awayTeamGoalsScored: 103,
+      };
+
+      await render(MatchHeroComponent, { inputs: { match } });
+
+      expect(screen.getByTestId('score')).toHaveTextContent('101');
+      expect(screen.getByTestId('score')).toHaveTextContent('103');
+    });
+
+    it('renders vs when match is pending', async () => {
+      const match = { ...fakeMatchBase(), status: Status.PENDING };
+
+      await render(MatchHeroComponent, { inputs: { match } });
+
+      expect(screen.getByText('vs')).toBeInTheDocument();
+    });
+
+    it('renders stadium name and city', async () => {
+      const match = { ...fakeMatchBase(), status: Status.FINISHED };
+
+      await render(MatchHeroComponent, { inputs: { match } });
+
+      expect(screen.getByTestId('stadium')).toHaveTextContent(match.stadium.name);
+      expect(screen.getByTestId('stadium')).toHaveTextContent(match.stadium.city);
+    });
+
+    it('renders Postponed when match is postponed', async () => {
+      const match = { ...fakeMatchBase(), status: Status.POSTPONED };
+
+      await render(MatchHeroComponent, { inputs: { match } });
+
+      expect(screen.getByTestId('datetime')).toHaveTextContent('Postponed');
+    });
   });
 });

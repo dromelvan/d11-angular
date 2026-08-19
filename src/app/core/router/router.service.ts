@@ -2,6 +2,7 @@ import { computed, inject, Injectable, signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { NavigationEnd, Router } from '@angular/router';
 import { filter, map } from 'rxjs';
+import { MatchBase } from '@app/core/api';
 
 @Injectable({
   providedIn: 'root',
@@ -39,13 +40,15 @@ export class RouterService {
     return this.router.navigate(['teams', teamId], extras);
   }
 
-  public navigateToMatch(matchId: number, push = true): Promise<boolean> {
+  public navigateToMatch(matchId: number, push = true, matchBase?: MatchBase): Promise<boolean> {
     if (!push) {
       this.stack.set([]);
     } else if (!this.router.url.match(/^\/matches\/\d/)) {
       this.stack.update((s) => [...s, this.router.url]);
     }
-    return this.router.navigate(['matches', matchId]);
+    return matchBase
+      ? this.router.navigate(['matches', matchId], { state: { matchBase } })
+      : this.router.navigate(['matches', matchId]);
   }
 
   public navigateToD11Match(d11MatchId: number, push = true): Promise<boolean> {

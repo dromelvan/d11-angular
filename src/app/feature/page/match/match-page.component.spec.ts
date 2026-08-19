@@ -1,15 +1,17 @@
 import { signal } from '@angular/core';
+import { Location } from '@angular/common';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { of } from 'rxjs';
+import { NEVER, of } from 'rxjs';
 import { beforeEach, describe, expect, vi } from 'vitest';
-import { Lineup, Match, PlayerMatchStat, Status, TeamBase } from '@app/core/api';
+import { Lineup, Match, MatchBase, PlayerMatchStat, Status, TeamBase } from '@app/core/api';
 import { MatchApiService } from '@app/core/api/match/match-api.service';
 import { LoadingService } from '@app/core/loading/loading.service';
 import { PageContextService } from '@app/core/page-context/page-context.service';
-import { fakeGoal, fakeMatch, fakePlayerMatchStat, fakeTeamBase } from '@app/test';
+import { fakeGoal, fakeMatch, fakeMatchBase, fakePlayerMatchStat, fakeTeamBase } from '@app/test';
 import { MatchPageComponent } from './match-page.component';
 
 interface MatchPageInternal {
+  matchBase: () => MatchBase | undefined;
   getTeamStats: (teamId: number) => PlayerMatchStat[];
 }
 
@@ -27,6 +29,7 @@ describe('MatchPageComponent', () => {
     await TestBed.configureTestingModule({
       imports: [MatchPageComponent],
       providers: [
+        { provide: Location, useValue: { getState: () => null } },
         {
           provide: MatchApiService,
           useValue: {
@@ -62,10 +65,6 @@ describe('MatchPageComponent', () => {
 
     it('creates the component', () => {
       expect(component).toBeTruthy();
-    });
-
-    it('registers loading with LoadingService', () => {
-      expect(mockLoadingService.register).toHaveBeenCalledOnce();
     });
 
     it('registers context with PageContextService', () => {
@@ -140,6 +139,63 @@ describe('MatchPageComponent', () => {
 
     it('returns empty array for a team with no stats', () => {
       expect((component as unknown as MatchPageInternal).getTeamStats(awayTeam.id)).toHaveLength(0);
+    });
+  });
+
+  describe('matchBase', () => {
+    it('is undefined when navigation state has no matchBase', async () => {
+      const match = fakeMatch();
+      await setup(match);
+      const fixture = await createFixture(match);
+
+      expect(
+        (fixture.componentInstance as unknown as MatchPageInternal).matchBase(),
+      ).toBeUndefined();
+    });
+
+    describe('with matchBase in navigation state', () => {
+      let fixture: ComponentFixture<MatchPageComponent>;
+      let matchBase: MatchBase;
+
+      beforeEach(async () => {
+        vi.clearAllMocks();
+        matchBase = fakeMatchBase();
+
+        await TestBed.configureTestingModule({
+          imports: [MatchPageComponent],
+          providers: [
+            { provide: Location, useValue: { getState: () => ({ matchBase }) } },
+            {
+              provide: MatchApiService,
+              useValue: {
+                getById: vi.fn().mockReturnValue(NEVER),
+                getPlayerMatchStatsByMatchId: vi.fn().mockReturnValue(NEVER),
+              },
+            },
+            { provide: LoadingService, useValue: mockLoadingService },
+            { provide: PageContextService, useValue: mockPageContextService },
+          ],
+        }).compileComponents();
+
+        fixture = TestBed.createComponent(MatchPageComponent);
+        fixture.componentRef.setInput('matchId', 1);
+        fixture.detectChanges();
+      });
+
+      it('reads matchBase from navigation state', () => {
+        expect((fixture.componentInstance as unknown as MatchPageInternal).matchBase()).toBe(
+          matchBase,
+        );
+      });
+
+      it('renders app-match-hero before rxMatch loads', () => {
+        expect(fixture.nativeElement.querySelector('app-match-hero')).toBeTruthy();
+      });
+
+      it('backgroundColor reflects matchBase homeTeam colour before rxMatch loads', () => {
+        const registeredContext = mockPageContextService.register.mock.calls[0][1];
+        expect(registeredContext.backgroundColor()).toBe(matchBase.homeTeam.colour);
+      });
     });
   });
 
