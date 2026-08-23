@@ -1,0 +1,18 @@
+<button
+  class="px-2 py-1 text-xs font-semibold border-none cursor-pointer outline-none min-w-12 h-9.5"
+  type="button"
+  (click)="onMoreClick()"
+>
+  <app-icon icon="more_vertical" />
+</button>
+
+<app-transfer-window-picker-drawer
+  [transferWindows]="transferWindows()"
+  [selectedId]="transferWindowId()"
+  [currentId]="currentTransferWindowId()"
+  [seasons]="seasons()"
+  [selectedSeasonId]="selectedSeasonId()"
+  [currentSeasonId]="currentSeasonId()"
+  (transferWindowSelected)="onTransferWindowSelected($event)"
+  (seasonSelected)="onSeasonSelected($event)"
+/>
