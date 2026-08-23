@@ -140,6 +140,10 @@
         @apply text-xs font-semibold text-surface-500 uppercase shrink-0;
     }
 
+    .app-text-detail-label {
+        @apply text-xs font-semibold;
+    }
+
     .app-text-detail {
         @apply text-xs opacity-75 shrink-0;
     }
