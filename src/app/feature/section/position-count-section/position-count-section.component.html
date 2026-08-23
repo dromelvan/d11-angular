@@ -1,0 +1,29 @@
+<app-section grow>
+  <div class="app-text-detail uppercase" sectionHeader>Position Count</div>
+
+  <div class="app-col-1">
+    @if (
+      transferWindow()?.status !== Status.PENDING &&
+      transferWindow()?.transferWindowPositionCounts?.length
+    ) {
+      <div
+        class="grid grid-cols-1 sm:grid-cols-[auto_1fr] sm:grid-flow-col sm:gap-x-4"
+        [style.grid-template-rows]="positionCountGridRows()"
+      >
+        @for (pc of transferWindow()?.transferWindowPositionCounts ?? []; track pc.position.id) {
+          <div>
+            <div class="app-text-detail-label sm:mt-0">{{ pc.position.name }}</div>
+            <div class="app-row-2 app-text-detail">
+              <span class="min-w-11 tabular-nums">Out: {{ pc.transferListingCount }}</span
+              ><span class="min-w-8 tabular-nums">In: {{ pc.transferCount }}</span
+              ><span
+                ><span class="sm:hidden">N</span><span class="hidden sm:inline">Need</span>:
+                {{ pc.transferListingCount - pc.transferCount }}</span
+              >
+            </div>
+          </div>
+        }
+      </div>
+    }
+  </div>
+</app-section>
