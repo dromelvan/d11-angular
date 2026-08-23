@@ -1,25 +1,26 @@
 <app-section grow>
   <div class="app-text-detail" sectionHeader>Deadlines</div>
-  <div class="app-col-1">
-    <div>
-      <div class="app-text-detail-label">Transfer listing</div>
-      <div class="app-text-detail">
-        {{ transferWindow()?.datetime | date: 'MMM dd, yyyy HH:mm' }}
+  <div class="flex flex-col sm:flex-row gap-1 sm:gap-4">
+    <div class="app-col-1">
+      <div>
+        <div class="app-text-detail-label">Transfer listing</div>
+        <div class="app-text-detail">
+          {{ transferWindow()?.datetime | date: 'MMM dd, yyyy HH:mm' }}
+        </div>
+      </div>
+      <div>
+        <div class="app-text-detail-label">Transfer bids</div>
+        <div class="app-text-detail">
+          {{ (transferWindow()?.transferDays ?? [])[0]?.datetime | date: 'MMM dd, yyyy HH:mm' }}
+        </div>
       </div>
     </div>
-    <div>
-      <div class="app-text-detail-label">Transfer bids</div>
-      <div class="app-text-detail">
-        {{ (transferWindow()?.transferDays ?? [])[0]?.datetime | date: 'MMM dd, yyyy HH:mm' }}
-      </div>
-    </div>
-  </div>
-  <div class="app-col-1">
-    <div class="app-text-detail">AVAILABILITY</div>
-    <div>
-      <div class="app-text-detail-label">Players available from</div>
-      <div class="app-text-detail">
-        Match week {{ transferWindow()?.matchWeek?.matchWeekNumber }}
+    <div class="app-col-1">
+      <div>
+        <div class="app-text-detail-label">Players available from</div>
+        <div class="app-text-detail">
+          Match week {{ transferWindow()?.matchWeek?.matchWeekNumber }}
+        </div>
       </div>
     </div>
   </div>

@@ -7,7 +7,7 @@
       transferWindow()?.transferWindowPositionCounts?.length
     ) {
       <div
-        class="grid grid-cols-1 sm:grid-cols-[auto_1fr] sm:grid-flow-col sm:gap-x-4"
+        class="grid grid-cols-1 gap-y-1 sm:grid-cols-[auto_1fr] sm:grid-flow-col sm:gap-x-4"
         [style.grid-template-rows]="positionCountGridRows()"
       >
         @for (pc of transferWindow()?.transferWindowPositionCounts ?? []; track pc.position.id) {
