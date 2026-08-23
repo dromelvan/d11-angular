@@ -11,7 +11,7 @@
     @if (item.header) {
       <span class="text-[0.6rem]">{{ item.header }}</span>
     }
-    <span class="app-text-header">{{ item.label }}</span>
+    <span class="app-text-header" [class.normal-case]="item.preserveCase">{{ item.label }}</span>
     @if (item.sublabel) {
       <span class="text-[0.6rem] app-text-number">{{ item.sublabel }}</span>
     }

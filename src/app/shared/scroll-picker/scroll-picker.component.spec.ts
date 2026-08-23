@@ -88,4 +88,60 @@ describe('ScrollPickerComponent', () => {
 
     expect(emitted).toBe(1);
   });
+
+  it('applies normal-case to the label span of an item with preserveCase', () => {
+    fixture.componentRef.setInput('items', [{ id: 1, label: 'Draft', preserveCase: true }]);
+    fixture.componentRef.setInput('selectedId', 1);
+    fixture.detectChanges();
+
+    const labelSpan = fixture.nativeElement.querySelector('[data-id="1"] .app-text-header');
+    expect(labelSpan.classList).toContain('normal-case');
+  });
+
+  it('does not apply normal-case to the label span of an item without preserveCase', () => {
+    const labelSpan = fixture.nativeElement.querySelector('[data-id="1"] .app-text-header');
+    expect(labelSpan.classList).not.toContain('normal-case');
+  });
+
+  it('calls scrollIntoView on the selected item on init with instant behavior', () => {
+    vi.useFakeTimers();
+
+    const freshFixture = TestBed.createComponent(ScrollPickerComponent);
+    freshFixture.componentRef.setInput('items', items);
+    freshFixture.componentRef.setInput('selectedId', 2);
+    freshFixture.detectChanges();
+
+    vi.runAllTimers();
+    vi.useRealTimers();
+
+    expect(HTMLElement.prototype.scrollIntoView).toHaveBeenCalledWith({
+      inline: 'center',
+      block: 'nearest',
+      behavior: 'instant',
+    });
+  });
+
+  it('calls scrollIntoView with smooth behavior when selectedId changes', () => {
+    vi.useFakeTimers();
+
+    const freshFixture = TestBed.createComponent(ScrollPickerComponent);
+    freshFixture.componentRef.setInput('items', items);
+    freshFixture.componentRef.setInput('selectedId', 2);
+    freshFixture.detectChanges();
+    vi.runAllTimers();
+
+    (HTMLElement.prototype.scrollIntoView as ReturnType<typeof vi.fn>).mockClear();
+
+    freshFixture.componentRef.setInput('selectedId', 1);
+    freshFixture.detectChanges();
+    vi.runAllTimers();
+
+    vi.useRealTimers();
+
+    expect(HTMLElement.prototype.scrollIntoView).toHaveBeenCalledWith({
+      inline: 'center',
+      block: 'nearest',
+      behavior: 'smooth',
+    });
+  });
 });

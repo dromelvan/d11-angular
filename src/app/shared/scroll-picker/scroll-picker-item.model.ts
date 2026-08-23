@@ -5,4 +5,5 @@ export interface ScrollPickerItem {
   date?: string;
   sublabel?: string;
   current?: boolean;
+  preserveCase?: boolean;
 }
