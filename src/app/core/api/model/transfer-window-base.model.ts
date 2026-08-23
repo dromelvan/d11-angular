@@ -1,3 +1,4 @@
+import { MatchWeekBase } from './match-week-base.model';
 import { Status } from './status.model';
 
 export interface TransferWindowBase {
@@ -6,4 +7,5 @@ export interface TransferWindowBase {
   draft: boolean;
   status: Status;
   datetime: string;
+  matchWeek: MatchWeekBase;
 }

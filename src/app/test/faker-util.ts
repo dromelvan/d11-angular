@@ -61,6 +61,7 @@ export const fakeTransferWindowBase = (): TransferWindowBase => ({
   draft: faker.datatype.boolean(),
   status: faker.helpers.enumValue(Status),
   datetime: faker.date.recent().toISOString(),
+  matchWeek: fakeMatchWeekBase(),
 });
 
 export const fakeCurrent = (): Current => ({
@@ -139,7 +140,7 @@ export const fakeStadium = (): Stadium => ({
   photoFileName: `${faker.system.fileName()}.jpg`,
 });
 
-const fakeMatchWeekBase = (): MatchWeekBase => ({
+export const fakeMatchWeekBase = (): MatchWeekBase => ({
   id: faker.number.int({ min: 1, max: 38 }),
   matchWeekNumber: faker.number.int({ min: 1, max: 38 }),
   season: fakeSeasonBase(),
@@ -338,15 +339,18 @@ export const fakeTransferDay = (): TransferDay => ({
   datetime: faker.date.recent().toISOString(),
 });
 
-export const fakeTransferWindow = (): TransferWindow => ({
-  id: faker.number.int({ min: 1, max: 10000 }),
-  transferWindowNumber: faker.number.int({ min: 1, max: 10 }),
-  draft: faker.datatype.boolean(),
-  status: faker.helpers.enumValue(Status),
-  datetime: faker.date.recent().toISOString(),
-  matchWeek: fakeMatchWeekBase(),
-  season: fakeSeasonBase(),
-});
+export const fakeTransferWindow = (): TransferWindow => {
+  const season = fakeSeasonBase();
+  return {
+    id: faker.number.int({ min: 1, max: 10000 }),
+    transferWindowNumber: faker.number.int({ min: 1, max: 10 }),
+    draft: faker.datatype.boolean(),
+    status: faker.helpers.enumValue(Status),
+    datetime: faker.date.recent().toISOString(),
+    matchWeek: { ...fakeMatchWeekBase(), season },
+    season,
+  };
+};
 
 export const fakeTransferListingBase = (): TransferListingBase => ({
   id: faker.number.int({ min: 1, max: 10000 }),
