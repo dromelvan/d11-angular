@@ -311,8 +311,8 @@ describe('TeamPageComponent seasonId input', () => {
   it('uses the season matching seasonId when provided', async () => {
     vi.clearAllMocks();
 
-    const season1 = fakeSeason();
-    const season2 = fakeSeason();
+    const season1 = { ...fakeSeason(), id: 1 };
+    const season2 = { ...fakeSeason(), id: 2 };
     const team = fakeTeam();
     team.dummy = false;
 

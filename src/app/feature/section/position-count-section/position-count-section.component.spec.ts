@@ -1,7 +1,8 @@
+import { TestBed } from '@angular/core/testing';
 import { render, screen } from '@testing-library/angular';
 import { Status, TransferWindow, TransferWindowPositionCount } from '@app/core/api';
 import { fakePosition, fakeTransferWindow } from '@app/test';
-import { expect } from 'vitest';
+import { describe, expect, it, beforeEach } from 'vitest';
 import { PositionCountSectionComponent } from './position-count-section.component';
 
 const fakePositionCount = (
@@ -13,33 +14,55 @@ const fakePositionCount = (
   ...overrides,
 });
 
-const template = `<app-position-count-section [transferWindow]="transferWindow" />`;
-
 describe('PositionCountSectionComponent', () => {
-  async function setup(transferWindow?: TransferWindow) {
-    return render(template, {
-      imports: [PositionCountSectionComponent],
-      componentProperties: { transferWindow },
-    });
-  }
-
   describe('with no transfer window', () => {
     beforeEach(async () => {
-      await setup(undefined);
+      await render(PositionCountSectionComponent, {
+        inputs: { transferWindow: undefined },
+      });
+      TestBed.tick();
     });
 
-    it('renders', () => {
-      expect(document.querySelector('app-position-count-section')).toBeInTheDocument();
+    it('renders "Position Count" section header', () => {
+      expect(screen.getByText('Position Count')).toBeInTheDocument();
+    });
+
+    it('does not render position counts', () => {
+      expect(screen.queryByText(/Out:/, { exact: false })).not.toBeInTheDocument();
     });
   });
 
   describe('with PENDING status', () => {
     beforeEach(async () => {
-      await setup({
-        ...fakeTransferWindow(),
-        status: Status.PENDING,
-        transferWindowPositionCounts: [fakePositionCount()],
+      await render(PositionCountSectionComponent, {
+        inputs: {
+          transferWindow: {
+            ...fakeTransferWindow(),
+            status: Status.PENDING,
+            transferWindowPositionCounts: [fakePositionCount()],
+          } as TransferWindow,
+        },
       });
+      TestBed.tick();
+    });
+
+    it('does not render position counts', () => {
+      expect(screen.queryByText(/Out:/, { exact: false })).not.toBeInTheDocument();
+    });
+  });
+
+  describe('with empty position counts', () => {
+    beforeEach(async () => {
+      await render(PositionCountSectionComponent, {
+        inputs: {
+          transferWindow: {
+            ...fakeTransferWindow(),
+            status: Status.ACTIVE,
+            transferWindowPositionCounts: [],
+          } as TransferWindow,
+        },
+      });
+      TestBed.tick();
     });
 
     it('does not render position counts', () => {
@@ -49,25 +72,31 @@ describe('PositionCountSectionComponent', () => {
 
   describe('with position counts', () => {
     let positionCounts: TransferWindowPositionCount[];
+    let container: HTMLElement;
 
     beforeEach(async () => {
       positionCounts = [
         fakePositionCount({
-          position: { ...fakePosition(), name: 'Goalkeeper' },
+          position: { ...fakePosition(), id: 1, name: 'Goalkeeper' },
           transferListingCount: 3,
           transferCount: 1,
         }),
         fakePositionCount({
-          position: { ...fakePosition(), name: 'Defender' },
+          position: { ...fakePosition(), id: 2, name: 'Defender' },
           transferListingCount: 5,
           transferCount: 2,
         }),
       ];
-      await setup({
-        ...fakeTransferWindow(),
-        status: Status.ACTIVE,
-        transferWindowPositionCounts: positionCounts,
-      });
+      ({ container } = await render(PositionCountSectionComponent, {
+        inputs: {
+          transferWindow: {
+            ...fakeTransferWindow(),
+            status: Status.ACTIVE,
+            transferWindowPositionCounts: positionCounts,
+          } as TransferWindow,
+        },
+      }));
+      TestBed.tick();
     });
 
     it('renders position names', () => {
@@ -92,9 +121,7 @@ describe('PositionCountSectionComponent', () => {
     it('renders Need counts', () => {
       for (const pc of positionCounts) {
         const need = pc.transferListingCount - pc.transferCount;
-        expect(
-          screen.getAllByText(new RegExp(`Need: ${need}`), { exact: false }).length,
-        ).toBeGreaterThan(0);
+        expect(container.textContent).toContain(`Need: ${need}`);
       }
     });
   });

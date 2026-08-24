@@ -1,31 +1,27 @@
-import { Component } from '@angular/core';
+import { TestBed } from '@angular/core/testing';
 import type { MatchBase, TeamBase } from '@app/core/api';
 import { Status } from '@app/core/api';
 import { fakeMatchBase, fakeTeamBase } from '@app/test';
 import { render, screen } from '@testing-library/angular';
-import { expect } from 'vitest';
+import { describe, expect, it, beforeEach } from 'vitest';
 import { MatchBaseComponent } from './match-base.component';
 
-const renderMatchBase = (match: MatchBase, team?: TeamBase) => {
-  @Component({
-    template: ` <app-match-base [match]="match" [team]="team" />`,
-    standalone: true,
-    imports: [MatchBaseComponent],
-  })
-  class HostComponent {
-    match = match;
-    team = team;
-  }
-
-  return render(HostComponent, {});
-};
+async function setup(match: MatchBase, team?: TeamBase) {
+  await render(MatchBaseComponent, { inputs: { match, team } });
+  TestBed.tick();
+}
 
 describe('MatchBaseComponent', () => {
   let match: MatchBase;
 
   beforeEach(async () => {
-    match = { ...fakeMatchBase(), status: Status.FINISHED };
-    await renderMatchBase(match);
+    match = {
+      ...fakeMatchBase(),
+      status: Status.FINISHED,
+      homeTeam: { ...fakeTeamBase(), code: 'HOM', name: 'Home Team' },
+      awayTeam: { ...fakeTeamBase(), code: 'AWY', name: 'Away Team' },
+    };
+    await setup(match);
   });
 
   it('renders', () => {
@@ -58,7 +54,7 @@ describe('MatchBaseComponent', () => {
 
   it('renders score', () => {
     expect(
-      screen.getByText(`${match.homeTeamGoalsScored}\u2013${match.awayTeamGoalsScored}`, {
+      screen.getByText(`${match.homeTeamGoalsScored}–${match.awayTeamGoalsScored}`, {
         exact: false,
       }),
     ).toBeInTheDocument();
@@ -78,22 +74,22 @@ describe('MatchBaseComponent when team is the home team', () => {
   let team: TeamBase;
 
   beforeEach(async () => {
-    team = fakeTeamBase();
+    team = { ...fakeTeamBase(), id: 1 };
     match = {
       ...fakeMatchBase(),
-      homeTeam: { ...fakeTeamBase(), id: team.id },
-      awayTeam: { ...fakeTeamBase(), id: team.id + 1 },
+      homeTeam: { ...fakeTeamBase(), id: 1, code: 'HOM', name: 'Home Team' },
+      awayTeam: { ...fakeTeamBase(), id: 2, code: 'AWY', name: 'Away Team' },
     };
-    await renderMatchBase(match, team);
+    await setup(match, team);
   });
 
   it('renders home team code bold', () => {
-    const element = screen.getAllByText(match.homeTeam.code)[0].closest('span')?.parentElement;
+    const element = screen.getByText(match.homeTeam.code).closest('span')?.parentElement;
     expect(element).toHaveClass('font-bold');
   });
 
   it('does not render away team code bold', () => {
-    const element = screen.getAllByText(match.awayTeam.code)[0].closest('span')?.parentElement;
+    const element = screen.getByText(match.awayTeam.code).closest('span')?.parentElement;
     expect(element).not.toHaveClass('font-bold');
   });
 });
@@ -103,22 +99,22 @@ describe('MatchBaseComponent when team is the away team', () => {
   let team: TeamBase;
 
   beforeEach(async () => {
-    team = fakeTeamBase();
+    team = { ...fakeTeamBase(), id: 2 };
     match = {
       ...fakeMatchBase(),
-      homeTeam: { ...fakeTeamBase(), id: team.id + 1 },
-      awayTeam: { ...fakeTeamBase(), id: team.id },
+      homeTeam: { ...fakeTeamBase(), id: 1, code: 'HOM', name: 'Home Team' },
+      awayTeam: { ...fakeTeamBase(), id: 2, code: 'AWY', name: 'Away Team' },
     };
-    await renderMatchBase(match, team);
+    await setup(match, team);
   });
 
   it('renders away team code bold', () => {
-    const element = screen.getAllByText(match.awayTeam.code)[0].closest('span')?.parentElement;
+    const element = screen.getByText(match.awayTeam.code).closest('span')?.parentElement;
     expect(element).toHaveClass('font-bold');
   });
 
   it('does not render home team code bold', () => {
-    const element = screen.getAllByText(match.homeTeam.code)[0].closest('span')?.parentElement;
+    const element = screen.getByText(match.homeTeam.code).closest('span')?.parentElement;
     expect(element).not.toHaveClass('font-bold');
   });
 });
@@ -126,7 +122,7 @@ describe('MatchBaseComponent when team is the away team', () => {
 describe('MatchBaseComponent PENDING', () => {
   it('renders vs', async () => {
     const match = { ...fakeMatchBase(), status: Status.PENDING };
-    await renderMatchBase(match);
+    await setup(match);
 
     expect(screen.getByText('vs')).toBeInTheDocument();
   });
@@ -135,7 +131,7 @@ describe('MatchBaseComponent PENDING', () => {
 describe('MatchBaseComponent POSTPONED', () => {
   it('renders PP', async () => {
     const match = { ...fakeMatchBase(), status: Status.POSTPONED };
-    await renderMatchBase(match);
+    await setup(match);
 
     expect(screen.getByText('PP')).toBeInTheDocument();
   });
