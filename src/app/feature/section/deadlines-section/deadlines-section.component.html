@@ -11,7 +11,7 @@
       <div>
         <div class="app-text-detail-label">Transfer bids</div>
         <div class="app-text-detail">
-          {{ (transferWindow()?.transferDays ?? [])[0]?.datetime | date: 'MMM dd, yyyy HH:mm' }}
+          {{ (transferWindow()?.transferDays ?? []).at(-1)?.datetime | date: 'MMM dd, yyyy HH:mm' }}
         </div>
       </div>
     </div>
