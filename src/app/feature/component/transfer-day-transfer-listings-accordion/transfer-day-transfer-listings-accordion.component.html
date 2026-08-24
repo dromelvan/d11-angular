@@ -1,6 +1,6 @@
 <div class="app-row app-text-header pb-2">
   <div class="app-fill">Player</div>
-  <div>D11 Team / # / Pts</div>
+  <div>D11 Team / Pts</div>
 </div>
 
 @if (isLoading()) {
@@ -9,156 +9,157 @@
   </div>
 }
 
-<p-accordion>
-  @for (listing of transferListings(); track listing.id; let index = $index) {
-    @if (index > 0) {
-      <div class="app-separator"></div>
-    }
-    <p-accordion-panel [value]="listing.id">
-      <p-accordion-header>
-        <div class="app-row-2 app-fill py-1.5">
-          <div class="">
+@if (!isLoading() && transferListings().length === 0) {
+  <div>No transfer listings</div>
+} @else {
+  <p-accordion>
+    @for (listing of transferListings(); track listing.id; let index = $index) {
+      @if (index > 0) {
+        <div class="app-separator"></div>
+      }
+      <p-accordion-panel [value]="listing.id">
+        <p-accordion-header>
+          <div class="app-row-2 app-fill py-1.5">
             <app-team-img [team]="listing.team" width="20" />
-          </div>
-          <div class="app-col app-fill">
-            <span class="app-text-base truncate">{{ listing.player.name }}</span>
-            <span class="app-text-detail"
-              >{{ listing.position.name }} - {{ listing.team.shortName }}</span
-            >
-          </div>
-          <div class="app-col">
-            <div class="app-row-1 app-text-base justify-end">
-              <app-d11-team-img [d11Team]="listing.d11Team" width="16" />
-              <span class="truncate">{{ listing.d11Team.name }}</span>
+            <div class="app-col app-fill">
+              <span class="app-text-base truncate">{{ listing.player.name }}</span>
+              <span class="app-text-detail"
+                >#{{ listing.ranking }} {{ listing.position.name }} -
+                {{ listing.team.shortName }}</span
+              >
             </div>
-            <span class="app-text-detail app-row justify-end"
-              >#{{ listing.ranking }} / {{ listing.points }} pts</span
-            >
+            <div class="app-col">
+              <div class="app-row-1 app-text-base justify-end">
+                <app-d11-team-img [d11Team]="listing.d11Team" width="16" />
+                <span class="truncate">{{ listing.d11Team.name }}</span>
+              </div>
+              <span class="app-text-detail app-row justify-end">{{ listing.points }} pts</span>
+            </div>
           </div>
-        </div>
-      </p-accordion-header>
-      <p-accordion-content>
-        <div class="app-col gap-2.5 p-4">
-          @if (!listing.team.dummy) {
+        </p-accordion-header>
+        <p-accordion-content>
+          <div class="app-col gap-2.5 p-4">
+            @if (!listing.team.dummy) {
+              <div class="app-details-list-row">
+                <span>Team</span>
+                <span class="app-row-1">
+                  <app-team-img [team]="listing.team" width="20" />
+                  {{ listing.team.name }}
+                </span>
+              </div>
+            }
+            @if (!listing.d11Team.dummy) {
+              <div class="app-details-list-row">
+                <span>D11 team</span>
+                <span class="app-row-1">
+                  <app-d11-team-img [d11Team]="listing.d11Team" width="20" />
+                  {{ listing.d11Team.name }}
+                </span>
+              </div>
+            }
+            @if (listing.rating > 0) {
+              <div class="app-details-list-row">
+                <span>Rating</span>
+                <span>{{ listing.rating | rating }}</span>
+              </div>
+            }
             <div class="app-details-list-row">
-              <span>Team</span>
-              <span class="app-row-1">
-                <app-team-img [team]="listing.team" width="20" />
-                {{ listing.team.name }}
+              <span>Points</span>
+              <span>{{ listing.points }}</span>
+            </div>
+            @if (listing.goals > 0) {
+              <div class="app-details-list-row">
+                <span>Goals</span>
+                <span>{{ listing.goals }}</span>
+              </div>
+            }
+            @if (listing.goalAssists > 0) {
+              <div class="app-details-list-row">
+                <span>Assists</span>
+                <span>{{ listing.goalAssists }}</span>
+              </div>
+            }
+            @if (listing.ownGoals > 0) {
+              <div class="app-details-list-row">
+                <span>Own goals</span>
+                <span>{{ listing.ownGoals }}</span>
+              </div>
+            }
+            @if (listing.cleanSheets > 0 && listing.position.id < 5) {
+              <div class="app-details-list-row">
+                <span>Clean sheets</span>
+                <span>{{ listing.cleanSheets }}</span>
+              </div>
+            }
+            @if (listing.goalsConceded > 0 && listing.position.defender) {
+              <div class="app-details-list-row">
+                <span>Goals conceded</span>
+                <span>{{ listing.goalsConceded }}</span>
+              </div>
+            }
+            @if (listing.yellowCards > 0) {
+              <div class="app-details-list-row">
+                <span>Yellow cards</span>
+                <span>{{ listing.yellowCards }}</span>
+              </div>
+            }
+            @if (listing.redCards > 0) {
+              <div class="app-details-list-row">
+                <span>Red cards</span>
+                <span>{{ listing.redCards }}</span>
+              </div>
+            }
+            @if (listing.manOfTheMatch > 0) {
+              <div class="app-details-list-row">
+                <span>Man of the match</span>
+                <span>{{ listing.manOfTheMatch }}</span>
+              </div>
+            }
+            @if (listing.sharedManOfTheMatch > 0) {
+              <div class="app-details-list-row">
+                <span>Shared man of the match</span>
+                <span>{{ listing.sharedManOfTheMatch }}</span>
+              </div>
+            }
+            <div class="app-details-list-row">
+              <span>Games started</span>
+              <span>{{ listing.gamesStarted }}</span>
+            </div>
+            @if (listing.gamesSubstitute > 0) {
+              <div class="app-details-list-row">
+                <span>Games substitute</span>
+                <span>{{ listing.gamesSubstitute }}</span>
+              </div>
+            }
+            @if (listing.gamesDidNotParticipate > 0) {
+              <div class="app-details-list-row">
+                <span>Games DNP</span>
+                <span>{{ listing.gamesDidNotParticipate }}</span>
+              </div>
+            }
+            <div class="app-details-list-row">
+              <span>Minutes played</span>
+              <span>{{ listing.minutesPlayed }}</span>
+            </div>
+            <div class="app-details-list-row">
+              <span>Form</span>
+              <span class="app-row gap-0">
+                <app-form-match-points [formMatchPoints]="listing.formMatchPoints" type="player" />
               </span>
             </div>
-          }
-          @if (!listing.d11Team.dummy) {
-            <div class="app-details-list-row">
-              <span>D11 team</span>
-              <span class="app-row-1">
-                <app-d11-team-img [d11Team]="listing.d11Team" width="20" />
-                {{ listing.d11Team.name }}
+            <button
+              (click)="navigateToPlayer(listing)"
+              class="app-text-primary app-details-list-row mt-2"
+            >
+              <span class="app-row-2">
+                <app-svg-icon name="person" size="sm" />
+                Player profile
               </span>
-            </div>
-          }
-          @if (listing.rating > 0) {
-            <div class="app-details-list-row">
-              <span>Rating</span>
-              <span>{{ listing.rating | rating }}</span>
-            </div>
-          }
-          <div class="app-details-list-row">
-            <span>Points</span>
-            <span>{{ listing.points }}</span>
+              <app-svg-icon name="chevron-right" size="sm" />
+            </button>
           </div>
-          @if (listing.goals > 0) {
-            <div class="app-details-list-row">
-              <span>Goals</span>
-              <span>{{ listing.goals }}</span>
-            </div>
-          }
-          @if (listing.goalAssists > 0) {
-            <div class="app-details-list-row">
-              <span>Assists</span>
-              <span>{{ listing.goalAssists }}</span>
-            </div>
-          }
-          @if (listing.ownGoals > 0) {
-            <div class="app-details-list-row">
-              <span>Own goals</span>
-              <span>{{ listing.ownGoals }}</span>
-            </div>
-          }
-          @if (listing.cleanSheets > 0 && listing.position.id < 5) {
-            <div class="app-details-list-row">
-              <span>Clean sheets</span>
-              <span>{{ listing.cleanSheets }}</span>
-            </div>
-          }
-          @if (listing.goalsConceded > 0 && listing.position.defender) {
-            <div class="app-details-list-row">
-              <span>Goals conceded</span>
-              <span>{{ listing.goalsConceded }}</span>
-            </div>
-          }
-          @if (listing.yellowCards > 0) {
-            <div class="app-details-list-row">
-              <span>Yellow cards</span>
-              <span>{{ listing.yellowCards }}</span>
-            </div>
-          }
-          @if (listing.redCards > 0) {
-            <div class="app-details-list-row">
-              <span>Red cards</span>
-              <span>{{ listing.redCards }}</span>
-            </div>
-          }
-          @if (listing.manOfTheMatch > 0) {
-            <div class="app-details-list-row">
-              <span>Man of the match</span>
-              <span>{{ listing.manOfTheMatch }}</span>
-            </div>
-          }
-          @if (listing.sharedManOfTheMatch > 0) {
-            <div class="app-details-list-row">
-              <span>Shared man of the match</span>
-              <span>{{ listing.sharedManOfTheMatch }}</span>
-            </div>
-          }
-          <div class="app-details-list-row">
-            <span>Games started</span>
-            <span>{{ listing.gamesStarted }}</span>
-          </div>
-          @if (listing.gamesSubstitute > 0) {
-            <div class="app-details-list-row">
-              <span>Games substitute</span>
-              <span>{{ listing.gamesSubstitute }}</span>
-            </div>
-          }
-          @if (listing.gamesDidNotParticipate > 0) {
-            <div class="app-details-list-row">
-              <span>Games DNP</span>
-              <span>{{ listing.gamesDidNotParticipate }}</span>
-            </div>
-          }
-          <div class="app-details-list-row">
-            <span>Minutes played</span>
-            <span>{{ listing.minutesPlayed }}</span>
-          </div>
-          <div class="app-details-list-row">
-            <span>Form</span>
-            <span class="app-row gap-0">
-              <app-form-match-points [formMatchPoints]="listing.formMatchPoints" type="player" />
-            </span>
-          </div>
-          <button
-            (click)="navigateToPlayer(listing)"
-            class="app-text-primary app-details-list-row mt-2"
-          >
-            <span class="app-row-2">
-              <app-svg-icon name="person" size="sm" />
-              Player profile
-            </span>
-            <app-svg-icon name="chevron-right" size="sm" />
-          </button>
-        </div>
-      </p-accordion-content>
-    </p-accordion-panel>
-  }
-</p-accordion>
+        </p-accordion-content>
+      </p-accordion-panel>
+    }
+  </p-accordion>
+}

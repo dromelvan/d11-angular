@@ -83,6 +83,40 @@ describe('TransferDayTransferListingsAccordionComponent', () => {
     expect(container.querySelector('p-progress-spinner')).not.toBeInTheDocument();
   });
 
+  it('shows "No transfer listings" message when listings are empty', async () => {
+    await render(TransferDayTransferListingsAccordionComponent, {
+      inputs: { transferDayId: 1 },
+      providers,
+    });
+    TestBed.tick();
+
+    expect(screen.getByText('No transfer listings')).toBeInTheDocument();
+  });
+
+  it('does not show "No transfer listings" message when listings are present', async () => {
+    mockTransferListingApi.getTransferListingsByTransferDayId.mockReturnValue(of([fakeListing()]));
+
+    await render(TransferDayTransferListingsAccordionComponent, {
+      inputs: { transferDayId: 1 },
+      providers,
+    });
+    TestBed.tick();
+
+    expect(screen.queryByText('No transfer listings')).not.toBeInTheDocument();
+  });
+
+  it('does not show "No transfer listings" message while loading', async () => {
+    mockTransferListingApi.getTransferListingsByTransferDayId.mockReturnValue(NEVER);
+
+    await render(TransferDayTransferListingsAccordionComponent, {
+      inputs: { transferDayId: 1 },
+      providers,
+    });
+    TestBed.tick();
+
+    expect(screen.queryByText('No transfer listings')).not.toBeInTheDocument();
+  });
+
   it('renders column headers', async () => {
     await render(TransferDayTransferListingsAccordionComponent, {
       inputs: { transferDayId: 1 },
@@ -91,7 +125,7 @@ describe('TransferDayTransferListingsAccordionComponent', () => {
     TestBed.tick();
 
     expect(screen.getByText('Player')).toBeInTheDocument();
-    expect(screen.getByText('D11 Team / # / Pts')).toBeInTheDocument();
+    expect(screen.getByText('D11 Team / Pts')).toBeInTheDocument();
   });
 
   it('renders player names in accordion header', async () => {
@@ -125,7 +159,7 @@ describe('TransferDayTransferListingsAccordionComponent', () => {
     });
     TestBed.tick();
 
-    expect(screen.getByText('Midfielder - MCI')).toBeInTheDocument();
+    expect(screen.getByText(/Midfielder - MCI/)).toBeInTheDocument();
   });
 
   it('renders D11 team name in accordion header', async () => {
@@ -154,7 +188,20 @@ describe('TransferDayTransferListingsAccordionComponent', () => {
     });
     TestBed.tick();
 
-    expect(screen.getByText('#3 / 42 pts')).toBeInTheDocument();
+    expect(screen.getByText('42 pts')).toBeInTheDocument();
+  });
+
+  it('renders ranking in accordion header subtitle', async () => {
+    const listing = { ...fakeListing(), ranking: 3 };
+    mockTransferListingApi.getTransferListingsByTransferDayId.mockReturnValue(of([listing]));
+
+    await render(TransferDayTransferListingsAccordionComponent, {
+      inputs: { transferDayId: 1 },
+      providers,
+    });
+    TestBed.tick();
+
+    expect(screen.getByText(/#3/)).toBeInTheDocument();
   });
 
   it('renders separators between listings', async () => {
