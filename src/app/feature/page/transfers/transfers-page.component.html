@@ -1,44 +1,59 @@
-<div class="app-transfers-page app-col max-w-sm mx-auto pb-4">
-  <app-transfers-header-card
-    [transferWindow]="model().transferWindow"
-    [hasPrevious]="hasPrevious()"
-    [hasNext]="hasNext()"
-    (previous)="navigateToPrevious()"
-    (next)="navigateToNext()"
-  />
+<div class="app-row bg-primary text-primary-contrast rounded-sm p-2">
+  <button
+    (click)="onLiveClick()"
+    class="px-2 py-1 rounded-sm app-text-header border-none cursor-pointer outline-none min-w-12 h-9.5"
+    type="button"
+  >
+    Live
+  </button>
 
-  @let columns = model().columns;
+  @if (season(); as selectedSeason) {
+    <app-transfer-window-scroll-picker
+      class="min-w-0 grow"
+      [seasonId]="selectedSeason.id"
+      [transferWindowId]="transferWindowId()"
+      (transferWindowSelected)="onTransferWindowSelected($event)"
+    />
 
-  @if (columns.length) {
-    <p-tabs value="0">
-      <p-tablist>
-        @for (column of columns; track column) {
-          <p-tab [value]="$index.toString()">{{ column }}</p-tab>
-        }
-      </p-tablist>
-      <p-tabpanels>
-        @for (column of columns; track column) {
-          <p-tabpanel [value]="$index.toString()">
-            @if (column === 'Transfers') {
-              <div class="app-col">
-                @for (transferDay of model().transferDays; track transferDay.id) {
-                  @if (transferDay.status === Status.FINISHED) {
-                    <app-transfer-day-transfers
-                      [transferDay]="transferDay"
-                      [draft]="model().transferWindow?.draft ?? false"
-                    />
-                  }
-                }
-              </div>
-            }
-            @if (column === 'Transfer Listings') {
-              @if (model().lastTransferDay) {
-                <app-transfer-day-transfer-listings [transferDay]="model().lastTransferDay!" />
-              }
-            }
-          </p-tabpanel>
-        }
-      </p-tabpanels>
-    </p-tabs>
+    <app-transfer-window-picker-button
+      [seasonId]="selectedSeason.id"
+      [transferWindowId]="transferWindowId()"
+      (transferWindowSelected)="onTransferWindowSelected($event)"
+    />
   }
 </div>
+
+@let transferWindow = model().transferWindow;
+@if (transferWindow) {
+  <div class="app-col-4">
+    <div class="mt-7 app-row-2 items-stretch">
+      <app-deadlines-section [transferWindow]="transferWindow" />
+      @if (transferWindow.status !== Status.PENDING) {
+        <app-position-count-section [transferWindow]="transferWindow" />
+      } @else {
+        <div class="hidden sm:block app-fill"></div>
+      }
+    </div>
+
+    @if (transferWindow.status !== Status.PENDING) {
+      <div class="app-responsive">
+        <div class="app-col-4 app-fill sm:order-last">
+          @for (transferDay of model().transferDays; track transferDay.id) {
+            @if (transferDay.status === Status.FINISHED) {
+              <app-transfer-day-transfers-section
+                [transferDay]="transferDay"
+                [draft]="transferWindow?.draft ?? false"
+              />
+            }
+          }
+        </div>
+
+        <div class="app-fill sm:order-first">
+          @if (model().transferDays.at(-1); as lastTransferDay) {
+            <app-transfer-day-transfer-listings-section [transferDayId]="lastTransferDay.id" />
+          }
+        </div>
+      </div>
+    }
+  </div>
+}

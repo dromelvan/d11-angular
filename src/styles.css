@@ -50,6 +50,10 @@
     }
 
     /* Flex styling */
+    .app-flex {
+        @apply flex;
+    }
+
     .app-fill {
         @apply flex-1 min-w-0;
     }
