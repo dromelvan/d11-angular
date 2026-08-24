@@ -1,0 +1,7 @@
+<app-section>
+  <div sectionHeader class="app-fill app-row">
+    <span>Transfer Day {{ transferDay().transferDayNumber }}</span>
+    <span class="ml-auto">{{ transferDay().datetime | date: 'MMM d, y' }}</span>
+  </div>
+  <app-transfer-day-transfers-accordion [transferDayId]="transferDay().id" [draft]="draft()" />
+</app-section>
