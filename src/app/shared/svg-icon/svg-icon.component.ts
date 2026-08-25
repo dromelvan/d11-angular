@@ -5,6 +5,7 @@ export type SvgIconName =
   | 'chevron-right'
   | 'chevrons-left'
   | 'chevrons-right'
+  | 'more-vertical'
   | 'search'
   | 'person'
   | 'shield';
@@ -32,6 +33,11 @@ const SVG_ICONS: Record<SvgIconName, SvgElement[]> = {
   'chevrons-right': [
     { type: 'path', d: 'M7 18l5-6-5-6' },
     { type: 'path', d: 'M13 18l5-6-5-6' },
+  ],
+  'more-vertical': [
+    { type: 'circle', cx: 12, cy: 5, r: 1 },
+    { type: 'circle', cx: 12, cy: 12, r: 1 },
+    { type: 'circle', cx: 12, cy: 19, r: 1 },
   ],
   search: [
     { type: 'circle', cx: 11, cy: 11, r: 7 },

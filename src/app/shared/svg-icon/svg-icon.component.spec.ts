@@ -96,6 +96,16 @@ describe('SvgIconComponent', () => {
     });
   });
 
+  describe('more-vertical', () => {
+    it('renders three circles', async () => {
+      const { container } = await render(SvgIconComponent, { inputs: { name: 'more-vertical' } });
+
+      expect(container.querySelector('circle[cx="12"][cy="5"][r="1"]')).toBeInTheDocument();
+      expect(container.querySelector('circle[cx="12"][cy="12"][r="1"]')).toBeInTheDocument();
+      expect(container.querySelector('circle[cx="12"][cy="19"][r="1"]')).toBeInTheDocument();
+    });
+  });
+
   describe('shield', () => {
     it('renders the shield path', async () => {
       const { container } = await render(SvgIconComponent, { inputs: { name: 'shield' } });
