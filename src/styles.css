@@ -116,8 +116,12 @@
     }
 
     /* Text styling */
-    .app-text-hero {
+    .app-text-hero-primary {
         @apply text-3xl font-semibold;
+    }
+
+    .app-text-hero {
+        @apply text-xl;
     }
 
     .app-text-title {
