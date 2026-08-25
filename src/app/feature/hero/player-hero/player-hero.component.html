@@ -1,0 +1,80 @@
+<div class="pb-6">
+  <button
+    class="absolute! -top-1 -right-1 z-5 p-1 cursor-pointer bg-transparent border-0"
+    (click)="onOpenDrawer()"
+  >
+    <app-svg-icon name="more-vertical" />
+  </button>
+
+  <div class="app-hero pb-2">
+    <div class="app-row-4 items-start">
+      <app-player-img class="sm:px-8" [player]="player()" [width]="ImgWidth.XXLARGE" />
+
+      <div class="flex flex-col gap-2 sm:flex-row sm:gap-8 app-text-base">
+        @if (playerSeasonStat(); as playerSeasonStat) {
+          <div class="app-col-2">
+            <div>
+              <div class="app-text-detail hidden sm:block">Premier League</div>
+              <div>
+                @if (!playerSeasonStat.team?.dummy && playerSeasonStat.shirtNumber) {
+                  <span class="app-text-hero">#{{ playerSeasonStat.shirtNumber }} </span>
+                }
+                <span>{{ playerSeasonStat?.position?.name }}</span>
+              </div>
+
+              @if (!playerSeasonStat.team?.dummy) {
+                <app-team-base [team]="playerSeasonStat.team" imgWidth="16" />
+              }
+            </div>
+
+            @if (!playerSeasonStat.d11Team?.dummy) {
+              <div>
+                <div class="app-text-detail hidden sm:block">D11</div>
+                <div>
+                  <app-d11-team-base [d11Team]="playerSeasonStat.d11Team" imgWidth="16" />
+                </div>
+                £{{ playerSeasonStat.fee | fee }} million
+              </div>
+            }
+          </div>
+        }
+
+        @if (player(); as player) {
+          <div>
+            <div class="app-text-detail hidden sm:block sm:mb-1.25">Info</div>
+            <div class="app-row-2" data-testid="country">
+              <div class="">Country:</div>
+              @if (player.country) {
+                <app-country-img [country]="player.country" />
+                <span class="">{{ player.country.name }}</span>
+              } @else {
+                Unknown
+              }
+            </div>
+
+            <div class="app-row-2 -mt-px" data-testid="date-of-birth">
+              <div>DoB:</div>
+              <div>
+                @if (player.dateOfBirth) {
+                  {{ player.dateOfBirth | safeDate }}
+                  <span>, age {{ player.dateOfBirth | age }}</span>
+                } @else {
+                  Unknown
+                }
+              </div>
+            </div>
+
+            <div class="app-row-2">
+              <div>Height:</div>
+              @if (player.height) {
+                <div>{{ player.height }}cm</div>
+              } @else {
+                Unknown
+              }
+            </div>
+          </div>
+        }
+      </div>
+    </div>
+  </div>
+</div>
