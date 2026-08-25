@@ -1,5 +1,5 @@
 import { Component, input } from '@angular/core';
-import { TransferDayTransferListingsAccordionComponent } from '@app/feature/component/transfer-day-transfer-listings-accordion/transfer-day-transfer-listings-accordion.component';
+import { TransferDayTransferListingsAccordionComponent } from '@app/feature/accordion/transfer-day-transfer-listings-accordion/transfer-day-transfer-listings-accordion.component';
 import { SectionComponent } from '@app/shared/section/section.component';
 
 @Component({

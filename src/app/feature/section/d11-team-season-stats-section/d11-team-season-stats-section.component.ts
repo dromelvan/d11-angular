@@ -1,5 +1,5 @@
 import { Component, input } from '@angular/core';
-import { D11TeamSeasonStatsAccordionComponent } from '@app/feature/component/d11-team-season-stats-accordion/d11-team-season-stats-accordion.component';
+import { D11TeamSeasonStatsAccordionComponent } from '@app/feature/accordion/d11-team-season-stats-accordion/d11-team-season-stats-accordion.component';
 import { SectionComponent } from '@app/shared/section/section.component';
 
 @Component({

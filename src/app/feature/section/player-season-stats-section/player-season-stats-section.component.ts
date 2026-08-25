@@ -4,7 +4,7 @@ import {
   PlayerSeasonStatsSearchParams,
 } from '@app/shared/model';
 import { SectionComponent } from '@app/shared/section/section.component';
-import { PlayerSeasonStatsAccordionComponent } from '@app/feature/component/player-season-stats-accordion/player-season-stats-accordion.component';
+import { PlayerSeasonStatsAccordionComponent } from '@app/feature/accordion/player-season-stats-accordion/player-season-stats-accordion.component';
 import { PlayerSeasonStatsFilterDrawerComponent } from './player-season-stats-filter-drawer/player-season-stats-filter-drawer.component';
 import { IconButtonComponent } from '@app/shared/button/icon-button/icon-button.component';
 import { SvgIconComponent } from '@app/shared/svg-icon/svg-icon.component';

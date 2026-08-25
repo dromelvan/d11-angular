@@ -2,7 +2,7 @@ import { Component, input } from '@angular/core';
 import { D11TeamBase, PlayerMatchStat } from '@app/core/api';
 import { D11TeamImgComponent } from '@app/shared/img/d11-team-img/d11-team-img.component';
 import { SectionComponent } from '@app/shared/section/section.component';
-import { PlayerMatchStatsAccordionComponent } from '@app/feature/component/player-match-stats-accordion/player-match-stats-accordion.component';
+import { PlayerMatchStatsAccordionComponent } from '@app/feature/accordion/player-match-stats-accordion/player-match-stats-accordion.component';
 
 @Component({
   selector: 'app-d11-team-player-match-stats-section',
