@@ -521,6 +521,7 @@ describe('PlayerDialogMatchStatComponent', () => {
         ...fakePlayerMatchStat(),
         lineup: Lineup.STARTING_LINEUP,
         substitutionOffTime: 0,
+        redCardTime: 0,
       };
 
       await setup(playerMatchStat);
@@ -535,6 +536,7 @@ describe('PlayerDialogMatchStatComponent', () => {
         ...fakePlayerMatchStat(),
         lineup: Lineup.STARTING_LINEUP,
         substitutionOffTime: 60,
+        redCardTime: 0,
       };
 
       await setup(playerMatchStat);
@@ -552,6 +554,7 @@ describe('PlayerDialogMatchStatComponent', () => {
         lineup: Lineup.SUBSTITUTE,
         substitutionOnTime: 60,
         substitutionOffTime: 0,
+        redCardTime: 0,
       };
 
       await setup(playerMatchStat);
@@ -569,6 +572,7 @@ describe('PlayerDialogMatchStatComponent', () => {
         lineup: Lineup.SUBSTITUTE,
         substitutionOnTime: 60,
         substitutionOffTime: 70,
+        redCardTime: 0,
       };
 
       await setup(playerMatchStat);

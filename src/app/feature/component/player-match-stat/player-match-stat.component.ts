@@ -1,5 +1,6 @@
 import { Component, computed, inject } from '@angular/core';
 import { Lineup, PlayerMatchStat } from '@app/core/api';
+import { minutesPlayed } from '@app/shared/util/player-match-stat.util';
 import { RatingPipe } from '@app/shared/pipes/rating.pipe';
 import { DynamicDialogConfig } from 'primeng/dynamicdialog';
 import { ImgWidth } from '@app/shared/img';
@@ -14,21 +15,7 @@ import { MatchHeaderComponent } from '@app/feature/component/match-header/match-
 })
 export class PlayerMatchStatComponent {
   protected playerMatchStat = computed<PlayerMatchStat>(() => this.config.data.current());
-  protected minutesPlayed = computed<number>(() => {
-    const playerMatchStat = this.playerMatchStat();
-    const started = playerMatchStat.lineup === Lineup.STARTING_LINEUP;
-    const played = started || playerMatchStat.substitutionOnTime > 0;
-
-    if (!played) {
-      return 0;
-    }
-
-    const startTime = started ? 0 : playerMatchStat.substitutionOnTime;
-    const endTime =
-      playerMatchStat.substitutionOffTime > 0 ? playerMatchStat.substitutionOffTime : 90;
-
-    return endTime - startTime;
-  });
+  protected minutesPlayed = computed<number>(() => minutesPlayed(this.playerMatchStat()));
   protected readonly Lineup = Lineup;
   protected readonly ImgWidth = ImgWidth;
 

@@ -16,32 +16,116 @@ import {
   TeamBase,
 } from '@app/core/api';
 import { describe, expect, it } from 'vitest';
-import { sortByD11Team, sortByTeam } from './player-match-stat.util';
+import { minutesPlayed, sortByD11Team, sortByTeam } from './player-match-stat.util';
 
-let homeTeam: TeamBase;
-let awayTeam: TeamBase;
-let baseMatch: MatchBase;
+describe('minutesPlayed', () => {
+  it('returns 90 for starting player with no stoppages', () => {
+    const stat = {
+      ...fakePlayerMatchStat(),
+      lineup: Lineup.STARTING_LINEUP,
+      substitutionOffTime: 0,
+      redCardTime: 0,
+    };
+    expect(minutesPlayed(stat)).toBe(90);
+  });
 
-const fakeStat = (
-  team: TeamBase,
-  lineup: Lineup,
-  overrides: Partial<PlayerMatchStat> = {},
-): PlayerMatchStat => ({
-  ...fakePlayerMatchStat(),
-  match: baseMatch,
-  team,
-  lineup,
-  substitutionOnTime: 0,
-  ...overrides,
+  it('returns minutes to substitution off for starting player subbed off', () => {
+    const stat = {
+      ...fakePlayerMatchStat(),
+      lineup: Lineup.STARTING_LINEUP,
+      substitutionOffTime: 70,
+      redCardTime: 0,
+    };
+    expect(minutesPlayed(stat)).toBe(70);
+  });
+
+  it('returns minutes to red card for starting player who received red card', () => {
+    const stat = {
+      ...fakePlayerMatchStat(),
+      lineup: Lineup.STARTING_LINEUP,
+      substitutionOnTime: 0,
+      substitutionOffTime: 0,
+      redCardTime: 55,
+    };
+    expect(minutesPlayed(stat)).toBe(55);
+  });
+
+  it('returns the earlier of substitution off and red card times', () => {
+    const stat = {
+      ...fakePlayerMatchStat(),
+      lineup: Lineup.STARTING_LINEUP,
+      substitutionOnTime: 0,
+      substitutionOffTime: 70,
+      redCardTime: 60,
+    };
+    expect(minutesPlayed(stat)).toBe(60);
+  });
+
+  it('returns minutes from substitution on to end for active substitute', () => {
+    const stat = {
+      ...fakePlayerMatchStat(),
+      lineup: Lineup.SUBSTITUTE,
+      substitutionOnTime: 60,
+      substitutionOffTime: 0,
+      redCardTime: 0,
+    };
+    expect(minutesPlayed(stat)).toBe(30);
+  });
+
+  it('returns minutes between substitution on and off for substituted substitute', () => {
+    const stat = {
+      ...fakePlayerMatchStat(),
+      lineup: Lineup.SUBSTITUTE,
+      substitutionOnTime: 60,
+      substitutionOffTime: 80,
+      redCardTime: 0,
+    };
+    expect(minutesPlayed(stat)).toBe(20);
+  });
+
+  it('returns 0 for unused substitute', () => {
+    const stat = {
+      ...fakePlayerMatchStat(),
+      lineup: Lineup.SUBSTITUTE,
+      substitutionOnTime: 0,
+    };
+    expect(minutesPlayed(stat)).toBe(0);
+  });
+
+  it('returns 0 for player who did not participate', () => {
+    const stat = {
+      ...fakePlayerMatchStat(),
+      lineup: Lineup.DID_NOT_PARTICIPATE,
+      substitutionOnTime: 0,
+    };
+    expect(minutesPlayed(stat)).toBe(0);
+  });
 });
 
-beforeEach(() => {
-  homeTeam = fakeTeamBase();
-  awayTeam = fakeTeamBase();
-  baseMatch = { ...fakeMatchBase(), homeTeam, awayTeam };
-});
+describe('sortByTeam', () => {
+  let homeTeam: TeamBase;
+  let awayTeam: TeamBase;
+  let baseMatch: MatchBase;
 
-describe('sortByTeamAndLineup', () => {
+  const fakeStat = (
+    team: TeamBase,
+    lineup: Lineup,
+    overrides: Partial<PlayerMatchStat> = {},
+  ): PlayerMatchStat => ({
+    ...fakePlayerMatchStat(),
+    match: baseMatch,
+    team,
+    lineup,
+    substitutionOnTime: 0,
+    ...overrides,
+  });
+
+  beforeEach(() => {
+    homeTeam = fakeTeamBase();
+    awayTeam = fakeTeamBase();
+    baseMatch = { ...fakeMatchBase(), homeTeam, awayTeam };
+  });
+
   it('filters out DID_NOT_PARTICIPATE', () => {
     const dnp = fakeStat(homeTeam, Lineup.DID_NOT_PARTICIPATE);
     const starter = fakeStat(homeTeam, Lineup.STARTING_LINEUP);
@@ -124,12 +208,31 @@ describe('sortByTeamAndLineup', () => {
   });
 });
 
-describe('sortByD11TeamAndLineup', () => {
+describe('sortByD11Team', () => {
+  let homeTeam: TeamBase;
+  let awayTeam: TeamBase;
+  let baseMatch: MatchBase;
   let homeD11Team: D11TeamBase;
   let awayD11Team: D11TeamBase;
   let baseD11Match: D11MatchBase;
 
+  const fakeStat = (
+    team: TeamBase,
+    lineup: Lineup,
+    overrides: Partial<PlayerMatchStat> = {},
+  ): PlayerMatchStat => ({
+    ...fakePlayerMatchStat(),
+    match: baseMatch,
+    team,
+    lineup,
+    substitutionOnTime: 0,
+    ...overrides,
+  });
+
   beforeEach(() => {
+    homeTeam = fakeTeamBase();
+    awayTeam = fakeTeamBase();
+    baseMatch = { ...fakeMatchBase(), homeTeam, awayTeam };
     homeD11Team = fakeD11TeamBase();
     awayD11Team = fakeD11TeamBase();
     baseD11Match = { ...fakeD11MatchBase(), homeD11Team, awayD11Team };

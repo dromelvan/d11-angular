@@ -8,7 +8,6 @@ import { FormMatchPointsComponent } from '@app/shared/form-match-points';
   selector: 'app-player-season-stat-section',
   templateUrl: './player-season-stat-section.component.html',
   imports: [SectionComponent, RatingPipe, FormMatchPointsComponent],
-  host: { class: 'app-fill' },
 })
 export class PlayerSeasonStatSectionComponent {
   readonly playerSeasonStat = input.required<PlayerSeasonStat>();

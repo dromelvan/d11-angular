@@ -1,6 +1,7 @@
 import { Component, computed, inject, input } from '@angular/core';
 import { Lineup, PlayerMatchStat } from '@app/core/api';
 import { RouterService } from '@app/core/router/router.service';
+import { minutesPlayed } from '@app/shared/util/player-match-stat.util';
 import { RatingPipe } from '@app/shared/pipes/rating.pipe';
 import { D11TeamImgComponent } from '@app/shared/img/d11-team-img/d11-team-img.component';
 import { TeamImgComponent } from '@app/shared/img/team-img/team-img.component';
@@ -37,19 +38,11 @@ export class PlayerMatchStatsAccordionComponent {
       : -1,
   );
 
+  protected readonly minutesPlayed = minutesPlayed;
+
   private readonly routerService = inject(RouterService);
 
   protected navigateToPlayer(pms: PlayerMatchStat): void {
     this.routerService.navigateToPlayer(pms.player.id, pms.match.matchWeek.season.id);
-  }
-
-  protected minutesPlayed(pms: PlayerMatchStat): number {
-    const started = pms.lineup === Lineup.STARTING_LINEUP;
-    const played = started || pms.substitutionOnTime > 0;
-    if (!played) return 0;
-    const startTime = started ? 0 : pms.substitutionOnTime;
-    const stoppedTimes = [pms.substitutionOffTime, pms.redCardTime].filter((t) => t > 0);
-    const endTime = stoppedTimes.length > 0 ? Math.min(...stoppedTimes) : 90;
-    return endTime - startTime;
   }
 }

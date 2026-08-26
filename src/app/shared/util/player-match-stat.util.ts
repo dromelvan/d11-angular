@@ -1,5 +1,15 @@
 import { D11MatchBase, Lineup, PlayerMatchStat } from '@app/core/api';
 
+export function minutesPlayed(pms: PlayerMatchStat): number {
+  const started = pms.lineup === Lineup.STARTING_LINEUP;
+  const played = started || pms.substitutionOnTime > 0;
+  if (!played) return 0;
+  const startTime = started ? 0 : pms.substitutionOnTime;
+  const stoppedTimes = [pms.substitutionOffTime, pms.redCardTime].filter((t) => t > 0);
+  const endTime = stoppedTimes.length > 0 ? Math.min(...stoppedTimes) : 90;
+  return endTime - startTime;
+}
+
 function compareByLineup(a: PlayerMatchStat, b: PlayerMatchStat): number {
   const lineupOrder = (pms: PlayerMatchStat): number => {
     if (pms.lineup === Lineup.STARTING_LINEUP) return 0;

@@ -78,4 +78,52 @@ describe('PlayerSeasonStatSectionComponent', () => {
 
     expect(screen.getByText('28/9')).toBeInTheDocument();
   });
+
+  it('renders dash when rating is zero', async () => {
+    const playerSeasonStat = { ...fakePlayerSeasonStat(), rating: 0 };
+
+    await render(PlayerSeasonStatSectionComponent, { inputs: { playerSeasonStat } });
+
+    const ratingCell = screen.getByText('Rating').closest('.app-col');
+    expect(ratingCell?.querySelector('.app-text-hero')).toHaveTextContent('-');
+  });
+
+  it('renders dash when no cards', async () => {
+    const playerSeasonStat = { ...fakePlayerSeasonStat(), redCards: 0, yellowCards: 0 };
+
+    await render(PlayerSeasonStatSectionComponent, { inputs: { playerSeasonStat } });
+
+    const cardsCell = screen.getByText('Cards').closest('.app-col');
+    expect(cardsCell?.querySelector('.app-text-hero')).toHaveTextContent('-');
+  });
+
+  it('renders dash when no man of the match', async () => {
+    const playerSeasonStat = {
+      ...fakePlayerSeasonStat(),
+      manOfTheMatch: 0,
+      sharedManOfTheMatch: 0,
+    };
+
+    await render(PlayerSeasonStatSectionComponent, { inputs: { playerSeasonStat } });
+
+    const momCell = screen.getByText('MoM').closest('.app-col');
+    expect(momCell?.querySelector('.app-text-hero')).toHaveTextContent('-');
+  });
+
+  it('renders dash when no games started or substitutions on', async () => {
+    const playerSeasonStat = { ...fakePlayerSeasonStat(), gamesStarted: 0, substitutionsOn: 0 };
+
+    await render(PlayerSeasonStatSectionComponent, { inputs: { playerSeasonStat } });
+
+    const startSubCell = screen.getByText('Start/Sub').closest('.app-col');
+    expect(startSubCell?.querySelector('.app-text-hero')).toHaveTextContent('-');
+  });
+
+  it('renders Form label', async () => {
+    await render(PlayerSeasonStatSectionComponent, {
+      inputs: { playerSeasonStat: fakePlayerSeasonStat() },
+    });
+
+    expect(screen.getByText('Form')).toBeInTheDocument();
+  });
 });
