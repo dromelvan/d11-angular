@@ -16,20 +16,20 @@
             <div>
               <div class="app-text-detail hidden sm:block">Premier League</div>
               <div>
-                @if (!playerSeasonStat.team?.dummy && playerSeasonStat.shirtNumber) {
+                @if (!playerSeasonStat.team.dummy && playerSeasonStat.shirtNumber) {
                   <span class="app-text-hero">#{{ playerSeasonStat.shirtNumber }} </span>
                 }
                 <span>{{ playerSeasonStat?.position?.name }}</span>
               </div>
 
-              @if (!playerSeasonStat.team?.dummy) {
+              @if (!playerSeasonStat.team.dummy) {
                 <app-team-base [team]="playerSeasonStat.team" imgWidth="16" />
               }
             </div>
 
-            @if (!playerSeasonStat.d11Team?.dummy) {
+            @if (!playerSeasonStat.d11Team.dummy) {
               <div>
-                <div class="app-text-detail hidden sm:block">D11</div>
+                <div class="app-text-detail mb-1 hidden sm:block">D11</div>
                 <div>
                   <app-d11-team-base [d11Team]="playerSeasonStat.d11Team" imgWidth="16" />
                 </div>

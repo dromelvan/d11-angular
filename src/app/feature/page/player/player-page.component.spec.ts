@@ -1,219 +1,190 @@
-import type { Player, PlayerSeasonStat, Season } from '@app/core/api';
-import { PlayerApiService, SeasonApiService } from '@app/core/api';
-import { fakePlayer, fakePlayerSeasonStat, fakeSeason } from '@app/test';
-import { LoadingService } from '@app/core/loading/loading.service';
-import { render, screen, waitFor } from '@testing-library/angular';
-import { of } from 'rxjs';
-import { expect } from 'vitest';
+import { signal } from '@angular/core';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { NEVER, of } from 'rxjs';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { Player, PlayerApiService, PlayerSeasonStat } from '@app/core/api';
+import { PRIMARY } from '@app/app.theme';
+import { PageContextService } from '@app/core/page-context/page-context.service';
+import { RouterService } from '@app/core/router/router.service';
+import { fakePlayer, fakePlayerSeasonStat } from '@app/test';
 import { PlayerPageComponent } from './player-page.component';
 
-let player: Player;
-let season: Season;
-let seasons: Season[];
-let playerSeasonStats: PlayerSeasonStat[];
-
-let playerApi: PlayerApiService;
-let seasonApi: SeasonApiService;
-let loadingService: LoadingService;
-
-function buildProviders() {
-  return [
-    { provide: PlayerApiService, useValue: playerApi },
-    { provide: SeasonApiService, useValue: seasonApi },
-    { provide: LoadingService, useValue: loadingService },
-  ];
-}
-
 describe('PlayerPageComponent', () => {
-  beforeEach(async () => {
-    player = fakePlayer();
-    season = fakeSeason();
-    seasons = [season];
+  const mockPageContextService = {
+    register: vi.fn(),
+    backgroundColor: signal<string | undefined>(undefined),
+  };
+  const mockRouterService = {
+    navigateToPlayer: vi.fn(),
+    navigateToMatch: vi.fn(),
+  };
 
-    const playerSeasonStat = fakePlayerSeasonStat();
-    playerSeasonStat.season = season;
-    playerSeasonStat.player = player;
-    playerSeasonStats = [playerSeasonStat];
+  async function setup(options: {
+    player?: Player;
+    playerSeasonStats?: PlayerSeasonStat[];
+    loading?: boolean;
+  }) {
+    const { player, playerSeasonStats = [], loading = false } = options;
+    vi.clearAllMocks();
 
-    playerApi = {
-      getById: vi.fn().mockReturnValue(of(player)),
-      getPlayerSeasonStatsByPlayerId: vi.fn().mockReturnValue(of(playerSeasonStats)),
-      getPlayerTransferContextByPlayerId: vi.fn().mockReturnValue(of(null)),
-    } as unknown as PlayerApiService;
+    await TestBed.configureTestingModule({
+      imports: [PlayerPageComponent],
+      providers: [
+        {
+          provide: PlayerApiService,
+          useValue: {
+            getById: vi.fn().mockReturnValue(loading ? NEVER : of(player)),
+            getPlayerSeasonStatsByPlayerId: vi
+              .fn()
+              .mockReturnValue(loading ? NEVER : of(playerSeasonStats)),
+            getPlayerMatchStatsByPlayerIdAndSeasonId: vi.fn().mockReturnValue(of([])),
+          },
+        },
+        { provide: PageContextService, useValue: mockPageContextService },
+        { provide: RouterService, useValue: mockRouterService },
+      ],
+    }).compileComponents();
+  }
 
-    seasonApi = {
-      getAll: vi.fn().mockReturnValue(of(seasons)),
-    } as unknown as SeasonApiService;
+  async function createFixture(
+    playerId: number,
+    seasonId?: number,
+  ): Promise<ComponentFixture<PlayerPageComponent>> {
+    const fixture = TestBed.createComponent(PlayerPageComponent);
+    fixture.componentRef.setInput('playerId', playerId);
+    if (seasonId !== undefined) {
+      fixture.componentRef.setInput('seasonId', seasonId);
+    }
+    fixture.detectChanges();
+    await fixture.whenStable();
+    return fixture;
+  }
 
-    loadingService = { register: vi.fn() } as unknown as LoadingService;
+  describe('when loading', () => {
+    let fixture: ComponentFixture<PlayerPageComponent>;
 
-    await render(PlayerPageComponent, {
-      inputs: { playerId: 1 },
-      providers: buildProviders(),
+    beforeEach(async () => {
+      await setup({ loading: true });
+      fixture = TestBed.createComponent(PlayerPageComponent);
+      fixture.componentRef.setInput('playerId', 1);
+      fixture.detectChanges();
+    });
+
+    it('does not render app-player-hero', () => {
+      expect(fixture.nativeElement.querySelector('app-player-hero')).toBeNull();
     });
   });
 
-  it('renders page', async () => {
-    await waitFor(() => {
-      expect(document.querySelector('.app-player-page')).toBeInTheDocument();
+  describe('when loaded with playerSeasonStat', () => {
+    let fixture: ComponentFixture<PlayerPageComponent>;
+    let player: Player;
+    let playerSeasonStat: PlayerSeasonStat;
+
+    beforeEach(async () => {
+      player = fakePlayer();
+      playerSeasonStat = fakePlayerSeasonStat();
+      await setup({ player, playerSeasonStats: [playerSeasonStat] });
+      fixture = await createFixture(1);
+    });
+
+    it('registers context with PageContextService', () => {
+      expect(mockPageContextService.register).toHaveBeenCalledOnce();
+    });
+
+    it('registered title is player name', () => {
+      const context = mockPageContextService.register.mock.calls[0][1];
+      expect(context.title()).toBe(player.name);
+    });
+
+    it('registered subtitle is Season {name}', () => {
+      const context = mockPageContextService.register.mock.calls[0][1];
+      expect(context.subtitle()).toBe(`Season ${playerSeasonStat.season.name}`);
+    });
+
+    it('registered backgroundColor is team colour', () => {
+      const context = mockPageContextService.register.mock.calls[0][1];
+      expect(context.backgroundColor()).toBe(playerSeasonStat.team.colour);
+    });
+
+    it('renders app-player-hero', () => {
+      expect(fixture.nativeElement.querySelector('app-player-hero')).toBeTruthy();
+    });
+
+    it('renders app-player-season-stat-section', () => {
+      expect(fixture.nativeElement.querySelector('app-player-season-stat-section')).toBeTruthy();
+    });
+
+    it('renders app-player-career-stats-section', () => {
+      expect(fixture.nativeElement.querySelector('app-player-career-stats-section')).toBeTruthy();
+    });
+
+    it('renders app-player-season-match-stats-section', () => {
+      expect(
+        fixture.nativeElement.querySelector('app-player-season-match-stats-section'),
+      ).toBeTruthy();
     });
   });
 
-  it('renders player', async () => {
-    await waitFor(() => {
-      expect(screen.getByText(player.firstName)).toBeInTheDocument();
-      expect(screen.getByText(player.lastName)).toBeInTheDocument();
+  describe('when loaded without playerSeasonStat', () => {
+    let fixture: ComponentFixture<PlayerPageComponent>;
+    let player: Player;
+
+    beforeEach(async () => {
+      player = fakePlayer();
+      await setup({ player, playerSeasonStats: [] });
+      fixture = await createFixture(1);
+    });
+
+    it('renders app-player-hero', () => {
+      expect(fixture.nativeElement.querySelector('app-player-hero')).toBeTruthy();
+    });
+
+    it('does not render app-player-season-stat-section', () => {
+      expect(fixture.nativeElement.querySelector('app-player-season-stat-section')).toBeNull();
+    });
+
+    it('renders app-player-career-stats-section', () => {
+      expect(fixture.nativeElement.querySelector('app-player-career-stats-section')).toBeTruthy();
+    });
+
+    it('does not render app-player-season-match-stats-section', () => {
+      expect(
+        fixture.nativeElement.querySelector('app-player-season-match-stats-section'),
+      ).toBeNull();
+    });
+
+    it('registered subtitle is undefined', () => {
+      const context = mockPageContextService.register.mock.calls[0][1];
+      expect(context.subtitle()).toBeUndefined();
+    });
+
+    it('registered backgroundColor is PRIMARY', () => {
+      const context = mockPageContextService.register.mock.calls[0][1];
+      expect(context.backgroundColor()).toBe(PRIMARY);
     });
   });
 
-  it('renders info', async () => {
-    await waitFor(() => {
-      expect(screen.getByText(player.country.iso)).toBeInTheDocument();
+  describe('with specific seasonId', () => {
+    it('uses the playerSeasonStat matching the seasonId', async () => {
+      const player = fakePlayer();
+      const playerSeasonStat1 = fakePlayerSeasonStat();
+      const playerSeasonStat2 = fakePlayerSeasonStat();
+      await setup({ player, playerSeasonStats: [playerSeasonStat1, playerSeasonStat2] });
+      await createFixture(1, playerSeasonStat2.season.id);
+
+      const context = mockPageContextService.register.mock.calls[0][1];
+      expect(context.subtitle()).toBe(`Season ${playerSeasonStat2.season.name}`);
     });
-  });
 
-  it('renders season', async () => {
-    await waitFor(() => {
-      expect(screen.getByText(`Season ${season.name}`)).toBeInTheDocument();
+    it('falls back to first playerSeasonStat when no seasonId is provided', async () => {
+      const player = fakePlayer();
+      const playerSeasonStat1 = fakePlayerSeasonStat();
+      const playerSeasonStat2 = fakePlayerSeasonStat();
+      await setup({ player, playerSeasonStats: [playerSeasonStat1, playerSeasonStat2] });
+      await createFixture(1);
+
+      const context = mockPageContextService.register.mock.calls[0][1];
+      expect(context.subtitle()).toBe(`Season ${playerSeasonStat1.season.name}`);
     });
-  });
-
-  it('renders tabs', async () => {
-    await waitFor(() => {
-      expect(screen.getByText('Overview')).toBeInTheDocument();
-      expect(screen.getByText('Matches')).toBeInTheDocument();
-      expect(screen.getByText('Stats')).toBeInTheDocument();
-      expect(screen.getByText('Career')).toBeInTheDocument();
-    });
-  });
-});
-
-describe('PlayerPageComponent with undefined playerSeasonStat', () => {
-  beforeEach(async () => {
-    player = fakePlayer();
-    season = fakeSeason();
-    seasons = [season];
-
-    playerApi = {
-      getById: vi.fn().mockReturnValue(of(player)),
-      getPlayerSeasonStatsByPlayerId: vi.fn().mockReturnValue(of([])),
-      getPlayerTransferContextByPlayerId: vi.fn().mockReturnValue(of(null)),
-    } as unknown as PlayerApiService;
-
-    seasonApi = {
-      getAll: vi.fn().mockReturnValue(of(seasons)),
-    } as unknown as SeasonApiService;
-
-    loadingService = { register: vi.fn() } as unknown as LoadingService;
-
-    await render(PlayerPageComponent, {
-      inputs: { playerId: 1 },
-      providers: buildProviders(),
-    });
-  });
-
-  it('renders player', async () => {
-    await waitFor(() => {
-      expect(screen.getByText(player.firstName)).toBeInTheDocument();
-      expect(screen.getByText(player.lastName)).toBeInTheDocument();
-    });
-  });
-
-  it('does not render season', async () => {
-    await waitFor(() => {
-      expect(screen.queryByText(`Season ${season.name}`)).not.toBeInTheDocument();
-    });
-  });
-
-  it('renders info', async () => {
-    await waitFor(() => {
-      expect(screen.getByText(player.country.iso)).toBeInTheDocument();
-    });
-  });
-
-  it('renders overview and career tabs', async () => {
-    await waitFor(() => {
-      expect(screen.getByText('Overview')).toBeInTheDocument();
-      expect(screen.getByText('Career')).toBeInTheDocument();
-    });
-  });
-
-  it('does not render matches and stats tabs', async () => {
-    await waitFor(() => {
-      expect(screen.queryByText('Matches')).not.toBeInTheDocument();
-      expect(screen.queryByText('Stats')).not.toBeInTheDocument();
-    });
-  });
-});
-
-describe('PlayerPageComponent with seasonId', () => {
-  let season2: Season;
-
-  beforeEach(async () => {
-    player = fakePlayer();
-    season = fakeSeason();
-    season2 = fakeSeason();
-
-    const playerSeasonStat1 = fakePlayerSeasonStat();
-    playerSeasonStat1.season = season;
-    playerSeasonStat1.player = player;
-
-    const playerSeasonStat2 = fakePlayerSeasonStat();
-    playerSeasonStat2.season = season2;
-    playerSeasonStat2.player = player;
-
-    playerApi = {
-      getById: vi.fn().mockReturnValue(of(player)),
-      getPlayerSeasonStatsByPlayerId: vi
-        .fn()
-        .mockReturnValue(of([playerSeasonStat1, playerSeasonStat2])),
-      getPlayerTransferContextByPlayerId: vi.fn().mockReturnValue(of(null)),
-    } as unknown as PlayerApiService;
-
-    seasonApi = {
-      getAll: vi.fn().mockReturnValue(of([season, season2])),
-    } as unknown as SeasonApiService;
-
-    loadingService = { register: vi.fn() } as unknown as LoadingService;
-
-    await render(PlayerPageComponent, {
-      inputs: { playerId: 1, seasonId: season2.id },
-      providers: buildProviders(),
-    });
-  });
-
-  it('renders the season matching seasonId', async () => {
-    await waitFor(() => {
-      expect(screen.getByText(`Season ${season2.name}`)).toBeInTheDocument();
-    });
-  });
-});
-
-describe('PlayerPageComponent when loading', () => {
-  beforeEach(async () => {
-    player = fakePlayer();
-    season = fakeSeason();
-    seasons = [season];
-
-    playerApi = {
-      getById: vi.fn().mockReturnValue(of(player)),
-      getPlayerSeasonStatsByPlayerId: vi.fn().mockReturnValue(of([])),
-      getPlayerTransferContextByPlayerId: vi.fn().mockReturnValue(of(null)),
-    } as unknown as PlayerApiService;
-
-    seasonApi = {
-      getAll: vi.fn().mockReturnValue(of(seasons)),
-    } as unknown as SeasonApiService;
-
-    loadingService = { register: vi.fn() } as unknown as LoadingService;
-
-    await render(PlayerPageComponent, {
-      inputs: { playerId: 1 },
-      providers: buildProviders(),
-    });
-  });
-
-  it('does not render page', () => {
-    expect(document.querySelector('.app-player-page')).not.toBeInTheDocument();
   });
 });

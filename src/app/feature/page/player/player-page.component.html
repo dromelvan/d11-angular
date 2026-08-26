@@ -1,46 +1,22 @@
-@if (!isLoading()) {
-  @let model = this.model();
-  <div class="app-player-page app-col max-w-sm mx-auto">
-    <app-player-header-card [player]="model.player" [playerSeasonStat]="model.playerSeasonStat" />
-    <p-tabs [(value)]="activeTab">
-      <p-tablist
-        [class.justify-between]="model.hasPlayerSeasonStat"
-        [class.justify-evenly]="!model.hasPlayerSeasonStat"
-      >
-        <p-tab value="0">Overview</p-tab>
-        @if (model.hasPlayerSeasonStat) {
-          <p-tab value="1">Matches</p-tab>
-          <p-tab value="2">Stats</p-tab>
-        }
-        <p-tab value="3">Career</p-tab>
-      </p-tablist>
-      <p-tabpanels>
-        <p-tabpanel value="0" class="app-col">
-          <app-player-info-card [player]="model.player" />
-          <app-player-season-summary-card [playerSeasonStat]="model.playerSeasonStat" />
-        </p-tabpanel>
+<app-hero-container>
+  @if (model().player; as player) {
+    <app-player-hero heroContent [player]="player" [playerSeasonStat]="model().playerSeasonStat" />
+  }
 
-        <p-tabpanel value="1">
-          @defer (when activeTab === '1') {
-            <app-player-match-stats [playerSeasonStat]="model.playerSeasonStat!" />
-          }
-        </p-tabpanel>
+  <div class="flex flex-col gap-4 sm:flex-row">
+    <div class="app-col-4 app-fill">
+      @if (model().playerSeasonStat) {
+        <app-player-season-stat-section [playerSeasonStat]="model().playerSeasonStat!" />
+      }
 
-        <p-tabpanel value="2">
-          @defer (when activeTab === '2') {
-            <app-player-stat-summary
-              [playerStatSummary]="model.playerSeasonStat!"
-              [seasonName]="model.playerSeasonStat!.season.name"
-            />
-          }
-        </p-tabpanel>
+      <app-player-career-stats-section [playerId]="playerId()" />
+    </div>
 
-        <p-tabpanel value="3">
-          @defer (when activeTab === '3') {
-            <app-player-season-stats [playerSeasonStats]="model.playerSeasonStats!" />
-          }
-        </p-tabpanel>
-      </p-tabpanels>
-    </p-tabs>
+    @if (model().playerSeasonStat; as playerSeasonStat) {
+      <app-player-season-match-stats-section
+        [playerId]="playerId()"
+        [seasonId]="playerSeasonStat.season.id"
+      />
+    }
   </div>
-}
+</app-hero-container>
