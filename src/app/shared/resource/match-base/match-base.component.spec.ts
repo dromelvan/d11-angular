@@ -31,33 +31,31 @@ describe('MatchBaseComponent', () => {
   it('renders home team code', () => {
     const element = screen.getByText(match.homeTeam.code);
     expect(element).toBeInTheDocument();
-    expect(element).toHaveClass('sm:hidden');
+    expect(element).toHaveClass('lg:hidden');
   });
 
   it('renders home team name', () => {
     const element = screen.getByText(match.homeTeam.name);
     expect(element).toBeInTheDocument();
-    expect(element).toHaveClass('sm:block');
+    expect(element).toHaveClass('lg:block');
   });
 
   it('renders away team code', () => {
     const element = screen.getByText(match.awayTeam.code);
     expect(element).toBeInTheDocument();
-    expect(element).toHaveClass('sm:hidden');
+    expect(element).toHaveClass('lg:hidden');
   });
 
   it('renders away team name', () => {
     const element = screen.getByText(match.awayTeam.name);
     expect(element).toBeInTheDocument();
-    expect(element).toHaveClass('sm:block');
+    expect(element).toHaveClass('lg:block');
   });
 
   it('renders score', () => {
-    expect(
-      screen.getByText(`${match.homeTeamGoalsScored}–${match.awayTeamGoalsScored}`, {
-        exact: false,
-      }),
-    ).toBeInTheDocument();
+    const scoreText =
+      document.querySelector('.app-row-result-container')?.textContent?.replace(/\s+/g, '') ?? '';
+    expect(scoreText).toContain(`${match.homeTeamGoalsScored}–${match.awayTeamGoalsScored}`);
   });
 
   it('renders home team image', () => {

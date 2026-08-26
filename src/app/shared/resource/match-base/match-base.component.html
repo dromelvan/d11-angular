@@ -1,23 +1,32 @@
 @let m = match();
 @let t = team();
-<span class="app-match-base app-row flex-1 items-center justify-center gap-0.5 text-sm">
-  <span class="w-10 sm:w-45 shrink-0 text-right" [class.font-bold]="m.homeTeam.id === t?.id">
-    <span class="sm:hidden">{{ m.homeTeam.code }}</span>
-    <span class="hidden sm:block">{{ m.homeTeam.name }}</span>
+<span class="app-match-base grid grid-cols-[1fr_auto_auto_auto_1fr] items-center">
+  <span
+    class="text-xs lg:text-sm min-w-0 text-right pr-1"
+    [class.font-bold]="m.homeTeam.id === t?.id"
+  >
+    <span class="lg:hidden">{{ m.homeTeam.code }}</span>
+    <span class="hidden lg:block">{{ m.homeTeam.name }}</span>
   </span>
-  <app-team-img class="shrink-0" [team]="m.homeTeam" />
-  <span class="app-row-result-container whitespace-nowrap">
+  <app-team-img [team]="m.homeTeam" width="20" />
+  <span class="app-row-result-container whitespace-nowrap px-0.5 text-center">
     @if (m.status === Status.PENDING) {
-      <span class="opacity-50">vs</span>
+      <span class="app-text-detail">vs</span>
     } @else if (m.status === Status.POSTPONED) {
-      <span class="opacity-50">PP</span>
+      <span class="app-text-detail">PP</span>
     } @else {
-      {{ m.homeTeamGoalsScored }}&ndash;{{ m.awayTeamGoalsScored }}
+      <span class="app-row tabular-nums"
+        ><div class="min-w-3 text-right">{{ m.homeTeamGoalsScored }}</div>
+        &ndash;<span class="min-w-3 text-left">{{ m.awayTeamGoalsScored }}</span></span
+      >
     }
   </span>
-  <app-team-img class="shrink-0" [team]="m.awayTeam" />
-  <span class="w-10 sm:w-45 shrink-0 text-left" [class.font-bold]="m.awayTeam.id === t?.id">
-    <span class="sm:hidden">{{ m.awayTeam.code }}</span>
-    <span class="hidden sm:block">{{ m.awayTeam.name }}</span>
+  <app-team-img [team]="m.awayTeam" width="20" />
+  <span
+    class="text-xs lg:text-sm min-w-0 text-left pl-1"
+    [class.font-bold]="m.awayTeam.id === t?.id"
+  >
+    <span class="lg:hidden">{{ m.awayTeam.code }}</span>
+    <span class="hidden lg:block">{{ m.awayTeam.name }}</span>
   </span>
 </span>
