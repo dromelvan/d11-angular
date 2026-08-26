@@ -1,0 +1,42 @@
+<app-section>
+  <span sectionHeader>Career</span>
+
+  <div class="app-row-2 app-text-header pb-2">
+    <div class="min-w-12">Season</div>
+    <div class="app-fill">Team</div>
+    <div class="app-text-number">Rank</div>
+    <div class="app-text-number w-8">Pts</div>
+  </div>
+
+  @if (isLoading()) {
+    <div class="flex justify-center py-8">
+      <p-progress-spinner />
+    </div>
+  } @else {
+    @for (playerSeasonStat of playerSeasonStats(); track playerSeasonStat.id; let index = $index) {
+      @if (index > 0) {
+        <div class="app-separator"></div>
+      }
+
+      <div
+        class="app-row-2 app-fill py-2.5 cursor-pointer"
+        (click)="navigateToPlayer(playerSeasonStat)"
+      >
+        <div class="min-w-12">{{ playerSeasonStat.season.shortName }}</div>
+        <div class="app-row-1 app-fill">
+          <app-team-img [team]="playerSeasonStat.team" width="20" />
+          <span>{{ playerSeasonStat.team.name }}</span>
+        </div>
+        <div class="app-text-number">#{{ playerSeasonStat.ranking }}</div>
+        <div class="app-text-primary app-text-number w-8">
+          {{ playerSeasonStat.points }}
+        </div>
+      </div>
+    }
+    <div class="app-row-2 pt-2.5">
+      <div class="app-fill">{{ summary().seasons }} seasons</div>
+      <div class="app-text-number">Avg {{ summary().avgRanking }}</div>
+      <div class="app-text-primary app-text-number w-8">{{ summary().points }}</div>
+    </div>
+  }
+</app-section>
