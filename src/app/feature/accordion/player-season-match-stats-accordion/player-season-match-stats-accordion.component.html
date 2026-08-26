@@ -1,0 +1,126 @@
+<div class="app-row app-text-header pb-2">
+  <div class="w-12">Date</div>
+  <div class="app-flex app-fill justify-center">Match</div>
+  <div class="app-text-number w-10">Rtg</div>
+  <div class="app-text-number w-8">Pts</div>
+</div>
+@if (isLoading()) {
+  <div class="flex justify-center py-8">
+    <p-progress-spinner />
+  </div>
+} @else {
+  <p-accordion>
+    @for (
+      playerMatchStat of playerMatchStats();
+      track playerMatchStat.match.id;
+      let index = $index
+    ) {
+      @if (index > 0) {
+        <div class="app-separator"></div>
+      }
+      <p-accordion-panel [value]="playerMatchStat.match.id">
+        <p-accordion-header>
+          <div class="app-row app-fill py-2.5 min-w-0">
+            <div class="w-12">
+              {{ playerMatchStat.match.datetime | date: 'd.M' }}
+            </div>
+            <app-match-base
+              class="app-fill min-w-0"
+              [match]="playerMatchStat.match"
+              [team]="playerMatchStat.team"
+            />
+            <div class="app-text-number w-10">
+              @if (
+                playerMatchStat.lineup === Lineup.SUBSTITUTE &&
+                playerMatchStat.substitutionOnTime <= 0
+              ) {
+                <span class="app-text-secondary">SUB</span>
+              } @else if (playerMatchStat.lineup === Lineup.DID_NOT_PARTICIPATE) {
+                <span class="app-text-secondary">DNP</span>
+              } @else {
+                {{ playerMatchStat.rating | rating }}
+              }
+            </div>
+            <div class="app-text-primary app-text-number w-8">{{ playerMatchStat.points }}</div>
+          </div>
+        </p-accordion-header>
+
+        <p-accordion-content>
+          <div class="app-col gap-2.5 p-4">
+            @if (!playerMatchStat.team.dummy) {
+              <div class="app-details-list-row">
+                <span>Team</span>
+                <span class="app-row-1">
+                  <app-team-img [team]="playerMatchStat.team" width="20" />
+                  {{ playerMatchStat.team.name }}
+                </span>
+              </div>
+            }
+            @if (!playerMatchStat.d11Team.dummy) {
+              <div class="app-details-list-row">
+                <span>D11 team</span>
+                <span class="app-row-1">
+                  <app-d11-team-img [d11Team]="playerMatchStat.d11Team" width="20" />
+                  {{ playerMatchStat.d11Team.name }}
+                </span>
+              </div>
+            }
+            @if (playerMatchStat.lineup === Lineup.DID_NOT_PARTICIPATE) {
+              <div>Did not participate</div>
+            } @else if (
+              playerMatchStat.lineup === Lineup.SUBSTITUTE &&
+              playerMatchStat.substitutionOnTime <= 0
+            ) {
+              <div>Unused substitute</div>
+            } @else {
+              @if (playerMatchStat.goals > 0) {
+                <div class="app-details-list-row">
+                  <span>Goals</span>
+                  <span>{{ playerMatchStat.goals }}</span>
+                </div>
+              }
+              @if (playerMatchStat.goalAssists > 0) {
+                <div class="app-details-list-row">
+                  <span>Assists</span>
+                  <span>{{ playerMatchStat.goalAssists }}</span>
+                </div>
+              }
+              @if (playerMatchStat.ownGoals > 0) {
+                <div class="app-details-list-row">
+                  <span>Own goals</span>
+                  <span>{{ playerMatchStat.ownGoals }}</span>
+                </div>
+              }
+              @if (playerMatchStat.goalsConceded === 0 && playerMatchStat.position.id < 5) {
+                <div class="app-details-list-row">
+                  <span>Clean sheet</span>
+                  <app-icon icon="check" [size]="16" />
+                </div>
+              }
+              @if (playerMatchStat.goalsConceded > 0 && playerMatchStat.position.defender) {
+                <div class="app-details-list-row">
+                  <span>Goals conceded</span>
+                  <span>{{ playerMatchStat.goalsConceded }}</span>
+                </div>
+              }
+              <div class="app-details-list-row">
+                <span>Minutes played</span>
+                <span>{{ minutesPlayed(playerMatchStat) }}</span>
+              </div>
+            }
+            <button
+              (click)="navigateToMatch(playerMatchStat)"
+              class="app-text-primary app-details-list-row mt-2"
+            >
+              <span class="app-row-2">
+                <app-svg-icon name="shield" size="sm" />
+                Match details
+              </span>
+              <app-svg-icon name="chevron-right" size="sm" />
+            </button>
+          </div>
+        </p-accordion-content>
+      </p-accordion-panel>
+    }
+  </p-accordion>
+}
