@@ -1,0 +1,74 @@
+<app-section>
+  <span sectionHeader>Season Stats</span>
+
+  @if (playerSeasonStat(); as playerSeasonStat) {
+    <div class="grid grid-cols-5 gap-2">
+      <div class="app-col items-center">
+        <div class="app-text-detail">Ranking</div>
+        <div class="app-text-hero">#{{ playerSeasonStat.ranking }}</div>
+      </div>
+      <div class="app-col items-center">
+        <div class="app-text-detail">Rating</div>
+        <div class="app-text-hero">
+          @if (playerSeasonStat.rating > 0) {
+            {{ playerSeasonStat.rating | rating }}
+          } @else {
+            -
+          }
+        </div>
+      </div>
+      <div class="app-col items-center">
+        <div class="app-text-detail">Goals</div>
+        <div class="app-text-hero">{{ playerSeasonStat.goals }}</div>
+      </div>
+      <div class="app-col items-center">
+        <div class="app-text-detail">Assists</div>
+        <div class="app-text-hero">{{ playerSeasonStat.goalAssists }}</div>
+      </div>
+      <div class="app-col items-center">
+        <div class="app-text-detail">Points</div>
+        <div class="app-text-hero">{{ playerSeasonStat.points }}</div>
+      </div>
+
+      <div class="app-col items-center">
+        <div class="app-text-detail">Cards</div>
+        <div class="app-text-hero">
+          @if (playerSeasonStat.redCards + playerSeasonStat.yellowCards > 0) {
+            {{ playerSeasonStat.redCards }}/{{ playerSeasonStat.yellowCards }}
+          } @else {
+            -
+          }
+        </div>
+      </div>
+      <div class="app-col items-center">
+        <div class="app-text-detail">MoM</div>
+        <div class="app-text-hero">
+          @if (playerSeasonStat.manOfTheMatch + playerSeasonStat.sharedManOfTheMatch > 0) {
+            {{ playerSeasonStat.manOfTheMatch }}/{{ playerSeasonStat.sharedManOfTheMatch }}
+          } @else {
+            -
+          }
+        </div>
+      </div>
+      <div class="app-col items-center">
+        <div class="app-text-detail">Start/Sub</div>
+        <div class="app-text-hero">
+          @if (playerSeasonStat.gamesStarted + playerSeasonStat.substitutionsOn > 0) {
+            {{ playerSeasonStat.gamesStarted }}/{{ playerSeasonStat.substitutionsOn }}
+          } @else {
+            -
+          }
+        </div>
+      </div>
+      <div class="col-span-2 app-col items-center">
+        <div class="app-text-detail">Form</div>
+        <div class="app-row grow justify-center">
+          <app-form-match-points
+            [formMatchPoints]="playerSeasonStat.formMatchPoints"
+            [type]="'player'"
+          />
+        </div>
+      </div>
+    </div>
+  }
+</app-section>
