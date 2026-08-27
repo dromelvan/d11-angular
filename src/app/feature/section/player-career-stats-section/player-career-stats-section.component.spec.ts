@@ -167,6 +167,16 @@ describe('PlayerCareerStatsSectionComponent', () => {
 
       expect(screen.getByText('Avg 3')).toBeInTheDocument();
     });
+
+    it('does not render avg ranking when no stats have rating > 0', async () => {
+      const stats = [stat({ rating: 0 }), stat({ rating: 0 })];
+      mockApiService.getPlayerSeasonStatsByPlayerId.mockReturnValue(of(stats));
+
+      await render(PlayerCareerStatsSectionComponent, { inputs: { playerId: 1 }, providers });
+      TestBed.tick();
+
+      expect(screen.queryByText(/Avg/)).not.toBeInTheDocument();
+    });
   });
 
   describe('API', () => {

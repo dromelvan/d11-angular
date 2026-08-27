@@ -27,7 +27,10 @@ export class PlayerCareerStatsSectionComponent {
     const playerSeasonStats = this.playerSeasonStats();
     const seasons = playerSeasonStats.length;
     const ratedStats = playerSeasonStats.filter((s) => s.rating > 0);
-    const avgRanking = ratedStats.reduce((sum, s) => sum + s.ranking, 0) / ratedStats.length;
+    const avgRanking =
+      ratedStats.length > 0
+        ? ratedStats.reduce((sum, s) => sum + s.ranking, 0) / ratedStats.length
+        : undefined;
     const points = playerSeasonStats.reduce((sum, s) => sum + s.points, 0);
 
     return { seasons, avgRanking, points };

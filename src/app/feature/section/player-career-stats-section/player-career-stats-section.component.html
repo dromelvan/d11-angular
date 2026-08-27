@@ -33,10 +33,16 @@
         </div>
       </div>
     }
-    <div class="app-row-2 pt-2.5">
-      <div class="app-fill">{{ summary().seasons }} seasons</div>
-      <div class="app-text-number">Avg {{ summary().avgRanking }}</div>
-      <div class="app-text-primary app-text-number w-8">{{ summary().points }}</div>
-    </div>
+    @if (summary(); as summary) {
+      <div class="app-row-2 pt-2.5">
+        <div class="app-fill">{{ summary.seasons }} seasons</div>
+        <div class="app-text-number">
+          @if (summary.avgRanking) {
+            Avg {{ summary.avgRanking }}
+          }
+        </div>
+        <div class="app-text-primary app-text-number w-8">{{ summary.points }}</div>
+      </div>
+    }
   }
 </app-section>
