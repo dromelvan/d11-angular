@@ -5,7 +5,7 @@ import { PlayerApiService } from '@app/core/api';
 import { PlayerActionService } from '@app/core/auth/player-action.service';
 import { UserActionService } from '@app/core/auth/user-action.service';
 import { LoadingService } from '@app/core/loading/loading.service';
-import { PlayerActionDrawerComponent } from '@app/feature/component/player-action-drawer/player-action-drawer.component';
+import { PlayerActionDrawerComponent } from '@app/feature/drawer/player-action-drawer/player-action-drawer.component';
 import { ImgWidth, PlayerImgComponent } from '@app/shared/img';
 import { D11TeamBaseComponent, TeamBaseComponent } from '@app/shared/resource';
 import { IconButtonComponent } from '@app/shared/button/icon-button/icon-button.component';

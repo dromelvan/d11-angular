@@ -13,7 +13,7 @@ import { SeasonApiService } from '@app/core/api/season/season-api.service';
 import { CurrentService } from '@app/core/current/current.service';
 import { PageContextService } from '@app/core/page-context/page-context.service';
 import { RouterService } from '@app/core/router/router.service';
-import { SeasonPickerButtonComponent } from '@app/feature/component/season-picker-button/season-picker-button.component';
+import { SeasonPickerButtonComponent } from '@app/feature/drawer/season-picker-button/season-picker-button.component';
 import { SeasonScrollPickerComponent } from '@app/feature/component/season-scroll-picker/season-scroll-picker.component';
 import { D11TeamSeasonStatsSectionComponent } from '@app/feature/section/d11-team-season-stats-section/d11-team-season-stats-section.component';
 import { TeamSeasonStatsSectionComponent } from '@app/feature/section/team-season-stats-section/team-season-stats-section.component';

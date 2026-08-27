@@ -9,7 +9,7 @@ import { SeasonApiService } from '@app/core/api/season/season-api.service';
 import { CurrentService } from '@app/core/current/current.service';
 import { LoadingService } from '@app/core/loading/loading.service';
 import { fakeMatchWeek, fakeSeasonBase } from '@app/test';
-import { MatchWeekPickerDrawerComponent } from '@app/feature/component/match-week-picker-drawer/match-week-picker-drawer.component';
+import { MatchWeekPickerDrawerComponent } from '@app/feature/drawer/match-week-picker-drawer/match-week-picker-drawer.component';
 import { MatchWeekPickerButtonComponent } from './match-week-picker-button.component';
 
 describe('MatchWeekPickerButtonComponent', () => {

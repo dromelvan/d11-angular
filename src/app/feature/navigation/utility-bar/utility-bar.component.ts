@@ -1,6 +1,6 @@
 import { Component, ViewChild } from '@angular/core';
 import { SearchAutocompleteComponent } from '@app/feature/component/search/search-autocomplete/search-autocomplete.component';
-import { SearchDrawerComponent } from '@app/feature/component/search/search-drawer/search-drawer.component';
+import { SearchDrawerComponent } from '@app/feature/drawer/search-drawer/search-drawer.component';
 import { UserSessionComponent } from '@app/feature/component/user-session/user-session.component';
 import { SvgIconComponent } from '@app/shared/svg-icon/svg-icon.component';
 

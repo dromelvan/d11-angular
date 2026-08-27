@@ -8,7 +8,7 @@ import { provideRouter } from '@angular/router';
 import { vi } from 'vitest';
 import { PlayerSeasonStatSort, POSITION_IDS } from '@app/core/api';
 import { PlayerSeasonStatsSectionComponent } from './player-season-stats-section.component';
-import { PlayerSeasonStatsFilterDrawerComponent } from './player-season-stats-filter-drawer/player-season-stats-filter-drawer.component';
+import { PlayerSeasonStatsFilterDrawerComponent } from '@app/feature/drawer/player-season-stats-filter-drawer/player-season-stats-filter-drawer.component';
 
 const drawerInstance = (fixture: ComponentFixture<PlayerSeasonStatsSectionComponent>) =>
   fixture.debugElement.query(By.directive(PlayerSeasonStatsFilterDrawerComponent))

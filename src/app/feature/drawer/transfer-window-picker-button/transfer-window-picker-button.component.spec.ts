@@ -9,7 +9,7 @@ import { TransferWindowApiService } from '@app/core/api/transfer-window/transfer
 import { CurrentService } from '@app/core/current/current.service';
 import { LoadingService } from '@app/core/loading/loading.service';
 import { fakeSeasonBase, fakeTransferWindow } from '@app/test';
-import { TransferWindowPickerDrawerComponent } from '@app/feature/component/transfer-window-picker-drawer/transfer-window-picker-drawer.component';
+import { TransferWindowPickerDrawerComponent } from '@app/feature/drawer/transfer-window-picker-drawer/transfer-window-picker-drawer.component';
 import { TransferWindowPickerButtonComponent } from './transfer-window-picker-button.component';
 
 describe('TransferWindowPickerButtonComponent', () => {

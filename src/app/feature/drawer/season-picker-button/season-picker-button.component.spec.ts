@@ -8,7 +8,7 @@ import { SeasonApiService } from '@app/core/api/season/season-api.service';
 import { CurrentService } from '@app/core/current/current.service';
 import { LoadingService } from '@app/core/loading/loading.service';
 import { fakeSeason } from '@app/test';
-import { SeasonPickerDrawerComponent } from '@app/feature/component/season-picker-drawer/season-picker-drawer.component';
+import { SeasonPickerDrawerComponent } from '@app/feature/drawer/season-picker-drawer/season-picker-drawer.component';
 import { SeasonPickerButtonComponent } from './season-picker-button.component';
 
 describe('SeasonPickerButtonComponent', () => {

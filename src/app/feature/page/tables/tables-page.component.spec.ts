@@ -7,7 +7,7 @@ import { SeasonApiService } from '@app/core/api/season/season-api.service';
 import { TeamSeasonStatApiService } from '@app/core/api/team-season-stat/team-season-stat-api.service';
 import { CurrentService } from '@app/core/current/current.service';
 import { RouterService } from '@app/core/router/router.service';
-import { SeasonPickerButtonComponent } from '@app/feature/component/season-picker-button/season-picker-button.component';
+import { SeasonPickerButtonComponent } from '@app/feature/drawer/season-picker-button/season-picker-button.component';
 import { fakeD11TeamSeasonStat, fakeSeason, fakeTeamSeasonStat } from '@app/test';
 import { screen, waitFor } from '@testing-library/angular';
 import userEvent from '@testing-library/user-event';

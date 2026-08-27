@@ -17,7 +17,7 @@ import { PageContextService } from '@app/core/page-context/page-context.service'
 import { RouterService } from '@app/core/router/router.service';
 import { MatchWeekD11MatchesSectionComponent } from '@app/feature/section/match-week-d11-matches-section/match-week-d11-matches-section.component';
 import { MatchWeekMatchesSectionComponent } from '@app/feature/section/match-week-matches-section/match-week-matches-section.component';
-import { MatchWeekPickerButtonComponent } from '@app/feature/component/match-week-picker-button/match-week-picker-button.component';
+import { MatchWeekPickerButtonComponent } from '@app/feature/drawer/match-week-picker-button/match-week-picker-button.component';
 import { MatchWeekScrollPickerComponent } from '@app/feature/component/match-week-scroll-picker/match-week-scroll-picker.component';
 import { EMPTY } from 'rxjs';
 

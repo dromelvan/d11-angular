@@ -17,6 +17,7 @@ import { TransferDayTransferListingsAccordionComponent } from './transfer-day-tr
 
 const fakeListing = (overrides: Partial<TransferListing> = {}): TransferListing => ({
   ...fakeTransferListing(),
+  points: 0,
   goals: 0,
   goalAssists: 0,
   ownGoals: 0,
@@ -26,8 +27,10 @@ const fakeListing = (overrides: Partial<TransferListing> = {}): TransferListing 
   redCards: 0,
   manOfTheMatch: 0,
   sharedManOfTheMatch: 0,
+  gamesStarted: 0,
   gamesSubstitute: 0,
   gamesDidNotParticipate: 0,
+  minutesPlayed: 0,
   rating: 0,
   team: { ...fakeTeamBase(), dummy: false },
   d11Team: { ...fakeD11TeamBase(), dummy: false },

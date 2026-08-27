@@ -13,7 +13,7 @@ import { Season } from '@app/core/api';
 import { SeasonApiService } from '@app/core/api/season/season-api.service';
 import { CurrentService } from '@app/core/current/current.service';
 import { LoadingService } from '@app/core/loading/loading.service';
-import { SeasonPickerDrawerComponent } from '@app/feature/component/season-picker-drawer/season-picker-drawer.component';
+import { SeasonPickerDrawerComponent } from '@app/feature/drawer/season-picker-drawer/season-picker-drawer.component';
 import { IconComponent } from '@app/shared/icon/icon.component';
 
 @Component({

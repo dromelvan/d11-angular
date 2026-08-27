@@ -17,7 +17,7 @@ import { TransferWindowApiService } from '@app/core/api/transfer-window/transfer
 import { CurrentService } from '@app/core/current/current.service';
 import { LoadingService } from '@app/core/loading/loading.service';
 import { IconComponent } from '@app/shared/icon/icon.component';
-import { TransferWindowPickerDrawerComponent } from '@app/feature/component/transfer-window-picker-drawer/transfer-window-picker-drawer.component';
+import { TransferWindowPickerDrawerComponent } from '@app/feature/drawer/transfer-window-picker-drawer/transfer-window-picker-drawer.component';
 
 @Component({
   selector: 'app-transfer-window-picker-button',

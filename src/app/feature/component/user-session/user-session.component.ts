@@ -3,7 +3,7 @@ import { UserActionService } from '@app/core/auth/user-action.service';
 import { UserSessionService } from '@app/core/auth/user-session.service';
 import { RouterService } from '@app/core/router/router.service';
 import { AvatarComponent } from '@app/shared/avatar/avatar.component';
-import { UserActionDrawerComponent } from '@app/feature/component/user-action-drawer/user-action-drawer.component';
+import { UserActionDrawerComponent } from '@app/feature/drawer/user-action-drawer/user-action-drawer.component';
 import { SvgIconComponent } from '@app/shared/svg-icon/svg-icon.component';
 
 @Component({
