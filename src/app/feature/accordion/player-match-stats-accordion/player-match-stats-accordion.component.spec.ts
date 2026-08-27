@@ -153,6 +153,9 @@ describe('PlayerMatchStatsAccordionComponent', () => {
         ...fakePlayerMatchStat(),
         lineup: Lineup.SUBSTITUTE,
         substitutionOnTime: 62,
+        substitutionOffTime: 0,
+        yellowCardTime: 0,
+        redCardTime: 0,
         manOfTheMatch: false,
         sharedManOfTheMatch: false,
       };

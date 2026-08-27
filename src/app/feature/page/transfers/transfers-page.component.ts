@@ -15,7 +15,7 @@ import { CurrentService } from '@app/core/current/current.service';
 import { PageContextService } from '@app/core/page-context/page-context.service';
 import { RouterService } from '@app/core/router/router.service';
 import { TransferWindowPickerButtonComponent } from '@app/feature/drawer/transfer-window-picker-button/transfer-window-picker-button.component';
-import { TransferWindowScrollPickerComponent } from '@app/feature/component/transfer-window-scroll-picker/transfer-window-scroll-picker.component';
+import { TransferWindowScrollPickerComponent } from '@app/feature/scroll-picker/transfer-window-scroll-picker/transfer-window-scroll-picker.component';
 import { DeadlinesSectionComponent } from '@app/feature/section/deadlines-section/deadlines-section.component';
 import { PositionCountSectionComponent } from '@app/feature/section/position-count-section/position-count-section.component';
 import { TransferDayTransferListingsSectionComponent } from '@app/feature/section/transfer-day-transfer-listings-section/transfer-day-transfer-listings-section.component';

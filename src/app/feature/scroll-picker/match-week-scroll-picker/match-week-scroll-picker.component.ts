@@ -13,8 +13,8 @@ import { MatchWeek } from '@app/core/api';
 import { MatchWeekApiService } from '@app/core/api/match-week/match-week-api.service';
 import { CurrentService } from '@app/core/current/current.service';
 import { LoadingService } from '@app/core/loading/loading.service';
-import { ScrollPickerComponent } from '@app/shared/scroll-picker/scroll-picker.component';
-import { ScrollPickerItem } from '@app/shared/scroll-picker/scroll-picker-item.model';
+import { ScrollPickerComponent } from '@app/feature/scroll-picker/scroll-picker/scroll-picker.component';
+import { ScrollPickerItem } from '@app/feature/scroll-picker/scroll-picker/scroll-picker-item.model';
 
 @Component({
   selector: 'app-match-week-scroll-picker',

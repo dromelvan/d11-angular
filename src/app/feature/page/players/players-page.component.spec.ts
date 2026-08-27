@@ -15,7 +15,7 @@ import { CurrentService } from '@app/core/current/current.service';
 import { PageContextService } from '@app/core/page-context/page-context.service';
 import { RouterService } from '@app/core/router/router.service';
 import { SeasonPickerButtonComponent } from '@app/feature/drawer/season-picker-button/season-picker-button.component';
-import { SeasonScrollPickerComponent } from '@app/feature/component/season-scroll-picker/season-scroll-picker.component';
+import { SeasonScrollPickerComponent } from '@app/feature/scroll-picker/season-scroll-picker/season-scroll-picker.component';
 import { fakeSeason } from '@app/test';
 import { PlayersPageComponent } from './players-page.component';
 
