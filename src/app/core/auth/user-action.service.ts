@@ -9,6 +9,7 @@ import { UserSessionService } from './user-session.service';
 export class UserActionService {
   readonly drawerVisible = signal(false);
   readonly isAdministrator = computed(() => this.userSession.user()?.administrator ?? false);
+  readonly loggedIn = computed(() => this.userSession.loggedIn());
 
   private userSession = inject(UserSessionService);
   private logoutTrigger = signal(0);

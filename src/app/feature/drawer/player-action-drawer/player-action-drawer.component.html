@@ -18,21 +18,78 @@
   <ng-template #header>
     <div class="grid grid-cols-[1fr_auto_1fr] items-center w-full">
       <span></span>
-      <span class="font-semibold">{{ playerActionService.player()?.name }}</span>
-      <a class="text-sm justify-self-end cursor-pointer" (click)="playerActionService.close()"
+      <span class="app-text-primary">{{ playerActionService.player()?.name }}</span>
+      <a class="app-text-base justify-self-end cursor-pointer" (click)="playerActionService.close()"
         >Done</a
       >
     </div>
   </ng-template>
 
-  @if (playerActionService.isAdministrator()) {
-    <button
-      type="button"
-      class="flex items-center gap-3 w-full cursor-pointer"
-      (click)="onEditPlayer()"
-    >
-      <app-icon name="edit" />
-      <span>Edit player</span>
-    </button>
-  }
+  <div class="app-col-2 app-text-base">
+    @if (playerActionService.isAdministrator()) {
+      <button
+        type="button"
+        class="flex items-center gap-3 w-full cursor-pointer"
+        (click)="onEditPlayer()"
+      >
+        <app-icon name="edit" />
+        <span>Edit player</span>
+      </button>
+    }
+
+    @if (playerActionService.loggedIn()) {
+      <button
+        type="button"
+        class="flex items-center gap-3 w-full cursor-pointer"
+        (click)="onAddToShortlist()"
+      >
+        <app-icon name="star" />
+        <span>Add to shortlist</span>
+      </button>
+    }
+
+    @if (rxPlayerTransferContext.value()?.transferListable) {
+      <button
+        type="button"
+        class="flex items-center gap-3 w-full cursor-pointer"
+        (click)="onAddToTransferList()"
+      >
+        <app-icon name="playlist_add" />
+        <span>Add to transfer list</span>
+      </button>
+    }
+
+    @if (rxPlayerTransferContext.value()?.deletableTransferListingId != null) {
+      <button
+        type="button"
+        class="flex items-center gap-3 w-full cursor-pointer"
+        (click)="onRemoveFromTransferList()"
+      >
+        <app-icon name="playlist_remove" />
+        <span>Remove from transfer list</span>
+      </button>
+    }
+
+    @if ((rxPlayerTransferContext.value()?.maxBid ?? 0) > 0) {
+      <button
+        type="button"
+        class="flex items-center gap-3 w-full cursor-pointer"
+        (click)="onMakeTransferBid()"
+      >
+        <app-icon name="gavel" />
+        <span>Make transfer bid</span>
+      </button>
+    }
+
+    @if (rxPlayerTransferContext.value()?.activeTransferBid != null) {
+      <button
+        type="button"
+        class="flex items-center gap-3 w-full cursor-pointer"
+        (click)="onRemoveTransferBid()"
+      >
+        <app-icon name="cancel" />
+        <span>Remove transfer bid</span>
+      </button>
+    }
+  </div>
 </p-drawer>

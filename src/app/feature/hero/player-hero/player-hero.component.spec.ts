@@ -1,13 +1,39 @@
+import { signal } from '@angular/core';
 import { render, screen } from '@testing-library/angular';
+import userEvent from '@testing-library/user-event';
 import {
   fakePlayer,
   fakePlayerSeasonStat,
   fakeTeamBase,
   fakeD11TeamBase,
 } from '@app/test/faker-util';
+import { PlayerActionService } from '@app/core/auth/player-action.service';
 import { PlayerHeroComponent } from './player-hero.component';
 
 describe('PlayerHeroComponent', () => {
+  describe('more button', () => {
+    it('opens player action drawer when clicked', async () => {
+      const player = fakePlayer();
+      const mockPlayerActionService = {
+        drawerVisible: signal(false),
+        player: signal(undefined),
+        isAdministrator: signal(false),
+        loggedIn: signal(false),
+        open: vi.fn(),
+        close: vi.fn(),
+      };
+
+      await render(PlayerHeroComponent, {
+        inputs: { player },
+        providers: [{ provide: PlayerActionService, useValue: mockPlayerActionService }],
+      });
+
+      await userEvent.click(screen.getByRole('button'));
+
+      expect(mockPlayerActionService.open).toHaveBeenCalledWith(player);
+    });
+  });
+
   it('renders country name', async () => {
     const player = fakePlayer();
 

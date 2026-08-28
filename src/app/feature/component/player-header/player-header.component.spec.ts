@@ -21,6 +21,7 @@ function buildProviders(transferContext: PlayerTransferContext, isAdministrator 
     drawerVisible: signal(false),
     player: signal<Player | undefined>(undefined),
     isAdministrator: signal(false),
+    loggedIn: signal(false),
     open: vi.fn(),
     close: vi.fn(),
   };

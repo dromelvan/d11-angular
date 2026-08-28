@@ -10,6 +10,7 @@ export class PlayerActionService {
   readonly player = signal<Player | undefined>(undefined);
   readonly transferContext = signal<PlayerTransferContext | undefined>(undefined);
   readonly isAdministrator = computed(() => this.userActionService.isAdministrator());
+  readonly loggedIn = computed(() => this.userActionService.loggedIn());
 
   private userActionService = inject(UserActionService);
 
