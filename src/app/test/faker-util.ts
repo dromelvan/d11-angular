@@ -89,6 +89,8 @@ export const fakeTeamBase = (): TeamBase => ({
 
 export const fakeTeam = (): Team => ({
   ...fakeTeamBase(),
+  established: faker.number.int({ min: 1880, max: 1990 }),
+  url: faker.internet.url(),
   stadium: fakeStadium(),
 });
 

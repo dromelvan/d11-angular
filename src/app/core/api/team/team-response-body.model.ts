@@ -1,6 +1,6 @@
-import { Stadium, TeamBase } from '@app/core/api';
+import { Stadium, Team } from '@app/core/api';
 
 export interface TeamResponseBody {
-  team: TeamBase;
+  team: Omit<Team, 'stadium'>;
   stadium: Stadium;
 }

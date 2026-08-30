@@ -1,0 +1,23 @@
+<div class="pb-6">
+  <div class="app-hero pb-2">
+    <div class="app-row-4 items-start">
+      <app-team-img class="sm:px-8" [team]="team()" width="96" />
+
+      <div class="flex flex-col gap-2 sm:flex-row sm:gap-8 app-text-base">
+        <div>
+          <div class="app-text-detail hidden sm:block sm:mb-1.25">Info</div>
+          <div data-testid="established">Established: {{ team().established }}</div>
+          <a [href]="team().url" target="_blank" rel="noopener noreferrer" data-testid="url">{{
+            team().url
+          }}</a>
+        </div>
+        <div>
+          <div class="app-text-detail hidden sm:block sm:mb-1.25">Stadium</div>
+          <div data-testid="stadium-name">{{ team().stadium.name }}</div>
+          <div data-testid="stadium-city">{{ team().stadium.city }}</div>
+          <div>Capacity: {{ team().stadium.capacity | number }}</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
