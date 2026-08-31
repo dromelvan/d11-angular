@@ -33,7 +33,7 @@ describe('MatchWeekScrollPickerComponent', () => {
     HTMLElement.prototype.scrollIntoView = vi.fn();
 
     matchWeek = fakeMatchWeek();
-    currentMatchWeek = fakeMatchWeek();
+    currentMatchWeek = { ...fakeMatchWeek(), id: matchWeek.id + 100 };
 
     matchWeekApi = {
       getMatchWeeksBySeasonId: vi.fn().mockReturnValue(of([matchWeek, currentMatchWeek])),

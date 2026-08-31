@@ -5,6 +5,7 @@ import {
   fakeMatchBase,
   fakePlayerSeasonStat,
   fakeStadium,
+  fakeTeam,
   fakeTeamBase,
   fakeTeamSeasonStat,
   GetFn,
@@ -78,7 +79,7 @@ describe('TeamApiService', () => {
   describe('getById', () => {
     const teamId = 7;
     const stadium = fakeStadium();
-    const team = fakeTeamBase();
+    const team = fakeTeam();
     const response: TeamResponseBody = { team, stadium };
 
     it('calls get with namespace and id', async () => {
