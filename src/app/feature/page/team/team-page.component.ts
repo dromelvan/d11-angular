@@ -16,16 +16,19 @@ import {
   Team,
   TeamSeasonStat,
 } from '@app/core/api';
+import { PRIMARY } from '@app/app.theme';
 import { TeamSeasonStatApiService } from '@app/core/api/team-season-stat/team-season-stat-api.service';
 import { TeamApiService } from '@app/core/api/team/team-api.service';
-import { LoadingService } from '@app/core/loading/loading.service';
+import { PageContextService } from '@app/core/page-context/page-context.service';
 import { RouterService } from '@app/core/router/router.service';
 import { of } from 'rxjs';
 import { Tab, TabList, TabPanel, TabPanels, Tabs } from 'primeng/tabs';
-import { TeamHeaderCardComponent } from '@app/feature/card/team-header-card/team-header-card.component';
-import { TeamMatchesComponent } from '@app/feature/component/team-matches/team-matches.component';
-import { TeamPlayerSeasonStatsComponent } from '@app/feature/component/team-player-season-stats/team-player-season-stats.component';
-import { TeamSeasonHistoryComponent } from '@app/feature/component/team-season-history/team-season-history.component';
+import { HeroContainerComponent } from '@app/feature/hero/hero-container/hero-container.component';
+import { TeamHeroComponent } from '@app/feature/hero/team-hero/team-hero.component';
+import { TeamHistoryStatsSectionComponent } from '@app/feature/section/team-history-stats-section/team-history-stats-section.component';
+import { TeamPlayerSeasonStatsSectionComponent } from '@app/feature/section/team-player-season-stats-section/team-player-season-stats-section.component';
+import { TeamSeasonMatchesSectionComponent } from '@app/feature/section/team-season-matches-section/team-season-matches-section.component';
+import { TeamSeasonStatSectionComponent } from '@app/feature/section/team-season-stat-section/team-season-stat-section.component';
 
 @Component({
   selector: 'app-team-page',
@@ -35,10 +38,12 @@ import { TeamSeasonHistoryComponent } from '@app/feature/component/team-season-h
     TabPanel,
     TabList,
     Tab,
-    TeamHeaderCardComponent,
-    TeamMatchesComponent,
-    TeamPlayerSeasonStatsComponent,
-    TeamSeasonHistoryComponent,
+    HeroContainerComponent,
+    TeamHeroComponent,
+    TeamSeasonStatSectionComponent,
+    TeamPlayerSeasonStatsSectionComponent,
+    TeamSeasonMatchesSectionComponent,
+    TeamHistoryStatsSectionComponent,
   ],
   templateUrl: './team-page.component.html',
 })
@@ -111,24 +116,24 @@ export class TeamPageComponent {
     };
   });
 
-  protected isLoading = computed(
-    () =>
-      this.rxTeam.isLoading() ||
-      this.rxSeasons.isLoading() ||
-      this.rxMatches.isLoading() ||
-      this.rxPlayerSeasonStats.isLoading(),
-  );
-
   protected activeTab = '0';
 
   private seasonApiService = inject(SeasonApiService);
   private teamApiService = inject(TeamApiService);
   private teamSeasonStatApiService = inject(TeamSeasonStatApiService);
   private routerService = inject(RouterService);
-  private loadingService = inject(LoadingService);
+  private pageContextService = inject(PageContextService);
 
   constructor() {
-    this.loadingService.register(inject(DestroyRef), this.isLoading);
+    const destroyRef = inject(DestroyRef);
+    this.pageContextService.register(destroyRef, {
+      title: computed(() => this.model().team?.name),
+      subtitle: computed(() => {
+        const name = this.model().season?.name;
+        return name !== undefined ? `Season ${name}` : undefined;
+      }),
+      backgroundColor: computed(() => this.model().team?.colour ?? PRIMARY),
+    });
     effect(() => {
       this.teamId();
       this.seasonId();

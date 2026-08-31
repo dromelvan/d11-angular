@@ -1,39 +1,39 @@
-@if (!isLoading()) {
-  @let model = this.model();
-  <div class="app-team-page app-col max-w-sm mx-auto">
-    <app-team-header-card [team]="model.team" [teamSeasonStat]="model.teamSeasonStat" />
-    <p-tabs [(value)]="activeTab">
-      <p-tablist class="justify-evenly">
-        <p-tab value="0">Matches</p-tab>
-        <p-tab value="1">Players</p-tab>
-        <p-tab value="2">History</p-tab>
-      </p-tablist>
-      <p-tabpanels>
-        <p-tabpanel value="0">
-          @defer (when activeTab === '0') {
-            <app-team-matches [matches]="model.matches" [season]="model.season" />
-          }
-        </p-tabpanel>
+<app-hero-container>
+  @if (model().team; as team) {
+    <app-team-hero heroContent [team]="team" [teamSeasonStat]="model().teamSeasonStat" />
+  }
 
-        <p-tabpanel value="1">
-          @defer (when activeTab === '1') {
-            <app-team-player-season-stats
-              [playerSeasonStats]="model.playerSeasonStats"
-              [season]="model.season"
-            />
-          }
-        </p-tabpanel>
+  @if (model().teamSeasonStat; as teamSeasonStat) {
+    <app-team-season-stat-section [teamSeasonStat]="teamSeasonStat" />
+  }
 
-        <p-tabpanel value="2">
-          @defer (when activeTab === '2') {
-            <app-team-season-history
-              [teamSeasonStats]="model.teamSeasonStats"
-              [currentSeasonId]="model.season?.id"
-              (seasonSelected)="navigateToSeason($event)"
-            />
-          }
-        </p-tabpanel>
-      </p-tabpanels>
-    </p-tabs>
-  </div>
-}
+  <p-tabs [(value)]="activeTab" class="app-pill-tabs">
+    <p-tablist class="justify-between py-4">
+      <p-tab value="0">Players</p-tab>
+      <p-tab value="1">Matches</p-tab>
+      <p-tab value="2">History</p-tab>
+    </p-tablist>
+    <p-tabpanels>
+      <p-tabpanel value="0">
+        @defer (when activeTab === '0') {
+          <app-team-player-season-stats-section
+            [teamId]="teamId()"
+            [seasonId]="model().season?.id"
+          />
+        }
+      </p-tabpanel>
+
+      <p-tabpanel value="1">
+        @defer (when activeTab === '1') {
+          <app-team-season-matches-section [teamId]="teamId()" [seasonId]="model().season?.id" />
+        }
+      </p-tabpanel>
+
+      <p-tabpanel value="2">
+        @defer (when activeTab === '2') {
+          <app-team-history-stats-section [teamId]="teamId()" />
+        }
+      </p-tabpanel>
+    </p-tabpanels>
+  </p-tabs>
+</app-hero-container>

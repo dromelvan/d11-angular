@@ -1,3 +1,4 @@
+import { signal } from '@angular/core';
 import type { Season, Team, TeamSeasonStat } from '@app/core/api';
 import { POSITION_IDS, SeasonApiService } from '@app/core/api';
 import { TeamSeasonStatApiService } from '@app/core/api/team-season-stat/team-season-stat-api.service';
@@ -10,30 +11,34 @@ import {
   fakeTeamBase,
   fakeTeamSeasonStat,
 } from '@app/test';
+import { PRIMARY } from '@app/app.theme';
+import { PageContextService } from '@app/core/page-context/page-context.service';
 import { DynamicDialogService } from '@app/shared/dialog/dynamic-dialog-service/dynamic-dialog.service';
-import { LoadingService } from '@app/core/loading/loading.service';
 import { RouterService } from '@app/core/router/router.service';
 import { DeferBlockBehavior } from '@angular/core/testing';
 import { render, screen, waitFor } from '@testing-library/angular';
 import userEvent from '@testing-library/user-event';
-import { of } from 'rxjs';
+import { NEVER, of } from 'rxjs';
 import { expect } from 'vitest';
 import { TeamPageComponent } from './team-page.component';
 
 const mockRouterService = { navigateToTeam: vi.fn() };
 const mockDynamicDialogService = { openPlayerSeasonStat: vi.fn() };
+const mockPageContextService = {
+  register: vi.fn(),
+  backgroundColor: signal<string | undefined>(undefined),
+};
 
 function buildProviders(overrides: {
   teamApi: TeamApiService;
   teamSeasonStatApi: TeamSeasonStatApiService;
   seasonApi: SeasonApiService;
-  loadingService: LoadingService;
 }) {
   return [
     { provide: TeamApiService, useValue: overrides.teamApi },
     { provide: TeamSeasonStatApiService, useValue: overrides.teamSeasonStatApi },
     { provide: SeasonApiService, useValue: overrides.seasonApi },
-    { provide: LoadingService, useValue: overrides.loadingService },
+    { provide: PageContextService, useValue: mockPageContextService },
     { provide: RouterService, useValue: mockRouterService },
     { provide: DynamicDialogService, useValue: mockDynamicDialogService },
   ];
@@ -45,7 +50,6 @@ describe('TeamPageComponent', () => {
   let teamApi: TeamApiService;
   let teamSeasonStatApi: TeamSeasonStatApiService;
   let seasonApi: SeasonApiService;
-  let loadingService: LoadingService;
 
   beforeEach(async () => {
     vi.clearAllMocks();
@@ -70,41 +74,97 @@ describe('TeamPageComponent', () => {
       getAll: vi.fn().mockReturnValue(of([season])),
     } as unknown as SeasonApiService;
 
-    loadingService = {
-      isLoading: vi.fn().mockReturnValue(false),
-      register: vi.fn(),
-    } as unknown as LoadingService;
-
     await render(TeamPageComponent, {
       inputs: { teamId: 1, seasonId: undefined },
       deferBlockBehavior: DeferBlockBehavior.Playthrough,
-      providers: buildProviders({ teamApi, teamSeasonStatApi, seasonApi, loadingService }),
+      providers: buildProviders({ teamApi, teamSeasonStatApi, seasonApi }),
     });
   });
 
   it('renders page', async () => {
     await waitFor(() => {
-      expect(document.querySelector('.app-team-page')).toBeInTheDocument();
+      expect(document.querySelector('app-hero-container')).toBeInTheDocument();
     });
   });
 
-  it('renders team name in header', async () => {
+  it('registers context with PageContextService', () => {
+    expect(mockPageContextService.register).toHaveBeenCalledOnce();
+  });
+
+  it('renders team stadium name in hero', async () => {
     await waitFor(() => {
-      expect(screen.getByText(team.name)).toBeInTheDocument();
+      expect(screen.getByTestId('stadium-name')).toHaveTextContent(team.stadium.name);
     });
   });
 
-  it('renders team stadium in header', async () => {
+  it('renders team stadium city in hero', async () => {
     await waitFor(() => {
-      expect(screen.getByText(`${team.stadium.name}, ${team.stadium.city}`)).toBeInTheDocument();
+      expect(screen.getByTestId('stadium-city')).toHaveTextContent(team.stadium.city);
     });
   });
 
   it('renders tabs', async () => {
     await waitFor(() => {
-      expect(screen.getByText('Matches')).toBeInTheDocument();
-      expect(screen.getByText('Players')).toBeInTheDocument();
-      expect(screen.getByText('History')).toBeInTheDocument();
+      expect(screen.getByRole('tab', { name: 'Matches' })).toBeInTheDocument();
+      expect(screen.getByRole('tab', { name: 'Players' })).toBeInTheDocument();
+      expect(screen.getByRole('tab', { name: 'History' })).toBeInTheDocument();
+    });
+  });
+});
+
+describe('TeamPageComponent context registration', () => {
+  let team: Team;
+  let season: Season;
+  let teamSeasonStat: TeamSeasonStat;
+
+  beforeEach(async () => {
+    vi.clearAllMocks();
+
+    team = fakeTeam();
+    team.dummy = false;
+    season = fakeSeason();
+    teamSeasonStat = fakeTeamSeasonStat();
+    teamSeasonStat.season = season;
+
+    const teamApi = {
+      getById: vi.fn().mockReturnValue(of(team)),
+      getMatchesByTeamIdAndSeasonId: vi.fn().mockReturnValue(of([])),
+      getPlayerSeasonStatsByTeamIdAndSeasonId: vi.fn().mockReturnValue(of([])),
+    } as unknown as TeamApiService;
+
+    const teamSeasonStatApi = {
+      getTeamSeasonStatsByTeamId: vi.fn().mockReturnValue(of([teamSeasonStat])),
+    } as unknown as TeamSeasonStatApiService;
+
+    const seasonApi = {
+      getAll: vi.fn().mockReturnValue(of([season])),
+    } as unknown as SeasonApiService;
+
+    await render(TeamPageComponent, {
+      inputs: { teamId: 1, seasonId: undefined },
+      deferBlockBehavior: DeferBlockBehavior.Playthrough,
+      providers: buildProviders({ teamApi, teamSeasonStatApi, seasonApi }),
+    });
+  });
+
+  it('registered title is team name', async () => {
+    const context = mockPageContextService.register.mock.calls[0][1];
+    await waitFor(() => {
+      expect(context.title()).toBe(team.name);
+    });
+  });
+
+  it('registered subtitle is Season {name}', async () => {
+    const context = mockPageContextService.register.mock.calls[0][1];
+    await waitFor(() => {
+      expect(context.subtitle()).toBe(`Season ${season.name}`);
+    });
+  });
+
+  it('registered backgroundColor is team colour', async () => {
+    const context = mockPageContextService.register.mock.calls[0][1];
+    await waitFor(() => {
+      expect(context.backgroundColor()).toBe(team.colour);
     });
   });
 });
@@ -132,11 +192,6 @@ describe('TeamPageComponent ranking and points', () => {
       getTeamSeasonStatsByTeamId: vi.fn().mockReturnValue(of([teamSeasonStat])),
     } as unknown as TeamSeasonStatApiService;
 
-    const loadingService = {
-      isLoading: vi.fn().mockReturnValue(false),
-      register: vi.fn(),
-    } as unknown as LoadingService;
-
     const seasonApi = {
       getAll: vi.fn().mockReturnValue(of([season])),
     } as unknown as SeasonApiService;
@@ -144,7 +199,7 @@ describe('TeamPageComponent ranking and points', () => {
     await render(TeamPageComponent, {
       inputs: { teamId: 1, seasonId: undefined },
       deferBlockBehavior: DeferBlockBehavior.Playthrough,
-      providers: buildProviders({ teamApi, teamSeasonStatApi, seasonApi, loadingService }),
+      providers: buildProviders({ teamApi, teamSeasonStatApi, seasonApi }),
     });
   });
 
@@ -158,6 +213,36 @@ describe('TeamPageComponent ranking and points', () => {
     await waitFor(() => {
       expect(screen.getByTestId('points')).toHaveTextContent(String(teamSeasonStat.points));
     });
+  });
+});
+
+describe('TeamPageComponent when loading', () => {
+  it('does not render app-team-hero', async () => {
+    vi.clearAllMocks();
+
+    const season = fakeSeason();
+
+    const teamApi = {
+      getById: vi.fn().mockReturnValue(NEVER),
+      getMatchesByTeamIdAndSeasonId: vi.fn().mockReturnValue(of([])),
+      getPlayerSeasonStatsByTeamIdAndSeasonId: vi.fn().mockReturnValue(of([])),
+    } as unknown as TeamApiService;
+
+    const teamSeasonStatApi = {
+      getTeamSeasonStatsByTeamId: vi.fn().mockReturnValue(of([])),
+    } as unknown as TeamSeasonStatApiService;
+
+    const seasonApi = {
+      getAll: vi.fn().mockReturnValue(of([season])),
+    } as unknown as SeasonApiService;
+
+    await render(TeamPageComponent, {
+      inputs: { teamId: 1, seasonId: undefined },
+      deferBlockBehavior: DeferBlockBehavior.Playthrough,
+      providers: buildProviders({ teamApi, teamSeasonStatApi, seasonApi }),
+    });
+
+    expect(document.querySelector('app-team-hero')).toBeNull();
   });
 });
 
@@ -186,22 +271,22 @@ describe('TeamPageComponent matches tab', () => {
       getAll: vi.fn().mockReturnValue(of([season])),
     } as unknown as SeasonApiService;
 
-    const loadingService = {
-      isLoading: vi.fn().mockReturnValue(false),
-      register: vi.fn(),
-    } as unknown as LoadingService;
-
     await render(TeamPageComponent, {
       inputs: { teamId: 1, seasonId: undefined },
       deferBlockBehavior: DeferBlockBehavior.Playthrough,
-      providers: buildProviders({ teamApi, teamSeasonStatApi, seasonApi, loadingService }),
+      providers: buildProviders({ teamApi, teamSeasonStatApi, seasonApi }),
     });
   });
 
-  it('renders home and away team names in the default Matches tab', async () => {
+  it('renders home and away team names in the Matches tab', async () => {
+    const user = userEvent.setup();
+
+    await waitFor(() => expect(screen.getByRole('tab', { name: 'Matches' })).toBeInTheDocument());
+    await user.click(screen.getByRole('tab', { name: 'Matches' }));
+
     await waitFor(() => {
-      expect(screen.getByText('Team1')).toBeInTheDocument();
-      expect(screen.getByText('Team2')).toBeInTheDocument();
+      expect(screen.getAllByText('Team1').length).toBeGreaterThan(0);
+      expect(screen.getAllByText('Team2').length).toBeGreaterThan(0);
     });
   });
 });
@@ -231,23 +316,18 @@ describe('TeamPageComponent history navigation', () => {
       getTeamSeasonStatsByTeamId: vi.fn().mockReturnValue(of([teamSeasonStat])),
     } as unknown as TeamSeasonStatApiService;
 
-    const loadingService = {
-      isLoading: vi.fn().mockReturnValue(false),
-      register: vi.fn(),
-    } as unknown as LoadingService;
-
     await render(TeamPageComponent, {
       inputs: { teamId: 1, seasonId: undefined },
       deferBlockBehavior: DeferBlockBehavior.Playthrough,
-      providers: buildProviders({ teamApi, teamSeasonStatApi, seasonApi, loadingService }),
+      providers: buildProviders({ teamApi, teamSeasonStatApi, seasonApi }),
     });
   });
 
   it('navigates to team when season row is clicked', async () => {
     const user = userEvent.setup();
 
-    await waitFor(() => expect(screen.getByText('History')).toBeInTheDocument());
-    await user.click(screen.getByText('History'));
+    await waitFor(() => expect(screen.getByRole('tab', { name: 'History' })).toBeInTheDocument());
+    await user.click(screen.getByRole('tab', { name: 'History' }));
 
     await waitFor(() => {
       expect(screen.getByTestId('season')).toBeInTheDocument();
@@ -287,19 +367,14 @@ describe('TeamPageComponent players tab', () => {
       getAll: vi.fn().mockReturnValue(of([season])),
     } as unknown as SeasonApiService;
 
-    const loadingService = {
-      isLoading: vi.fn().mockReturnValue(false),
-      register: vi.fn(),
-    } as unknown as LoadingService;
-
     await render(TeamPageComponent, {
       inputs: { teamId: 1, seasonId: undefined },
       deferBlockBehavior: DeferBlockBehavior.Playthrough,
-      providers: buildProviders({ teamApi, teamSeasonStatApi, seasonApi, loadingService }),
+      providers: buildProviders({ teamApi, teamSeasonStatApi, seasonApi }),
     });
 
-    await waitFor(() => expect(screen.getByText('Players')).toBeInTheDocument());
-    await user.click(screen.getByText('Players'));
+    await waitFor(() => expect(screen.getByRole('tab', { name: 'Players' })).toBeInTheDocument());
+    await user.click(screen.getByRole('tab', { name: 'Players' }));
 
     await waitFor(() => {
       expect(screen.getByText(playerSeasonStat.player.name)).toBeInTheDocument();
@@ -330,31 +405,24 @@ describe('TeamPageComponent seasonId input', () => {
       getAll: vi.fn().mockReturnValue(of([season1, season2])),
     } as unknown as SeasonApiService;
 
-    const loadingService = {
-      isLoading: vi.fn().mockReturnValue(false),
-      register: vi.fn(),
-    } as unknown as LoadingService;
-
     await render(TeamPageComponent, {
       inputs: { teamId: 1, seasonId: season2.id },
       deferBlockBehavior: DeferBlockBehavior.Playthrough,
-      providers: buildProviders({ teamApi, teamSeasonStatApi, seasonApi, loadingService }),
+      providers: buildProviders({ teamApi, teamSeasonStatApi, seasonApi }),
     });
 
     await waitFor(() => {
-      expect(screen.getByText(`Matches ${season2.name}`)).toBeInTheDocument();
+      expect(teamApi.getMatchesByTeamIdAndSeasonId).toHaveBeenCalledWith(1, season2.id);
     });
   });
-});
 
-describe('TeamPageComponent when loading', () => {
-  beforeEach(async () => {
+  it('registered backgroundColor is PRIMARY when team is not loaded', async () => {
     vi.clearAllMocks();
 
     const season = fakeSeason();
 
     const teamApi = {
-      getById: vi.fn().mockReturnValue(of(fakeTeam())),
+      getById: vi.fn().mockReturnValue(NEVER),
       getMatchesByTeamIdAndSeasonId: vi.fn().mockReturnValue(of([])),
       getPlayerSeasonStatsByTeamIdAndSeasonId: vi.fn().mockReturnValue(of([])),
     } as unknown as TeamApiService;
@@ -367,19 +435,13 @@ describe('TeamPageComponent when loading', () => {
       getAll: vi.fn().mockReturnValue(of([season])),
     } as unknown as SeasonApiService;
 
-    const loadingService = {
-      isLoading: vi.fn().mockReturnValue(true),
-      register: vi.fn(),
-    } as unknown as LoadingService;
-
     await render(TeamPageComponent, {
       inputs: { teamId: 1, seasonId: undefined },
       deferBlockBehavior: DeferBlockBehavior.Playthrough,
-      providers: buildProviders({ teamApi, teamSeasonStatApi, seasonApi, loadingService }),
+      providers: buildProviders({ teamApi, teamSeasonStatApi, seasonApi }),
     });
-  });
 
-  it('does not render page', () => {
-    expect(document.querySelector('.app-team-page')).not.toBeInTheDocument();
+    const context = mockPageContextService.register.mock.calls[0][1];
+    expect(context.backgroundColor()).toBe(PRIMARY);
   });
 });
