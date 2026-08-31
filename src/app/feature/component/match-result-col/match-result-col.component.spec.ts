@@ -10,12 +10,19 @@ const mockRouterService = { navigateToMatch: vi.fn() };
 describe('MatchResultColComponent', () => {
   let fixture: ComponentFixture<MatchResultColComponent>;
 
-  async function setup(matchInput = fakeMatchBase(), showDate = false) {
+  async function setup(matchInput = fakeMatchBase(), showDate = false, teamId?: number) {
     fixture = TestBed.createComponent(MatchResultColComponent);
     fixture.componentRef.setInput('match', matchInput);
     fixture.componentRef.setInput('showDate', showDate);
+    if (teamId !== undefined) fixture.componentRef.setInput('teamId', teamId);
     fixture.detectChanges();
     await fixture.whenStable();
+  }
+
+  function spanWithText(text: string): HTMLElement | undefined {
+    return Array.from<HTMLElement>(fixture.nativeElement.querySelectorAll('span')).find(
+      (span) => span.textContent?.trim() === text,
+    );
   }
 
   beforeEach(async () => {
@@ -61,6 +68,51 @@ describe('MatchResultColComponent', () => {
       await setup({ ...fakeMatchBase(), awayTeam });
 
       expect(fixture.nativeElement.textContent).toContain('Team2');
+    });
+  });
+
+  // Highlighted team -----------------------------------------------------------------------------
+
+  describe('highlighted team', () => {
+    it('applies app-text-primary to home team name when teamId matches home team', async () => {
+      const homeTeam = { ...fakeTeamBase(), id: 1, name: 'Team1' };
+      const awayTeam = { ...fakeTeamBase(), id: 2, name: 'Team2' };
+      await setup({ ...fakeMatchBase(), homeTeam, awayTeam }, false, homeTeam.id);
+
+      expect(spanWithText('Team1')?.classList).toContain('app-text-primary');
+    });
+
+    it('does not apply app-text-primary to away team name when teamId matches home team', async () => {
+      const homeTeam = { ...fakeTeamBase(), id: 1, name: 'Team1' };
+      const awayTeam = { ...fakeTeamBase(), id: 2, name: 'Team2' };
+      await setup({ ...fakeMatchBase(), homeTeam, awayTeam }, false, homeTeam.id);
+
+      expect(spanWithText('Team2')?.classList).not.toContain('app-text-primary');
+    });
+
+    it('applies app-text-primary to away team name when teamId matches away team', async () => {
+      const homeTeam = { ...fakeTeamBase(), id: 1, name: 'Team1' };
+      const awayTeam = { ...fakeTeamBase(), id: 2, name: 'Team2' };
+      await setup({ ...fakeMatchBase(), homeTeam, awayTeam }, false, awayTeam.id);
+
+      expect(spanWithText('Team2')?.classList).toContain('app-text-primary');
+    });
+
+    it('does not apply app-text-primary to home team name when teamId matches away team', async () => {
+      const homeTeam = { ...fakeTeamBase(), id: 1, name: 'Team1' };
+      const awayTeam = { ...fakeTeamBase(), id: 2, name: 'Team2' };
+      await setup({ ...fakeMatchBase(), homeTeam, awayTeam }, false, awayTeam.id);
+
+      expect(spanWithText('Team1')?.classList).not.toContain('app-text-primary');
+    });
+
+    it('does not apply app-text-primary to either team name when teamId is not provided', async () => {
+      const homeTeam = { ...fakeTeamBase(), id: 1, name: 'Team1' };
+      const awayTeam = { ...fakeTeamBase(), id: 2, name: 'Team2' };
+      await setup({ ...fakeMatchBase(), homeTeam, awayTeam });
+
+      expect(spanWithText('Team1')?.classList).not.toContain('app-text-primary');
+      expect(spanWithText('Team2')?.classList).not.toContain('app-text-primary');
     });
   });
 

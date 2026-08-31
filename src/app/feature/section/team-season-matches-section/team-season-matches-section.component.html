@@ -1,0 +1,27 @@
+<app-section>
+  <span sectionHeader>Matches</span>
+
+  @if (isLoading()) {
+    <div class="flex justify-center py-8">
+      <p-progress-spinner />
+    </div>
+  } @else if (matches().length > 0) {
+    <div class="grid grid-cols-[auto_1fr_auto_auto] gap-x-2">
+      @for (match of matches(); track match.id; let first = $first; let last = $last) {
+        <app-match-result-col
+          [match]="match"
+          [isLast]="last"
+          [showDate]="true"
+          [teamId]="teamId()"
+          [class.pt-2]="!first"
+          [class.pb-2]="!last"
+        />
+        @if (!last) {
+          <div class="app-separator col-span-4"></div>
+        }
+      }
+    </div>
+  } @else {
+    <div class="app-text-low-emphasis">No matches found</div>
+  }
+</app-section>

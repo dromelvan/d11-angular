@@ -19,12 +19,14 @@ export class MatchResultColComponent {
   match = input.required<MatchBase>();
   isLast = input<boolean>(false);
   showDate = input<boolean>(false);
+  teamId = input<number | undefined>(undefined);
 
   protected readonly Status = Status;
 
   protected model = computed(() => {
     const match = this.match();
     const showDate = this.showDate();
+    const teamId = this.teamId();
     const homeDiff = match.homeTeamGoalsScored - match.previousHomeTeamGoalsScored;
     const awayDiff = match.awayTeamGoalsScored - match.previousAwayTeamGoalsScored;
     const kickoff = new Date(match.datetime);
@@ -36,6 +38,8 @@ export class MatchResultColComponent {
       awayDiff,
       showElapsed: [Status.ACTIVE, Status.FULL_TIME, Status.FINISHED].includes(match.status),
       showGoals: match.status !== Status.PENDING && match.status !== Status.POSTPONED,
+      isHomeTeam: teamId === match.homeTeam.id,
+      isAwayTeam: teamId === match.awayTeam.id,
     };
   });
 

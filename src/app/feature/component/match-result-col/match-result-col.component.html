@@ -24,7 +24,7 @@
 </div>
 <div class="app-row items-center gap-1.5 pb-0.5">
   <app-team-img [team]="m.match.homeTeam" width="20" />
-  <span>{{ m.match.homeTeam.name }}</span>
+  <span [class.app-text-primary]="m.isHomeTeam">{{ m.match.homeTeam.name }}</span>
 </div>
 <div class="app-row app-text-detail items-center justify-end">
   @if (m.showGoals && m.homeDiff !== 0) {
@@ -45,7 +45,7 @@
 </div>
 <div class="app-row items-center gap-1.5">
   <app-team-img [team]="m.match.awayTeam" width="20" />
-  <span>{{ m.match.awayTeam.name }}</span>
+  <span [class.app-text-primary]="m.isAwayTeam">{{ m.match.awayTeam.name }}</span>
 </div>
 <div class="app-row app-text-detail items-center justify-end">
   @if (m.showGoals && m.awayDiff !== 0) {
