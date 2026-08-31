@@ -57,11 +57,32 @@ export const D11Light = definePreset(Aura, {
       },
     },
     tabs: {
+      tablist: {
+        borderWidth: '0',
+        background: '{surface.50}',
+      },
       tab: {
-        padding: '.5rem',
+        background: '{surface.0}',
+        hoverBackground: '{surface.0}',
+        activeBackground: '{primary.color}',
+        borderWidth: '1px',
+        borderColor: '{surface.300}',
+        hoverBorderColor: '{surface.300}',
+        activeBorderColor: '{primary.color}',
+        color: '{text.color}',
+        hoverColor: '{text.color}',
+        activeColor: '#ffffff',
+        padding: '0.375rem 1.25rem',
+        fontWeight: '500',
+        margin: '0',
       },
       tabpanel: {
-        padding: '1rem 0rem',
+        background: '{surface.50}',
+        padding: '0',
+      },
+      activeBar: {
+        height: '0',
+        background: 'transparent',
       },
     },
     paginator: {

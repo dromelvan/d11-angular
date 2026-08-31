@@ -191,7 +191,7 @@
 
     /** PrimeNG styling that can't be done in theme **/
     .p-accordionheader .p-icon {
-        display: none !important;
+        @apply hidden!;
     }
 
     .p-accordioncontent {
@@ -199,25 +199,42 @@
     }
 
     .p-accordioncontent-wrapper {
-        overflow: hidden;
+        @apply overflow-hidden;
     }
 
     .p-drawer-mask.p-overlay-mask {
-        transition: opacity 0.5s cubic-bezier(0.32, 0.72, 0, 1);
+        @apply transition-opacity duration-500 ease-[cubic-bezier(0.32,0.72,0,1)];
     }
 
     body:not(:has(.p-drawer-open)) .p-drawer-mask.p-overlay-mask {
-        opacity: 0;
+        @apply opacity-0;
     }
 
     .p-progressspinner {
-        width: 4rem !important;
-        height: 4rem !important;
+        @apply size-16!;
     }
 
     .p-progressspinner-circle {
-        stroke: var(--p-primary-color) !important;
+        @apply stroke-(--p-primary-color)!;
         animation: p-progressspinner-dash 1.5s ease-in-out infinite !important;
+    }
+
+    .p-tabpanel .app-section-header {
+        @apply hidden;
+    }
+
+    .app-pill-tabs {
+        .p-tablist {
+            @apply py-1;
+        }
+
+        .p-tablist-tab-list {
+            @apply border-b-0! pb-[2px] justify-center gap-4;
+        }
+
+        .p-tab {
+            @apply rounded-full! text-sm;
+        }
     }
 }
 
