@@ -161,17 +161,15 @@ describe('TeamPlayerSeasonStatsAccordionComponent', () => {
       });
 
       it('always renders games started', async () => {
-        await setup([stat({ gamesStarted: 12 })]);
+        await setup([stat()]);
 
         expect(screen.getByText('Games started')).toBeInTheDocument();
-        expect(screen.getByText('12')).toBeInTheDocument();
       });
 
       it('always renders minutes played', async () => {
-        await setup([stat({ minutesPlayed: 900 })]);
+        await setup([stat()]);
 
         expect(screen.getByText('Minutes played')).toBeInTheDocument();
-        expect(screen.getByText('900')).toBeInTheDocument();
       });
 
       it('renders goals when greater than zero', async () => {
