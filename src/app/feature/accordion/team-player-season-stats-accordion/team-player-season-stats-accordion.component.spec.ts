@@ -34,6 +34,16 @@ const providers = [
   { provide: RouterService, useValue: mockRouterService },
 ];
 
+async function setup(stats = [stat()]) {
+  mockTeamApiService.getPlayerSeasonStatsByTeamIdAndSeasonId.mockReturnValue(of(stats));
+  const { container } = await render(TeamPlayerSeasonStatsAccordionComponent, {
+    inputs: { teamId: 1, seasonId: 10 },
+    providers,
+  });
+  TestBed.tick();
+  return { container };
+}
+
 describe('TeamPlayerSeasonStatsAccordionComponent', () => {
   beforeEach(() => {
     vi.clearAllMocks();
@@ -80,138 +90,175 @@ describe('TeamPlayerSeasonStatsAccordionComponent', () => {
   });
 
   describe('loaded state', () => {
-    it('renders player names', async () => {
-      const stat1 = stat();
-      const stat2 = stat();
-      mockTeamApiService.getPlayerSeasonStatsByTeamIdAndSeasonId.mockReturnValue(
-        of([stat1, stat2]),
-      );
+    describe('header row', () => {
+      it('renders player names', async () => {
+        const stat1 = stat();
+        const stat2 = stat();
+        await setup([stat1, stat2]);
 
-      await render(TeamPlayerSeasonStatsAccordionComponent, {
-        inputs: { teamId: 1, seasonId: 10 },
-        providers,
+        expect(screen.getByText(stat1.player.name)).toBeInTheDocument();
+        expect(screen.getByText(stat2.player.name)).toBeInTheDocument();
       });
-      TestBed.tick();
 
-      expect(screen.getByText(stat1.player.name)).toBeInTheDocument();
-      expect(screen.getByText(stat2.player.name)).toBeInTheDocument();
+      it('renders position code', async () => {
+        await setup([stat({ position: { ...fakePlayerSeasonStat().position, code: 'MID' } })]);
+
+        expect(screen.getByText('MID')).toBeInTheDocument();
+      });
+
+      it('renders ranking with # prefix', async () => {
+        await setup([stat({ ranking: 7 })]);
+
+        expect(screen.getByText('#7')).toBeInTheDocument();
+      });
+
+      it('renders rating when greater than zero', async () => {
+        await setup([stat({ rating: 750 })]);
+
+        expect(screen.getAllByText('7.50').length).toBeGreaterThan(0);
+      });
+
+      it('does not render rating when zero', async () => {
+        await setup([stat({ rating: 0 })]);
+
+        expect(screen.queryByText('0.00')).not.toBeInTheDocument();
+      });
+
+      it('renders points', async () => {
+        await setup([stat({ points: 42 })]);
+
+        expect(screen.getAllByText('42').length).toBeGreaterThan(0);
+      });
+
+      it('renders d11 team name in detail line when not dummy', async () => {
+        const d11Team = { ...fakePlayerSeasonStat().d11Team, dummy: false, name: 'D11Team1' };
+        await setup([stat({ d11Team })]);
+
+        expect(screen.getAllByText('D11Team1').length).toBeGreaterThan(0);
+      });
+
+      it('does not render d11 team name in detail line when dummy', async () => {
+        const d11Team = { ...fakePlayerSeasonStat().d11Team, dummy: true, name: 'D11Team1' };
+        await setup([stat({ d11Team })]);
+
+        expect(screen.queryAllByText('D11Team1').length).toBe(0);
+      });
     });
 
-    it('renders position code', async () => {
-      const stat1 = stat({ position: { ...fakePlayerSeasonStat().position, code: 'MID' } });
-      mockTeamApiService.getPlayerSeasonStatsByTeamIdAndSeasonId.mockReturnValue(of([stat1]));
+    describe('content panel', () => {
+      it('renders team name when not dummy', async () => {
+        const team = { ...fakePlayerSeasonStat().team, dummy: false, name: 'Team1' };
+        await setup([stat({ team })]);
 
-      await render(TeamPlayerSeasonStatsAccordionComponent, {
-        inputs: { teamId: 1, seasonId: 10 },
-        providers,
+        expect(screen.getByText('Team1')).toBeInTheDocument();
       });
-      TestBed.tick();
 
-      expect(screen.getByText('MID')).toBeInTheDocument();
-    });
+      it('does not render team name when dummy', async () => {
+        const team = { ...fakePlayerSeasonStat().team, dummy: true, name: 'Team1' };
+        await setup([stat({ team })]);
 
-    it('renders ranking with # prefix', async () => {
-      const stat1 = stat({ ranking: 7 });
-      mockTeamApiService.getPlayerSeasonStatsByTeamIdAndSeasonId.mockReturnValue(of([stat1]));
-
-      await render(TeamPlayerSeasonStatsAccordionComponent, {
-        inputs: { teamId: 1, seasonId: 10 },
-        providers,
+        expect(screen.queryByText('Team1')).not.toBeInTheDocument();
       });
-      TestBed.tick();
 
-      expect(screen.getByText('#7')).toBeInTheDocument();
-    });
+      it('always renders games started', async () => {
+        await setup([stat({ gamesStarted: 12 })]);
 
-    it('renders rating when greater than zero', async () => {
-      const stat1 = stat({ rating: 750 });
-      mockTeamApiService.getPlayerSeasonStatsByTeamIdAndSeasonId.mockReturnValue(of([stat1]));
-
-      await render(TeamPlayerSeasonStatsAccordionComponent, {
-        inputs: { teamId: 1, seasonId: 10 },
-        providers,
+        expect(screen.getByText('Games started')).toBeInTheDocument();
+        expect(screen.getByText('12')).toBeInTheDocument();
       });
-      TestBed.tick();
 
-      expect(screen.getAllByText('7.50').length).toBeGreaterThan(0);
-    });
+      it('always renders minutes played', async () => {
+        await setup([stat({ minutesPlayed: 900 })]);
 
-    it('does not render rating when zero', async () => {
-      const stat1 = stat({ rating: 0 });
-      mockTeamApiService.getPlayerSeasonStatsByTeamIdAndSeasonId.mockReturnValue(of([stat1]));
-
-      await render(TeamPlayerSeasonStatsAccordionComponent, {
-        inputs: { teamId: 1, seasonId: 10 },
-        providers,
+        expect(screen.getByText('Minutes played')).toBeInTheDocument();
+        expect(screen.getByText('900')).toBeInTheDocument();
       });
-      TestBed.tick();
 
-      expect(screen.queryByText('0.00')).not.toBeInTheDocument();
-    });
+      it('renders goals when greater than zero', async () => {
+        await setup([stat({ goals: 3 })]);
 
-    it('renders d11 team name in detail line when not dummy', async () => {
-      const d11Team = { ...fakePlayerSeasonStat().d11Team, dummy: false, name: 'D11Team1' };
-      const stat1 = stat({ d11Team });
-      mockTeamApiService.getPlayerSeasonStatsByTeamIdAndSeasonId.mockReturnValue(of([stat1]));
-
-      await render(TeamPlayerSeasonStatsAccordionComponent, {
-        inputs: { teamId: 1, seasonId: 10 },
-        providers,
+        expect(screen.getAllByText('Goals').length).toBeGreaterThan(1);
       });
-      TestBed.tick();
 
-      expect(screen.getAllByText('D11Team1').length).toBeGreaterThan(0);
-    });
+      it('does not render goals label in content when zero', async () => {
+        await setup([stat({ goals: 0 })]);
 
-    it('does not render d11 team name in detail line when dummy', async () => {
-      const d11Team = { ...fakePlayerSeasonStat().d11Team, dummy: true, name: 'D11Team1' };
-      const stat1 = stat({ d11Team });
-      mockTeamApiService.getPlayerSeasonStatsByTeamIdAndSeasonId.mockReturnValue(of([stat1]));
-
-      await render(TeamPlayerSeasonStatsAccordionComponent, {
-        inputs: { teamId: 1, seasonId: 10 },
-        providers,
+        expect(screen.getAllByText('Goals').length).toBe(1);
       });
-      TestBed.tick();
 
-      expect(screen.queryAllByText('D11Team1').length).toBe(0);
-    });
+      it('renders goal assists when greater than zero', async () => {
+        await setup([stat({ goalAssists: 2 })]);
 
-    it('renders points', async () => {
-      const stat1 = stat({ points: 42 });
-      mockTeamApiService.getPlayerSeasonStatsByTeamIdAndSeasonId.mockReturnValue(of([stat1]));
-
-      await render(TeamPlayerSeasonStatsAccordionComponent, {
-        inputs: { teamId: 1, seasonId: 10 },
-        providers,
+        expect(screen.getByText('Assists')).toBeInTheDocument();
       });
-      TestBed.tick();
 
-      expect(screen.getAllByText('42').length).toBeGreaterThan(0);
+      it('does not render goal assists when zero', async () => {
+        await setup([stat({ goalAssists: 0 })]);
+
+        expect(screen.queryByText('Assists')).not.toBeInTheDocument();
+      });
+
+      it('renders yellow cards when greater than zero', async () => {
+        await setup([stat({ yellowCards: 1 })]);
+
+        expect(screen.getByText('Yellow cards')).toBeInTheDocument();
+      });
+
+      it('does not render yellow cards when zero', async () => {
+        await setup([stat({ yellowCards: 0 })]);
+
+        expect(screen.queryByText('Yellow cards')).not.toBeInTheDocument();
+      });
+
+      it('renders red cards when greater than zero', async () => {
+        await setup([stat({ redCards: 1 })]);
+
+        expect(screen.getByText('Red cards')).toBeInTheDocument();
+      });
+
+      it('does not render red cards when zero', async () => {
+        await setup([stat({ redCards: 0 })]);
+
+        expect(screen.queryByText('Red cards')).not.toBeInTheDocument();
+      });
+
+      it('renders clean sheets when greater than zero and position id is below 5', async () => {
+        const position = { ...fakePlayerSeasonStat().position, id: 4 };
+        await setup([stat({ cleanSheets: 3, position })]);
+
+        expect(screen.getByText('Clean sheets')).toBeInTheDocument();
+      });
+
+      it('does not render clean sheets when position id is 5 or above', async () => {
+        const position = { ...fakePlayerSeasonStat().position, id: 5 };
+        await setup([stat({ cleanSheets: 3, position })]);
+
+        expect(screen.queryByText('Clean sheets')).not.toBeInTheDocument();
+      });
+
+      it('renders games substitute when greater than zero', async () => {
+        await setup([stat({ gamesSubstitute: 4 })]);
+
+        expect(screen.getByText('Games substitute')).toBeInTheDocument();
+      });
+
+      it('does not render games substitute when zero', async () => {
+        await setup([stat({ gamesSubstitute: 0 })]);
+
+        expect(screen.queryByText('Games substitute')).not.toBeInTheDocument();
+      });
     });
 
     it('renders separators between players', async () => {
       const stats = [1, 2, 3].map((id) => ({ ...stat(), player: { ...stat().player, id } }));
-      mockTeamApiService.getPlayerSeasonStatsByTeamIdAndSeasonId.mockReturnValue(of(stats));
-
-      const { container } = await render(TeamPlayerSeasonStatsAccordionComponent, {
-        inputs: { teamId: 1, seasonId: 10 },
-        providers,
-      });
-      TestBed.tick();
+      const { container } = await setup(stats);
 
       expect(container.querySelectorAll('.app-separator').length).toBe(2);
     });
 
     it('navigates to player on profile button click', async () => {
       const stat1 = stat();
-      mockTeamApiService.getPlayerSeasonStatsByTeamIdAndSeasonId.mockReturnValue(of([stat1]));
-
-      await render(TeamPlayerSeasonStatsAccordionComponent, {
-        inputs: { teamId: 1, seasonId: 10 },
-        providers,
-      });
-      TestBed.tick();
+      await setup([stat1]);
 
       await userEvent.click(screen.getByText('Player profile'));
 
