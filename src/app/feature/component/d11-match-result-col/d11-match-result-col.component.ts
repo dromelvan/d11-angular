@@ -17,6 +17,7 @@ import { SafeDatePipe } from '@app/shared/pipes';
 })
 export class D11MatchResultColComponent {
   d11Match = input.required<D11MatchBase>();
+  d11TeamId = input<number | undefined>(undefined);
   isLast = input<boolean>(false);
   showDate = input<boolean>(false);
 
@@ -24,6 +25,7 @@ export class D11MatchResultColComponent {
 
   protected model = computed(() => {
     const d11Match = this.d11Match();
+    const d11TeamId = this.d11TeamId();
     const showDate = this.showDate();
     const homeDiff = d11Match.homeTeamGoalsScored - d11Match.previousHomeTeamGoalsScored;
     const awayDiff = d11Match.awayTeamGoalsScored - d11Match.previousAwayTeamGoalsScored;
@@ -36,6 +38,8 @@ export class D11MatchResultColComponent {
       awayDiff,
       showElapsed: [Status.ACTIVE, Status.FULL_TIME, Status.FINISHED].includes(d11Match.status),
       showGoals: d11Match.status !== Status.PENDING && d11Match.status !== Status.POSTPONED,
+      isHomeD11Team: d11TeamId === d11Match.homeD11Team.id,
+      isAwayD11Team: d11TeamId === d11Match.awayD11Team.id,
     };
   });
 

@@ -24,7 +24,7 @@
 </div>
 <div class="app-row items-center gap-1.5 pb-0.5">
   <app-d11-team-img [d11Team]="m.d11Match.homeD11Team" width="20" />
-  <span>{{ m.d11Match.homeD11Team.name }}</span>
+  <span [class.app-text-primary]="m.isHomeD11Team">{{ m.d11Match.homeD11Team.name }}</span>
 </div>
 <div class="app-row app-text-detail items-center justify-end">
   @if (m.showGoals && m.homeDiff !== 0) {
@@ -50,7 +50,7 @@
 </div>
 <div class="app-row items-center gap-1.5">
   <app-d11-team-img [d11Team]="m.d11Match.awayD11Team" width="20" />
-  <span>{{ m.d11Match.awayD11Team.name }}</span>
+  <span [class.app-text-primary]="m.isAwayD11Team">{{ m.d11Match.awayD11Team.name }}</span>
 </div>
 <div class="app-row app-text-detail items-center justify-end">
   @if (m.showGoals && m.awayDiff !== 0) {

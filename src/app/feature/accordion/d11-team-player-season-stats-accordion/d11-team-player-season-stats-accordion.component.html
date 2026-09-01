@@ -1,0 +1,192 @@
+<div class="app-row app-text-header pb-2">
+  <div class="w-8">Pos</div>
+  <div class="app-fill">Player</div>
+  <div class="lg:hidden flex items-center">
+    <div class="app-text-number w-10">Rtg</div>
+    <div class="app-text-number w-10">Pts</div>
+  </div>
+  <div class="hidden lg:contents">
+    <div class="app-text-number w-10">Goals</div>
+    <div class="app-text-number w-28">Form</div>
+    <div class="app-text-number w-10">Rtg</div>
+    <div class="app-text-number w-10">Pts</div>
+  </div>
+</div>
+
+@if (isLoading()) {
+  <div class="flex justify-center py-8">
+    <p-progress-spinner />
+  </div>
+} @else {
+  <p-accordion>
+    @for (stat of playerSeasonStats(); track stat.player.id; let index = $index) {
+      @if (index > 0) {
+        <div class="app-separator"></div>
+      }
+      <p-accordion-panel [value]="stat.player.id">
+        <p-accordion-header>
+          <div class="app-row app-fill py-2.5 min-w-0">
+            <div class="w-8">{{ stat.position.code }}</div>
+            <div class="app-row-2 app-fill min-w-0">
+              <app-player-img [player]="stat.player" width="24" />
+              <div class="app-col gap-0 min-w-0">
+                <span class="truncate">{{ stat.player.name }}</span>
+                <div class="app-row-1 app-text-detail min-w-0">
+                  <span>#{{ stat.ranking }}</span>
+                  @if (!stat.team.dummy) {
+                    <span>-</span>
+                    <app-team-img [team]="stat.team" width="14" />
+                    <span class="truncate">{{ stat.team.name }}</span>
+                  }
+                </div>
+              </div>
+            </div>
+            <div class="lg:hidden flex items-center">
+              <div class="app-text-number w-10">
+                {{ stat.rating > 0 ? (stat.rating | rating) : '' }}
+              </div>
+              <div class="app-text-primary app-text-number w-10">{{ stat.points }}</div>
+            </div>
+            <div class="hidden lg:contents">
+              <div class="app-text-number w-10">{{ stat.goals }}</div>
+              <div class="app-row app-text-number gap-0 w-28">
+                <app-form-match-points [formMatchPoints]="stat.formMatchPoints" type="player" />
+              </div>
+              <div class="app-text-number w-10">
+                {{ stat.rating > 0 ? (stat.rating | rating) : '' }}
+              </div>
+              <div class="app-text-primary app-text-number w-10">{{ stat.points }}</div>
+            </div>
+          </div>
+        </p-accordion-header>
+
+        <p-accordion-content>
+          <div class="app-col gap-2.5 p-4">
+            @if (!stat.team.dummy) {
+              <div class="app-details-list-row">
+                <span>Team</span>
+                <span class="app-row-1">
+                  <app-team-img [team]="stat.team" width="20" />
+                  {{ stat.team.name }}
+                </span>
+              </div>
+            }
+            @if (!stat.d11Team.dummy) {
+              <div class="app-details-list-row">
+                <span>D11 team</span>
+                <span class="app-row-1">
+                  <app-d11-team-img [d11Team]="stat.d11Team" width="20" />
+                  {{ stat.d11Team.name }}
+                </span>
+              </div>
+              <div class="app-details-list-row">
+                <span>Fee</span>
+                <span>£{{ stat.fee | fee }}m</span>
+              </div>
+            }
+            @if (stat.rating > 0) {
+              <div class="app-details-list-row">
+                <span>Rating</span>
+                <span>{{ stat.rating | rating }}</span>
+              </div>
+            }
+            <div class="app-details-list-row">
+              <span>Points</span>
+              <span>{{ stat.points }}</span>
+            </div>
+            @if (stat.goals > 0) {
+              <div class="app-details-list-row">
+                <span>Goals</span>
+                <span>{{ stat.goals }}</span>
+              </div>
+            }
+            @if (stat.goalAssists > 0) {
+              <div class="app-details-list-row">
+                <span>Assists</span>
+                <span>{{ stat.goalAssists }}</span>
+              </div>
+            }
+            @if (stat.ownGoals > 0) {
+              <div class="app-details-list-row">
+                <span>Own goals</span>
+                <span>{{ stat.ownGoals }}</span>
+              </div>
+            }
+            @if (stat.cleanSheets > 0 && stat.position.id < 5) {
+              <div class="app-details-list-row">
+                <span>Clean sheets</span>
+                <span>{{ stat.cleanSheets }}</span>
+              </div>
+            }
+            @if (stat.goalsConceded > 0 && stat.position.defender) {
+              <div class="app-details-list-row">
+                <span>Goals conceded</span>
+                <span>{{ stat.goalsConceded }}</span>
+              </div>
+            }
+            @if (stat.yellowCards > 0) {
+              <div class="app-details-list-row">
+                <span>Yellow cards</span>
+                <span>{{ stat.yellowCards }}</span>
+              </div>
+            }
+            @if (stat.redCards > 0) {
+              <div class="app-details-list-row">
+                <span>Red cards</span>
+                <span>{{ stat.redCards }}</span>
+              </div>
+            }
+            @if (stat.manOfTheMatch > 0) {
+              <div class="app-details-list-row">
+                <span>Man of the match</span>
+                <span>{{ stat.manOfTheMatch }}</span>
+              </div>
+            }
+            @if (stat.sharedManOfTheMatch > 0) {
+              <div class="app-details-list-row">
+                <span>Shared man of the match</span>
+                <span>{{ stat.sharedManOfTheMatch }}</span>
+              </div>
+            }
+            <div class="app-details-list-row">
+              <span>Games started</span>
+              <span>{{ stat.gamesStarted }}</span>
+            </div>
+            @if (stat.gamesSubstitute > 0) {
+              <div class="app-details-list-row">
+                <span>Games substitute</span>
+                <span>{{ stat.gamesSubstitute }}</span>
+              </div>
+            }
+            @if (stat.gamesDidNotParticipate > 0) {
+              <div class="app-details-list-row">
+                <span>Games DNP</span>
+                <span>{{ stat.gamesDidNotParticipate }}</span>
+              </div>
+            }
+            <div class="app-details-list-row">
+              <span>Minutes played</span>
+              <span>{{ stat.minutesPlayed }}</span>
+            </div>
+            <div class="app-details-list-row">
+              <span>Form</span>
+              <span class="app-row gap-0">
+                <app-form-match-points [formMatchPoints]="stat.formMatchPoints" type="player" />
+              </span>
+            </div>
+            <button
+              (click)="navigateToPlayer(stat)"
+              class="app-text-primary app-details-list-row mt-2"
+            >
+              <span class="app-row-2">
+                <app-svg-icon name="person" size="sm" />
+                Player profile
+              </span>
+              <app-svg-icon name="chevron-right" size="sm" />
+            </button>
+          </div>
+        </p-accordion-content>
+      </p-accordion-panel>
+    }
+  </p-accordion>
+}

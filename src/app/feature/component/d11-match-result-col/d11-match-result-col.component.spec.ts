@@ -10,10 +10,17 @@ const mockRouterService = { navigateToD11Match: vi.fn() };
 describe('D11MatchResultColComponent', () => {
   let fixture: ComponentFixture<D11MatchResultColComponent>;
 
-  async function setup(d11MatchInput: D11MatchBase = fakeD11MatchBase(), showDate = false) {
+  async function setup(
+    d11MatchInput: D11MatchBase = fakeD11MatchBase(),
+    showDate = false,
+    d11TeamId?: number,
+  ) {
     fixture = TestBed.createComponent(D11MatchResultColComponent);
     fixture.componentRef.setInput('d11Match', d11MatchInput);
     fixture.componentRef.setInput('showDate', showDate);
+    if (d11TeamId !== undefined) {
+      fixture.componentRef.setInput('d11TeamId', d11TeamId);
+    }
     fixture.detectChanges();
     await fixture.whenStable();
   }
@@ -61,6 +68,44 @@ describe('D11MatchResultColComponent', () => {
       await setup({ ...fakeD11MatchBase(), awayD11Team });
 
       expect(fixture.nativeElement.textContent).toContain('Team2');
+    });
+
+    it('applies app-text-primary to home team name when d11TeamId matches', async () => {
+      const homeD11Team = { ...fakeD11TeamBase(), name: 'Team1' };
+      const match = { ...fakeD11MatchBase(), homeD11Team };
+      await setup(match, false, homeD11Team.id);
+
+      const spans = Array.from<HTMLElement>(fixture.nativeElement.querySelectorAll('span'));
+      const homeSpan = spans.find((span) => span.textContent?.trim() === 'Team1');
+      expect(homeSpan?.classList).toContain('app-text-primary');
+    });
+
+    it('applies app-text-primary to away team name when d11TeamId matches', async () => {
+      const awayD11Team = { ...fakeD11TeamBase(), name: 'Team2' };
+      const match = { ...fakeD11MatchBase(), awayD11Team };
+      await setup(match, false, awayD11Team.id);
+
+      const spans = Array.from<HTMLElement>(fixture.nativeElement.querySelectorAll('span'));
+      const awaySpan = spans.find((span) => span.textContent?.trim() === 'Team2');
+      expect(awaySpan?.classList).toContain('app-text-primary');
+    });
+
+    it('does not apply app-text-primary to home team name when d11TeamId does not match', async () => {
+      const homeD11Team = { ...fakeD11TeamBase(), id: 1, name: 'Team1' };
+      await setup({ ...fakeD11MatchBase(), homeD11Team }, false, 999);
+
+      const spans = Array.from<HTMLElement>(fixture.nativeElement.querySelectorAll('span'));
+      const homeSpan = spans.find((span) => span.textContent?.trim() === 'Team1');
+      expect(homeSpan?.classList).not.toContain('app-text-primary');
+    });
+
+    it('does not apply app-text-primary to away team name when d11TeamId does not match', async () => {
+      const awayD11Team = { ...fakeD11TeamBase(), id: 1, name: 'Team2' };
+      await setup({ ...fakeD11MatchBase(), awayD11Team }, false, 999);
+
+      const spans = Array.from<HTMLElement>(fixture.nativeElement.querySelectorAll('span'));
+      const awaySpan = spans.find((span) => span.textContent?.trim() === 'Team2');
+      expect(awaySpan?.classList).not.toContain('app-text-primary');
     });
   });
 
