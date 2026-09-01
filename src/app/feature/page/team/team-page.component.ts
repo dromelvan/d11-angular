@@ -17,6 +17,7 @@ import {
   TeamSeasonStat,
 } from '@app/core/api';
 import { PRIMARY } from '@app/app.theme';
+import { BreakpointService } from '@app/core/breakpoint/breakpoint.service';
 import { TeamSeasonStatApiService } from '@app/core/api/team-season-stat/team-season-stat-api.service';
 import { TeamApiService } from '@app/core/api/team/team-api.service';
 import { PageContextService } from '@app/core/page-context/page-context.service';
@@ -117,6 +118,7 @@ export class TeamPageComponent {
   });
 
   protected activeTab = '0';
+  protected readonly isSmOrUp = inject(BreakpointService).isSmOrUp;
 
   private seasonApiService = inject(SeasonApiService);
   private teamApiService = inject(TeamApiService);

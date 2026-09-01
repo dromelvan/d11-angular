@@ -1,4 +1,4 @@
-import { signal } from '@angular/core';
+import { signal, Signal } from '@angular/core';
 import type { Season, Team, TeamSeasonStat } from '@app/core/api';
 import { POSITION_IDS, SeasonApiService } from '@app/core/api';
 import { TeamSeasonStatApiService } from '@app/core/api/team-season-stat/team-season-stat-api.service';
@@ -12,6 +12,7 @@ import {
   fakeTeamSeasonStat,
 } from '@app/test';
 import { PRIMARY } from '@app/app.theme';
+import { BreakpointService } from '@app/core/breakpoint/breakpoint.service';
 import { PageContextService } from '@app/core/page-context/page-context.service';
 import { DynamicDialogService } from '@app/shared/dialog/dynamic-dialog-service/dynamic-dialog.service';
 import { RouterService } from '@app/core/router/router.service';
@@ -28,11 +29,13 @@ const mockPageContextService = {
   register: vi.fn(),
   backgroundColor: signal<string | undefined>(undefined),
 };
+const mockBreakpointService = { isSmOrUp: signal(false) };
 
 function buildProviders(overrides: {
   teamApi: TeamApiService;
   teamSeasonStatApi: TeamSeasonStatApiService;
   seasonApi: SeasonApiService;
+  breakpointService?: { isSmOrUp: Signal<boolean> };
 }) {
   return [
     { provide: TeamApiService, useValue: overrides.teamApi },
@@ -41,38 +44,65 @@ function buildProviders(overrides: {
     { provide: PageContextService, useValue: mockPageContextService },
     { provide: RouterService, useValue: mockRouterService },
     { provide: DynamicDialogService, useValue: mockDynamicDialogService },
+    {
+      provide: BreakpointService,
+      useValue: overrides.breakpointService ?? mockBreakpointService,
+    },
   ];
+}
+
+function buildApis(
+  overrides: {
+    team?: Team;
+    matches?: ReturnType<typeof fakeMatchBase>[];
+    playerSeasonStats?: ReturnType<typeof fakePlayerSeasonStat>[];
+    teamSeasonStats?: TeamSeasonStat[];
+    seasons?: Season[];
+  } = {},
+) {
+  const team =
+    overrides.team ??
+    (() => {
+      const t = fakeTeam();
+      t.dummy = false;
+      return t;
+    })();
+  const season = fakeSeason();
+
+  const teamApi = {
+    getById: vi.fn().mockReturnValue(of(team)),
+    getMatchesByTeamIdAndSeasonId: vi.fn().mockReturnValue(of(overrides.matches ?? [])),
+    getPlayerSeasonStatsByTeamIdAndSeasonId: vi
+      .fn()
+      .mockReturnValue(of(overrides.playerSeasonStats ?? [])),
+  } as unknown as TeamApiService;
+
+  const teamSeasonStatApi = {
+    getTeamSeasonStatsByTeamId: vi.fn().mockReturnValue(of(overrides.teamSeasonStats ?? [])),
+  } as unknown as TeamSeasonStatApiService;
+
+  const seasonApi = {
+    getAll: vi.fn().mockReturnValue(of(overrides.seasons ?? [season])),
+  } as unknown as SeasonApiService;
+
+  return { team, season, teamApi, teamSeasonStatApi, seasonApi };
 }
 
 describe('TeamPageComponent', () => {
   let team: Team;
-  let season: Season;
   let teamApi: TeamApiService;
   let teamSeasonStatApi: TeamSeasonStatApiService;
   let seasonApi: SeasonApiService;
 
   beforeEach(async () => {
     vi.clearAllMocks();
+    mockBreakpointService.isSmOrUp.set(false);
 
-    team = fakeTeam();
-    team.dummy = false;
-    season = fakeSeason();
-
-    teamApi = {
-      getById: vi.fn().mockReturnValue(of(team)),
-      getMatchesByTeamIdAndSeasonId: vi.fn().mockReturnValue(of([fakeMatchBase()])),
-      getPlayerSeasonStatsByTeamIdAndSeasonId: vi
-        .fn()
-        .mockReturnValue(of([fakePlayerSeasonStat()])),
-    } as unknown as TeamApiService;
-
-    teamSeasonStatApi = {
-      getTeamSeasonStatsByTeamId: vi.fn().mockReturnValue(of([fakeTeamSeasonStat()])),
-    } as unknown as TeamSeasonStatApiService;
-
-    seasonApi = {
-      getAll: vi.fn().mockReturnValue(of([season])),
-    } as unknown as SeasonApiService;
+    ({ team, teamApi, teamSeasonStatApi, seasonApi } = buildApis({
+      matches: [fakeMatchBase()],
+      playerSeasonStats: [fakePlayerSeasonStat()],
+      teamSeasonStats: [fakeTeamSeasonStat()],
+    }));
 
     await render(TeamPageComponent, {
       inputs: { teamId: 1, seasonId: undefined },
@@ -103,11 +133,44 @@ describe('TeamPageComponent', () => {
     });
   });
 
-  it('renders tabs', async () => {
+  it('renders tabs on mobile layout', async () => {
     await waitFor(() => {
-      expect(screen.getByRole('tab', { name: 'Matches' })).toBeInTheDocument();
       expect(screen.getByRole('tab', { name: 'Players' })).toBeInTheDocument();
+      expect(screen.getByRole('tab', { name: 'Matches' })).toBeInTheDocument();
       expect(screen.getByRole('tab', { name: 'History' })).toBeInTheDocument();
+    });
+  });
+});
+
+describe('TeamPageComponent sm layout', () => {
+  beforeEach(async () => {
+    vi.clearAllMocks();
+
+    const { teamApi, teamSeasonStatApi, seasonApi } = buildApis();
+
+    await render(TeamPageComponent, {
+      inputs: { teamId: 1, seasonId: undefined },
+      deferBlockBehavior: DeferBlockBehavior.Playthrough,
+      providers: buildProviders({
+        teamApi,
+        teamSeasonStatApi,
+        seasonApi,
+        breakpointService: { isSmOrUp: signal(true) },
+      }),
+    });
+  });
+
+  it('renders all three sections directly', async () => {
+    await waitFor(() => {
+      expect(document.querySelector('app-team-player-season-stats-section')).toBeInTheDocument();
+      expect(document.querySelector('app-team-season-matches-section')).toBeInTheDocument();
+      expect(document.querySelector('app-team-history-stats-section')).toBeInTheDocument();
+    });
+  });
+
+  it('does not render tabs', async () => {
+    await waitFor(() => {
+      expect(screen.queryByRole('tab')).not.toBeInTheDocument();
     });
   });
 });
@@ -119,26 +182,19 @@ describe('TeamPageComponent context registration', () => {
 
   beforeEach(async () => {
     vi.clearAllMocks();
+    mockBreakpointService.isSmOrUp.set(false);
 
-    team = fakeTeam();
-    team.dummy = false;
-    season = fakeSeason();
     teamSeasonStat = fakeTeamSeasonStat();
+    season = fakeSeason();
     teamSeasonStat.season = season;
 
-    const teamApi = {
-      getById: vi.fn().mockReturnValue(of(team)),
-      getMatchesByTeamIdAndSeasonId: vi.fn().mockReturnValue(of([])),
-      getPlayerSeasonStatsByTeamIdAndSeasonId: vi.fn().mockReturnValue(of([])),
-    } as unknown as TeamApiService;
-
-    const teamSeasonStatApi = {
-      getTeamSeasonStatsByTeamId: vi.fn().mockReturnValue(of([teamSeasonStat])),
-    } as unknown as TeamSeasonStatApiService;
-
-    const seasonApi = {
-      getAll: vi.fn().mockReturnValue(of([season])),
-    } as unknown as SeasonApiService;
+    let teamApi: TeamApiService;
+    let teamSeasonStatApi: TeamSeasonStatApiService;
+    let seasonApi: SeasonApiService;
+    ({ team, teamApi, teamSeasonStatApi, seasonApi } = buildApis({
+      seasons: [season],
+      teamSeasonStats: [teamSeasonStat],
+    }));
 
     await render(TeamPageComponent, {
       inputs: { teamId: 1, seasonId: undefined },
@@ -175,26 +231,16 @@ describe('TeamPageComponent ranking and points', () => {
 
   beforeEach(async () => {
     vi.clearAllMocks();
+    mockBreakpointService.isSmOrUp.set(false);
 
-    const team = fakeTeam();
-    team.dummy = false;
     season = fakeSeason();
     teamSeasonStat = fakeTeamSeasonStat();
     teamSeasonStat.season = season;
 
-    const teamApi = {
-      getById: vi.fn().mockReturnValue(of(team)),
-      getMatchesByTeamIdAndSeasonId: vi.fn().mockReturnValue(of([])),
-      getPlayerSeasonStatsByTeamIdAndSeasonId: vi.fn().mockReturnValue(of([])),
-    } as unknown as TeamApiService;
-
-    const teamSeasonStatApi = {
-      getTeamSeasonStatsByTeamId: vi.fn().mockReturnValue(of([teamSeasonStat])),
-    } as unknown as TeamSeasonStatApiService;
-
-    const seasonApi = {
-      getAll: vi.fn().mockReturnValue(of([season])),
-    } as unknown as SeasonApiService;
+    const { teamApi, teamSeasonStatApi, seasonApi } = buildApis({
+      seasons: [season],
+      teamSeasonStats: [teamSeasonStat],
+    });
 
     await render(TeamPageComponent, {
       inputs: { teamId: 1, seasonId: undefined },
@@ -219,8 +265,7 @@ describe('TeamPageComponent ranking and points', () => {
 describe('TeamPageComponent when loading', () => {
   it('does not render app-team-hero', async () => {
     vi.clearAllMocks();
-
-    const season = fakeSeason();
+    mockBreakpointService.isSmOrUp.set(false);
 
     const teamApi = {
       getById: vi.fn().mockReturnValue(NEVER),
@@ -228,13 +273,7 @@ describe('TeamPageComponent when loading', () => {
       getPlayerSeasonStatsByTeamIdAndSeasonId: vi.fn().mockReturnValue(of([])),
     } as unknown as TeamApiService;
 
-    const teamSeasonStatApi = {
-      getTeamSeasonStatsByTeamId: vi.fn().mockReturnValue(of([])),
-    } as unknown as TeamSeasonStatApiService;
-
-    const seasonApi = {
-      getAll: vi.fn().mockReturnValue(of([season])),
-    } as unknown as SeasonApiService;
+    const { teamSeasonStatApi, seasonApi } = buildApis();
 
     await render(TeamPageComponent, {
       inputs: { teamId: 1, seasonId: undefined },
@@ -249,27 +288,13 @@ describe('TeamPageComponent when loading', () => {
 describe('TeamPageComponent matches tab', () => {
   beforeEach(async () => {
     vi.clearAllMocks();
+    mockBreakpointService.isSmOrUp.set(false);
 
-    const team = fakeTeam();
-    team.dummy = false;
-    const season = fakeSeason();
     const homeTeam = { ...fakeTeamBase(), name: 'Team1' };
     const awayTeam = { ...fakeTeamBase(), name: 'Team2' };
     const match = { ...fakeMatchBase(), homeTeam, awayTeam };
 
-    const teamApi = {
-      getById: vi.fn().mockReturnValue(of(team)),
-      getMatchesByTeamIdAndSeasonId: vi.fn().mockReturnValue(of([match])),
-      getPlayerSeasonStatsByTeamIdAndSeasonId: vi.fn().mockReturnValue(of([])),
-    } as unknown as TeamApiService;
-
-    const teamSeasonStatApi = {
-      getTeamSeasonStatsByTeamId: vi.fn().mockReturnValue(of([])),
-    } as unknown as TeamSeasonStatApiService;
-
-    const seasonApi = {
-      getAll: vi.fn().mockReturnValue(of([season])),
-    } as unknown as SeasonApiService;
+    const { teamApi, teamSeasonStatApi, seasonApi } = buildApis({ matches: [match] });
 
     await render(TeamPageComponent, {
       inputs: { teamId: 1, seasonId: undefined },
@@ -296,25 +321,13 @@ describe('TeamPageComponent history navigation', () => {
 
   beforeEach(async () => {
     vi.clearAllMocks();
+    mockBreakpointService.isSmOrUp.set(false);
 
-    const team = fakeTeam();
-    team.dummy = false;
-    const season = fakeSeason();
     teamSeasonStat = fakeTeamSeasonStat();
 
-    const teamApi = {
-      getById: vi.fn().mockReturnValue(of(team)),
-      getMatchesByTeamIdAndSeasonId: vi.fn().mockReturnValue(of([])),
-      getPlayerSeasonStatsByTeamIdAndSeasonId: vi.fn().mockReturnValue(of([])),
-    } as unknown as TeamApiService;
-
-    const seasonApi = {
-      getAll: vi.fn().mockReturnValue(of([season])),
-    } as unknown as SeasonApiService;
-
-    const teamSeasonStatApi = {
-      getTeamSeasonStatsByTeamId: vi.fn().mockReturnValue(of([teamSeasonStat])),
-    } as unknown as TeamSeasonStatApiService;
+    const { teamApi, teamSeasonStatApi, seasonApi } = buildApis({
+      teamSeasonStats: [teamSeasonStat],
+    });
 
     await render(TeamPageComponent, {
       inputs: { teamId: 1, seasonId: undefined },
@@ -345,27 +358,15 @@ describe('TeamPageComponent history navigation', () => {
 describe('TeamPageComponent players tab', () => {
   it('renders player name when Players tab is clicked', async () => {
     vi.clearAllMocks();
+    mockBreakpointService.isSmOrUp.set(false);
 
     const user = userEvent.setup();
-    const team = fakeTeam();
-    team.dummy = false;
-    const season = fakeSeason();
     const playerSeasonStat = fakePlayerSeasonStat();
     playerSeasonStat.position.id = POSITION_IDS.KEEPER;
 
-    const teamApi = {
-      getById: vi.fn().mockReturnValue(of(team)),
-      getMatchesByTeamIdAndSeasonId: vi.fn().mockReturnValue(of([])),
-      getPlayerSeasonStatsByTeamIdAndSeasonId: vi.fn().mockReturnValue(of([playerSeasonStat])),
-    } as unknown as TeamApiService;
-
-    const teamSeasonStatApi = {
-      getTeamSeasonStatsByTeamId: vi.fn().mockReturnValue(of([])),
-    } as unknown as TeamSeasonStatApiService;
-
-    const seasonApi = {
-      getAll: vi.fn().mockReturnValue(of([season])),
-    } as unknown as SeasonApiService;
+    const { teamApi, teamSeasonStatApi, seasonApi } = buildApis({
+      playerSeasonStats: [playerSeasonStat],
+    });
 
     await render(TeamPageComponent, {
       inputs: { teamId: 1, seasonId: undefined },
@@ -385,25 +386,14 @@ describe('TeamPageComponent players tab', () => {
 describe('TeamPageComponent seasonId input', () => {
   it('uses the season matching seasonId when provided', async () => {
     vi.clearAllMocks();
+    mockBreakpointService.isSmOrUp.set(false);
 
     const season1 = { ...fakeSeason(), id: 1 };
     const season2 = { ...fakeSeason(), id: 2 };
-    const team = fakeTeam();
-    team.dummy = false;
 
-    const teamApi = {
-      getById: vi.fn().mockReturnValue(of(team)),
-      getMatchesByTeamIdAndSeasonId: vi.fn().mockReturnValue(of([])),
-      getPlayerSeasonStatsByTeamIdAndSeasonId: vi.fn().mockReturnValue(of([])),
-    } as unknown as TeamApiService;
-
-    const teamSeasonStatApi = {
-      getTeamSeasonStatsByTeamId: vi.fn().mockReturnValue(of([])),
-    } as unknown as TeamSeasonStatApiService;
-
-    const seasonApi = {
-      getAll: vi.fn().mockReturnValue(of([season1, season2])),
-    } as unknown as SeasonApiService;
+    const { teamApi, teamSeasonStatApi, seasonApi } = buildApis({
+      seasons: [season1, season2],
+    });
 
     await render(TeamPageComponent, {
       inputs: { teamId: 1, seasonId: season2.id },
@@ -418,8 +408,7 @@ describe('TeamPageComponent seasonId input', () => {
 
   it('registered backgroundColor is PRIMARY when team is not loaded', async () => {
     vi.clearAllMocks();
-
-    const season = fakeSeason();
+    mockBreakpointService.isSmOrUp.set(false);
 
     const teamApi = {
       getById: vi.fn().mockReturnValue(NEVER),
@@ -427,13 +416,7 @@ describe('TeamPageComponent seasonId input', () => {
       getPlayerSeasonStatsByTeamIdAndSeasonId: vi.fn().mockReturnValue(of([])),
     } as unknown as TeamApiService;
 
-    const teamSeasonStatApi = {
-      getTeamSeasonStatsByTeamId: vi.fn().mockReturnValue(of([])),
-    } as unknown as TeamSeasonStatApiService;
-
-    const seasonApi = {
-      getAll: vi.fn().mockReturnValue(of([season])),
-    } as unknown as SeasonApiService;
+    const { teamSeasonStatApi, seasonApi } = buildApis();
 
     await render(TeamPageComponent, {
       inputs: { teamId: 1, seasonId: undefined },
