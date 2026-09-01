@@ -8,26 +8,18 @@ import {
   numberAttribute,
 } from '@angular/core';
 import { rxResource } from '@angular/core/rxjs-interop';
-import {
-  D11MatchBase,
-  D11TeamSeasonStat,
-  PlayerSeasonStat,
-  Season,
-  SeasonApiService,
-} from '@app/core/api';
-import { D11TeamBase } from '@app/core/api/model/d11-team-base.model';
-import { Position } from '@app/core/api/model/position.model';
+import { D11TeamBase, D11TeamSeasonStat, Season, SeasonApiService } from '@app/core/api';
+import { PRIMARY } from '@app/app.theme';
+import { BreakpointService } from '@app/core/breakpoint/breakpoint.service';
 import { D11TeamApiService } from '@app/core/api/d11-team/d11-team-api.service';
 import { D11TeamSeasonStatApiService } from '@app/core/api/d11-team-season-stat/d11-team-season-stat-api.service';
-import { PositionApiService } from '@app/core/api/position/position-api.service';
-import { LoadingService } from '@app/core/loading/loading.service';
-import { RouterService } from '@app/core/router/router.service';
-import { of } from 'rxjs';
+import { PageContextService } from '@app/core/page-context/page-context.service';
 import { Tab, TabList, TabPanel, TabPanels, Tabs } from 'primeng/tabs';
-import { D11TeamHeaderCardComponent } from '@app/feature/card/d11-team-header-card/d11-team-header-card.component';
-import { D11TeamMatchesComponent } from '@app/feature/component/d11-team-matches/d11-team-matches.component';
-import { TeamPlayerSeasonStatsComponent } from '@app/feature/component/team-player-season-stats/team-player-season-stats.component';
-import { D11TeamSeasonHistoryComponent } from '@app/feature/component/d11-team-season-history/d11-team-season-history.component';
+import { HeroContainerComponent } from '@app/feature/hero/hero-container/hero-container.component';
+import { D11TeamHistoryStatsSectionComponent } from '@app/feature/section/d11-team-history-stats-section/d11-team-history-stats-section.component';
+import { D11TeamPlayerSeasonStatsSectionComponent } from '@app/feature/section/d11-team-player-season-stats-section/d11-team-player-season-stats-section.component';
+import { D11TeamSeasonMatchesSectionComponent } from '@app/feature/section/d11-team-season-matches-section/d11-team-season-matches-section.component';
+import { D11TeamSeasonStatSectionComponent } from '@app/feature/section/d11-team-season-stat-section/d11-team-season-stat-section.component';
 
 @Component({
   selector: 'app-d11-team-page',
@@ -37,10 +29,11 @@ import { D11TeamSeasonHistoryComponent } from '@app/feature/component/d11-team-s
     TabPanel,
     TabList,
     Tab,
-    D11TeamHeaderCardComponent,
-    D11TeamMatchesComponent,
-    TeamPlayerSeasonStatsComponent,
-    D11TeamSeasonHistoryComponent,
+    HeroContainerComponent,
+    D11TeamSeasonStatSectionComponent,
+    D11TeamPlayerSeasonStatsSectionComponent,
+    D11TeamSeasonMatchesSectionComponent,
+    D11TeamHistoryStatsSectionComponent,
   ],
   templateUrl: './d11-team-page.component.html',
 })
@@ -54,45 +47,6 @@ export class D11TeamPageComponent {
   });
   protected rxSeasons = rxResource<Season[], void>({
     stream: () => this.seasonApiService.getAll(),
-  });
-  protected rxD11Matches = rxResource<
-    D11MatchBase[],
-    { d11TeamId: number; seasonId: number } | undefined
-  >({
-    params: () => {
-      const seasonId = this.currentSeason()?.id;
-      const d11TeamId = this.d11TeamId();
-      if (seasonId == null) return undefined;
-      return { d11TeamId, seasonId };
-    },
-    stream: ({ params }) => {
-      if (params == null) return of([]);
-      return this.d11TeamApiService.getD11MatchesByD11TeamIdAndSeasonId(
-        params.d11TeamId,
-        params.seasonId,
-      );
-    },
-  });
-  protected rxPlayerSeasonStats = rxResource<
-    PlayerSeasonStat[],
-    { d11TeamId: number; seasonId: number } | undefined
-  >({
-    params: () => {
-      const seasonId = this.currentSeason()?.id;
-      const d11TeamId = this.d11TeamId();
-      if (seasonId == null) return undefined;
-      return { d11TeamId, seasonId };
-    },
-    stream: ({ params }) => {
-      if (params == null) return of([]);
-      return this.d11TeamApiService.getPlayerSeasonStatsByD11TeamIdAndSeasonId(
-        params.d11TeamId,
-        params.seasonId,
-      );
-    },
-  });
-  protected rxPositions = rxResource<Position[], void>({
-    stream: () => this.positionApiService.getPositions(),
   });
   protected rxD11TeamSeasonStats = rxResource<D11TeamSeasonStat[], number>({
     params: () => this.d11TeamId(),
@@ -115,43 +69,33 @@ export class D11TeamPageComponent {
     return {
       d11Team: this.rxD11Team.value(),
       season,
-      seasons: this.rxSeasons.value(),
-      d11Matches: this.rxD11Matches.value() ?? [],
-      playerSeasonStats: this.rxPlayerSeasonStats.value() ?? [],
-      positions: this.rxPositions.value() ?? [],
-      d11TeamSeasonStats,
       d11TeamSeasonStat: d11TeamSeasonStats.find((stat) => stat.season.id === season?.id),
     };
   });
 
-  protected isLoading = computed(
-    () =>
-      this.rxD11Team.isLoading() ||
-      this.rxSeasons.isLoading() ||
-      this.rxD11Matches.isLoading() ||
-      this.rxPlayerSeasonStats.isLoading(),
-  );
-
   protected activeTab = '0';
+  protected readonly isSmOrUp = inject(BreakpointService).isSmOrUp;
 
   private seasonApiService = inject(SeasonApiService);
   private d11TeamApiService = inject(D11TeamApiService);
   private d11TeamSeasonStatApiService = inject(D11TeamSeasonStatApiService);
-  private positionApiService = inject(PositionApiService);
-  private routerService = inject(RouterService);
-  private loadingService = inject(LoadingService);
+  private pageContextService = inject(PageContextService);
 
   constructor() {
-    this.loadingService.register(inject(DestroyRef), this.isLoading);
+    const destroyRef = inject(DestroyRef);
+    this.pageContextService.register(destroyRef, {
+      title: computed(() => this.model().d11Team?.name),
+      subtitle: computed(() => {
+        const name = this.model().season?.name;
+        return name !== undefined ? `Season ${name}` : undefined;
+      }),
+      backgroundColor: computed(() => PRIMARY),
+    });
     effect(() => {
       this.d11TeamId();
       this.seasonId();
       this.activeTab = '0';
       window.scrollTo({ top: 0 });
     });
-  }
-
-  protected navigateToSeason(stat: D11TeamSeasonStat): void {
-    this.routerService.navigateToD11Team(this.d11TeamId(), stat.season.id);
   }
 }
