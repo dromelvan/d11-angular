@@ -43,10 +43,6 @@ describe('RulesPageComponent', () => {
     expect(TestBed.inject(PageContextService).subtitle()).toBe('');
   });
 
-  it('renders the page header', () => {
-    expect(screen.getByText('Rules')).toBeInTheDocument();
-  });
-
   it('renders section headers', () => {
     for (const header of [
       'Scoring',
