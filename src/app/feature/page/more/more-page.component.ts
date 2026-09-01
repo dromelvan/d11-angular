@@ -1,6 +1,9 @@
-import { Component, inject } from '@angular/core';
+import { Component, computed, DestroyRef, inject, signal } from '@angular/core';
+import { CurrentService } from '@app/core/current/current.service';
+import { PageContextService } from '@app/core/page-context/page-context.service';
 import { RouterService } from '@app/core/router/router.service';
 import { IconComponent, IconPreset } from '@app/shared/icon/icon.component';
+import { SectionComponent } from '@app/shared/section/section.component';
 
 interface MoreNavItem {
   label: string;
@@ -10,7 +13,7 @@ interface MoreNavItem {
 
 @Component({
   selector: 'app-more-page',
-  imports: [IconComponent],
+  imports: [IconComponent, SectionComponent],
   templateUrl: './more-page.component.html',
 })
 export class MorePageComponent {
@@ -24,5 +27,20 @@ export class MorePageComponent {
     { label: 'History', icon: 'history', navigate: () => this.routerService.navigateToHistory() },
   ];
 
-  private routerService = inject(RouterService);
+  private readonly currentService = inject(CurrentService);
+  private readonly pageContextService = inject(PageContextService);
+  private readonly routerService = inject(RouterService);
+
+  constructor() {
+    const destroyRef = inject(DestroyRef);
+
+    this.pageContextService.register(destroyRef, {
+      title: signal('More'),
+      subtitle: computed(() => {
+        const name = this.currentService.season()?.name;
+        return name !== undefined ? `Season ${name}` : undefined;
+      }),
+      backgroundColor: signal(''),
+    });
+  }
 }
