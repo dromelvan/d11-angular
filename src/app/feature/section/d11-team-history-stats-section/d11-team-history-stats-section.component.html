@@ -1,0 +1,74 @@
+<app-section>
+  <span sectionHeader>History</span>
+
+  <div class="app-row-2 app-text-header justify-between pb-2">
+    <div class="min-w-12">Season</div>
+    <div class="app-text-number min-w-10 text-center justify-center">Rank</div>
+    <div class="app-text-number w-5 text-center justify-center">W</div>
+    <div class="app-text-number w-5 text-center justify-center">D</div>
+    <div class="app-text-number w-5 text-center justify-center">L</div>
+    <div class="app-text-number w-5 text-center justify-center">G+</div>
+    <div class="app-text-number w-5 text-center justify-center">G-</div>
+    <div class="app-text-number w-5 text-center justify-center">GD</div>
+    <div class="app-text-number w-7">Pts</div>
+  </div>
+
+  @if (isLoading()) {
+    <div class="flex justify-center py-8">
+      <p-progress-spinner />
+    </div>
+  } @else {
+    @for (
+      d11TeamSeasonStat of d11TeamSeasonStats();
+      track d11TeamSeasonStat.id;
+      let index = $index
+    ) {
+      @if (index > 0) {
+        <div class="app-separator"></div>
+      }
+
+      <div
+        class="app-row-2 app-fill justify-between py-2.5 cursor-pointer"
+        (click)="navigateToD11Team(d11TeamSeasonStat)"
+        data-testid="season"
+      >
+        <div class="min-w-12">{{ d11TeamSeasonStat.season.shortName }}</div>
+        <div class="app-text-number min-w-10 text-center justify-center">
+          #{{ d11TeamSeasonStat.ranking }}
+        </div>
+        <div class="app-text-number w-5 text-center justify-center" data-testid="matches-won">
+          {{ d11TeamSeasonStat.matchesWon }}
+        </div>
+        <div class="app-text-number w-5 text-center justify-center" data-testid="matches-drawn">
+          {{ d11TeamSeasonStat.matchesDrawn }}
+        </div>
+        <div class="app-text-number w-5 text-center justify-center" data-testid="matches-lost">
+          {{ d11TeamSeasonStat.matchesLost }}
+        </div>
+        <div class="app-text-number w-5 text-center justify-center" data-testid="goals-for">
+          {{ d11TeamSeasonStat.goalsFor }}
+        </div>
+        <div class="app-text-number w-5 text-center justify-center" data-testid="goals-against">
+          {{ d11TeamSeasonStat.goalsAgainst }}
+        </div>
+        <div class="app-text-number w-5 text-center justify-center" data-testid="goal-difference">
+          {{ d11TeamSeasonStat.goalDifference }}
+        </div>
+        <div class="app-text-primary app-text-number w-7">{{ d11TeamSeasonStat.points }}</div>
+      </div>
+    }
+    @if (summary(); as summary) {
+      <div class="app-row-2 pt-2.5">
+        <div>{{ summary.seasons }} seasons</div>
+        <div class="app-text-number">
+          @if (summary.avgRanking) {
+            Avg rank {{ summary.avgRanking }}
+          }
+        </div>
+        <div class="app-fill app-text-primary app-text-number w-7" data-testid="summary-points">
+          {{ summary.points }}
+        </div>
+      </div>
+    }
+  }
+</app-section>
