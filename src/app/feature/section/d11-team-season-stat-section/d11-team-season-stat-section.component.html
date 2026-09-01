@@ -1,0 +1,58 @@
+<app-section>
+  <span sectionHeader>Season Stats</span>
+
+  @if (d11TeamSeasonStat(); as d11TeamSeasonStat) {
+    <div class="grid grid-cols-5 gap-2">
+      <div class="app-col items-center">
+        <div class="app-text-detail">Ranking</div>
+        <div class="app-text-hero" data-testid="ranking">#{{ d11TeamSeasonStat.ranking }}</div>
+      </div>
+      <div class="app-col items-center">
+        <div class="app-text-detail">Goals+</div>
+        <div class="app-text-hero" data-testid="goals-for">{{ d11TeamSeasonStat.goalsFor }}</div>
+      </div>
+      <div class="app-col items-center">
+        <div class="app-text-detail">Goals-</div>
+        <div class="app-text-hero" data-testid="goals-against">
+          {{ d11TeamSeasonStat.goalsAgainst }}
+        </div>
+      </div>
+      <div class="app-col items-center">
+        <div class="app-text-detail">GD</div>
+        <div class="app-text-hero" data-testid="goal-difference">
+          {{ d11TeamSeasonStat.goalDifference }}
+        </div>
+      </div>
+      <div class="app-col items-center">
+        <div class="app-text-detail">Points</div>
+        <div class="app-text-hero" data-testid="points">{{ d11TeamSeasonStat.points }}</div>
+      </div>
+
+      <div class="app-col items-center">
+        <div class="app-text-detail">Won</div>
+        <div class="app-text-hero" data-testid="matches-won">{{ d11TeamSeasonStat.matchesWon }}</div>
+      </div>
+      <div class="app-col items-center">
+        <div class="app-text-detail">Lost</div>
+        <div class="app-text-hero" data-testid="matches-lost">
+          {{ d11TeamSeasonStat.matchesLost }}
+        </div>
+      </div>
+      <div class="app-col items-center">
+        <div class="app-text-detail">Drawn</div>
+        <div class="app-text-hero" data-testid="matches-drawn">
+          {{ d11TeamSeasonStat.matchesDrawn }}
+        </div>
+      </div>
+      <div class="col-span-2 app-col items-center">
+        <div class="app-text-detail">Form</div>
+        <div class="app-row grow justify-center">
+          <app-form-match-points
+            [formMatchPoints]="d11TeamSeasonStat.formMatchPoints"
+            [type]="'team'"
+          />
+        </div>
+      </div>
+    </div>
+  }
+</app-section>
