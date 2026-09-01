@@ -11,6 +11,8 @@ import { Accordion, AccordionContent, AccordionHeader, AccordionPanel } from 'pr
 import { ProgressSpinner } from 'primeng/progressspinner';
 import { of } from 'rxjs';
 
+export type D11TeamPlayerSeasonStatsContext = 'd11-team' | 'd11-teams';
+
 @Component({
   selector: 'app-d11-team-player-season-stats-accordion',
   templateUrl: './d11-team-player-season-stats-accordion.component.html',
@@ -28,11 +30,12 @@ import { of } from 'rxjs';
     SvgIconComponent,
     ProgressSpinner,
   ],
-  host: { class: 'flex flex-col grow' },
+  host: { class: 'flex flex-col grow min-h-162' },
 })
 export class D11TeamPlayerSeasonStatsAccordionComponent {
   readonly d11TeamId = input.required<number>();
   readonly seasonId = input<number>();
+  readonly context = input<D11TeamPlayerSeasonStatsContext>('d11-team');
 
   protected readonly rxPlayerSeasonStats = rxResource<
     PlayerSeasonStat[],
@@ -53,7 +56,8 @@ export class D11TeamPlayerSeasonStatsAccordionComponent {
     },
   });
 
-  protected readonly playerSeasonStats = computed(() => this.rxPlayerSeasonStats.value() ?? []);
+  // eslint-disable-next-line @typescript-eslint/member-ordering
+  readonly playerSeasonStats = computed(() => this.rxPlayerSeasonStats.value() ?? []);
   protected readonly isLoading = computed(() => this.rxPlayerSeasonStats.isLoading());
 
   private readonly d11TeamApiService = inject(D11TeamApiService);

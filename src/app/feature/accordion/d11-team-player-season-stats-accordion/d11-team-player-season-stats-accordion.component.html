@@ -2,14 +2,24 @@
   <div class="w-8">Pos</div>
   <div class="app-fill">Player</div>
   <div class="lg:hidden flex items-center">
-    <div class="app-text-number w-10">Rtg</div>
+    @if (context() !== 'd11-teams') {
+      <div class="app-text-number w-10">Rtg</div>
+    }
     <div class="app-text-number w-10">Pts</div>
+    @if (context() === 'd11-teams') {
+      <div class="app-text-number w-12">Fee</div>
+    }
   </div>
   <div class="hidden lg:contents">
     <div class="app-text-number w-10">Goals</div>
     <div class="app-text-number w-28">Form</div>
-    <div class="app-text-number w-10">Rtg</div>
+    @if (context() !== 'd11-teams') {
+      <div class="app-text-number w-10">Rtg</div>
+    }
     <div class="app-text-number w-10">Pts</div>
+    @if (context() === 'd11-teams') {
+      <div class="app-text-number w-12">Fee</div>
+    }
   </div>
 </div>
 
@@ -28,12 +38,16 @@
           <div class="app-row app-fill py-2.5 min-w-0">
             <div class="w-8">{{ stat.position.code }}</div>
             <div class="app-row-2 app-fill min-w-0">
-              <app-player-img [player]="stat.player" width="24" />
+              @if (context() === 'd11-teams') {
+                <app-team-img [team]="stat.team" width="24" />
+              } @else {
+                <app-player-img [player]="stat.player" width="24" />
+              }
               <div class="app-col gap-0 min-w-0">
                 <span class="truncate">{{ stat.player.name }}</span>
                 <div class="app-row-1 app-text-detail min-w-0">
                   <span>#{{ stat.ranking }}</span>
-                  @if (!stat.team.dummy) {
+                  @if (!stat.team.dummy && context() === 'd11-team') {
                     <span>-</span>
                     <app-team-img [team]="stat.team" width="14" />
                     <span class="truncate">{{ stat.team.name }}</span>
@@ -42,20 +56,30 @@
               </div>
             </div>
             <div class="lg:hidden flex items-center">
-              <div class="app-text-number w-10">
-                {{ stat.rating > 0 ? (stat.rating | rating) : '' }}
-              </div>
+              @if (context() !== 'd11-teams') {
+                <div class="app-text-number w-10">
+                  {{ stat.rating > 0 ? (stat.rating | rating) : '' }}
+                </div>
+              }
               <div class="app-text-primary app-text-number w-10">{{ stat.points }}</div>
+              @if (context() === 'd11-teams') {
+                <div class="app-text-number w-12">{{ stat.fee | fee }}m</div>
+              }
             </div>
             <div class="hidden lg:contents">
               <div class="app-text-number w-10">{{ stat.goals }}</div>
               <div class="app-row app-text-number gap-0 w-28">
                 <app-form-match-points [formMatchPoints]="stat.formMatchPoints" type="player" />
               </div>
-              <div class="app-text-number w-10">
-                {{ stat.rating > 0 ? (stat.rating | rating) : '' }}
-              </div>
+              @if (context() !== 'd11-teams') {
+                <div class="app-text-number w-10">
+                  {{ stat.rating > 0 ? (stat.rating | rating) : '' }}
+                </div>
+              }
               <div class="app-text-primary app-text-number w-10">{{ stat.points }}</div>
+              @if (context() === 'd11-teams') {
+                <div class="app-text-number w-12">{{ stat.fee | fee }}m</div>
+              }
             </div>
           </div>
         </p-accordion-header>

@@ -1,4 +1,29 @@
 <app-section>
-  <span sectionHeader>Players</span>
-  <app-d11-team-player-season-stats-accordion [d11TeamId]="d11TeamId()" [seasonId]="seasonId()" />
+  <span sectionHeader class="app-row-1">
+    @if (context() === 'd11-teams' && d11Team(); as d11TeamValue) {
+      <app-d11-team-img [d11Team]="d11TeamValue" width="20" />
+      {{ d11TeamValue.name }}
+    } @else {
+      Players
+    }
+  </span>
+  <app-d11-team-player-season-stats-accordion
+    [d11TeamId]="d11TeamId()"
+    [seasonId]="seasonId()"
+    [context]="context()"
+  />
+  @if (context() === 'd11-teams' && (accordion()?.playerSeasonStats()?.length ?? 0) > 0) {
+    <div class="app-row pt-2 text-sm">
+      <div class="app-row-1 app-fill app-text-detail">
+        <span>Lineup</span>
+        @for (entry of positionSummary(); track entry.position.id; let last = $last) {
+          <span [class.text-error]="entry.hasError">{{ entry.count }}</span>
+          @if (!last) {
+            <span>-</span>
+          }
+        }
+      </div>
+      <span class="app-text-primary text-nowrap">Total: {{ totalFee() | fee }}m</span>
+    </div>
+  }
 </app-section>

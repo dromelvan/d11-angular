@@ -1,17 +1,20 @@
+import { signal } from '@angular/core';
+import { By } from '@angular/platform-browser';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { D11TeamSeasonStat, Position, Season } from '@app/core/api';
+import { D11TeamSeasonStat, Season, SeasonBase } from '@app/core/api';
 import { D11TeamApiService } from '@app/core/api/d11-team/d11-team-api.service';
 import { D11TeamSeasonStatApiService } from '@app/core/api/d11-team-season-stat/d11-team-season-stat-api.service';
 import { PositionApiService } from '@app/core/api/position/position-api.service';
 import { SeasonApiService } from '@app/core/api/season/season-api.service';
-import { LoadingService } from '@app/core/loading/loading.service';
+import { CurrentService } from '@app/core/current/current.service';
+import { PageContextService } from '@app/core/page-context/page-context.service';
 import { RouterService } from '@app/core/router/router.service';
-import { DynamicDialogService } from '@app/shared/dialog/dynamic-dialog-service/dynamic-dialog.service';
-import { fakeD11TeamBase, fakeD11TeamSeasonStat, fakePosition, fakeSeason } from '@app/test';
+import { SeasonPickerButtonComponent } from '@app/feature/drawer/season-picker-button/season-picker-button.component';
+import { fakeD11TeamBase, fakeD11TeamSeasonStat, fakeSeason } from '@app/test';
 import { screen, waitFor } from '@testing-library/angular';
 import userEvent from '@testing-library/user-event';
 import { Observable, of } from 'rxjs';
-import { expect, vi } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { D11TeamsPageComponent } from './d11-teams-page.component';
 
 describe('D11TeamsPageComponent', () => {
@@ -19,89 +22,85 @@ describe('D11TeamsPageComponent', () => {
   const mockD11TeamSeasonStatApi = {
     getD11TeamSeasonStatsBySeasonId: vi.fn<(id: number) => Observable<D11TeamSeasonStat[]>>(),
   };
-  const mockPositionApi = { getPositions: vi.fn<() => Observable<Position[]>>() };
-  const mockD11TeamApi = { getPlayerSeasonStatsByD11TeamIdAndSeasonId: vi.fn() };
-  const mockLoadingService = { register: vi.fn() };
+  const mockD11TeamApi = {
+    getPlayerSeasonStatsByD11TeamIdAndSeasonId: vi.fn(),
+  };
+  const mockPositionApi = { getPositions: vi.fn() };
   const mockRouterService = { navigateToD11Teams: vi.fn(), navigateToPlayer: vi.fn() };
-  const mockDynamicDialogService = { openPlayerSeasonStat: vi.fn() };
 
   let seasons: Season[];
   let d11TeamSeasonStats: D11TeamSeasonStat[];
   let fixture: ComponentFixture<D11TeamsPageComponent>;
+  let mockCurrentService: {
+    season: ReturnType<typeof signal<SeasonBase | undefined>>;
+    rxCurrent: { isLoading: ReturnType<typeof signal<boolean>> };
+  };
 
   beforeEach(async () => {
     vi.clearAllMocks();
+    HTMLElement.prototype.scrollIntoView = vi.fn();
+
     seasons = [
       { ...fakeSeason(), id: 1, date: '2023-08-01' },
       { ...fakeSeason(), id: 2, date: '2022-08-01' },
       { ...fakeSeason(), id: 3, date: '2021-08-01' },
     ];
     d11TeamSeasonStats = [
-      { ...fakeD11TeamSeasonStat(), d11Team: { ...fakeD11TeamBase(), name: 'D11Team2' } },
-      { ...fakeD11TeamSeasonStat(), d11Team: { ...fakeD11TeamBase(), name: 'D11Team1' } },
+      { ...fakeD11TeamSeasonStat(), d11Team: { ...fakeD11TeamBase(), id: 1, name: 'D11Team2' } },
+      { ...fakeD11TeamSeasonStat(), d11Team: { ...fakeD11TeamBase(), id: 2, name: 'D11Team1' } },
     ];
+
     mockSeasonApi.getAll.mockReturnValue(of(seasons));
     mockD11TeamSeasonStatApi.getD11TeamSeasonStatsBySeasonId.mockReturnValue(
       of(d11TeamSeasonStats),
     );
-    mockPositionApi.getPositions.mockReturnValue(of([fakePosition(), fakePosition()]));
     mockD11TeamApi.getPlayerSeasonStatsByD11TeamIdAndSeasonId.mockReturnValue(of([]));
+    mockPositionApi.getPositions.mockReturnValue(of([]));
+
+    mockCurrentService = {
+      season: signal<SeasonBase | undefined>(seasons[0]),
+      rxCurrent: { isLoading: signal(false) },
+    };
 
     await TestBed.configureTestingModule({
       imports: [D11TeamsPageComponent],
       providers: [
         { provide: SeasonApiService, useValue: mockSeasonApi },
         { provide: D11TeamSeasonStatApiService, useValue: mockD11TeamSeasonStatApi },
-        { provide: PositionApiService, useValue: mockPositionApi },
         { provide: D11TeamApiService, useValue: mockD11TeamApi },
-        { provide: LoadingService, useValue: mockLoadingService },
+        { provide: PositionApiService, useValue: mockPositionApi },
         { provide: RouterService, useValue: mockRouterService },
-        { provide: DynamicDialogService, useValue: mockDynamicDialogService },
+        { provide: CurrentService, useValue: mockCurrentService },
       ],
     }).compileComponents();
   });
 
   describe('with seasonId', () => {
-    beforeEach(() => {
+    beforeEach(async () => {
       fixture = TestBed.createComponent(D11TeamsPageComponent);
       fixture.componentRef.setInput('seasonId', seasons[1].id);
       fixture.detectChanges();
+      await fixture.whenStable();
     });
 
-    it('renders', async () => {
-      await waitFor(() => {
-        expect(fixture.nativeElement.querySelector('.app-d11-teams-page')).toBeInTheDocument();
-      });
+    it('renders', () => {
+      expect(fixture.nativeElement.querySelector('.app-d11-teams-page')).toBeInTheDocument();
     });
 
-    it('gets all seasons', () => {
+    it('calls getAll', () => {
       expect(mockSeasonApi.getAll).toHaveBeenCalled();
     });
 
-    it('renders season name', async () => {
-      await waitFor(() => {
-        expect(screen.getByText(seasons[1].name, { exact: false })).toBeInTheDocument();
-      });
+    it('renders a scroll picker item for the selected season', () => {
+      const button = fixture.nativeElement.querySelector(`[data-id="${seasons[1].id}"]`);
+      expect(button).toBeInTheDocument();
     });
 
-    it('renders d11-team-squad for each stat', async () => {
-      await waitFor(() => {
-        expect(fixture.nativeElement.querySelectorAll('app-d11-team-squad').length).toBe(
-          d11TeamSeasonStats.length,
-        );
-      });
+    it('calls getPositions', () => {
+      expect(mockPositionApi.getPositions).toHaveBeenCalled();
     });
 
-    it('renders d11-team-squads sorted by d11 team name', async () => {
-      await waitFor(() => {
-        const cards = fixture.nativeElement.querySelectorAll('app-d11-team-squad');
-        expect(cards.length).toBe(2);
-        expect(cards[0].textContent).toContain('D11Team1');
-        expect(cards[1].textContent).toContain('D11Team2');
-      });
-    });
-
-    it('gets stats for the provided season', async () => {
+    it('loads stats for the provided season', async () => {
       await waitFor(() => {
         expect(mockD11TeamSeasonStatApi.getD11TeamSeasonStatsBySeasonId).toHaveBeenCalledWith(
           seasons[1].id,
@@ -109,92 +108,132 @@ describe('D11TeamsPageComponent', () => {
       });
     });
 
-    it('navigates to previous season on previous button click', async () => {
-      await waitFor(() => screen.getByText(seasons[1].name, { exact: false }));
-      const [prevButton] = fixture.nativeElement.querySelectorAll('app-material-icon-button');
-
-      await userEvent.click(prevButton);
-
-      expect(mockRouterService.navigateToD11Teams).toHaveBeenCalledExactlyOnceWith(seasons[2].id);
+    it('renders a player season stats section for each stat', async () => {
+      await waitFor(() => {
+        expect(
+          fixture.nativeElement.querySelectorAll('app-d11-team-player-season-stats-section').length,
+        ).toBe(d11TeamSeasonStats.length);
+      });
     });
 
-    it('navigates to next season on next button click', async () => {
-      await waitFor(() => screen.getByText(seasons[1].name, { exact: false }));
-      const [, nextButton] = fixture.nativeElement.querySelectorAll('app-material-icon-button');
+    it('renders sections sorted alphabetically by d11 team name', async () => {
+      await waitFor(() => {
+        const headers = Array.from<HTMLElement>(
+          fixture.nativeElement.querySelectorAll('[data-testid="section-header"]'),
+        );
+        expect(headers.length).toBe(2);
+        expect(headers[0].textContent?.trim()).toContain('D11Team1');
+        expect(headers[1].textContent?.trim()).toContain('D11Team2');
+      });
+    });
 
-      await userEvent.click(nextButton);
+    it('navigates to selected season when a scroll picker item is clicked', async () => {
+      await waitFor(() => fixture.nativeElement.querySelector(`[data-id="${seasons[0].id}"]`));
+      const button = fixture.nativeElement.querySelector(`[data-id="${seasons[0].id}"]`);
+      button.click();
 
-      expect(mockRouterService.navigateToD11Teams).toHaveBeenCalledExactlyOnceWith(seasons[0].id);
+      expect(mockRouterService.navigateToD11Teams).toHaveBeenCalledWith(seasons[0].id);
+    });
+
+    it('navigates to selected season when a season picker button selection is made', () => {
+      const pickerButton = fixture.debugElement.query(By.directive(SeasonPickerButtonComponent))
+        .componentInstance as SeasonPickerButtonComponent;
+      pickerButton.seasonSelected.emit(seasons[0]);
+
+      expect(mockRouterService.navigateToD11Teams).toHaveBeenCalledWith(seasons[0].id);
     });
   });
 
   describe('without seasonId', () => {
-    beforeEach(() => {
+    beforeEach(async () => {
       fixture = TestBed.createComponent(D11TeamsPageComponent);
       fixture.detectChanges();
+      await fixture.whenStable();
+      TestBed.tick();
     });
 
-    it('renders', async () => {
+    it('calls getAll', () => {
+      expect(mockSeasonApi.getAll).toHaveBeenCalled();
+    });
+
+    it('does not render the season picker button', () => {
+      expect(
+        fixture.nativeElement.querySelector('app-season-picker-button'),
+      ).not.toBeInTheDocument();
+    });
+
+    it('navigates to the current season on auto-select', async () => {
       await waitFor(() => {
-        expect(fixture.nativeElement.querySelector('.app-d11-teams-page')).toBeInTheDocument();
+        expect(mockRouterService.navigateToD11Teams).toHaveBeenCalledWith(seasons[0].id);
       });
-    });
-
-    it('renders most recent season name', async () => {
-      await waitFor(() => {
-        expect(screen.getByText(seasons[0].name, { exact: false })).toBeInTheDocument();
-      });
-    });
-
-    it('renders d11-team-squad for each stat', async () => {
-      await waitFor(() => {
-        expect(fixture.nativeElement.querySelectorAll('app-d11-team-squad').length).toBe(
-          d11TeamSeasonStats.length,
-        );
-      });
-    });
-
-    it('navigates to previous season on previous button click', async () => {
-      await waitFor(() => screen.getByText(seasons[0].name, { exact: false }));
-      const [prevButton] = fixture.nativeElement.querySelectorAll('app-material-icon-button');
-
-      await userEvent.click(prevButton);
-
-      expect(mockRouterService.navigateToD11Teams).toHaveBeenCalledExactlyOnceWith(seasons[1].id);
     });
   });
 
-  describe('at last season', () => {
-    beforeEach(() => {
+  describe('seasonId input', () => {
+    beforeEach(async () => {
       fixture = TestBed.createComponent(D11TeamsPageComponent);
-      fixture.componentRef.setInput('seasonId', seasons[0].id);
       fixture.detectChanges();
+      await fixture.whenStable();
     });
 
-    it('does not navigate to next season on next button click', async () => {
-      await waitFor(() => screen.getByText(seasons[0].name, { exact: false }));
-      const [, nextButton] = fixture.nativeElement.querySelectorAll('app-material-icon-button');
+    it('is undefined by default', () => {
+      expect(fixture.componentInstance.seasonId()).toBeUndefined();
+    });
 
-      await userEvent.click(nextButton);
+    it('parses a numeric string', () => {
+      fixture.componentRef.setInput('seasonId', '42');
+      expect(fixture.componentInstance.seasonId()).toBe(42);
+    });
 
-      expect(mockRouterService.navigateToD11Teams).not.toHaveBeenCalled();
+    it('parses null as undefined', () => {
+      fixture.componentRef.setInput('seasonId', null);
+      expect(fixture.componentInstance.seasonId()).toBeUndefined();
+    });
+
+    it('parses empty string as undefined', () => {
+      fixture.componentRef.setInput('seasonId', '');
+      expect(fixture.componentInstance.seasonId()).toBeUndefined();
     });
   });
 
-  describe('at first season', () => {
-    beforeEach(() => {
+  describe('live button', () => {
+    beforeEach(async () => {
       fixture = TestBed.createComponent(D11TeamsPageComponent);
-      fixture.componentRef.setInput('seasonId', seasons[2].id);
+      fixture.componentRef.setInput('seasonId', seasons[1].id);
       fixture.detectChanges();
+      await fixture.whenStable();
     });
 
-    it('does not navigate to previous season on previous button click', async () => {
-      await waitFor(() => screen.getByText(seasons[2].name, { exact: false }));
-      const [prevButton] = fixture.nativeElement.querySelectorAll('app-material-icon-button');
+    it('renders the Live button', () => {
+      expect(screen.getByRole('button', { name: 'Live' })).toBeInTheDocument();
+    });
 
-      await userEvent.click(prevButton);
+    it('navigates to the current season on Live button click', async () => {
+      await userEvent.click(screen.getByRole('button', { name: 'Live' }));
 
-      expect(mockRouterService.navigateToD11Teams).not.toHaveBeenCalled();
+      expect(mockRouterService.navigateToD11Teams).toHaveBeenCalledWith(seasons[0].id);
+    });
+  });
+
+  describe('page context', () => {
+    beforeEach(async () => {
+      fixture = TestBed.createComponent(D11TeamsPageComponent);
+      fixture.componentRef.setInput('seasonId', seasons[1].id);
+      fixture.detectChanges();
+      await fixture.whenStable();
+    });
+
+    it('sets title to D11 Teams', () => {
+      expect(TestBed.inject(PageContextService).title()).toBe('D11 Teams');
+    });
+
+    it('sets subtitle to Season <name> for the selected season', () => {
+      expect(TestBed.inject(PageContextService).subtitle()).toBe(`Season ${seasons[1].name}`);
+    });
+
+    it('falls back to current season name when no season is selected', () => {
+      fixture.componentRef.setInput('seasonId', undefined);
+      expect(TestBed.inject(PageContextService).subtitle()).toBe(seasons[0].name);
     });
   });
 });

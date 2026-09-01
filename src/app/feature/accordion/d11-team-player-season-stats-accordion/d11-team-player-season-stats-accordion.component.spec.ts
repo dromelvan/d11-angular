@@ -51,7 +51,7 @@ describe('D11TeamPlayerSeasonStatsAccordionComponent', () => {
   });
 
   describe('column headers', () => {
-    it('renders column headers', async () => {
+    it('renders Rtg column header when context is d11-team', async () => {
       await render(D11TeamPlayerSeasonStatsAccordionComponent, {
         inputs: { d11TeamId: 1, seasonId: 10 },
         providers,
@@ -62,6 +62,17 @@ describe('D11TeamPlayerSeasonStatsAccordionComponent', () => {
       expect(screen.getByText('Player')).toBeInTheDocument();
       expect(screen.getAllByText('Rtg').length).toBeGreaterThan(0);
       expect(screen.getAllByText('Pts').length).toBeGreaterThan(0);
+    });
+
+    it('renders Fee column header when context is d11-teams', async () => {
+      await render(D11TeamPlayerSeasonStatsAccordionComponent, {
+        inputs: { d11TeamId: 1, seasonId: 10, context: 'd11-teams' },
+        providers,
+      });
+      TestBed.tick();
+
+      expect(screen.getAllByText('Fee').length).toBeGreaterThan(0);
+      expect(screen.queryByText('Rtg')).not.toBeInTheDocument();
     });
   });
 
@@ -124,6 +135,19 @@ describe('D11TeamPlayerSeasonStatsAccordionComponent', () => {
         expect(screen.queryByText('0.00')).not.toBeInTheDocument();
       });
 
+      it('renders fee in row when context is d11-teams', async () => {
+        mockD11TeamApiService.getPlayerSeasonStatsByD11TeamIdAndSeasonId.mockReturnValue(
+          of([stat({ fee: 105 })]),
+        );
+        await render(D11TeamPlayerSeasonStatsAccordionComponent, {
+          inputs: { d11TeamId: 1, seasonId: 10, context: 'd11-teams' },
+          providers,
+        });
+        TestBed.tick();
+
+        expect(screen.getAllByText('10.5m').length).toBeGreaterThan(0);
+      });
+
       it('renders points', async () => {
         await setup([stat({ points: 42 })]);
 
@@ -135,6 +159,21 @@ describe('D11TeamPlayerSeasonStatsAccordionComponent', () => {
         await setup([stat({ team })]);
 
         expect(screen.getAllByText('Team1').length).toBeGreaterThan(0);
+      });
+
+      it('does not render team name in detail line when context is d11-teams', async () => {
+        const team = { ...fakePlayerSeasonStat().team, dummy: false, name: 'Team1' };
+        mockD11TeamApiService.getPlayerSeasonStatsByD11TeamIdAndSeasonId.mockReturnValue(
+          of([stat({ team })]),
+        );
+        const { container } = await render(D11TeamPlayerSeasonStatsAccordionComponent, {
+          inputs: { d11TeamId: 1, seasonId: 10, context: 'd11-teams' },
+          providers,
+        });
+        TestBed.tick();
+
+        const headerText = container.querySelector('p-accordion-header')?.textContent ?? '';
+        expect(headerText).not.toContain('Team1');
       });
 
       it('does not render team name in detail line when dummy', async () => {
@@ -267,6 +306,13 @@ describe('D11TeamPlayerSeasonStatsAccordionComponent', () => {
         expect(screen.getByText('Clean sheets')).toBeInTheDocument();
       });
 
+      it('does not render clean sheets when zero', async () => {
+        const position = { ...fakePlayerSeasonStat().position, id: 4 };
+        await setup([stat({ cleanSheets: 0, position })]);
+
+        expect(screen.queryByText('Clean sheets')).not.toBeInTheDocument();
+      });
+
       it('does not render clean sheets when position id is 5 or above', async () => {
         const position = { ...fakePlayerSeasonStat().position, id: 5 };
         await setup([stat({ cleanSheets: 3, position })]);
@@ -293,6 +339,13 @@ describe('D11TeamPlayerSeasonStatsAccordionComponent', () => {
         expect(screen.getByText('Goals conceded')).toBeInTheDocument();
       });
 
+      it('does not render goals conceded when zero', async () => {
+        const position = { ...fakePlayerSeasonStat().position, defender: true };
+        await setup([stat({ goalsConceded: 0, position })]);
+
+        expect(screen.queryByText('Goals conceded')).not.toBeInTheDocument();
+      });
+
       it('does not render goals conceded when position is not defender', async () => {
         const position = { ...fakePlayerSeasonStat().position, defender: false };
         await setup([stat({ goalsConceded: 5, position })]);
@@ -306,10 +359,22 @@ describe('D11TeamPlayerSeasonStatsAccordionComponent', () => {
         expect(screen.getByText('Man of the match')).toBeInTheDocument();
       });
 
+      it('does not render man of the match when zero', async () => {
+        await setup([stat({ manOfTheMatch: 0 })]);
+
+        expect(screen.queryByText('Man of the match')).not.toBeInTheDocument();
+      });
+
       it('renders shared man of the match when greater than zero', async () => {
         await setup([stat({ sharedManOfTheMatch: 1 })]);
 
         expect(screen.getByText('Shared man of the match')).toBeInTheDocument();
+      });
+
+      it('does not render shared man of the match when zero', async () => {
+        await setup([stat({ sharedManOfTheMatch: 0 })]);
+
+        expect(screen.queryByText('Shared man of the match')).not.toBeInTheDocument();
       });
 
       it('renders games substitute when greater than zero', async () => {
@@ -354,6 +419,62 @@ describe('D11TeamPlayerSeasonStatsAccordionComponent', () => {
         stat1.player.id,
         stat1.season.id,
       );
+    });
+  });
+
+  describe('context input', () => {
+    it('defaults to d11-team', async () => {
+      const { fixture } = await render(D11TeamPlayerSeasonStatsAccordionComponent, {
+        inputs: { d11TeamId: 1, seasonId: 10 },
+        providers,
+      });
+
+      expect(fixture.componentInstance.context()).toBe('d11-team');
+    });
+
+    it('shows player image when context is d11-team', async () => {
+      const { container } = await setup([stat()]);
+
+      expect(container.querySelector('app-player-img')).toBeInTheDocument();
+      expect(container.querySelectorAll('app-team-img').length).toBe(0);
+    });
+
+    it('shows team image when context is d11-teams', async () => {
+      mockD11TeamApiService.getPlayerSeasonStatsByD11TeamIdAndSeasonId.mockReturnValue(
+        of([stat()]),
+      );
+      const { container } = await render(D11TeamPlayerSeasonStatsAccordionComponent, {
+        inputs: { d11TeamId: 1, seasonId: 10, context: 'd11-teams' },
+        providers,
+      });
+      TestBed.tick();
+
+      expect(container.querySelector('app-team-img')).toBeInTheDocument();
+      expect(container.querySelector('app-player-img')).not.toBeInTheDocument();
+    });
+  });
+
+  describe('playerSeasonStats', () => {
+    it('exposes loaded stats', async () => {
+      const stat1 = stat();
+      mockD11TeamApiService.getPlayerSeasonStatsByD11TeamIdAndSeasonId.mockReturnValue(of([stat1]));
+      const { fixture } = await render(D11TeamPlayerSeasonStatsAccordionComponent, {
+        inputs: { d11TeamId: 1, seasonId: 10 },
+        providers,
+      });
+      TestBed.tick();
+
+      expect(fixture.componentInstance.playerSeasonStats()).toEqual([stat1]);
+    });
+
+    it('returns empty array when not loaded', async () => {
+      const { fixture } = await render(D11TeamPlayerSeasonStatsAccordionComponent, {
+        inputs: { d11TeamId: 1, seasonId: 10 },
+        providers,
+      });
+      TestBed.tick();
+
+      expect(fixture.componentInstance.playerSeasonStats()).toEqual([]);
     });
   });
 
