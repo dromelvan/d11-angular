@@ -1,0 +1,27 @@
+<app-section>
+  <span sectionHeader>Matches</span>
+
+  @if (isLoading()) {
+    <div class="flex justify-center py-8">
+      <p-progress-spinner />
+    </div>
+  } @else if (d11Matches().length > 0) {
+    <div class="grid grid-cols-[auto_1fr_auto_auto_auto] gap-x-2">
+      @for (d11Match of d11Matches(); track d11Match.id; let first = $first; let last = $last) {
+        <app-d11-match-result-col
+          [d11Match]="d11Match"
+          [d11TeamId]="d11TeamId()"
+          [isLast]="last"
+          [showDate]="true"
+          [class.pt-2]="!first"
+          [class.pb-2]="!last"
+        />
+        @if (!last) {
+          <div class="app-separator col-span-5"></div>
+        }
+      }
+    </div>
+  } @else {
+    <div class="app-text-low-emphasis">No matches found</div>
+  }
+</app-section>
