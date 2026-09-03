@@ -1,0 +1,159 @@
+<app-section>
+  <span sectionHeader>{{ seasonWinners().season.name }}</span>
+
+  <div class="flex flex-col md:flex-row gap-4">
+    @let d11TeamSeasonStat = seasonWinners().d11TeamSeasonStat;
+    <div class="app-col-2 flex-1">
+      <div class="app-text-header">D11 {{ winnerLabel() }}</div>
+      <button
+        class="grid grid-cols-[auto_1fr] gap-x-3 text-left w-full cursor-pointer"
+        data-testid="d11-team"
+        (click)="navigateToD11Team()"
+      >
+        <app-d11-team-img
+          class="row-span-2 self-center"
+          [d11Team]="d11TeamSeasonStat.d11Team"
+          width="40"
+        />
+        <div class="self-end pb-0.5 app-row-2">
+          <span class="app-text-primary">{{ d11TeamSeasonStat.d11Team.name }}</span>
+          @if (isFinished()) {
+            <span class="app-text-detail" data-testid="d11-team-win-count">
+              {{ d11TeamSeasonStat.winCount | ordinal }} win
+            </span>
+          }
+        </div>
+        <div class="grid grid-cols-5 pt-1">
+          <div class="app-text-detail text-center">W</div>
+          <div class="app-text-detail text-center">D</div>
+          <div class="app-text-detail text-center">L</div>
+          <div class="app-text-detail text-center">GD</div>
+          <div class="app-text-detail text-center">Pts</div>
+          <div class="app-text-hero md:text-base lg:text-xl text-center">
+            {{ d11TeamSeasonStat.matchesWon }}
+          </div>
+          <div class="app-text-hero md:text-base lg:text-xl text-center">
+            {{ d11TeamSeasonStat.matchesDrawn }}
+          </div>
+          <div class="app-text-hero md:text-base lg:text-xl text-center">
+            {{ d11TeamSeasonStat.matchesLost }}
+          </div>
+          <div class="app-text-hero md:text-base lg:text-xl text-center">
+            {{ d11TeamSeasonStat.goalDifference > 0 ? '+' : ''
+            }}{{ d11TeamSeasonStat.goalDifference }}
+          </div>
+          <div
+            class="app-text-hero md:text-base lg:text-xl text-center"
+            data-testid="d11-team-points"
+          >
+            {{ d11TeamSeasonStat.points }}
+          </div>
+        </div>
+      </button>
+    </div>
+
+    <div class="border-t border-surface-200 -mx-4 md:border-t-0 md:border-l md:mx-0 md:-my-4"></div>
+
+    @let teamSeasonStat = seasonWinners().teamSeasonStat;
+    <div class="app-col-2 flex-1">
+      <div class="app-text-header">Premier League {{ winnerLabel() }}</div>
+      <button
+        class="grid grid-cols-[auto_1fr] gap-x-3 text-left w-full cursor-pointer"
+        data-testid="team"
+        (click)="navigateToTeam()"
+      >
+        <app-team-img class="row-span-2 self-center" [team]="teamSeasonStat.team" width="40" />
+        <div class="self-end pb-0.5 app-row-2">
+          <span class="app-text-primary">{{ teamSeasonStat.team.name }}</span>
+          @if (isFinished()) {
+            <span class="app-text-detail" data-testid="team-win-count">
+              {{ teamSeasonStat.winCount | ordinal }} win
+            </span>
+          }
+        </div>
+        <div class="grid grid-cols-5 pt-1">
+          <div class="app-text-detail text-center">W</div>
+          <div class="app-text-detail text-center">D</div>
+          <div class="app-text-detail text-center">L</div>
+          <div class="app-text-detail text-center">GD</div>
+          <div class="app-text-detail text-center">Pts</div>
+          <div class="app-text-hero md:text-base lg:text-xl text-center">
+            {{ teamSeasonStat.matchesWon }}
+          </div>
+          <div class="app-text-hero md:text-base lg:text-xl text-center">
+            {{ teamSeasonStat.matchesDrawn }}
+          </div>
+          <div class="app-text-hero md:text-base lg:text-xl text-center">
+            {{ teamSeasonStat.matchesLost }}
+          </div>
+          <div class="app-text-hero md:text-base lg:text-xl text-center">
+            {{ teamSeasonStat.goalDifference > 0 ? '+' : '' }}{{ teamSeasonStat.goalDifference }}
+          </div>
+          <div class="app-text-hero md:text-base lg:text-xl text-center" data-testid="team-points">
+            {{ teamSeasonStat.points }}
+          </div>
+        </div>
+      </button>
+    </div>
+
+    <div class="border-t border-surface-200 -mx-4 md:border-t-0 md:border-l md:mx-0 md:-my-4"></div>
+
+    @let playerSeasonStat = seasonWinners().playerSeasonStat;
+    <div class="app-col-2 flex-1">
+      <div class="app-text-header">Most valuable player</div>
+      <button
+        class="grid grid-cols-[auto_1fr] gap-x-3 text-left w-full cursor-pointer"
+        data-testid="player"
+        (click)="navigateToPlayer()"
+      >
+        <app-player-img
+          class="row-span-2 self-center"
+          [player]="playerSeasonStat.player"
+          width="40"
+        />
+        <div class="self-end pb-0.5">
+          <div class="app-row-2">
+            <span class="app-text-primary">{{ playerSeasonStat.player.name }}</span>
+            @if (isFinished()) {
+              <span class="app-text-detail" data-testid="player-win-count">
+                {{ playerSeasonStat.winCount | ordinal }} win
+              </span>
+            }
+          </div>
+          <div class="app-row-1 app-text-detail">
+            <app-d11-team-img [d11Team]="playerSeasonStat.d11Team" width="16" />
+            {{ playerSeasonStat.d11Team.shortName }}
+          </div>
+        </div>
+        <div class="grid grid-cols-5 pt-1">
+          <div class="app-text-detail text-center">Goals</div>
+          <div class="app-text-detail text-center">
+            <span class="md:hidden lg:block">Assists</span
+            ><span class="hidden md:block lg:hidden">Ass.</span>
+          </div>
+          <div class="app-text-detail text-center">MoM</div>
+          <div class="app-text-detail text-center">Rating</div>
+          <div class="app-text-detail text-center">Pts</div>
+          <div class="app-text-hero md:text-base lg:text-xl text-center">
+            {{ playerSeasonStat.goals }}
+          </div>
+          <div class="app-text-hero md:text-base lg:text-xl text-center">
+            {{ playerSeasonStat.goalAssists }}
+          </div>
+          <div class="app-text-hero md:text-base lg:text-xl text-center">
+            {{ playerSeasonStat.manOfTheMatch }}
+          </div>
+          <div class="app-text-hero md:text-base lg:text-xl text-center">
+            {{ playerSeasonStat.rating | rating }}
+          </div>
+          <div
+            class="app-text-hero md:text-base lg:text-xl text-center"
+            data-testid="player-points"
+          >
+            {{ playerSeasonStat.points }}
+          </div>
+        </div>
+      </button>
+    </div>
+  </div>
+</app-section>
