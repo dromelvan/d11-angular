@@ -1,6 +1,8 @@
+import { By } from '@angular/platform-browser';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { render, screen } from '@testing-library/angular';
 import userEvent from '@testing-library/user-event';
+import { AutoComplete } from 'primeng/autocomplete';
 import { InputAutocompleteComponent } from './input-autocomplete.component';
 
 const PROPERTY = 'property';
@@ -9,8 +11,6 @@ const SUGGESTIONS = ['option1', 'option2', 'option3'];
 
 describe('InputAutocompleteComponent', () => {
   describe('basic', () => {
-    let input: HTMLInputElement;
-
     beforeEach(async () => {
       const form = new FormGroup({
         [PROPERTY]: new FormControl(''),
@@ -29,15 +29,81 @@ describe('InputAutocompleteComponent', () => {
           componentProperties: { form, suggestions: SUGGESTIONS },
         },
       );
-
-      input = screen.getByRole('combobox', { name: LABEL });
     });
 
-    it('renders', () => {
+    it('renders label and input', () => {
       expect(screen.getByText(LABEL)).toBeInTheDocument();
-      expect(input).toBeInTheDocument();
+      expect(screen.getByRole('combobox', { name: LABEL })).toBeInTheDocument();
     });
   });
+
+  // placeholder -----------------------------------------------------------------------------------
+
+  describe('placeholder', () => {
+    const PLACEHOLDER = 'Search...';
+
+    beforeEach(async () => {
+      const form = new FormGroup({ [PROPERTY]: new FormControl('') });
+
+      await render(
+        `<form [formGroup]="form">
+          <app-input-autocomplete
+            property="${PROPERTY}"
+            label="${LABEL}"
+            [suggestions]="[]"
+            placeholder="${PLACEHOLDER}"
+          />
+        </form>`,
+        {
+          imports: [ReactiveFormsModule, InputAutocompleteComponent],
+          componentProperties: { form },
+        },
+      );
+    });
+
+    it('sets placeholder on the input', () => {
+      expect(screen.getByRole('combobox', { name: LABEL })).toHaveAttribute(
+        'placeholder',
+        PLACEHOLDER,
+      );
+    });
+  });
+
+  // completeMethod --------------------------------------------------------------------------------
+
+  describe('completeMethod', () => {
+    let onComplete: ReturnType<typeof vi.fn>;
+
+    beforeEach(async () => {
+      const form = new FormGroup({ [PROPERTY]: new FormControl('') });
+      onComplete = vi.fn();
+
+      const { fixture } = await render(
+        `<form [formGroup]="form">
+          <app-input-autocomplete
+            property="${PROPERTY}"
+            label="${LABEL}"
+            [suggestions]="suggestions"
+            (completeMethod)="onComplete($event)"
+          />
+        </form>`,
+        {
+          imports: [ReactiveFormsModule, InputAutocompleteComponent],
+          componentProperties: { form, suggestions: SUGGESTIONS, onComplete },
+        },
+      );
+
+      fixture.debugElement
+        .query(By.directive(AutoComplete))
+        .componentInstance.completeMethod.emit({ query: 'opt' });
+    });
+
+    it('emits completeMethod with the query', () => {
+      expect(onComplete).toHaveBeenCalledWith({ query: 'opt' });
+    });
+  });
+
+  // when required ---------------------------------------------------------------------------------
 
   describe('when required', () => {
     let form: FormGroup;

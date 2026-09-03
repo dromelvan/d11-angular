@@ -14,6 +14,7 @@ describe('InputTextComponent', () => {
   describe('basic', () => {
     let form: FormGroup;
     let input: HTMLInputElement;
+    let detectChanges: () => void;
 
     beforeEach(async () => {
       form = new FormGroup({
@@ -21,21 +22,29 @@ describe('InputTextComponent', () => {
         [ICON_PROPERTY]: new FormControl(''),
       });
 
-      await render(
+      const { fixture } = await render(
         `<form [formGroup]="form">
           <app-input-text property="${PROPERTY}" label="${LABEL}" />
           <app-input-text property="${ICON_PROPERTY}" label="${ICON_LABEL}" icon="${ICON}" />
         </form>`,
         { imports: [ReactiveFormsModule, InputTextComponent], componentProperties: { form } },
       );
+      detectChanges = () => fixture.detectChanges();
 
       input = screen.getByRole('textbox', { name: LABEL });
     });
 
-    it('renders', () => {
+    it('renders label and input', () => {
       expect(screen.getByText(LABEL)).toBeInTheDocument();
       expect(input).toBeInTheDocument();
       expect(input).toHaveValue(INITIAL_INPUT);
+    });
+
+    it('reflects form value changes', () => {
+      form.get(PROPERTY)?.setValue('updated');
+      detectChanges();
+
+      expect(input).toHaveValue('updated');
     });
 
     it('does not render icon when icon is not provided', () => {

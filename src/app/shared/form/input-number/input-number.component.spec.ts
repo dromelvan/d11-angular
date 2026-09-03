@@ -29,7 +29,7 @@ describe('InputNumberComponent', () => {
       input = screen.getByRole('spinbutton', { name: LABEL });
     });
 
-    it('renders', () => {
+    it('renders label and input', () => {
       expect(screen.getByText(LABEL)).toBeInTheDocument();
       expect(input).toBeInTheDocument();
       expect(input).toHaveValue(String(INITIAL_VALUE));
@@ -42,6 +42,40 @@ describe('InputNumberComponent', () => {
       expect(input).toHaveValue('99');
     });
   });
+
+  // useGrouping -----------------------------------------------------------------------------------
+
+  describe('useGrouping', () => {
+    const LARGE_VALUE = 1000;
+
+    it('does not group digits by default', async () => {
+      const form = new FormGroup({ [PROPERTY]: new FormControl(LARGE_VALUE) });
+
+      await render(
+        `<form [formGroup]="form">
+          <app-input-number property="${PROPERTY}" label="${LABEL}" />
+        </form>`,
+        { imports: [ReactiveFormsModule, InputNumberComponent], componentProperties: { form } },
+      );
+
+      expect(screen.getByRole('spinbutton', { name: LABEL })).toHaveValue('1000');
+    });
+
+    it('groups digits when useGrouping is true', async () => {
+      const form = new FormGroup({ [PROPERTY]: new FormControl(LARGE_VALUE) });
+
+      await render(
+        `<form [formGroup]="form">
+          <app-input-number property="${PROPERTY}" label="${LABEL}" [useGrouping]="true" />
+        </form>`,
+        { imports: [ReactiveFormsModule, InputNumberComponent], componentProperties: { form } },
+      );
+
+      expect(screen.getByRole('spinbutton', { name: LABEL })).toHaveValue('1,000');
+    });
+  });
+
+  // when required ---------------------------------------------------------------------------------
 
   describe('when required', () => {
     let form: FormGroup;
