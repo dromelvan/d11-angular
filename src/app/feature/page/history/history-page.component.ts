@@ -1,12 +1,12 @@
-import { Component, computed, DestroyRef, inject } from '@angular/core';
+import { Component, computed, DestroyRef, inject, signal } from '@angular/core';
 import { rxResource } from '@angular/core/rxjs-interop';
 import { SeasonApiService, SeasonWinners, Status } from '@app/core/api';
-import { LoadingService } from '@app/core/loading/loading.service';
-import { SeasonHistoryComponent } from '@app/feature/component/season-history/season-history.component';
+import { PageContextService } from '@app/core/page-context/page-context.service';
+import { SeasonWinnersSectionComponent } from '@app/feature/section/season-winners-section/season-winners-section.component';
 
 @Component({
   selector: 'app-history-page',
-  imports: [SeasonHistoryComponent],
+  imports: [SeasonWinnersSectionComponent],
   templateUrl: './history-page.component.html',
 })
 export class HistoryPageComponent {
@@ -22,10 +22,22 @@ export class HistoryPageComponent {
     stream: () => this.seasonApiService.getSeasonWinners(),
   });
 
-  private seasonApiService = inject(SeasonApiService);
-  private loadingService = inject(LoadingService);
+  private readonly seasonApiService = inject(SeasonApiService);
+  private readonly pageContextService = inject(PageContextService);
 
   constructor() {
-    this.loadingService.register(inject(DestroyRef), this.isLoading);
+    const destroyRef = inject(DestroyRef);
+    this.pageContextService.register(destroyRef, {
+      title: signal('Season History'),
+      subtitle: computed(() => {
+        const winners = this.seasonWinners();
+        if (winners.length === 0) return undefined;
+        const years = winners.map((winner) => winner.season.name.split('-').map(Number));
+        const startYear = Math.min(...years.map(([start]) => start));
+        const endYear = Math.max(...years.map(([, end]) => end));
+        return `${startYear}-${endYear}`;
+      }),
+      backgroundColor: signal(''),
+    });
   }
 }
