@@ -10,7 +10,6 @@ import {
 import { Country } from '@app/core/api/model/country.model';
 import { Position } from '@app/core/api/model/position.model';
 import { TeamBase } from '@app/core/api/model/team-base.model';
-import { LoadingService } from '@app/core/loading/loading.service';
 import { RouterService } from '@app/core/router/router.service';
 import {
   fakeCountry,
@@ -19,7 +18,7 @@ import {
   fakePosition,
   fakeTeamBase,
 } from '@app/test';
-import { CreatePlayerComponent } from './create-player.component';
+import { CreatePlayerFormComponent } from './create-player-form.component';
 
 const validFormValue = {
   firstName: 'Test',
@@ -34,16 +33,15 @@ const validFormValue = {
   team: null as TeamBase | null,
 };
 
-describe('CreatePlayerComponent', () => {
-  let fixture: ComponentFixture<CreatePlayerComponent>;
-  let component: CreatePlayerComponent;
+describe('CreatePlayerFormComponent', () => {
+  let fixture: ComponentFixture<CreatePlayerFormComponent>;
+  let component: CreatePlayerFormComponent;
   let mockCountryApiService: { getCountries: ReturnType<typeof vi.fn> };
   let mockPlayerApiService: { createPlayer: ReturnType<typeof vi.fn> };
   let mockPlayerSeasonStatApiService: { createPlayerSeasonStat: ReturnType<typeof vi.fn> };
   let mockPositionApiService: { getPositions: ReturnType<typeof vi.fn> };
   let mockRouterService: { navigateToPlayer: ReturnType<typeof vi.fn> };
   let mockTeamApiService: { getTeams: ReturnType<typeof vi.fn> };
-  let mockLoadingService: { register: ReturnType<typeof vi.fn> };
   let countries: Country[];
   let positions: Position[];
   let teams: TeamBase[];
@@ -61,10 +59,9 @@ describe('CreatePlayerComponent', () => {
     mockPositionApiService = { getPositions: vi.fn().mockReturnValue(of(positions)) };
     mockRouterService = { navigateToPlayer: vi.fn().mockResolvedValue(true) };
     mockTeamApiService = { getTeams: vi.fn().mockReturnValue(of(teams)) };
-    mockLoadingService = { register: vi.fn() };
 
     await TestBed.configureTestingModule({
-      imports: [CreatePlayerComponent],
+      imports: [CreatePlayerFormComponent],
       providers: [
         { provide: CountryApiService, useValue: mockCountryApiService },
         { provide: PlayerApiService, useValue: mockPlayerApiService },
@@ -72,11 +69,10 @@ describe('CreatePlayerComponent', () => {
         { provide: PositionApiService, useValue: mockPositionApiService },
         { provide: RouterService, useValue: mockRouterService },
         { provide: TeamApiService, useValue: mockTeamApiService },
-        { provide: LoadingService, useValue: mockLoadingService },
       ],
     }).compileComponents();
 
-    fixture = TestBed.createComponent(CreatePlayerComponent);
+    fixture = TestBed.createComponent(CreatePlayerFormComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
     await fixture.whenStable();
