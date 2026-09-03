@@ -6,7 +6,6 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { TransferWindow, TransferWindowBase } from '@app/core/api';
 import { TransferWindowApiService } from '@app/core/api/transfer-window/transfer-window-api.service';
 import { CurrentService } from '@app/core/current/current.service';
-import { LoadingService } from '@app/core/loading/loading.service';
 import { SafeDatePipe } from '@app/shared/pipes/safe-date.pipe';
 import { fakeMatchWeekBase, fakeTransferWindow } from '@app/test';
 import { TransferWindowScrollPickerComponent } from './transfer-window-scroll-picker.component';
@@ -23,7 +22,6 @@ function makeProviders() {
   return [
     { provide: TransferWindowApiService, useValue: transferWindowApi },
     { provide: CurrentService, useValue: mockCurrentService },
-    { provide: LoadingService, useValue: { register: vi.fn() } },
   ];
 }
 

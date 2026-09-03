@@ -2,7 +2,6 @@ import {
   ChangeDetectionStrategy,
   Component,
   computed,
-  DestroyRef,
   effect,
   inject,
   input,
@@ -15,7 +14,6 @@ import { SeasonBase, TransferWindow } from '@app/core/api';
 import { SeasonApiService } from '@app/core/api/season/season-api.service';
 import { TransferWindowApiService } from '@app/core/api/transfer-window/transfer-window-api.service';
 import { CurrentService } from '@app/core/current/current.service';
-import { LoadingService } from '@app/core/loading/loading.service';
 import { IconComponent } from '@app/shared/icon/icon.component';
 import { TransferWindowPickerDrawerComponent } from '@app/feature/drawer/transfer-window-picker-drawer/transfer-window-picker-drawer.component';
 
@@ -62,11 +60,8 @@ export class TransferWindowPickerButtonComponent {
   private transferWindowApiService = inject(TransferWindowApiService);
   private seasonApiService = inject(SeasonApiService);
   private currentService = inject(CurrentService);
-  private loadingService = inject(LoadingService);
 
   constructor() {
-    this.loadingService.register(inject(DestroyRef), this.rxTransferWindows.isLoading);
-
     effect(() => {
       if (!this.pendingSeasonNavigation()) return;
       const transferWindows = this.transferWindows();
