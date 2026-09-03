@@ -233,7 +233,7 @@
         }
 
         .p-tab {
-            @apply rounded-full! text-sm;
+            @apply rounded-2xl! text-sm;
         }
     }
 }

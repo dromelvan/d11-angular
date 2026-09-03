@@ -26,6 +26,9 @@ export const D11Light = definePreset(Aura, {
 
   components: {
     button: {
+      root: {
+        borderRadius: '1rem',
+      },
       colorScheme: {
         light: {
           root: {
