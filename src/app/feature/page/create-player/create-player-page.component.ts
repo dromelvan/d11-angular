@@ -1,9 +1,25 @@
-import { Component } from '@angular/core';
-import { CreatePlayerComponent } from '@app/feature/component/create-player/create-player.component';
+import { Component, computed, DestroyRef, inject, signal } from '@angular/core';
+import { CurrentService } from '@app/core/current/current.service';
+import { PageContextService } from '@app/core/page-context/page-context.service';
+import { CreatePlayerFormComponent } from '@app/feature/form/create-player/create-player-form.component';
 
 @Component({
   selector: 'app-create-player-page',
-  imports: [CreatePlayerComponent],
+  imports: [CreatePlayerFormComponent],
   templateUrl: './create-player-page.component.html',
 })
-export class CreatePlayerPageComponent {}
+export class CreatePlayerPageComponent {
+  private readonly currentService = inject(CurrentService);
+  private readonly pageContextService = inject(PageContextService);
+
+  constructor() {
+    this.pageContextService.register(inject(DestroyRef), {
+      title: signal('New Player'),
+      subtitle: computed(() => {
+        const name = this.currentService.season()?.name;
+        return name !== undefined ? `Season ${name}` : undefined;
+      }),
+      backgroundColor: signal(''),
+    });
+  }
+}
