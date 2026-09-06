@@ -8,12 +8,12 @@ import { UserSessionService } from '@app/core/auth/user-session.service';
 import { RouterService } from '@app/core/router/router.service';
 import { MessageService } from 'primeng/api';
 import { fakeCurrent, userCredentials } from '@app/test';
-import { LoginComponent } from './login.component';
+import { LoginFormComponent } from './login-form.component';
 
-describe('LoginComponent', () => {
-  let fixture: ComponentFixture<LoginComponent>;
+describe('LoginFormComponent', () => {
+  let fixture: ComponentFixture<LoginFormComponent>;
   let username: HTMLInputElement;
-  let password: HTMLInputElement;
+  let password: HTMLElement;
   let persistent: HTMLElement;
   let button: HTMLButtonElement;
   let user: ReturnType<typeof userEvent.setup>;
@@ -45,7 +45,7 @@ describe('LoginComponent', () => {
     };
 
     await TestBed.configureTestingModule({
-      imports: [LoginComponent],
+      imports: [LoginFormComponent],
       providers: [
         { provide: UserSessionService, useValue: mockUserSession },
         { provide: CurrentApiService, useValue: mockCurrentApiService },
@@ -54,7 +54,7 @@ describe('LoginComponent', () => {
       ],
     }).compileComponents();
 
-    fixture = TestBed.createComponent(LoginComponent);
+    fixture = TestBed.createComponent(LoginFormComponent);
     fixture.detectChanges();
     await fixture.whenStable();
 
@@ -127,6 +127,12 @@ describe('LoginComponent', () => {
     await submitCredentials();
 
     expect(mockMessageService.add).not.toHaveBeenCalled();
+  });
+
+  it('marks all fields as touched when form is invalid', () => {
+    fixture.componentInstance['onSubmit']();
+
+    expect(fixture.componentInstance['form'].touched).toBe(true);
   });
 
   it('does not submit when form is invalid', async () => {

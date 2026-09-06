@@ -12,22 +12,21 @@ import {
   InputPasswordComponent,
   InputTextComponent,
 } from '@app/shared/form';
-import { D11LionDarkImgComponent } from '@app/shared/img/d11-lion-dark-img/d11-lion-dark-img.component';
+import { SectionComponent } from '@app/shared/section/section.component';
 
 @Component({
-  selector: 'app-login',
+  selector: 'app-login-form',
   imports: [
     ReactiveFormsModule,
     InputTextComponent,
     ButtonSubmitComponent,
     CheckboxComponent,
     InputPasswordComponent,
-    InputTextComponent,
-    D11LionDarkImgComponent,
+    SectionComponent,
   ],
-  templateUrl: './login.component.html',
+  templateUrl: './login-form.component.html',
 })
-export class LoginComponent {
+export class LoginFormComponent {
   public readonly working = signal(false);
 
   protected form = inject(FormBuilder).nonNullable.group({
@@ -35,6 +34,7 @@ export class LoginComponent {
     password: ['', Validators.required],
     persistent: false,
   });
+
   private userSession = inject(UserSessionService);
   private routerService = inject(RouterService);
   private messageService = inject(MessageService);

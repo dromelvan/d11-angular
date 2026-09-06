@@ -1,0 +1,25 @@
+<div class="app-col w-full sm:w-140">
+  <form (ngSubmit)="onSubmit()" [formGroup]="form">
+    <div class="app-col-4">
+      <app-section>
+        <div class="app-col-4">
+          <app-input-text icon="pi-user" label="Email Address" property="username" />
+
+          <app-input-password
+            class="app-col-margin"
+            icon="pi-lock"
+            label="Password"
+            property="password"
+          />
+
+          <div class="app-text-primary">
+            <app-checkbox label="Remember me" property="persistent" />
+          </div>
+          <a>Forgot your password?</a>
+        </div>
+      </app-section>
+
+      <app-button-submit [form]="form" [working]="working" icon="pi-user" label="Sign In" />
+    </div>
+  </form>
+</div>
