@@ -1,17 +1,15 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { of } from 'rxjs';
 import { TransferWindowApiService } from '@app/core/api';
-import { LoadingService } from '@app/core/loading/loading.service';
 import { RouterService } from '@app/core/router/router.service';
 import { fakeTransferWindow } from '@app/test';
-import { CreateTransferWindowComponent } from './create-transfer-window.component';
+import { CreateTransferWindowFormComponent } from './create-transfer-window-form.component';
 
-describe('CreateTransferWindowComponent', () => {
-  let fixture: ComponentFixture<CreateTransferWindowComponent>;
-  let component: CreateTransferWindowComponent;
+describe('CreateTransferWindowFormComponent', () => {
+  let fixture: ComponentFixture<CreateTransferWindowFormComponent>;
+  let component: CreateTransferWindowFormComponent;
   let mockTransferWindowApiService: { createTransferWindow: ReturnType<typeof vi.fn> };
   let mockRouterService: { navigateToTransferWindow: ReturnType<typeof vi.fn> };
-  let mockLoadingService: { register: ReturnType<typeof vi.fn> };
 
   beforeEach(async () => {
     vi.clearAllMocks();
@@ -19,25 +17,19 @@ describe('CreateTransferWindowComponent', () => {
       createTransferWindow: vi.fn().mockReturnValue(of(fakeTransferWindow())),
     };
     mockRouterService = { navigateToTransferWindow: vi.fn().mockResolvedValue(true) };
-    mockLoadingService = { register: vi.fn() };
 
     await TestBed.configureTestingModule({
-      imports: [CreateTransferWindowComponent],
+      imports: [CreateTransferWindowFormComponent],
       providers: [
         { provide: TransferWindowApiService, useValue: mockTransferWindowApiService },
         { provide: RouterService, useValue: mockRouterService },
-        { provide: LoadingService, useValue: mockLoadingService },
       ],
     }).compileComponents();
 
-    fixture = TestBed.createComponent(CreateTransferWindowComponent);
+    fixture = TestBed.createComponent(CreateTransferWindowFormComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
     await fixture.whenStable();
-  });
-
-  it('registers isLoading with LoadingService', () => {
-    expect(mockLoadingService.register).toHaveBeenCalledOnce();
   });
 
   it('renders datetime and transferDayDelay fields', () => {
@@ -102,6 +94,9 @@ describe('CreateTransferWindowComponent', () => {
       const transferWindow = fakeTransferWindow();
       mockTransferWindowApiService.createTransferWindow.mockReturnValue(of(transferWindow));
       const datetime = new Date('2024-01-15T14:30:00');
+      const expectedDatetime = new Date(datetime.getTime() - datetime.getTimezoneOffset() * 60000)
+        .toISOString()
+        .slice(0, 19);
       component['form'].setValue({ datetime, transferDayDelay: 1 });
 
       component['onSubmit']();
@@ -110,7 +105,7 @@ describe('CreateTransferWindowComponent', () => {
       await fixture.whenStable();
 
       expect(mockTransferWindowApiService.createTransferWindow).toHaveBeenCalledWith({
-        datetime: datetime.toISOString().slice(0, 19),
+        datetime: expectedDatetime,
         transferDayDelay: 1,
       });
     });
