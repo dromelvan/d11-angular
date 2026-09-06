@@ -1,10 +1,14 @@
 import { ApiErrorService } from '@app/core/api/api-error.service';
+import { PageContextService } from '@app/core/page-context/page-context.service';
 import { render, screen } from '@testing-library/angular';
 import { beforeEach, describe, expect, it } from 'vitest';
 import { ApiErrorPageComponent } from './api-error-page.component';
 
+const mockPageContextService = { register: vi.fn() };
+const providers = [{ provide: PageContextService, useValue: mockPageContextService }];
+
 async function renderWithError(partial: Partial<Parameters<ApiErrorService['setError']>[0]> = {}) {
-  const result = await render(ApiErrorPageComponent);
+  const result = await render(ApiErrorPageComponent, { providers });
   const apiErrorService = result.fixture.debugElement.injector.get(ApiErrorService);
   apiErrorService.setError({
     status: 500,
@@ -19,13 +23,17 @@ async function renderWithError(partial: Partial<Parameters<ApiErrorService['setE
 }
 
 describe('ApiErrorPageComponent', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
   describe('with error', () => {
     beforeEach(async () => {
       await renderWithError();
     });
 
     it('renders', () => {
-      expect(document.querySelector('.app-api-error-page')).toBeInTheDocument();
+      expect(document.querySelector('app-section')).toBeInTheDocument();
     });
 
     it('renders HTTP status heading', () => {
@@ -81,7 +89,7 @@ describe('ApiErrorPageComponent', () => {
 
   describe('without error', () => {
     beforeEach(async () => {
-      await render(ApiErrorPageComponent);
+      await render(ApiErrorPageComponent, { providers });
     });
 
     it('renders fallback heading', () => {
@@ -90,6 +98,29 @@ describe('ApiErrorPageComponent', () => {
 
     it('renders no error details message', () => {
       expect(screen.getByText('No error details available.')).toBeInTheDocument();
+    });
+  });
+
+  // page context ------------------------------------------------------------------------------------
+
+  describe('page context', () => {
+    beforeEach(async () => {
+      await render(ApiErrorPageComponent, { providers });
+    });
+
+    it('registers with title Api Error', () => {
+      const context = mockPageContextService.register.mock.calls[0][1];
+      expect(context.title()).toBe('Api Error');
+    });
+
+    it('has no subtitle', () => {
+      const context = mockPageContextService.register.mock.calls[0][1];
+      expect(context.subtitle()).toBeUndefined();
+    });
+
+    it('registers with empty background color', () => {
+      const context = mockPageContextService.register.mock.calls[0][1];
+      expect(context.backgroundColor()).toBe('');
     });
   });
 });
