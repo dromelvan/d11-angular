@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { signal } from '@angular/core';
 import { of } from 'rxjs';
 import {
   CountryApiService,
@@ -12,7 +13,6 @@ import { Position } from '@app/core/api/model/position.model';
 import { SeasonBase } from '@app/core/api/model/season-base.model';
 import { TeamBase } from '@app/core/api/model/team-base.model';
 import { CurrentService } from '@app/core/current/current.service';
-import { LoadingService } from '@app/core/loading/loading.service';
 import { RouterService } from '@app/core/router/router.service';
 import {
   fakeCountry,
@@ -21,9 +21,7 @@ import {
   fakePosition,
   fakeTeamBase,
 } from '@app/test';
-import { signal } from '@angular/core';
-import { beforeEach, describe } from 'vitest';
-import { EditPlayerComponent } from './edit-player.component';
+import { EditPlayerFormComponent } from './edit-player-form.component';
 
 const validFormValue = {
   firstName: 'Test',
@@ -38,9 +36,9 @@ const validFormValue = {
   team: null as TeamBase | null,
 };
 
-describe('EditPlayerComponent', () => {
-  let fixture: ComponentFixture<EditPlayerComponent>;
-  let component: EditPlayerComponent;
+describe('EditPlayerFormComponent', () => {
+  let fixture: ComponentFixture<EditPlayerFormComponent>;
+  let component: EditPlayerFormComponent;
   let mockCountryApiService: { getCountries: ReturnType<typeof vi.fn> };
   let mockPlayerApiService: {
     getById: ReturnType<typeof vi.fn>;
@@ -51,7 +49,6 @@ describe('EditPlayerComponent', () => {
   let mockPositionApiService: { getPositions: ReturnType<typeof vi.fn> };
   let mockRouterService: { navigateToPlayer: ReturnType<typeof vi.fn> };
   let mockTeamApiService: { getTeams: ReturnType<typeof vi.fn> };
-  let mockLoadingService: { register: ReturnType<typeof vi.fn> };
   let mockCurrentService: { season: ReturnType<typeof signal<SeasonBase | undefined>> };
   let player: ReturnType<typeof fakePlayer>;
   let playerSeasonStat: ReturnType<typeof fakePlayerSeasonStat>;
@@ -79,11 +76,10 @@ describe('EditPlayerComponent', () => {
     mockPositionApiService = { getPositions: vi.fn().mockReturnValue(of(positions)) };
     mockRouterService = { navigateToPlayer: vi.fn().mockResolvedValue(true) };
     mockTeamApiService = { getTeams: vi.fn().mockReturnValue(of(teams)) };
-    mockLoadingService = { register: vi.fn() };
     mockCurrentService = { season: signal<SeasonBase | undefined>(playerSeasonStat.season) };
 
     await TestBed.configureTestingModule({
-      imports: [EditPlayerComponent],
+      imports: [EditPlayerFormComponent],
       providers: [
         { provide: CountryApiService, useValue: mockCountryApiService },
         { provide: PlayerApiService, useValue: mockPlayerApiService },
@@ -91,12 +87,11 @@ describe('EditPlayerComponent', () => {
         { provide: PositionApiService, useValue: mockPositionApiService },
         { provide: RouterService, useValue: mockRouterService },
         { provide: TeamApiService, useValue: mockTeamApiService },
-        { provide: LoadingService, useValue: mockLoadingService },
         { provide: CurrentService, useValue: mockCurrentService },
       ],
     }).compileComponents();
 
-    fixture = TestBed.createComponent(EditPlayerComponent);
+    fixture = TestBed.createComponent(EditPlayerFormComponent);
     component = fixture.componentInstance;
     fixture.componentRef.setInput('playerId', 1);
     fixture.detectChanges();
@@ -122,10 +117,6 @@ describe('EditPlayerComponent', () => {
 
   it('loads teams on init', () => {
     expect(mockTeamApiService.getTeams).toHaveBeenCalled();
-  });
-
-  it('registers isLoading with LoadingService', () => {
-    expect(mockLoadingService.register).toHaveBeenCalledOnce();
   });
 
   it('renders all form fields', () => {
@@ -239,8 +230,8 @@ describe('EditPlayerComponent', () => {
     });
 
     it('calls updatePlayer with playerId and form value on valid submit', async () => {
-      const player = fakePlayer();
-      mockPlayerApiService.updatePlayer.mockReturnValue(of(player));
+      const updatedPlayer = fakePlayer();
+      mockPlayerApiService.updatePlayer.mockReturnValue(of(updatedPlayer));
       component['form'].setValue({
         ...validFormValue,
         country: countries[0],
@@ -280,6 +271,46 @@ describe('EditPlayerComponent', () => {
           teamId: team!.id,
           d11TeamId: playerSeasonStat.d11Team.id,
         },
+      );
+    });
+
+    it('defaults null country to country with id 1', async () => {
+      component['form'].patchValue({ country: null });
+
+      component['onSubmit']();
+      TestBed.tick();
+      fixture.detectChanges();
+      await fixture.whenStable();
+
+      expect(mockPlayerApiService.updatePlayer).toHaveBeenCalledWith(
+        1,
+        expect.objectContaining({ countryId: 1 }),
+      );
+    });
+
+    it('defaults null fullName to undefined', async () => {
+      component['form'].patchValue({ fullName: null });
+
+      component['onSubmit']();
+      TestBed.tick();
+      fixture.detectChanges();
+      await fixture.whenStable();
+
+      const called = mockPlayerApiService.updatePlayer.mock.calls[0][1] as Record<string, unknown>;
+      expect(called['fullName']).toBeUndefined();
+    });
+
+    it('defaults null statSourceId, premierLeagueId and height to 0', async () => {
+      component['form'].patchValue({ statSourceId: null, premierLeagueId: null, height: null });
+
+      component['onSubmit']();
+      TestBed.tick();
+      fixture.detectChanges();
+      await fixture.whenStable();
+
+      expect(mockPlayerApiService.updatePlayer).toHaveBeenCalledWith(
+        1,
+        expect.objectContaining({ statSourceId: 0, premierLeagueId: 0, height: 0 }),
       );
     });
 

@@ -1,4 +1,4 @@
-import { Component, computed, DestroyRef, effect, inject, input, signal } from '@angular/core';
+import { Component, computed, effect, inject, input, signal } from '@angular/core';
 import { rxResource } from '@angular/core/rxjs-interop';
 import { FormBuilder, FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
 import {
@@ -16,9 +16,7 @@ import { PlayerInput } from '@app/core/api/model/player-input.model';
 import { Position } from '@app/core/api/model/position.model';
 import { TeamBase } from '@app/core/api/model/team-base.model';
 import { CurrentService } from '@app/core/current/current.service';
-import { LoadingService } from '@app/core/loading/loading.service';
 import { RouterService } from '@app/core/router/router.service';
-import { AvatarComponent } from '@app/shared/avatar/avatar.component';
 import {
   ButtonSubmitComponent,
   InputAutocompleteComponent,
@@ -26,22 +24,23 @@ import {
   InputNumberComponent,
   InputTextComponent,
 } from '@app/shared/form';
+import { SectionComponent } from '@app/shared/section/section.component';
 import { EMPTY } from 'rxjs';
 
 @Component({
-  selector: 'app-edit-player',
+  selector: 'app-edit-player-form',
   imports: [
     ReactiveFormsModule,
-    AvatarComponent,
     ButtonSubmitComponent,
     InputAutocompleteComponent,
     InputDateComponent,
     InputNumberComponent,
     InputTextComponent,
+    SectionComponent,
   ],
-  templateUrl: './edit-player.component.html',
+  templateUrl: './edit-player-form.component.html',
 })
-export class EditPlayerComponent {
+export class EditPlayerFormComponent {
   playerId = input.required<number>();
 
   protected form = inject(FormBuilder).group({
@@ -138,7 +137,6 @@ export class EditPlayerComponent {
 
   private countryApiService = inject(CountryApiService);
   private currentService = inject(CurrentService);
-  private loadingService = inject(LoadingService);
   private playerApiService = inject(PlayerApiService);
   private playerSeasonStatApiService = inject(PlayerSeasonStatApiService);
   private positionApiService = inject(PositionApiService);
@@ -146,8 +144,6 @@ export class EditPlayerComponent {
   private teamApiService = inject(TeamApiService);
 
   constructor() {
-    this.loadingService.register(inject(DestroyRef), this.isLoading);
-
     effect(() => {
       const player = this.rxPlayer.value();
       const playerSeasonStat = this.playerSeasonStat();
