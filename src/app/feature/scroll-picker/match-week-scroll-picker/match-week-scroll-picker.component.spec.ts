@@ -5,7 +5,6 @@ import { beforeEach, describe, expect, vi } from 'vitest';
 import { MatchWeek, MatchWeekBase } from '@app/core/api';
 import { MatchWeekApiService } from '@app/core/api/match-week/match-week-api.service';
 import { CurrentService } from '@app/core/current/current.service';
-import { LoadingService } from '@app/core/loading/loading.service';
 import { SafeDatePipe } from '@app/shared/pipes/safe-date.pipe';
 import { fakeMatchWeek } from '@app/test';
 import { MatchWeekScrollPickerComponent } from './match-week-scroll-picker.component';
@@ -49,7 +48,6 @@ describe('MatchWeekScrollPickerComponent', () => {
       providers: [
         { provide: MatchWeekApiService, useValue: matchWeekApi },
         { provide: CurrentService, useValue: mockCurrentService },
-        { provide: LoadingService, useValue: { register: vi.fn() } },
       ],
     }).compileComponents();
 
@@ -120,6 +118,30 @@ describe('MatchWeekScrollPickerComponent', () => {
     expect(otherButton.classList).not.toContain('bg-primary-300');
   });
 
+  it('selects matchWeekId as the active item when it exists in the match weeks', async () => {
+    await setup(matchWeek.season.id, matchWeek.id);
+
+    const selectedButton = fixture.nativeElement.querySelector(`[data-id="${matchWeek.id}"]`);
+    const currentButton = fixture.nativeElement.querySelector(`[data-id="${currentMatchWeek.id}"]`);
+
+    expect(selectedButton.classList).toContain('bg-primary-300');
+    expect(currentButton.classList).not.toContain('bg-primary-300');
+  });
+
+  it('does not emit on initial load when matchWeekId matches a loaded match week', async () => {
+    const emitted: MatchWeek[] = [];
+
+    fixture = TestBed.createComponent(MatchWeekScrollPickerComponent);
+    fixture.componentInstance.matchWeekSelected.subscribe((mw) => emitted.push(mw));
+    fixture.componentRef.setInput('seasonId', matchWeek.season.id);
+    fixture.componentRef.setInput('matchWeekId', matchWeek.id);
+    fixture.detectChanges();
+    await fixture.whenStable();
+    TestBed.tick();
+
+    expect(emitted).toHaveLength(0);
+  });
+
   it('defaults to the first match week when the current match week is not in the season', async () => {
     const outsideMatchWeek = { ...fakeMatchWeek(), id: 99999 };
     mockCurrentService.matchWeek.set(outsideMatchWeek);
@@ -132,11 +154,6 @@ describe('MatchWeekScrollPickerComponent', () => {
 
     const firstButton = fixture.nativeElement.querySelector(`[data-id="${matchWeek.id}"]`);
     expect(firstButton.classList).toContain('bg-primary-300');
-  });
-
-  it('uses CurrentService matchWeek to mark the current match week', () => {
-    const currentButton = fixture.nativeElement.querySelector(`[data-id="${currentMatchWeek.id}"]`);
-    expect(currentButton.classList).toContain('border-white');
   });
 
   it('emits the current match week on initial load', async () => {

@@ -2,7 +2,6 @@ import {
   ChangeDetectionStrategy,
   Component,
   computed,
-  DestroyRef,
   effect,
   inject,
   input,
@@ -12,7 +11,6 @@ import { rxResource } from '@angular/core/rxjs-interop';
 import { MatchWeek } from '@app/core/api';
 import { MatchWeekApiService } from '@app/core/api/match-week/match-week-api.service';
 import { CurrentService } from '@app/core/current/current.service';
-import { LoadingService } from '@app/core/loading/loading.service';
 import { ScrollPickerComponent } from '@app/feature/scroll-picker/scroll-picker/scroll-picker.component';
 import { ScrollPickerItem } from '@app/feature/scroll-picker/scroll-picker/scroll-picker-item.model';
 
@@ -66,11 +64,8 @@ export class MatchWeekScrollPickerComponent {
 
   private matchWeekApiService = inject(MatchWeekApiService);
   private currentService = inject(CurrentService);
-  private loadingService = inject(LoadingService);
 
   constructor() {
-    this.loadingService.register(inject(DestroyRef), this.isLoading);
-
     effect(() => {
       // This sets the default match week after switching season
       if (this.isLoading()) return;

@@ -3,13 +3,12 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { of } from 'rxjs';
 import { screen } from '@testing-library/angular';
 import { beforeEach, describe, expect, vi } from 'vitest';
-import { MatchWeek, SeasonBase } from '@app/core/api';
+import { MatchWeek, MatchWeekBase, SeasonBase } from '@app/core/api';
 import { SeasonApiService } from '@app/core/api/season/season-api.service';
 import { MatchApiService } from '@app/core/api/match/match-api.service';
 import { D11MatchApiService } from '@app/core/api/d11-match/d11-match-api.service';
 import { MatchWeekApiService } from '@app/core/api/match-week/match-week-api.service';
 import { CurrentService } from '@app/core/current/current.service';
-import { LoadingService } from '@app/core/loading/loading.service';
 import { RouterService } from '@app/core/router/router.service';
 import { fakeMatchWeek, fakeSeasonBase } from '@app/test';
 import { MatchesPageComponent } from './matches-page.component';
@@ -26,6 +25,11 @@ describe('MatchesPageComponent', () => {
     navigateToMatch: ReturnType<typeof vi.fn>;
     navigateToMatchWeekMatches: ReturnType<typeof vi.fn>;
   };
+  let mockCurrentService: {
+    season: ReturnType<typeof signal<SeasonBase | undefined>>;
+    matchWeek: ReturnType<typeof signal<MatchWeekBase | undefined>>;
+    rxCurrent: { isLoading: ReturnType<typeof signal<boolean>> };
+  };
 
   beforeEach(async () => {
     vi.clearAllMocks();
@@ -35,11 +39,16 @@ describe('MatchesPageComponent', () => {
       navigateToMatchWeekMatches: vi.fn(),
     };
 
+    mockCurrentService = {
+      season: signal<SeasonBase | undefined>(undefined),
+      matchWeek: signal<MatchWeekBase | undefined>(undefined),
+      rxCurrent: { isLoading: signal(false) },
+    };
+
     await TestBed.configureTestingModule({
       imports: [MatchesPageComponent],
       providers: [
         { provide: SeasonApiService, useValue: { getAll: vi.fn().mockReturnValue(of([])) } },
-        { provide: LoadingService, useValue: { register: vi.fn() } },
         {
           provide: MatchWeekApiService,
           useValue: {
@@ -47,14 +56,7 @@ describe('MatchesPageComponent', () => {
             getMatchWeeksBySeasonId: vi.fn().mockReturnValue(of([])),
           },
         },
-        {
-          provide: CurrentService,
-          useValue: {
-            season: signal(undefined),
-            matchWeek: signal(undefined),
-            rxCurrent: { isLoading: signal(false) },
-          },
-        },
+        { provide: CurrentService, useValue: mockCurrentService },
         {
           provide: MatchApiService,
           useValue: {
@@ -122,6 +124,17 @@ describe('MatchesPageComponent', () => {
 
     it('does not show match week sections when matchWeekId is undefined and Live is not active', () => {
       expect(fixture.nativeElement.querySelector('app-match-week-matches-section')).toBeNull();
+    });
+  });
+
+  describe('currentService.season fallback', () => {
+    it('shows season pickers when currentService.season is set and matchWeekId is not provided', async () => {
+      mockCurrentService.season.set(fakeSeasonBase());
+      fixture.detectChanges();
+      await fixture.whenStable();
+
+      expect(fixture.nativeElement.querySelector('app-match-week-scroll-picker')).toBeTruthy();
+      expect(fixture.nativeElement.querySelector('app-match-week-picker-button')).toBeTruthy();
     });
   });
 
@@ -199,7 +212,7 @@ describe('MatchesPageComponent', () => {
       (component as unknown as MatchesPageInternal).onMatchWeekSelected(fakeMatchWeek());
       fixture.detectChanges();
 
-      expect(fixture.nativeElement.querySelector('app-match-week-matches')).toBeNull();
+      expect(fixture.nativeElement.querySelector('app-match-week-matches-section')).toBeNull();
     });
   });
 });

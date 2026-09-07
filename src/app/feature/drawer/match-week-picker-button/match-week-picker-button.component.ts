@@ -2,7 +2,6 @@ import {
   ChangeDetectionStrategy,
   Component,
   computed,
-  DestroyRef,
   effect,
   inject,
   input,
@@ -15,7 +14,6 @@ import { MatchWeek, SeasonBase } from '@app/core/api';
 import { MatchWeekApiService } from '@app/core/api/match-week/match-week-api.service';
 import { SeasonApiService } from '@app/core/api/season/season-api.service';
 import { CurrentService } from '@app/core/current/current.service';
-import { LoadingService } from '@app/core/loading/loading.service';
 import { IconComponent } from '@app/shared/icon/icon.component';
 import { MatchWeekPickerDrawerComponent } from '@app/feature/drawer/match-week-picker-drawer/match-week-picker-drawer.component';
 
@@ -60,11 +58,8 @@ export class MatchWeekPickerButtonComponent {
   private matchWeekApiService = inject(MatchWeekApiService);
   private seasonApiService = inject(SeasonApiService);
   private currentService = inject(CurrentService);
-  private loadingService = inject(LoadingService);
 
   constructor() {
-    this.loadingService.register(inject(DestroyRef), this.rxMatchWeeks.isLoading);
-
     effect(() => {
       if (!this.pendingSeasonNavigation()) return;
       const matchWeeks = this.matchWeeks();

@@ -7,7 +7,6 @@ import { MatchWeek, MatchWeekBase, SeasonBase } from '@app/core/api';
 import { MatchWeekApiService } from '@app/core/api/match-week/match-week-api.service';
 import { SeasonApiService } from '@app/core/api/season/season-api.service';
 import { CurrentService } from '@app/core/current/current.service';
-import { LoadingService } from '@app/core/loading/loading.service';
 import { fakeMatchWeek, fakeSeasonBase } from '@app/test';
 import { MatchWeekPickerDrawerComponent } from '@app/feature/drawer/match-week-picker-drawer/match-week-picker-drawer.component';
 import { MatchWeekPickerButtonComponent } from './match-week-picker-button.component';
@@ -19,15 +18,19 @@ describe('MatchWeekPickerButtonComponent', () => {
   let mockCurrentService: {
     matchWeek: ReturnType<typeof signal<MatchWeekBase | undefined>>;
     season: ReturnType<typeof signal<SeasonBase | undefined>>;
-    rxCurrent: { isLoading: ReturnType<typeof signal<boolean>> };
   };
 
-  async function setup() {
+  async function setup(matchWeekId?: number) {
     fixture = TestBed.createComponent(MatchWeekPickerButtonComponent);
     fixture.componentRef.setInput('seasonId', matchWeek.season.id);
-    fixture.componentRef.setInput('matchWeekId', matchWeek.id);
+    if (matchWeekId !== undefined) fixture.componentRef.setInput('matchWeekId', matchWeekId);
     fixture.detectChanges();
     await fixture.whenStable();
+  }
+
+  function drawer(): MatchWeekPickerDrawerComponent {
+    return fixture.debugElement.query(By.directive(MatchWeekPickerDrawerComponent))
+      .componentInstance as MatchWeekPickerDrawerComponent;
   }
 
   beforeEach(async () => {
@@ -42,7 +45,6 @@ describe('MatchWeekPickerButtonComponent', () => {
     mockCurrentService = {
       matchWeek: signal<MatchWeekBase | undefined>(matchWeek),
       season: signal<SeasonBase | undefined>(matchWeek.season),
-      rxCurrent: { isLoading: signal(false) },
     };
 
     await TestBed.configureTestingModule({
@@ -57,11 +59,10 @@ describe('MatchWeekPickerButtonComponent', () => {
           useValue: { getAll: vi.fn().mockReturnValue(of(seasons)) },
         },
         { provide: CurrentService, useValue: mockCurrentService },
-        { provide: LoadingService, useValue: { register: vi.fn() } },
       ],
     }).compileComponents();
 
-    await setup();
+    await setup(matchWeek.id);
   });
 
   it('creates the component', () => {
@@ -83,9 +84,7 @@ describe('MatchWeekPickerButtonComponent', () => {
     const emitted: MatchWeek[] = [];
     fixture.componentInstance.matchWeekSelected.subscribe((mw) => emitted.push(mw));
 
-    const drawer = fixture.debugElement.query(By.directive(MatchWeekPickerDrawerComponent))
-      .componentInstance as MatchWeekPickerDrawerComponent;
-    drawer.matchWeekSelected.emit(matchWeek.id);
+    drawer().matchWeekSelected.emit(matchWeek.id);
 
     expect(emitted).toEqual([matchWeek]);
   });
@@ -94,73 +93,83 @@ describe('MatchWeekPickerButtonComponent', () => {
     const emitted: MatchWeek[] = [];
     fixture.componentInstance.matchWeekSelected.subscribe((mw) => emitted.push(mw));
 
-    const drawer = fixture.debugElement.query(By.directive(MatchWeekPickerDrawerComponent))
-      .componentInstance as MatchWeekPickerDrawerComponent;
-    drawer.matchWeekSelected.emit(matchWeek.id + 999);
+    drawer().matchWeekSelected.emit(matchWeek.id + 999);
 
     expect(emitted).toHaveLength(0);
   });
 
-  it('passes current match week id as currentId to the drawer', () => {
-    const drawer = fixture.debugElement.query(By.directive(MatchWeekPickerDrawerComponent))
-      .componentInstance as MatchWeekPickerDrawerComponent;
-
-    expect(drawer.currentId()).toBe(matchWeek.id);
+  it('passes matchWeekId as selectedId to the drawer', () => {
+    expect(drawer().selectedId()).toBe(matchWeek.id);
   });
 
-  it('returns empty match weeks when loaded season does not match seasonId input', async () => {
-    const differentSeasonId = matchWeek.season.id + 1;
-    fixture.componentRef.setInput('seasonId', differentSeasonId);
-    fixture.detectChanges();
-    await fixture.whenStable();
+  it('passes undefined as selectedId when matchWeekId is not set', async () => {
+    await setup();
 
-    const drawer = fixture.debugElement.query(By.directive(MatchWeekPickerDrawerComponent))
-      .componentInstance as MatchWeekPickerDrawerComponent;
-    expect(drawer.matchWeeks()).toHaveLength(0);
+    expect(drawer().selectedId()).toBeUndefined();
+  });
+
+  it('passes current match week id as currentId to the drawer', () => {
+    expect(drawer().currentId()).toBe(matchWeek.id);
   });
 
   it('passes seasons to the drawer', () => {
-    const drawer = fixture.debugElement.query(By.directive(MatchWeekPickerDrawerComponent))
-      .componentInstance as MatchWeekPickerDrawerComponent;
-
-    expect(drawer.seasons()).toEqual(seasons);
+    expect(drawer().seasons()).toEqual(seasons);
   });
 
   it('passes current season id to the drawer', () => {
-    const drawer = fixture.debugElement.query(By.directive(MatchWeekPickerDrawerComponent))
-      .componentInstance as MatchWeekPickerDrawerComponent;
-
-    expect(drawer.currentSeasonId()).toBe(matchWeek.season.id);
+    expect(drawer().currentSeasonId()).toBe(matchWeek.season.id);
   });
 
   it('passes seasonId as selectedSeasonId to the drawer initially', () => {
-    const drawer = fixture.debugElement.query(By.directive(MatchWeekPickerDrawerComponent))
-      .componentInstance as MatchWeekPickerDrawerComponent;
-
-    expect(drawer.selectedSeasonId()).toBe(matchWeek.season.id);
+    expect(drawer().selectedSeasonId()).toBe(matchWeek.season.id);
   });
 
-  it('updates selectedSeasonId when drawer emits seasonSelected', async () => {
-    const drawer = fixture.debugElement.query(By.directive(MatchWeekPickerDrawerComponent))
-      .componentInstance as MatchWeekPickerDrawerComponent;
-
-    drawer.seasonSelected.emit(seasons[0].id);
+  it('returns empty match weeks when loaded season does not match seasonId input', async () => {
+    fixture.componentRef.setInput('seasonId', matchWeek.season.id + 1);
     fixture.detectChanges();
     await fixture.whenStable();
 
-    expect(drawer.selectedSeasonId()).toBe(seasons[0].id);
+    expect(drawer().matchWeeks()).toHaveLength(0);
+  });
+
+  it('updates selectedSeasonId when drawer emits seasonSelected', async () => {
+    drawer().seasonSelected.emit(seasons[0].id);
+    fixture.detectChanges();
+    await fixture.whenStable();
+
+    expect(drawer().selectedSeasonId()).toBe(seasons[0].id);
   });
 
   it('emits matchWeekSelected with the last match week when a season is selected', async () => {
     const emitted: MatchWeek[] = [];
     fixture.componentInstance.matchWeekSelected.subscribe((mw) => emitted.push(mw));
 
-    const drawer = fixture.debugElement.query(By.directive(MatchWeekPickerDrawerComponent))
-      .componentInstance as MatchWeekPickerDrawerComponent;
-    drawer.seasonSelected.emit(matchWeek.season.id);
+    drawer().seasonSelected.emit(matchWeek.season.id);
     fixture.detectChanges();
     await fixture.whenStable();
 
     expect(emitted).toEqual([matchWeek]);
+  });
+
+  it('emits the last match week from a list when a season is selected', async () => {
+    const matchWeek1 = { ...fakeMatchWeek(), id: 1 };
+    const matchWeek2 = { ...fakeMatchWeek(), id: 2 };
+    const newSeasonId = matchWeek.season.id + 1;
+    const matchWeekApiService = TestBed.inject(MatchWeekApiService);
+    vi.mocked(matchWeekApiService.getMatchWeeksBySeasonId).mockReturnValue(
+      of([
+        { ...matchWeek1, season: { ...matchWeek1.season, id: newSeasonId } },
+        { ...matchWeek2, season: { ...matchWeek2.season, id: newSeasonId } },
+      ]),
+    );
+
+    const emitted: MatchWeek[] = [];
+    fixture.componentInstance.matchWeekSelected.subscribe((mw) => emitted.push(mw));
+
+    drawer().seasonSelected.emit(newSeasonId);
+    fixture.detectChanges();
+    await fixture.whenStable();
+
+    expect(emitted[emitted.length - 1].id).toBe(matchWeek2.id);
   });
 });
