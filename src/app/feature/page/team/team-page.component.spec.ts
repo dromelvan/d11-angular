@@ -14,7 +14,6 @@ import {
 import { PRIMARY } from '@app/app.theme';
 import { BreakpointService } from '@app/core/breakpoint/breakpoint.service';
 import { PageContextService } from '@app/core/page-context/page-context.service';
-import { DynamicDialogService } from '@app/shared/dialog/dynamic-dialog-service/dynamic-dialog.service';
 import { RouterService } from '@app/core/router/router.service';
 import { DeferBlockBehavior } from '@angular/core/testing';
 import { render, screen, waitFor } from '@testing-library/angular';
@@ -24,7 +23,6 @@ import { expect } from 'vitest';
 import { TeamPageComponent } from './team-page.component';
 
 const mockRouterService = { navigateToTeam: vi.fn() };
-const mockDynamicDialogService = { openPlayerSeasonStat: vi.fn() };
 const mockPageContextService = {
   setContext: vi.fn(),
   backgroundColor: signal<string | undefined>(undefined),
@@ -43,7 +41,6 @@ function buildProviders(overrides: {
     { provide: SeasonApiService, useValue: overrides.seasonApi },
     { provide: PageContextService, useValue: mockPageContextService },
     { provide: RouterService, useValue: mockRouterService },
-    { provide: DynamicDialogService, useValue: mockDynamicDialogService },
     {
       provide: BreakpointService,
       useValue: overrides.breakpointService ?? mockBreakpointService,
