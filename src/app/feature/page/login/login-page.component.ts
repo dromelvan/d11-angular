@@ -1,4 +1,4 @@
-import { Component, computed, DestroyRef, inject, signal } from '@angular/core';
+import { Component, computed, inject, signal } from '@angular/core';
 import { CurrentService } from '@app/core/current/current.service';
 import { PageContextService } from '@app/core/page-context/page-context.service';
 import { LoginFormComponent } from '@app/feature/form/login/login-form.component';
@@ -13,7 +13,7 @@ export class LoginPageComponent {
   private readonly pageContextService = inject(PageContextService);
 
   constructor() {
-    this.pageContextService.register(inject(DestroyRef), {
+    this.pageContextService.setContext({
       title: signal('Sign In'),
       subtitle: computed(() => {
         const name = this.currentService.season()?.name;

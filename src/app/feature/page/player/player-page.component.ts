@@ -1,12 +1,4 @@
-import {
-  Component,
-  computed,
-  DestroyRef,
-  effect,
-  inject,
-  input,
-  numberAttribute,
-} from '@angular/core';
+import { Component, computed, effect, inject, input, numberAttribute } from '@angular/core';
 import { rxResource } from '@angular/core/rxjs-interop';
 import { Player, PlayerApiService, PlayerSeasonStat } from '@app/core/api';
 import { PRIMARY } from '@app/app.theme';
@@ -58,8 +50,7 @@ export class PlayerPageComponent {
   private pageContextService = inject(PageContextService);
 
   constructor() {
-    const destroyRef = inject(DestroyRef);
-    this.pageContextService.register(destroyRef, {
+    this.pageContextService.setContext({
       title: computed(() => this.rxPlayer.value()?.name),
       subtitle: computed(() => {
         const name = this.model().playerSeasonStat?.season?.name;

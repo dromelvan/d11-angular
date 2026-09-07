@@ -1,4 +1,4 @@
-import { Component, DestroyRef, inject, signal } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { ApiErrorService } from '@app/core/api/api-error.service';
 import { PageContextService } from '@app/core/page-context/page-context.service';
 import { SectionComponent } from '@app/shared/section/section.component';
@@ -14,7 +14,7 @@ export class ApiErrorPageComponent {
   private readonly pageContextService = inject(PageContextService);
 
   constructor() {
-    this.pageContextService.register(inject(DestroyRef), {
+    this.pageContextService.setContext({
       title: signal('Api Error'),
       subtitle: signal(undefined),
       backgroundColor: signal(''),

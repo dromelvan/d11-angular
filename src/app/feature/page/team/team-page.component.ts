@@ -1,12 +1,4 @@
-import {
-  Component,
-  computed,
-  DestroyRef,
-  effect,
-  inject,
-  input,
-  numberAttribute,
-} from '@angular/core';
+import { Component, computed, effect, inject, input, numberAttribute } from '@angular/core';
 import { rxResource } from '@angular/core/rxjs-interop';
 import {
   MatchBase,
@@ -127,8 +119,7 @@ export class TeamPageComponent {
   private pageContextService = inject(PageContextService);
 
   constructor() {
-    const destroyRef = inject(DestroyRef);
-    this.pageContextService.register(destroyRef, {
+    this.pageContextService.setContext({
       title: computed(() => this.model().team?.name),
       subtitle: computed(() => {
         const name = this.model().season?.name;

@@ -4,7 +4,7 @@ import { render, screen } from '@testing-library/angular';
 import { beforeEach, describe, expect, it } from 'vitest';
 import { ApiErrorPageComponent } from './api-error-page.component';
 
-const mockPageContextService = { register: vi.fn() };
+const mockPageContextService = { setContext: vi.fn() };
 const providers = [{ provide: PageContextService, useValue: mockPageContextService }];
 
 async function renderWithError(partial: Partial<Parameters<ApiErrorService['setError']>[0]> = {}) {
@@ -109,17 +109,17 @@ describe('ApiErrorPageComponent', () => {
     });
 
     it('registers with title Api Error', () => {
-      const context = mockPageContextService.register.mock.calls[0][1];
+      const context = mockPageContextService.setContext.mock.calls[0][0];
       expect(context.title()).toBe('Api Error');
     });
 
     it('has no subtitle', () => {
-      const context = mockPageContextService.register.mock.calls[0][1];
+      const context = mockPageContextService.setContext.mock.calls[0][0];
       expect(context.subtitle()).toBeUndefined();
     });
 
     it('registers with empty background color', () => {
-      const context = mockPageContextService.register.mock.calls[0][1];
+      const context = mockPageContextService.setContext.mock.calls[0][0];
       expect(context.backgroundColor()).toBe('');
     });
   });

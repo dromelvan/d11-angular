@@ -1,6 +1,5 @@
 import { signal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
-import { DestroyRef } from '@angular/core';
 import { CurrentService } from '@app/core/current/current.service';
 import { PageContextService } from './page-context.service';
 
@@ -19,17 +18,6 @@ describe('PageContextService', () => {
       ],
     });
     return TestBed.inject(PageContextService);
-  }
-
-  function mockDestroyRef(): { destroyRef: DestroyRef; destroy: () => void } {
-    const callbacks: (() => void)[] = [];
-    const destroyRef = {
-      onDestroy: (callback: () => void) => {
-        callbacks.push(callback);
-        return () => {};
-      },
-    } as unknown as DestroyRef;
-    return { destroyRef, destroy: () => callbacks.forEach((fn) => fn()) };
   }
 
   it('defaults title to D11', () => {
@@ -52,11 +40,10 @@ describe('PageContextService', () => {
     expect(service.textClass()).toBeUndefined();
   });
 
-  it('reflects registered context title and subtitle', () => {
+  it('reflects set context title and subtitle', () => {
     const service = setup();
-    const { destroyRef } = mockDestroyRef();
 
-    service.register(destroyRef, {
+    service.setContext({
       title: signal('Match Week 34'),
       subtitle: signal('Season 2025-2026'),
       backgroundColor: signal('#ff0000'),
@@ -69,9 +56,8 @@ describe('PageContextService', () => {
 
   it('textClass returns text-white! for dark backgroundColor', () => {
     const service = setup();
-    const { destroyRef } = mockDestroyRef();
 
-    service.register(destroyRef, {
+    service.setContext({
       title: signal('Title1'),
       backgroundColor: signal('#000000'),
     });
@@ -81,31 +67,12 @@ describe('PageContextService', () => {
 
   it('textClass returns text-black! for light backgroundColor', () => {
     const service = setup();
-    const { destroyRef } = mockDestroyRef();
 
-    service.register(destroyRef, {
+    service.setContext({
       title: signal('Title1'),
       backgroundColor: signal('#ffffff'),
     });
 
     expect(service.textClass()).toBe('text-black!');
-  });
-
-  it('resets to defaults after destroy', () => {
-    const service = setup(seasonName);
-    const { destroyRef, destroy } = mockDestroyRef();
-
-    service.register(destroyRef, {
-      title: signal('Match Week 34'),
-      subtitle: signal('Custom subtitle'),
-      backgroundColor: signal('#ff0000'),
-    });
-
-    destroy();
-
-    expect(service.title()).toBe('D11');
-    expect(service.subtitle()).toBe(seasonName);
-    expect(service.backgroundColor()).toBeUndefined();
-    expect(service.textClass()).toBeUndefined();
   });
 });

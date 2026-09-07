@@ -1,12 +1,4 @@
-import {
-  Component,
-  computed,
-  DestroyRef,
-  inject,
-  input,
-  numberAttribute,
-  signal,
-} from '@angular/core';
+import { Component, computed, inject, input, numberAttribute, signal } from '@angular/core';
 import { Season } from '@app/core/api';
 import { CurrentService } from '@app/core/current/current.service';
 import { PageContextService } from '@app/core/page-context/page-context.service';
@@ -37,8 +29,7 @@ export class PlayersPageComponent {
   private readonly pageContextService = inject(PageContextService);
 
   constructor() {
-    const destroyRef = inject(DestroyRef);
-    this.pageContextService.register(destroyRef, {
+    this.pageContextService.setContext({
       title: signal('Player Stats'),
       subtitle: computed(() => {
         const name = this.season()?.name;

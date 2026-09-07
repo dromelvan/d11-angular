@@ -1,4 +1,4 @@
-import { Component, computed, DestroyRef, inject, signal } from '@angular/core';
+import { Component, computed, inject, signal } from '@angular/core';
 import { CurrentService } from '@app/core/current/current.service';
 import { PageContextService } from '@app/core/page-context/page-context.service';
 import { RouterService } from '@app/core/router/router.service';
@@ -32,9 +32,7 @@ export class MorePageComponent {
   private readonly routerService = inject(RouterService);
 
   constructor() {
-    const destroyRef = inject(DestroyRef);
-
-    this.pageContextService.register(destroyRef, {
+    this.pageContextService.setContext({
       title: signal('More'),
       subtitle: computed(() => {
         const name = this.currentService.season()?.name;

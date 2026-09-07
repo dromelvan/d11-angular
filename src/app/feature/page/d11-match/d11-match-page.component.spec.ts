@@ -22,7 +22,7 @@ interface D11MatchPageInternal {
 
 describe('D11MatchPageComponent', () => {
   const mockPageContextService = {
-    register: vi.fn(),
+    setContext: vi.fn(),
     backgroundColor: signal('#000000'),
     textClass: signal('text-white'),
   };
@@ -72,17 +72,17 @@ describe('D11MatchPageComponent', () => {
       expect(component).toBeTruthy();
     });
 
-    it('registers context with PageContextService', () => {
-      expect(mockPageContextService.register).toHaveBeenCalledOnce();
+    it('sets context with PageContextService', () => {
+      expect(mockPageContextService.setContext).toHaveBeenCalledOnce();
     });
 
-    it('registered context title reflects match week number', () => {
-      const registeredContext = mockPageContextService.register.mock.calls[0][1];
+    it('set context title reflects match week number', () => {
+      const registeredContext = mockPageContextService.setContext.mock.calls[0][0];
       expect(registeredContext.title()).toBe(`Match Week ${d11Match.matchWeek.matchWeekNumber}`);
     });
 
-    it('registered context subtitle reflects season name', () => {
-      const registeredContext = mockPageContextService.register.mock.calls[0][1];
+    it('set context subtitle reflects season name', () => {
+      const registeredContext = mockPageContextService.setContext.mock.calls[0][0];
       expect(registeredContext.subtitle()).toBe(`Season ${d11Match.matchWeek.season.name}`);
     });
 

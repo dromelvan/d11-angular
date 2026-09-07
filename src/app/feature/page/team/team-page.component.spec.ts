@@ -26,7 +26,7 @@ import { TeamPageComponent } from './team-page.component';
 const mockRouterService = { navigateToTeam: vi.fn() };
 const mockDynamicDialogService = { openPlayerSeasonStat: vi.fn() };
 const mockPageContextService = {
-  register: vi.fn(),
+  setContext: vi.fn(),
   backgroundColor: signal<string | undefined>(undefined),
 };
 const mockBreakpointService = { isSmOrUp: signal(false) };
@@ -117,8 +117,8 @@ describe('TeamPageComponent', () => {
     });
   });
 
-  it('registers context with PageContextService', () => {
-    expect(mockPageContextService.register).toHaveBeenCalledOnce();
+  it('sets context with PageContextService', () => {
+    expect(mockPageContextService.setContext).toHaveBeenCalledOnce();
   });
 
   it('renders team stadium name in hero', async () => {
@@ -204,21 +204,21 @@ describe('TeamPageComponent context registration', () => {
   });
 
   it('registered title is team name', async () => {
-    const context = mockPageContextService.register.mock.calls[0][1];
+    const context = mockPageContextService.setContext.mock.calls[0][0];
     await waitFor(() => {
       expect(context.title()).toBe(team.name);
     });
   });
 
   it('registered subtitle is Season {name}', async () => {
-    const context = mockPageContextService.register.mock.calls[0][1];
+    const context = mockPageContextService.setContext.mock.calls[0][0];
     await waitFor(() => {
       expect(context.subtitle()).toBe(`Season ${season.name}`);
     });
   });
 
   it('registered backgroundColor is team colour', async () => {
-    const context = mockPageContextService.register.mock.calls[0][1];
+    const context = mockPageContextService.setContext.mock.calls[0][0];
     await waitFor(() => {
       expect(context.backgroundColor()).toBe(team.colour);
     });
@@ -424,7 +424,7 @@ describe('TeamPageComponent seasonId input', () => {
       providers: buildProviders({ teamApi, teamSeasonStatApi, seasonApi }),
     });
 
-    const context = mockPageContextService.register.mock.calls[0][1];
+    const context = mockPageContextService.setContext.mock.calls[0][0];
     expect(context.backgroundColor()).toBe(PRIMARY);
   });
 });

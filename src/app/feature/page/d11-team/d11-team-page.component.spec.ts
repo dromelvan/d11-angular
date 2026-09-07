@@ -23,7 +23,7 @@ import { D11TeamPageComponent } from './d11-team-page.component';
 
 const mockRouterService = { navigateToD11Team: vi.fn() };
 const mockPageContextService = {
-  register: vi.fn(),
+  setContext: vi.fn(),
   backgroundColor: signal<string | undefined>(undefined),
 };
 const mockBreakpointService = { isSmOrUp: signal(false) };
@@ -107,8 +107,8 @@ describe('D11TeamPageComponent', () => {
     });
   });
 
-  it('registers context with PageContextService', () => {
-    expect(mockPageContextService.register).toHaveBeenCalledOnce();
+  it('sets context with PageContextService', () => {
+    expect(mockPageContextService.setContext).toHaveBeenCalledOnce();
   });
 
   it('renders tabs on mobile layout', async () => {
@@ -184,21 +184,21 @@ describe('D11TeamPageComponent context registration', () => {
   });
 
   it('registered title is d11 team name', async () => {
-    const context = mockPageContextService.register.mock.calls[0][1];
+    const context = mockPageContextService.setContext.mock.calls[0][0];
     await waitFor(() => {
       expect(context.title()).toBe(d11Team.name);
     });
   });
 
   it('registered subtitle is Season {name}', async () => {
-    const context = mockPageContextService.register.mock.calls[0][1];
+    const context = mockPageContextService.setContext.mock.calls[0][0];
     await waitFor(() => {
       expect(context.subtitle()).toBe(`Season ${season.name}`);
     });
   });
 
   it('registered backgroundColor is PRIMARY', async () => {
-    const context = mockPageContextService.register.mock.calls[0][1];
+    const context = mockPageContextService.setContext.mock.calls[0][0];
     await waitFor(() => {
       expect(context.backgroundColor()).toBe(PRIMARY);
     });

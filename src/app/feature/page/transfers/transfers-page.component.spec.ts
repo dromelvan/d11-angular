@@ -40,7 +40,7 @@ function makeProviders() {
         rxCurrent: { isLoading: signal(false) },
       },
     },
-    { provide: PageContextService, useValue: { register: vi.fn() } },
+    { provide: PageContextService, useValue: { setContext: vi.fn() } },
     {
       provide: TransferApiService,
       useValue: { getTransfersByTransferDayId: vi.fn().mockReturnValue(of([])) },
@@ -293,7 +293,7 @@ describe('TransfersPageComponent', () => {
 
       const providers = makeProviders();
       const pageContextService = providers.find((p) => p.provide === PageContextService)!
-        .useValue as { register: ReturnType<typeof vi.fn> };
+        .useValue as { setContext: ReturnType<typeof vi.fn> };
 
       await render(TransfersPageComponent, {
         inputs: { transferWindowId: transferWindow.id },
@@ -301,7 +301,7 @@ describe('TransfersPageComponent', () => {
       });
       TestBed.tick();
 
-      const context = pageContextService.register.mock.calls[0][1];
+      const context = pageContextService.setContext.mock.calls[0][0];
       expect(context.title()).toBe('Transfer Window 3');
     });
 
@@ -315,7 +315,7 @@ describe('TransfersPageComponent', () => {
 
       const providers = makeProviders();
       const pageContextService = providers.find((p) => p.provide === PageContextService)!
-        .useValue as { register: ReturnType<typeof vi.fn> };
+        .useValue as { setContext: ReturnType<typeof vi.fn> };
 
       await render(TransfersPageComponent, {
         inputs: { transferWindowId: transferWindow.id },
@@ -323,14 +323,14 @@ describe('TransfersPageComponent', () => {
       });
       TestBed.tick();
 
-      const context = pageContextService.register.mock.calls[0][1];
+      const context = pageContextService.setContext.mock.calls[0][0];
       expect(context.title()).toBe('Draft');
     });
 
     it('registers subtitle as season name', async () => {
       const providers = makeProviders();
       const pageContextService = providers.find((p) => p.provide === PageContextService)!
-        .useValue as { register: ReturnType<typeof vi.fn> };
+        .useValue as { setContext: ReturnType<typeof vi.fn> };
 
       await render(TransfersPageComponent, {
         inputs: { transferWindowId: transferWindow.id },
@@ -338,7 +338,7 @@ describe('TransfersPageComponent', () => {
       });
       TestBed.tick();
 
-      const context = pageContextService.register.mock.calls[0][1];
+      const context = pageContextService.setContext.mock.calls[0][0];
       expect(context.subtitle()).toBe(`Season ${transferWindow.matchWeek.season.name}`);
     });
   });

@@ -1,13 +1,4 @@
-import {
-  Component,
-  computed,
-  DestroyRef,
-  effect,
-  inject,
-  input,
-  numberAttribute,
-  signal,
-} from '@angular/core';
+import { Component, computed, effect, inject, input, numberAttribute, signal } from '@angular/core';
 import { rxResource } from '@angular/core/rxjs-interop';
 import { SeasonBase, Status, TransferWindow } from '@app/core/api';
 import { TransferWindowApiService } from '@app/core/api/transfer-window/transfer-window-api.service';
@@ -74,9 +65,7 @@ export class TransfersPageComponent {
   private pageContextService = inject(PageContextService);
 
   constructor() {
-    const destroyRef = inject(DestroyRef);
-
-    this.pageContextService.register(destroyRef, {
+    this.pageContextService.setContext({
       title: computed(() => {
         const transferWindow = this.model().transferWindow;
         if (!transferWindow) return undefined;

@@ -1,12 +1,4 @@
-import {
-  Component,
-  computed,
-  DestroyRef,
-  inject,
-  input,
-  numberAttribute,
-  signal,
-} from '@angular/core';
+import { Component, computed, inject, input, numberAttribute, signal } from '@angular/core';
 import { CurrentService } from '@app/core/current/current.service';
 import { PageContextService } from '@app/core/page-context/page-context.service';
 import { EditPlayerFormComponent } from '@app/feature/form/edit-player/edit-player-form.component';
@@ -23,7 +15,7 @@ export class EditPlayerPageComponent {
   private readonly pageContextService = inject(PageContextService);
 
   constructor() {
-    this.pageContextService.register(inject(DestroyRef), {
+    this.pageContextService.setContext({
       title: signal('Edit Player'),
       subtitle: computed(() => {
         const name = this.currentService.season()?.name;

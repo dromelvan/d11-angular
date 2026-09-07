@@ -1,12 +1,4 @@
-import {
-  Component,
-  computed,
-  DestroyRef,
-  inject,
-  input,
-  numberAttribute,
-  signal,
-} from '@angular/core';
+import { Component, computed, inject, input, numberAttribute, signal } from '@angular/core';
 import { Location } from '@angular/common';
 import { rxResource } from '@angular/core/rxjs-interop';
 import { D11Match, D11MatchBase, D11TeamBase, PlayerMatchStat, Status } from '@app/core/api';
@@ -75,8 +67,7 @@ export class D11MatchPageComponent {
   private pageContextService = inject(PageContextService);
 
   constructor() {
-    const destroyRef = inject(DestroyRef);
-    this.pageContextService.register(destroyRef, {
+    this.pageContextService.setContext({
       title: computed(() => {
         const number = this.model().d11Match?.matchWeek.matchWeekNumber;
         return number !== undefined ? `Match Week ${number}` : undefined;

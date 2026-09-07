@@ -1,4 +1,4 @@
-import { computed, DestroyRef, inject, Injectable, signal, Signal } from '@angular/core';
+import { computed, inject, Injectable, signal, Signal } from '@angular/core';
 import { CurrentService } from '@app/core/current/current.service';
 import { contrastTextClass } from '@app/shared/util/contrast-text.util';
 
@@ -25,8 +25,7 @@ export class PageContextService {
   private readonly currentService = inject(CurrentService);
   private readonly activeContext = signal<PageContext | undefined>(undefined);
 
-  register(destroyRef: DestroyRef, context: PageContext): void {
+  setContext(context: PageContext): void {
     this.activeContext.set(context);
-    destroyRef.onDestroy(() => this.activeContext.set(undefined));
   }
 }

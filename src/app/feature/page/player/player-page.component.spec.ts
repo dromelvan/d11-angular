@@ -11,7 +11,7 @@ import { PlayerPageComponent } from './player-page.component';
 
 describe('PlayerPageComponent', () => {
   const mockPageContextService = {
-    register: vi.fn(),
+    setContext: vi.fn(),
     backgroundColor: signal<string | undefined>(undefined),
   };
   const mockRouterService = {
@@ -87,22 +87,22 @@ describe('PlayerPageComponent', () => {
       fixture = await createFixture(1);
     });
 
-    it('registers context with PageContextService', () => {
-      expect(mockPageContextService.register).toHaveBeenCalledOnce();
+    it('sets context with PageContextService', () => {
+      expect(mockPageContextService.setContext).toHaveBeenCalledOnce();
     });
 
-    it('registered title is player name', () => {
-      const context = mockPageContextService.register.mock.calls[0][1];
+    it('set title is player name', () => {
+      const context = mockPageContextService.setContext.mock.calls[0][0];
       expect(context.title()).toBe(player.name);
     });
 
-    it('registered subtitle is Season {name}', () => {
-      const context = mockPageContextService.register.mock.calls[0][1];
+    it('set subtitle is Season {name}', () => {
+      const context = mockPageContextService.setContext.mock.calls[0][0];
       expect(context.subtitle()).toBe(`Season ${playerSeasonStat.season.name}`);
     });
 
-    it('registered backgroundColor is team colour', () => {
-      const context = mockPageContextService.register.mock.calls[0][1];
+    it('set backgroundColor is team colour', () => {
+      const context = mockPageContextService.setContext.mock.calls[0][0];
       expect(context.backgroundColor()).toBe(playerSeasonStat.team.colour);
     });
 
@@ -153,13 +153,13 @@ describe('PlayerPageComponent', () => {
       ).toBeNull();
     });
 
-    it('registered subtitle is undefined', () => {
-      const context = mockPageContextService.register.mock.calls[0][1];
+    it('set subtitle is undefined', () => {
+      const context = mockPageContextService.setContext.mock.calls[0][0];
       expect(context.subtitle()).toBeUndefined();
     });
 
-    it('registered backgroundColor is PRIMARY', () => {
-      const context = mockPageContextService.register.mock.calls[0][1];
+    it('set backgroundColor is PRIMARY', () => {
+      const context = mockPageContextService.setContext.mock.calls[0][0];
       expect(context.backgroundColor()).toBe(PRIMARY);
     });
   });
@@ -172,7 +172,7 @@ describe('PlayerPageComponent', () => {
       await setup({ player, playerSeasonStats: [playerSeasonStat1, playerSeasonStat2] });
       await createFixture(1, playerSeasonStat2.season.id);
 
-      const context = mockPageContextService.register.mock.calls[0][1];
+      const context = mockPageContextService.setContext.mock.calls[0][0];
       expect(context.subtitle()).toBe(`Season ${playerSeasonStat2.season.name}`);
     });
 
@@ -183,7 +183,7 @@ describe('PlayerPageComponent', () => {
       await setup({ player, playerSeasonStats: [playerSeasonStat1, playerSeasonStat2] });
       await createFixture(1);
 
-      const context = mockPageContextService.register.mock.calls[0][1];
+      const context = mockPageContextService.setContext.mock.calls[0][0];
       expect(context.subtitle()).toBe(`Season ${playerSeasonStat1.season.name}`);
     });
   });

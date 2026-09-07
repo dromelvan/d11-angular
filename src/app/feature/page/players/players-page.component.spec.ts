@@ -25,7 +25,7 @@ const mockSeasonApi = { getAll: vi.fn() };
 const mockPlayerSeasonStatApi = { getPlayerSeasonStatsBySeasonId: vi.fn() };
 const mockCurrentService = { season: currentSeason, rxCurrent: { isLoading: signal(false) } };
 const mockRouterService = { navigateToPlayers: vi.fn() };
-const mockPageContextService = { register: vi.fn() };
+const mockPageContextService = { setContext: vi.fn() };
 
 const providers = [
   provideHttpClient(),
@@ -206,11 +206,11 @@ describe('PlayersPageComponent', () => {
   });
 
   describe('page context', () => {
-    it('registers with title Player Stats', async () => {
+    it('sets title Player Stats', async () => {
       await render(PlayersPageComponent, { providers });
       TestBed.tick();
 
-      const context = mockPageContextService.register.mock.calls[0][1];
+      const context = mockPageContextService.setContext.mock.calls[0][0];
       expect(context.title()).toBe('Player Stats');
     });
 
@@ -221,7 +221,7 @@ describe('PlayersPageComponent', () => {
 
       selectSeason(fixture, seasons[0]);
 
-      const context = mockPageContextService.register.mock.calls[0][1];
+      const context = mockPageContextService.setContext.mock.calls[0][0];
       expect(context.subtitle()).toBe(`Season ${seasons[0].name}`);
     });
 
@@ -230,7 +230,7 @@ describe('PlayersPageComponent', () => {
       await render(PlayersPageComponent, { providers });
       TestBed.tick();
 
-      const context = mockPageContextService.register.mock.calls[0][1];
+      const context = mockPageContextService.setContext.mock.calls[0][0];
       expect(context.subtitle()).toBeUndefined();
     });
   });

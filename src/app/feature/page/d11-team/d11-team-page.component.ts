@@ -1,12 +1,4 @@
-import {
-  Component,
-  computed,
-  DestroyRef,
-  effect,
-  inject,
-  input,
-  numberAttribute,
-} from '@angular/core';
+import { Component, computed, effect, inject, input, numberAttribute } from '@angular/core';
 import { rxResource } from '@angular/core/rxjs-interop';
 import { D11TeamBase, D11TeamSeasonStat, Season, SeasonApiService } from '@app/core/api';
 import { PRIMARY } from '@app/app.theme';
@@ -82,8 +74,7 @@ export class D11TeamPageComponent {
   private pageContextService = inject(PageContextService);
 
   constructor() {
-    const destroyRef = inject(DestroyRef);
-    this.pageContextService.register(destroyRef, {
+    this.pageContextService.setContext({
       title: computed(() => this.model().d11Team?.name),
       subtitle: computed(() => {
         const name = this.model().season?.name;

@@ -1,12 +1,4 @@
-import {
-  Component,
-  computed,
-  DestroyRef,
-  inject,
-  input,
-  numberAttribute,
-  signal,
-} from '@angular/core';
+import { Component, computed, inject, input, numberAttribute, signal } from '@angular/core';
 import { rxResource } from '@angular/core/rxjs-interop';
 import { Season } from '@app/core/api';
 import { SeasonApiService } from '@app/core/api/season/season-api.service';
@@ -48,8 +40,7 @@ export class TablesPageComponent {
   private readonly seasonApiService = inject(SeasonApiService);
 
   constructor() {
-    const destroyRef = inject(DestroyRef);
-    this.pageContextService.register(destroyRef, {
+    this.pageContextService.setContext({
       title: signal('League Tables'),
       subtitle: computed(() => {
         const name = this.selectedSeason()?.name;

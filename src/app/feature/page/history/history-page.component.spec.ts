@@ -31,7 +31,7 @@ const mockRouterService = {
   navigateToTeam: vi.fn(),
 };
 
-const mockPageContextService = { register: vi.fn() };
+const mockPageContextService = { setContext: vi.fn() };
 
 const providers = [
   { provide: SeasonApiService, useValue: mockSeasonApiService },
@@ -68,14 +68,14 @@ describe('HistoryPageComponent', () => {
       expect(await screen.findAllByText(seasonWinner2.season.name)).not.toHaveLength(0);
     });
 
-    it('registers page context with Season History title', () => {
-      const [, context] = mockPageContextService.register.mock.calls[0];
+    it('sets page context with Season History title', () => {
+      const [context] = mockPageContextService.setContext.mock.calls[0];
       expect(context.title()).toBe('Season History');
     });
 
-    it('registers page context subtitle as year range of seasons', async () => {
+    it('sets page context subtitle as year range of seasons', async () => {
       await screen.findAllByText(seasonWinner1.season.name);
-      const [, context] = mockPageContextService.register.mock.calls[0];
+      const [context] = mockPageContextService.setContext.mock.calls[0];
       expect(context.subtitle()).toBe('2023-2025');
     });
   });
@@ -97,7 +97,7 @@ describe('HistoryPageComponent', () => {
 
     it('excludes pending seasons from subtitle', async () => {
       await screen.findAllByText(seasonWinner1.season.name);
-      const [, context] = mockPageContextService.register.mock.calls[0];
+      const [context] = mockPageContextService.setContext.mock.calls[0];
       expect(context.subtitle()).toBe('2023-2024');
     });
   });
@@ -112,8 +112,8 @@ describe('HistoryPageComponent', () => {
       expect(await screen.findByText('No season history found')).toBeInTheDocument();
     });
 
-    it('registers page context subtitle as undefined', () => {
-      const [, context] = mockPageContextService.register.mock.calls[0];
+    it('sets page context subtitle as undefined', () => {
+      const [context] = mockPageContextService.setContext.mock.calls[0];
       expect(context.subtitle()).toBeUndefined();
     });
   });

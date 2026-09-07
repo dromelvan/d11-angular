@@ -1,4 +1,4 @@
-import { Component, computed, DestroyRef, inject, signal } from '@angular/core';
+import { Component, computed, inject, signal } from '@angular/core';
 import { CurrentService } from '@app/core/current/current.service';
 import { PageContextService } from '@app/core/page-context/page-context.service';
 import { CreateTransferWindowFormComponent } from '@app/feature/form/create-transfer-window/create-transfer-window-form.component';
@@ -13,7 +13,7 @@ export class CreateTransferWindowPageComponent {
   private readonly pageContextService = inject(PageContextService);
 
   constructor() {
-    this.pageContextService.register(inject(DestroyRef), {
+    this.pageContextService.setContext({
       title: signal('New Transfer Window'),
       subtitle: computed(() => {
         const name = this.currentService.season()?.name;

@@ -1,12 +1,4 @@
-import {
-  Component,
-  computed,
-  DestroyRef,
-  inject,
-  input,
-  numberAttribute,
-  signal,
-} from '@angular/core';
+import { Component, computed, inject, input, numberAttribute, signal } from '@angular/core';
 import { rxResource } from '@angular/core/rxjs-interop';
 import { D11TeamSeasonStat, Season } from '@app/core/api';
 import { D11TeamSeasonStatApiService } from '@app/core/api/d11-team-season-stat/d11-team-season-stat-api.service';
@@ -71,7 +63,7 @@ export class D11TeamsPageComponent {
   private readonly seasonApiService = inject(SeasonApiService);
 
   constructor() {
-    this.pageContextService.register(inject(DestroyRef), {
+    this.pageContextService.setContext({
       title: signal('D11 Teams'),
       subtitle: computed(() => {
         const name = this.selectedSeason()?.name;

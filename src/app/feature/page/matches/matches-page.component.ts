@@ -1,14 +1,5 @@
 import { NgClass } from '@angular/common';
-import {
-  Component,
-  computed,
-  DestroyRef,
-  effect,
-  inject,
-  input,
-  numberAttribute,
-  signal,
-} from '@angular/core';
+import { Component, computed, effect, inject, input, numberAttribute, signal } from '@angular/core';
 import { rxResource } from '@angular/core/rxjs-interop';
 import { MatchWeek, SeasonBase } from '@app/core/api';
 import { MatchWeekApiService } from '@app/core/api/match-week/match-week-api.service';
@@ -53,8 +44,6 @@ export class MatchesPageComponent {
   private routerService = inject(RouterService);
 
   constructor() {
-    const destroyRef = inject(DestroyRef);
-
     effect(() => {
       const matchWeek = this.rxMatchWeek.value();
       if (matchWeek) {
@@ -66,7 +55,7 @@ export class MatchesPageComponent {
       }
     });
 
-    this.pageContextService.register(destroyRef, {
+    this.pageContextService.setContext({
       title: computed(() => {
         if (this.active()) return 'Live Matches';
         const number =

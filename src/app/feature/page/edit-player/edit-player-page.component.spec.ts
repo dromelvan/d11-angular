@@ -22,13 +22,13 @@ describe('EditPlayerPageComponent', () => {
   let mockCurrentService: {
     season: ReturnType<typeof signal<ReturnType<typeof fakeSeason> | undefined>>;
   };
-  let mockPageContextService: { register: ReturnType<typeof vi.fn> };
+  let mockPageContextService: { setContext: ReturnType<typeof vi.fn> };
 
   beforeEach(async () => {
     vi.clearAllMocks();
     const playerSeasonStat = fakePlayerSeasonStat();
     mockCurrentService = { season: signal(playerSeasonStat.season) };
-    mockPageContextService = { register: vi.fn() };
+    mockPageContextService = { setContext: vi.fn() };
 
     ({ fixture } = await render(EditPlayerPageComponent, {
       inputs: { playerId: 1 },
@@ -68,7 +68,7 @@ describe('EditPlayerPageComponent', () => {
 
   describe('page context', () => {
     it('registers with title Edit Player', () => {
-      const context = mockPageContextService.register.mock.calls[0][1];
+      const context = mockPageContextService.setContext.mock.calls[0][0];
       expect(context.title()).toBe('Edit Player');
     });
 
@@ -76,19 +76,19 @@ describe('EditPlayerPageComponent', () => {
       const season = fakeSeason();
       mockCurrentService.season.set(season);
 
-      const context = mockPageContextService.register.mock.calls[0][1];
+      const context = mockPageContextService.setContext.mock.calls[0][0];
       expect(context.subtitle()).toBe(`Season ${season.name}`);
     });
 
     it('has no subtitle when there is no current season', () => {
       mockCurrentService.season.set(undefined);
 
-      const context = mockPageContextService.register.mock.calls[0][1];
+      const context = mockPageContextService.setContext.mock.calls[0][0];
       expect(context.subtitle()).toBeUndefined();
     });
 
     it('registers with empty background color', () => {
-      const context = mockPageContextService.register.mock.calls[0][1];
+      const context = mockPageContextService.setContext.mock.calls[0][0];
       expect(context.backgroundColor()).toBe('');
     });
   });

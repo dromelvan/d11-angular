@@ -1,4 +1,4 @@
-import { Component, computed, DestroyRef, inject, signal } from '@angular/core';
+import { Component, computed, inject, signal } from '@angular/core';
 import { rxResource } from '@angular/core/rxjs-interop';
 import { SeasonApiService, SeasonWinners, Status } from '@app/core/api';
 import { PageContextService } from '@app/core/page-context/page-context.service';
@@ -26,8 +26,7 @@ export class HistoryPageComponent {
   private readonly pageContextService = inject(PageContextService);
 
   constructor() {
-    const destroyRef = inject(DestroyRef);
-    this.pageContextService.register(destroyRef, {
+    this.pageContextService.setContext({
       title: signal('Season History'),
       subtitle: computed(() => {
         const winners = this.seasonWinners();
