@@ -3,7 +3,7 @@ import { RouterOutlet } from '@angular/router';
 import { Toast } from 'primeng/toast';
 import { LoadingComponent } from '@app/feature/component/loading/loading/loading.component';
 import { FooterComponent } from '@app/shared/footer/footer.component';
-import { HeaderComponent } from '@app/shared/header/header.component';
+import { HeaderComponent } from '@app/feature/navigation/header/header.component';
 
 @Component({
   selector: 'app-root',
