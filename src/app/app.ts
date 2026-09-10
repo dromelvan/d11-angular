@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { Toast } from 'primeng/toast';
 import { LoadingComponent } from '@app/feature/component/loading/loading/loading.component';
-import { FooterComponent } from '@app/shared/footer/footer.component';
+import { FooterComponent } from '@app/feature/navigation/footer/footer.component';
 import { HeaderComponent } from '@app/feature/navigation/header/header.component';
 
 @Component({

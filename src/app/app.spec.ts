@@ -21,4 +21,8 @@ describe('App', () => {
   it('renders router outlet', () => {
     expect(document.querySelector('router-outlet')).toBeInTheDocument();
   });
+
+  it('renders footer', () => {
+    expect(document.querySelector('app-footer')).toBeInTheDocument();
+  });
 });
